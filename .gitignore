@@ -1,0 +1,10 @@
+## Executable + Temp files ##
+
+*.exe
+*.exe.*
+*.o
+*.pdb
+*.mdb
+
+## Fbx SDK ##
+spike/2016.0/
