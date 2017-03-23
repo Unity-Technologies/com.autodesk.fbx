@@ -23,9 +23,20 @@ endif()
 
 message("Looking for fbxsdk.h in ${FBXSDK_INCLUDE_PATHS}")
 find_path(FBXSDK_INCLUDE_DIR fbxsdk.h PATHS ${FBXSDK_INCLUDE_PATHS})
+message("Found ${FBXSDK_INCLUDE_DIR}")
 
 message("Looking for fbxsdk library in ${FBXSDK_LIB_PATHS}")
-find_library(FBXSDK_LIBRARY fbxsdk PATHS ${FBXSDK_LIB_PATHS})
+find_library(FBXSDK_LIBRARY libfbxsdk.a fbxsdk.lib fbxsdk PATHS ${FBXSDK_LIB_PATHS})
+message("Found ${FBXSDK_LIBRARY}")
+
+# On OSX we need to link to Cocoa when we statically link.
+# (But if we didn't find FBX, don't link to Cocoa.)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+  if (NOT(FBXSDK_LIBRARY STREQUAL ""))
+      find_library(COCOA_LIBRARY Cocoa)
+      list(APPEND FBXSDK_LIBRARY ${COCOA_LIBRARY})
+  endif()
+endif()
 
 # Standard code to report whether we found the package or not.
 #include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
