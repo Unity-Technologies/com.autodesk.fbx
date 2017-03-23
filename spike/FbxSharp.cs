@@ -19,14 +19,15 @@ namespace FbxSharp
         {
             driver.Options.GeneratorKind = GeneratorKind.CSharp;
             driver.Options.LibraryName = "FbxSdk";
-            driver.Options.Headers.Add("fbxsdk.h");
+            // driver.Options.Headers.Add("fbxsdk.h");
+            driver.Options.Headers.Add("fbxsdk/core/base/fbxstring.h");
             driver.Options.SharedLibraryName = "libfbxsdk.dylib";
             driver.Options.OutputDir = "out/cppsharp";
-            driver.Options.CompileCode = true;
+            driver.Options.CompileCode = false;
 
             driver.ParserOptions.Abi = CppAbi.Itanium;
             driver.ParserOptions.AddIncludeDirs(Path.Combine(Directory.GetCurrentDirectory(), "2016.0/include"));
-            driver.ParserOptions.AddLibraryDirs(Path.Combine(Directory.GetCurrentDirectory(), "2016.0/lib/clang/release"));
+            driver.ParserOptions.AddLibraryDirs(Path.Combine(Directory.GetCurrentDirectory(), "2016.0/lib/clang/debug"));
         }
 
         public void SetupPasses(Driver driver)

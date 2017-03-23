@@ -1,0 +1,17 @@
+﻿<Properties StartupConfiguration="{023D7CBF-56AD-4D5F-A412-6A28BC939498}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../out/cppsharp/FbxSdk.cs">
+    <Files>
+      <File FileName="HelloWorldApp/Program.cs" Line="16" Column="1" />
+      <File FileName="HelloWorldApp/Properties/AssemblyInfo.cs" Line="1" Column="1" />
+      <File FileName="../out/cppsharp/FbxSdk.cs" Line="2597" Column="2" />
+      <File FileName="../FbxSharp.cs" Line="31" Column="10" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.HelloWorldApp PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>
