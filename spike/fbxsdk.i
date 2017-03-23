@@ -1,12 +1,11 @@
 %module example
 %{
 /* Includes the header in the wrapper code */
-#define FBXSDK_SHARED
+#define FBXSDK_SHARED // necessary for proper library linking
 #include "fbxsdk.h"
 %}
  
 /* Parse the header file to generate wrappers */
-//%include <windows.i>
 %include "2016.0/include/fbxsdk.h"
 %include "2016.0/include/fbxsdk/fbxsdk_def.h"
 %include "2016.0/include/fbxsdk/fbxsdk_nsbegin.h"
@@ -19,7 +18,7 @@
 
 
 /* For generating wrapper to export an empty scene */
-#define DOXYGEN_SHOULD_SKIP_THIS
+#define DOXYGEN_SHOULD_SKIP_THIS // skip code that is undocumented and subject to change without notice
 %include "../2016.0/include/fbxsdk/core/arch/fbxnew.h"
 %include "../2016.0/include/fbxsdk/core/arch/fbxarch.h"
 %include "../2016.0/include/fbxsdk/fileio/fbxiosettingspath.h"
