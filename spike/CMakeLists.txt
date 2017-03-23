@@ -19,3 +19,6 @@ set_source_files_properties(fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;FbxSdk")
 set(CMAKE_SWIG_OUTDIR, "out")
 swig_add_module(fbxsdk_sharp csharp fbxsdk.i)
 swig_link_libraries(fbxsdk_sharp ${FBXSDK_LIBRARY})
+
+install(DIRECTORY . DESTINATION fbxsharp/csharp FILES_MATCHING PATTERN "*.cs")
+install(TARGETS fbxsdk_sharp DESTINATION fbxsharp/csharp)
