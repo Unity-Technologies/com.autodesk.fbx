@@ -1,15 +1,40 @@
 %module example
 %{
 /* Includes the header in the wrapper code */
+#define FBXSDK_SHARED
 #include "fbxsdk.h"
 %}
  
 /* Parse the header file to generate wrappers */
+//%include <windows.i>
 %include "2016.0/include/fbxsdk.h"
 %include "2016.0/include/fbxsdk/fbxsdk_def.h"
 %include "2016.0/include/fbxsdk/fbxsdk_nsbegin.h"
 %include "2016.0/include/fbxsdk/fbxsdk_nsend.h"
 %include "2016.0/include/fbxsdk/fbxsdk_version.h"
+
+/* For generating wrapper for FbxVector2 class */
+//#define FBXSDK_DLL
+//%include "2016.0/include/fbxsdk/core/math/fbxvector2.h"
+
+
+/* For generating wrapper to export an empty scene */
+#define DOXYGEN_SHOULD_SKIP_THIS
+%include "../2016.0/include/fbxsdk/core/arch/fbxnew.h"
+%include "../2016.0/include/fbxsdk/core/arch/fbxarch.h"
+%include "../2016.0/include/fbxsdk/fileio/fbxiosettingspath.h"
+%include "../2016.0/include/fbxsdk/core/fbxobject.h"
+%include "../2016.0/include/fbxsdk/scene/fbxdocument.h" 
+
+%nodefaultdtor;
+%include "../2016.0/include/fbxsdk/scene/fbxscene.h"
+%include "../2016.0/include/fbxsdk/fileio/fbxexporter.h"
+%nodefaultctor FbxManager;
+%include "../2016.0/include/fbxsdk/core/fbxmanager.h"
+%include "../2016.0/include/fbxsdk/fileio/fbxiosettings.h"
+
+/* Everything */
+/*%include "2016.0/include/fbxsdk/fbxsdk_version.h"
 %include "2016.0/include/fbxsdk/core/arch/fbxarch.h"
 %include "2016.0/include/fbxsdk/core/arch/fbxalloc.h"
 %include "2016.0/include/fbxsdk/core/arch/fbxdebug.h"
@@ -233,4 +258,4 @@
 %include "2016.0/include/fbxsdk/utils/fbxrenamingstrategyfbx7.h"
 %include "2016.0/include/fbxsdk/utils/fbxrenamingstrategyutilities.h"
 %include "2016.0/include/fbxsdk/utils/fbxrootnodeutility.h"
-%include "2016.0/include/fbxsdk/utils/fbxusernotification.h"
+%include "2016.0/include/fbxsdk/utils/fbxusernotification.h"*/
