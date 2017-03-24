@@ -29,9 +29,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FBXSharpProject">
-      <HintPath>..\FBXSharpProject\bin\Debug\FBXSharpProject.dll</HintPath>
-    </Reference>
     <Reference Include="System.Runtime">
       <HintPath>..\..\..\..\..\..\..\Library\Frameworks\Mono.framework\Versions\4.8.0\lib\mono\4.5\Facades\System.Runtime.dll</HintPath>
     </Reference>
@@ -39,6 +36,12 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FbxSdk\FbxSdk.csproj">
+      <Project>{61B031FD-9D03-4DAB-A7D4-247F22B56B90}</Project>
+      <Name>FbxSdk</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

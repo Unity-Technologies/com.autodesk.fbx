@@ -10,2597 +10,2600 @@ using System.Security;
 
 namespace FbxSdk
 {
-namespace fbxsdk
-{
-/// <summary>
-/// <para>The assertion procedure signature. If a different assertion procedure must be provided, it should have this signature.</para>
-/// </summary>
-/// <param name="pFileName">
-/// <para>The file name where the assertion occurred.</para>
-/// </param>
-/// <param name="pFunctionName">
-/// <para>The function name where the assertion occurred.</para>
-/// </param>
-/// <param name="pLineNumber">
-/// <para>The line number in the file where the assertion occurred.</para>
-/// </param>
-/// <param name="pMessage">
-/// <para>The message to display when the assertion occurs.</para>
-/// </param>
-[UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
-public unsafe delegate void FbxAssertProc([MarshalAs(UnmanagedType.LPStr)] string pFileName, [MarshalAs(UnmanagedType.LPStr)] string pFunctionName, uint pLineNumber, [MarshalAs(UnmanagedType.LPStr)] string pMessage);
-
-[UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
-public unsafe delegate global::System.IntPtr FbxMallocProc(ulong _0);
-
-/// <summary>
-/// <para>Function pointer signature used to replace &quot;malloc&quot;</para>
-/// </summary>
-[UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
-public unsafe delegate global::System.IntPtr FbxCallocProc(ulong _0, ulong _1);
-
-/// <summary>
-/// <para>Function pointer signature used to replace &quot;calloc&quot;</para>
-/// </summary>
-[UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
-public unsafe delegate global::System.IntPtr FbxReallocProc(global::System.IntPtr _0, ulong _1);
-
-/// <summary>
-/// <para>Function pointer signature used to replace &quot;realloc&quot;</para>
-/// </summary>
-[UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
-public unsafe delegate void FbxFreeProc(global::System.IntPtr _0);
-
-namespace FbxIncompatibleWithArray
-{
-[StructLayout(LayoutKind.Explicit, Size = 1)]
-public unsafe partial struct __Internal
-{
-}
-}
-
-namespace FbxSimpleType
-{
-[StructLayout(LayoutKind.Explicit, Size = 0)]
-public unsafe partial struct __Internal
-{
-}
-}
-
-/// <summary>
-/// <para>FbxSharedPtr class describes an object that stores a pointer to a single allocated object of type </para>
-/// <para>Type* that ensures that the object to which it points gets destroyed automatically when the control </para>
-/// <para>leaves a scope and the reference count is 0. </para>
-/// </summary>
-public unsafe partial class RefCount : IDisposable
-{
-[StructLayout(LayoutKind.Explicit, Size = 4)]
-public partial struct __Internal
-{
-[FieldOffset(0)]
-public int count;
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk8RefCountC2Ev")]
-internal static extern void ctor_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk8RefCountC2ERKS0_")]
-internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk8RefCountD2Ev")]
-internal static extern void dtor_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk8RefCount4InitEv")]
-internal static extern void Init_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk8RefCount6IncRefEv")]
-internal static extern void IncRef_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk8RefCount6DecRefEv")]
-internal static extern int DecRef_0(global::System.IntPtr instance);
-}
-
-public global::System.IntPtr __Instance { get; protected set; }
-
-protected int __PointerAdjustment;
-internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, RefCount> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, RefCount>();
-protected void*[] __OriginalVTables;
-
-protected bool __ownsNativeInstance;
-
-internal static RefCount __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
-{
-    return new RefCount(native.ToPointer(), skipVTables);
-}
-
-internal static RefCount __CreateInstance(RefCount.__Internal native, bool skipVTables = false)
-{
-    return new RefCount(native, skipVTables);
-}
-
-private static void* __CopyValue(RefCount.__Internal native)
-{
-    var ret = Marshal.AllocHGlobal(4);
-    *(RefCount.__Internal*) ret = native;
-    return ret.ToPointer();
-}
-
-private RefCount(RefCount.__Internal native, bool skipVTables = false)
-    : this(__CopyValue(native), skipVTables)
-{
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-protected RefCount(void* native, bool skipVTables = false)
-{
-    if (native == null)
-        return;
-    __Instance = new global::System.IntPtr(native);
-}
-
-public RefCount()
-{
-    __Instance = Marshal.AllocHGlobal(4);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    __Internal.ctor_0((__Instance + __PointerAdjustment));
-}
-
-public RefCount(fbxsdk.RefCount _0)
-{
-    __Instance = Marshal.AllocHGlobal(4);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    *((RefCount.__Internal*) __Instance) = *((RefCount.__Internal*) _0.__Instance);
-}
-
-public void Dispose()
-{
-    Dispose(disposing: true);
-}
-
-public virtual void Dispose(bool disposing)
-{
-    fbxsdk.RefCount __dummy;
-    NativeToManagedMap.TryRemove(__Instance, out __dummy);
-    if (disposing)
-        __Internal.dtor_0((__Instance + __PointerAdjustment));
-    if (__ownsNativeInstance)
-        Marshal.FreeHGlobal(__Instance);
-}
-
-public void Init()
-{
-    __Internal.Init_0((__Instance + __PointerAdjustment));
-}
-
-public void IncRef()
-{
-    __Internal.IncRef_0((__Instance + __PointerAdjustment));
-}
-
-public int DecRef
-{
-get
-{
-    var __ret = __Internal.DecRef_0((__Instance + __PointerAdjustment));
-    return __ret;
-}
-}
-}
-
-/// <summary>
-/// <para>Utility class to manipulate strings.</para>
-/// </summary>
-public unsafe partial class FbxString : IDisposable
-{
-[StructLayout(LayoutKind.Explicit, Size = 8)]
-public partial struct __Internal
-{
-[FieldOffset(0)]
-public global::System.IntPtr mData;
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringC2Ev")]
-internal static extern void ctor_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringC2ERKS0_")]
-internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringC2EPKc")]
-internal static extern void ctor_2(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringC2Ecm")]
-internal static extern void ctor_3(global::System.IntPtr instance, sbyte pChar, ulong pNbRepeat);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringC2EPKcm")]
-internal static extern void ctor_4(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pCharPtr, ulong pLength);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringC2Ei")]
-internal static extern void ctor_5(global::System.IntPtr instance, int pValue);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringC2Ef")]
-internal static extern void ctor_6(global::System.IntPtr instance, float pValue);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringC2Ed")]
-internal static extern void ctor_7(global::System.IntPtr instance, double pValue);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringD2Ev")]
-internal static extern void dtor_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringeqERKS0_")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorEqualEqual_0(global::System.IntPtr instance, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringneERKS0_")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorExclaimEqual_0(global::System.IntPtr instance, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringltERKS0_")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorLess_0(global::System.IntPtr instance, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringleERKS0_")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorLessEqual_0(global::System.IntPtr instance, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringgeERKS0_")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorGreaterEqual_0(global::System.IntPtr instance, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringgtERKS0_")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorGreater_0(global::System.IntPtr instance, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringeqEPKc")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorEqualEqual_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringneEPKc")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorExclaimEqual_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringltEPKc")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorLess_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringleEPKc")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorLessEqual_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringgeEPKc")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorGreaterEqual_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringgtEPKc")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool OperatorGreater_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxStringcvPKcEv")]
-internal static extern global::System.IntPtr OperatorConversion_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxString4CopyEPKcm")]
-internal static extern global::System.IntPtr Copy_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString, ulong pLength);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxString6AppendEPKcm")]
-internal static extern global::System.IntPtr Append_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString, ulong pLength);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString7CompareEPKc")]
-internal static extern int Compare_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString13CompareNoCaseEPKc")]
-internal static extern int CompareNoCase_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxString4SwapERS0_")]
-internal static extern void Swap_0(global::System.IntPtr instance, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString3MidEmm")]
-internal static extern void Mid_0(global::System.IntPtr @return, global::System.IntPtr instance, ulong pFirst, ulong pCount);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString3MidEm")]
-internal static extern void Mid_1(global::System.IntPtr @return, global::System.IntPtr instance, ulong pFirst);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString4LeftEm")]
-internal static extern void Left_0(global::System.IntPtr @return, global::System.IntPtr instance, ulong pCount);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString5RightEm")]
-internal static extern void Right_0(global::System.IntPtr @return, global::System.IntPtr instance, ulong pCount);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString3PadENS0_12EPaddingTypeEmc")]
-internal static extern void Pad_0(global::System.IntPtr @return, global::System.IntPtr instance, fbxsdk.FbxString.EPaddingType pPadding, ulong pLen, sbyte pCar);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString5UnPadENS0_12EPaddingTypeEc")]
-internal static extern void UnPad_0(global::System.IntPtr @return, global::System.IntPtr instance, fbxsdk.FbxString.EPaddingType pPadding, sbyte pCar);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString4FindEcm")]
-internal static extern int Find_0(global::System.IntPtr instance, sbyte pChar, ulong pStartPosition);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString4FindEPKcm")]
-internal static extern int Find_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pStrSub, ulong pStartPosition);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString11ReverseFindEc")]
-internal static extern int ReverseFind_0(global::System.IntPtr instance, sbyte pChar);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString9FindOneOfEPKcm")]
-internal static extern int FindOneOf_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pStrCharSet, ulong pStartPosition);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxString14FindAndReplaceEPKcS2_m")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool FindAndReplace_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pFind, [MarshalAs(UnmanagedType.LPStr)] string pReplaceBy, ulong pStartPosition);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxString10ReplaceAllEPKcS2_")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool ReplaceAll_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pFind, [MarshalAs(UnmanagedType.LPStr)] string pReplaceBy);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxString10ReplaceAllEcc")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool ReplaceAll_1(global::System.IntPtr instance, sbyte pFind, sbyte pReplaceBy);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString13GetTokenCountEPKc")]
-internal static extern int GetTokenCount_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pSpans);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString8GetTokenEiPKc")]
-internal static extern void GetToken_0(global::System.IntPtr @return, global::System.IntPtr instance, int pTokenIndex, [MarshalAs(UnmanagedType.LPStr)] string pSpans);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringES2_")]
-internal static extern void OperatorPlus_0(global::System.IntPtr @return, global::System.IntPtr pString1, global::System.IntPtr pString2);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEc")]
-internal static extern void OperatorPlus_1(global::System.IntPtr @return, global::System.IntPtr pString, sbyte pChar);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplEcRKNS_9FbxStringE")]
-internal static extern void OperatorPlus_2(global::System.IntPtr @return, sbyte pChar, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEPKc")]
-internal static extern void OperatorPlus_3(global::System.IntPtr @return, global::System.IntPtr pString1, [MarshalAs(UnmanagedType.LPStr)] string pString2);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplEPKcRKNS_9FbxStringE")]
-internal static extern void OperatorPlus_4(global::System.IntPtr @return, [MarshalAs(UnmanagedType.LPStr)] string pString1, global::System.IntPtr pString2);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEi")]
-internal static extern void OperatorPlus_5(global::System.IntPtr @return, global::System.IntPtr pString, int pValue);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplEiRKNS_9FbxStringE")]
-internal static extern void OperatorPlus_6(global::System.IntPtr @return, int pValue, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEf")]
-internal static extern void OperatorPlus_7(global::System.IntPtr @return, global::System.IntPtr pString, float pValue);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplEfRKNS_9FbxStringE")]
-internal static extern void OperatorPlus_8(global::System.IntPtr @return, float pValue, global::System.IntPtr pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEd")]
-internal static extern void OperatorPlus_9(global::System.IntPtr @return, global::System.IntPtr pString, double pValue);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStringixEi")]
-internal static extern sbyte* OperatorSubscript_0(global::System.IntPtr instance, int pIndex);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString6GetLenEv")]
-internal static extern ulong GetLen_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString4SizeEv")]
-internal static extern ulong Size_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString7IsEmptyEv")]
-[return: MarshalAsAttribute(UnmanagedType.I1)]
-internal static extern bool IsEmpty_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxString5ClearEv")]
-internal static extern global::System.IntPtr Clear_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxString6BufferEv")]
-internal static extern sbyte* Buffer_0(global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString5UpperEv")]
-internal static extern void Upper_0(global::System.IntPtr @return, global::System.IntPtr instance);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZNK6fbxsdk9FbxString5LowerEv")]
-internal static extern void Lower_0(global::System.IntPtr @return, global::System.IntPtr instance);
-}
-
-/// <remarks>
-/// <para>- </para>
-/// <para>- </para>
-/// <para>- </para>
-/// </remarks>
-public enum EPaddingType : uint
-{
-    eRight = 0,
-    eLeft = 1,
-    eBoth = 2
-}
-
-public global::System.IntPtr __Instance { get; protected set; }
-
-protected int __PointerAdjustment;
-internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxString> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxString>();
-protected void*[] __OriginalVTables;
-
-protected bool __ownsNativeInstance;
-
-internal static FbxString __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
-{
-    return new FbxString(native.ToPointer(), skipVTables);
-}
-
-internal static FbxString __CreateInstance(FbxString.__Internal native, bool skipVTables = false)
-{
-    return new FbxString(native, skipVTables);
-}
-
-private static void* __CopyValue(FbxString.__Internal native)
-{
-    var ret = Marshal.AllocHGlobal(8);
-    fbxsdk.FbxString.__Internal.cctor_1(ret, new global::System.IntPtr(&native));
-    return ret.ToPointer();
-}
-
-private FbxString(FbxString.__Internal native, bool skipVTables = false)
-    : this(__CopyValue(native), skipVTables)
-{
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-protected FbxString(void* native, bool skipVTables = false)
-{
-    if (native == null)
-        return;
-    __Instance = new global::System.IntPtr(native);
-}
-
-/// <summary>
-/// <para>Default constructor.</para>
-/// </summary>
-public FbxString()
-{
-    __Instance = Marshal.AllocHGlobal(8);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    __Internal.ctor_0((__Instance + __PointerAdjustment));
-}
-
-/// <summary>
-/// <para>Copy constructor.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The FbxString to be copied.</para>
-/// </param>
-public FbxString(fbxsdk.FbxString pString)
-{
-    __Instance = Marshal.AllocHGlobal(8);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString.__Instance;
-    __Internal.cctor_1((__Instance + __PointerAdjustment), __arg0);
-}
-
-/// <summary>
-/// <para>String constructor.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string used to construct FbxString.</para>
-/// </param>
-public FbxString(string pString)
-{
-    __Instance = Marshal.AllocHGlobal(8);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    __Internal.ctor_2((__Instance + __PointerAdjustment), pString);
-}
-
-/// <summary>
-/// <para>Character constructor.</para>
-/// </summary>
-/// <param name="pChar">
-/// <para>The character used to construct FbxString.</para>
-/// </param>
-/// <param name="pNbRepeat">
-/// <para>The number of times to repeat the character. Default value is 1</para>
-/// </param>
-public FbxString(sbyte pChar, ulong pNbRepeat)
-{
-    __Instance = Marshal.AllocHGlobal(8);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    __Internal.ctor_3((__Instance + __PointerAdjustment), pChar, pNbRepeat);
-}
-
-/// <summary>
-/// <para>String constructor with maximum length.</para>
-/// </summary>
-/// <param name="pCharPtr">
-/// <para>The string used to construct FbxString.</para>
-/// </param>
-/// <param name="pLength">
-/// <para>Maximum length.</para>
-/// </param>
-public FbxString(string pCharPtr, ulong pLength)
-{
-    __Instance = Marshal.AllocHGlobal(8);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    __Internal.ctor_4((__Instance + __PointerAdjustment), pCharPtr, pLength);
-}
-
-/// <summary>
-/// <para>Integer constructor.</para>
-/// </summary>
-/// <param name="pValue">
-/// <para>The int value used to construct FbxString.</para>
-/// </param>
-public FbxString(int pValue)
-{
-    __Instance = Marshal.AllocHGlobal(8);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    __Internal.ctor_5((__Instance + __PointerAdjustment), pValue);
-}
-
-/// <summary>
-/// <para>Float constructor.</para>
-/// </summary>
-/// <param name="pValue">
-/// <para>The float value used to construct FbxString.</para>
-/// </param>
-public FbxString(float pValue)
-{
-    __Instance = Marshal.AllocHGlobal(8);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    __Internal.ctor_6((__Instance + __PointerAdjustment), pValue);
-}
-
-/// <summary>
-/// <para>Double constructor.</para>
-/// </summary>
-/// <param name="pValue">
-/// <para>The double value used to construct FbxString.</para>
-/// </param>
-public FbxString(double pValue)
-{
-    __Instance = Marshal.AllocHGlobal(8);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    __Internal.ctor_7((__Instance + __PointerAdjustment), pValue);
-}
-
-public void Dispose()
-{
-    Dispose(disposing: true);
-}
-
-public virtual void Dispose(bool disposing)
-{
-    fbxsdk.FbxString __dummy;
-    NativeToManagedMap.TryRemove(__Instance, out __dummy);
-    if (disposing)
-        __Internal.dtor_0((__Instance + __PointerAdjustment));
-    if (__ownsNativeInstance)
-        Marshal.FreeHGlobal(__Instance);
-}
-
-/// <summary>
-/// <para>Equality operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The FbxString to be compared.</para>
-/// </param>
-public static bool operator ==(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
-{
-    bool __opNull = ReferenceEquals(__op, null);
-    bool pStringNull = ReferenceEquals(pString, null);
-    if (__opNull || pStringNull)
-        return __opNull && pStringNull;
-    var __arg0 = __op.__Instance;
-    var __arg1 = pString.__Instance;
-    var __ret = __Internal.OperatorEqualEqual_0(__arg0, __arg1);
-    return __ret;
-}
-
-public override bool Equals(object obj)
-{
-    return this == obj as FbxString;
-}
-
-public override int GetHashCode()
-{
-    if (__Instance == global::System.IntPtr.Zero)
-        return global::System.IntPtr.Zero.GetHashCode();
-    return (*(__Internal*) __Instance).GetHashCode();
-}
-
-/// <summary>
-/// <para>Inequality operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The FbxString to be compared.</para>
-/// </param>
-public static bool operator !=(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
-{
-    bool __opNull = ReferenceEquals(__op, null);
-    bool pStringNull = ReferenceEquals(pString, null);
-    if (__opNull || pStringNull)
-        return !(__opNull && pStringNull);
-    var __arg0 = __op.__Instance;
-    var __arg1 = pString.__Instance;
-    var __ret = __Internal.OperatorExclaimEqual_0(__arg0, __arg1);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Inferior to operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The FbxString to be compared.</para>
-/// </param>
-public static bool operator <(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString.__Instance;
-    var __ret = __Internal.OperatorLess_0(__arg0, __arg1);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Inferior or equal to operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The FbxString to be compared.</para>
-/// </param>
-public static bool operator <=(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString.__Instance;
-    var __ret = __Internal.OperatorLessEqual_0(__arg0, __arg1);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Superior or equal to operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The FbxString to be compared.</para>
-/// </param>
-public static bool operator >=(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString.__Instance;
-    var __ret = __Internal.OperatorGreaterEqual_0(__arg0, __arg1);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Superior to operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The FbxString to be compared.</para>
-/// </param>
-public static bool operator >(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString.__Instance;
-    var __ret = __Internal.OperatorGreater_0(__arg0, __arg1);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Equality operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be compared.</para>
-/// </param>
-public static bool operator ==(fbxsdk.FbxString __op, string pString)
-{
-    bool __opNull = ReferenceEquals(__op, null);
-    bool pStringNull = ReferenceEquals(pString, null);
-    if (__opNull || pStringNull)
-        return __opNull && pStringNull;
-    var __arg0 = __op.__Instance;
-    var __ret = __Internal.OperatorEqualEqual_1(__arg0, pString);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Inequality operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be compared.</para>
-/// </param>
-public static bool operator !=(fbxsdk.FbxString __op, string pString)
-{
-    bool __opNull = ReferenceEquals(__op, null);
-    bool pStringNull = ReferenceEquals(pString, null);
-    if (__opNull || pStringNull)
-        return !(__opNull && pStringNull);
-    var __arg0 = __op.__Instance;
-    var __ret = __Internal.OperatorExclaimEqual_1(__arg0, pString);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Inferior to operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be compared.</para>
-/// </param>
-public static bool operator <(fbxsdk.FbxString __op, string pString)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    var __ret = __Internal.OperatorLess_1(__arg0, pString);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Inferior or equal to operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be compared.</para>
-/// </param>
-public static bool operator <=(fbxsdk.FbxString __op, string pString)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    var __ret = __Internal.OperatorLessEqual_1(__arg0, pString);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Superior or equal to operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be compared.</para>
-/// </param>
-public static bool operator >=(fbxsdk.FbxString __op, string pString)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    var __ret = __Internal.OperatorGreaterEqual_1(__arg0, pString);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Superior to operator.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be compared.</para>
-/// </param>
-public static bool operator >(fbxsdk.FbxString __op, string pString)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    var __ret = __Internal.OperatorGreater_1(__arg0, pString);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Cast operator.</para>
-/// </summary>
-public static implicit operator string(fbxsdk.FbxString __op)
-{
-    if (ReferenceEquals(__op, null))
-        throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = __op.__Instance;
-    var __ret = __Internal.OperatorConversion_0(__arg0);
-    return Marshal.PtrToStringAnsi(__ret);
-}
-
-/// <summary>
-/// <para>String assignment function with maximum length.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be assigned.</para>
-/// </param>
-/// <param name="pLength">
-/// <para>The maximum length of string to be assigned.</para>
-/// </param>
-public fbxsdk.FbxString Copy(string pString, ulong pLength)
-{
-    var __ret = __Internal.Copy_0((__Instance + __PointerAdjustment), pString, pLength);
-    fbxsdk.FbxString __result0;
-    if (__ret == IntPtr.Zero) __result0 = null;
-    else if (fbxsdk.FbxString.NativeToManagedMap.ContainsKey(__ret))
-        __result0 = (fbxsdk.FbxString) fbxsdk.FbxString.NativeToManagedMap[__ret];
-    else __result0 = fbxsdk.FbxString.__CreateInstance(__ret);
-    return __result0;
-}
-
-/// <summary>
-/// <para>Append as &quot;C&quot; strncat().</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be appended.</para>
-/// </param>
-/// <param name="pLength">
-/// <para>The length of chars to be appended.</para>
-/// </param>
-public fbxsdk.FbxString Append(string pString, ulong pLength)
-{
-    var __ret = __Internal.Append_0((__Instance + __PointerAdjustment), pString, pLength);
-    fbxsdk.FbxString __result0;
-    if (__ret == IntPtr.Zero) __result0 = null;
-    else if (fbxsdk.FbxString.NativeToManagedMap.ContainsKey(__ret))
-        __result0 = (fbxsdk.FbxString) fbxsdk.FbxString.NativeToManagedMap[__ret];
-    else __result0 = fbxsdk.FbxString.__CreateInstance(__ret);
-    return __result0;
-}
-
-/// <summary>
-/// <para>Compare as &quot;C&quot; strcmp().</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be compared.</para>
-/// </param>
-public int Compare(string pString)
-{
-    var __ret = __Internal.Compare_0((__Instance + __PointerAdjustment), pString);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Compare as &quot;C&quot; stricmp().</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The string to be compared.</para>
-/// </param>
-public int CompareNoCase(string pString)
-{
-    var __ret = __Internal.CompareNoCase_0((__Instance + __PointerAdjustment), pString);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Swap the contents of two strings.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The FbxString to be swapped.</para>
-/// </param>
-public void Swap(fbxsdk.FbxString pString)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString.__Instance;
-    __Internal.Swap_0((__Instance + __PointerAdjustment), __arg0);
-}
-
-/// <summary>
-/// <para>Extract middle string for a given length.</para>
-/// </summary>
-/// <param name="pFirst">
-/// <para>The start index of FbxString to be extracted.</para>
-/// </param>
-/// <param name="pCount">
-/// <para>The length of sub-string to be extracted.</para>
-/// </param>
-public fbxsdk.FbxString Mid(ulong pFirst, ulong pCount)
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.Mid_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pFirst, pCount);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Extract middle string up to the end.</para>
-/// </summary>
-/// <param name="pFirst">
-/// <para>The start index of FbxString to be extracted.</para>
-/// </param>
-public fbxsdk.FbxString Mid(ulong pFirst)
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.Mid_1(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pFirst);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Extract left string.</para>
-/// </summary>
-/// <param name="pCount">
-/// <para>The length of sub-string to be extracted.</para>
-/// </param>
-public fbxsdk.FbxString Left(ulong pCount)
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.Left_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pCount);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Extract right string.</para>
-/// </summary>
-/// <param name="pCount">
-/// <para>The length of sub-string to be extracted.</para>
-/// </param>
-public fbxsdk.FbxString Right(ulong pCount)
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.Right_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pCount);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Add padding characters.</para>
-/// </summary>
-/// <param name="pPadding">
-/// <para>The padding type.</para>
-/// </param>
-/// <param name="pLen">
-/// <para>The length limit of FbxString after padding.</para>
-/// </param>
-/// <param name="pCar">
-/// <para>The character to be padded.</para>
-/// </param>
-public fbxsdk.FbxString Pad(fbxsdk.FbxString.EPaddingType pPadding, ulong pLen, sbyte pCar)
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.Pad_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pPadding, pLen, pCar);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Remove padding characters.</para>
-/// </summary>
-/// <param name="pPadding">
-/// <para>The padding type.</para>
-/// </param>
-/// <param name="pCar">
-/// <para>The character to be padded.</para>
-/// </param>
-public fbxsdk.FbxString UnPad(fbxsdk.FbxString.EPaddingType pPadding, sbyte pCar)
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.UnPad_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pPadding, pCar);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Look for a single character match, like &quot;C&quot; strchr().</para>
-/// </summary>
-/// <param name="pChar">
-/// <para>The character to look for.</para>
-/// </param>
-/// <param name="pStartPosition">
-/// <para>Start position to look for.</para>
-/// </param>
-/// <returns>
-/// <para>Index or -1 if not found.</para>
-/// </returns>
-public int Find(sbyte pChar, ulong pStartPosition)
-{
-    var __ret = __Internal.Find_0((__Instance + __PointerAdjustment), pChar, pStartPosition);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Look for a substring match, like &quot;C&quot; strstr().</para>
-/// </summary>
-/// <param name="pStrSub">
-/// <para>The substring to look for.</para>
-/// </param>
-/// <param name="pStartPosition">
-/// <para>Start position to look for.</para>
-/// </param>
-/// <returns>
-/// <para>Starting index or -1 if not found.</para>
-/// </returns>
-public int Find(string pStrSub, ulong pStartPosition)
-{
-    var __ret = __Internal.Find_1((__Instance + __PointerAdjustment), pStrSub, pStartPosition);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Look for the last occurrence of character in string, like &quot;C&quot; strrchr().</para>
-/// </summary>
-/// <param name="pChar">
-/// <para>The character to look for.</para>
-/// </param>
-/// <returns>
-/// <para>Index or -1 if not found.</para>
-/// </returns>
-public int ReverseFind(sbyte pChar)
-{
-    var __ret = __Internal.ReverseFind_0((__Instance + __PointerAdjustment), pChar);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Look for a single character match, like &quot;C&quot; strpbrk().</para>
-/// </summary>
-/// <param name="pStrCharSet">
-/// <para>The character set.</para>
-/// </param>
-/// <param name="pStartPosition">
-/// <para>The start position.</para>
-/// </param>
-/// <returns>
-/// <para>Index or -1 if not found.</para>
-/// </returns>
-public int FindOneOf(string pStrCharSet, ulong pStartPosition)
-{
-    var __ret = __Internal.FindOneOf_0((__Instance + __PointerAdjustment), pStrCharSet, pStartPosition);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Replace a substring.</para>
-/// </summary>
-/// <param name="pFind">
-/// <para>The substring to look for.</para>
-/// </param>
-/// <param name="pReplaceBy">
-/// <para>The string to replace by.</para>
-/// </param>
-/// <param name="pStartPosition">
-/// <para>The start position.</para>
-/// </param>
-/// <returns>
-/// <para>if substring found and replaced.</para>
-/// </returns>
-public bool FindAndReplace(string pFind, string pReplaceBy, ulong pStartPosition)
-{
-    var __ret = __Internal.FindAndReplace_0((__Instance + __PointerAdjustment), pFind, pReplaceBy, pStartPosition);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Replace all occurrence of a substring.</para>
-/// </summary>
-/// <param name="pFind">
-/// <para>The substring to look for.</para>
-/// </param>
-/// <param name="pReplaceBy">
-/// <para>The string to replace by.</para>
-/// </param>
-/// <returns>
-/// <para>if something got replaced.</para>
-/// </returns>
-public bool ReplaceAll(string pFind, string pReplaceBy)
-{
-    var __ret = __Internal.ReplaceAll_0((__Instance + __PointerAdjustment), pFind, pReplaceBy);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Replace all occurrence of character to find by replacement character.</para>
-/// </summary>
-/// <param name="pFind">
-/// <para>The character to look for.</para>
-/// </param>
-/// <param name="pReplaceBy">
-/// <para>The character to replace by.</para>
-/// </param>
-/// <returns>
-/// <para>if character found and replaced.</para>
-/// </returns>
-public bool ReplaceAll(sbyte pFind, sbyte pReplaceBy)
-{
-    var __ret = __Internal.ReplaceAll_1((__Instance + __PointerAdjustment), pFind, pReplaceBy);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Get number of tokens.</para>
-/// </summary>
-/// <param name="pSpans">
-/// <para>The span</para>
-/// </param>
-/// <returns>
-/// <para>The number of tokens.</para>
-/// </returns>
-public int GetTokenCount(string pSpans)
-{
-    var __ret = __Internal.GetTokenCount_0((__Instance + __PointerAdjustment), pSpans);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Get token at given index.</para>
-/// </summary>
-/// <param name="pTokenIndex">
-/// <para>The token index.</para>
-/// </param>
-/// <param name="pSpans">
-/// <para>The span</para>
-/// </param>
-public fbxsdk.FbxString GetToken(int pTokenIndex, string pSpans)
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.GetToken_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pTokenIndex, pSpans);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-public static implicit operator fbxsdk.FbxString(string pString)
-{
-    return new fbxsdk.FbxString(pString);
-}
-
-public static implicit operator fbxsdk.FbxString(int pValue)
-{
-    return new fbxsdk.FbxString(pValue);
-}
-
-public static implicit operator fbxsdk.FbxString(float pValue)
-{
-    return new fbxsdk.FbxString(pValue);
-}
-
-public static implicit operator fbxsdk.FbxString(double pValue)
-{
-    return new fbxsdk.FbxString(pValue);
-}
-
-/// <summary>
-/// <para>FbxString concatenation.</para>
-/// </summary>
-/// <param name="pString1">
-/// <para>FbxString 1 to be concatenated to FbxString 2.</para>
-/// </param>
-/// <param name="pString2">
-/// <para>FbxString 2 to be concatenated to FbxString 1</para>
-/// </param>
-public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString1, fbxsdk.FbxString pString2)
-{
-    if (ReferenceEquals(pString1, null))
-        throw new global::System.ArgumentNullException("pString1", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString1.__Instance;
-    if (ReferenceEquals(pString2, null))
-        throw new global::System.ArgumentNullException("pString2", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString2.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_0(new IntPtr(&__ret), __arg0, __arg1);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Character concatenation.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>FbxString to be concatenated to Character.</para>
-/// </param>
-/// <param name="pChar">
-/// <para>Character to be concatenated to FbxString</para>
-/// </param>
-public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString, sbyte pChar)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_1(new IntPtr(&__ret), __arg0, pChar);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Character concatenation.</para>
-/// </summary>
-/// <param name="pChar">
-/// <para>Character to be concatenated to FbxString</para>
-/// </param>
-/// <param name="pString">
-/// <para>FbxString to be concatenated to Character.</para>
-/// </param>
-public static fbxsdk.FbxString operator +(sbyte pChar, fbxsdk.FbxString pString)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_2(new IntPtr(&__ret), pChar, __arg1);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>String concatenation.</para>
-/// </summary>
-/// <param name="pString1">
-/// <para>FbxString to be concatenated to String.</para>
-/// </param>
-/// <param name="pString2">
-/// <para>String to be concatenated to FbxString</para>
-/// </param>
-public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString1, string pString2)
-{
-    if (ReferenceEquals(pString1, null))
-        throw new global::System.ArgumentNullException("pString1", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString1.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_3(new IntPtr(&__ret), __arg0, pString2);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>String concatenation.</para>
-/// </summary>
-/// <param name="pString1">
-/// <para>String to be concatenated to FbxString</para>
-/// </param>
-/// <param name="pString2">
-/// <para>FbxString to be concatenated to String.</para>
-/// </param>
-public static fbxsdk.FbxString operator +(string pString1, fbxsdk.FbxString pString2)
-{
-    if (ReferenceEquals(pString2, null))
-        throw new global::System.ArgumentNullException("pString2", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString2.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_4(new IntPtr(&__ret), pString1, __arg1);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Integer concatenation.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>FbxString to be concatenated to Integer.</para>
-/// </param>
-/// <param name="pValue">
-/// <para>Integer to be concatenated to FbxString</para>
-/// </param>
-public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString, int pValue)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_5(new IntPtr(&__ret), __arg0, pValue);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Integer concatenation.</para>
-/// </summary>
-/// <param name="pValue">
-/// <para>Integer to be concatenated to FbxString</para>
-/// </param>
-/// <param name="pString">
-/// <para>FbxString to be concatenated to Integer.</para>
-/// </param>
-public static fbxsdk.FbxString operator +(int pValue, fbxsdk.FbxString pString)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_6(new IntPtr(&__ret), pValue, __arg1);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Float concatenation.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>FbxString to be concatenated to Float.</para>
-/// </param>
-/// <param name="pValue">
-/// <para>Float to be concatenated to FbxString</para>
-/// </param>
-public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString, float pValue)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_7(new IntPtr(&__ret), __arg0, pValue);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Float concatenation.</para>
-/// </summary>
-/// <param name="pValue">
-/// <para>Float to be concatenated to FbxString</para>
-/// </param>
-/// <param name="pString">
-/// <para>FbxString to be concatenated to Float.</para>
-/// </param>
-public static fbxsdk.FbxString operator +(float pValue, fbxsdk.FbxString pString)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg1 = pString.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_8(new IntPtr(&__ret), pValue, __arg1);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-/// <summary>
-/// <para>Double concatenation.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>FbxString to be concatenated to Double.</para>
-/// </param>
-/// <param name="pValue">
-/// <para>Double to be concatenated to FbxString</para>
-/// </param>
-public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString, double pValue)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString.__Instance;
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.OperatorPlus_9(new IntPtr(&__ret), __arg0, pValue);
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-
-public sbyte this[int pIndex]
-{
-get
-{
-    var __ret = __Internal.OperatorSubscript_0((__Instance + __PointerAdjustment), pIndex);
-    return *__ret;
-}
-
-set
-{
-    *__Internal.OperatorSubscript_0((__Instance + __PointerAdjustment), pIndex) = value;
-}
-}
-
-/// <summary>
-/// <para>Get string length like &quot;C&quot; strlen().</para>
-/// </summary>
-public ulong Len
-{
-get
-{
-    var __ret = __Internal.GetLen_0((__Instance + __PointerAdjustment));
-    return __ret;
-}
-}
-
-/// <summary>
-/// <para>Get string length like &quot;C&quot; strlen().</para>
-/// </summary>
-public ulong Size
-{
-get
-{
-    var __ret = __Internal.Size_0((__Instance + __PointerAdjustment));
-    return __ret;
-}
-}
-
-/// <summary>
-/// <para>Return </para>
-/// <para>if string length equal zero.</para>
-/// </summary>
-public bool IsEmpty
-{
-get
-{
-    var __ret = __Internal.IsEmpty_0((__Instance + __PointerAdjustment));
-    return __ret;
-}
-}
-
-/// <summary>
-/// <para>Discard the content of the string.</para>
-/// </summary>
-public fbxsdk.FbxString Clear
-{
-get
-{
-    var __ret = __Internal.Clear_0((__Instance + __PointerAdjustment));
-    fbxsdk.FbxString __result0;
-    if (__ret == IntPtr.Zero) __result0 = null;
-    else if (fbxsdk.FbxString.NativeToManagedMap.ContainsKey(__ret))
-        __result0 = (fbxsdk.FbxString) fbxsdk.FbxString.NativeToManagedMap[__ret];
-    else __result0 = fbxsdk.FbxString.__CreateInstance(__ret);
-    return __result0;
-}
-}
-
-/// <summary>
-/// <para>Non-const buffer access.</para>
-/// </summary>
-public sbyte* Buffer
-{
-get
-{
-    var __ret = __Internal.Buffer_0((__Instance + __PointerAdjustment));
-    return __ret;
-}
-}
-
-/// <summary>
-/// <para>Uppercase conversion.</para>
-/// </summary>
-public fbxsdk.FbxString Upper
-{
-get
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.Upper_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment));
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-}
-
-/// <summary>
-/// <para>Lowercase conversion.</para>
-/// </summary>
-public fbxsdk.FbxString Lower
-{
-get
-{
-    var __ret = new fbxsdk.FbxString.__Internal();
-    __Internal.Lower_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment));
-    return fbxsdk.FbxString.__CreateInstance(__ret);
-}
-}
-}
-
-/// <summary>
-/// <para>Functor to compare FbxString</para>
-/// </summary>
-public unsafe partial class FbxStringCompare : IDisposable
-{
-[StructLayout(LayoutKind.Explicit, Size = 0)]
-public partial struct __Internal
-{
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk16FbxStringCompareC2ERKS0_")]
-internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
-}
-
-public global::System.IntPtr __Instance { get; protected set; }
-
-protected int __PointerAdjustment;
-internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxStringCompare> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxStringCompare>();
-protected void*[] __OriginalVTables;
-
-protected bool __ownsNativeInstance;
-
-internal static FbxStringCompare __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
-{
-    return new FbxStringCompare(native.ToPointer(), skipVTables);
-}
-
-internal static FbxStringCompare __CreateInstance(FbxStringCompare.__Internal native, bool skipVTables = false)
-{
-    return new FbxStringCompare(native, skipVTables);
-}
-
-private static void* __CopyValue(FbxStringCompare.__Internal native)
-{
-    var ret = Marshal.AllocHGlobal(0);
-    *(FbxStringCompare.__Internal*) ret = native;
-    return ret.ToPointer();
-}
-
-private FbxStringCompare(FbxStringCompare.__Internal native, bool skipVTables = false)
-    : this(__CopyValue(native), skipVTables)
-{
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-protected FbxStringCompare(void* native, bool skipVTables = false)
-{
-    if (native == null)
-        return;
-    __Instance = new global::System.IntPtr(native);
-}
-
-public FbxStringCompare()
-{
-    __Instance = Marshal.AllocHGlobal(0);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-public FbxStringCompare(fbxsdk.FbxStringCompare _0)
-{
-    __Instance = Marshal.AllocHGlobal(0);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    *((FbxStringCompare.__Internal*) __Instance) = *((FbxStringCompare.__Internal*) _0.__Instance);
-}
-
-public void Dispose()
-{
-    Dispose(disposing: true);
-}
-
-public virtual void Dispose(bool disposing)
-{
-    fbxsdk.FbxStringCompare __dummy;
-    NativeToManagedMap.TryRemove(__Instance, out __dummy);
-    if (__ownsNativeInstance)
-        Marshal.FreeHGlobal(__Instance);
-}
-}
-
-/// <summary>
-/// <para>Functor to compare FbxString without case sensitivity</para>
-/// </summary>
-public unsafe partial class FbxStringCompareNoCase : IDisposable
-{
-[StructLayout(LayoutKind.Explicit, Size = 0)]
-public partial struct __Internal
-{
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk22FbxStringCompareNoCaseC2ERKS0_")]
-internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
-}
-
-public global::System.IntPtr __Instance { get; protected set; }
-
-protected int __PointerAdjustment;
-internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxStringCompareNoCase> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxStringCompareNoCase>();
-protected void*[] __OriginalVTables;
-
-protected bool __ownsNativeInstance;
-
-internal static FbxStringCompareNoCase __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
-{
-    return new FbxStringCompareNoCase(native.ToPointer(), skipVTables);
-}
-
-internal static FbxStringCompareNoCase __CreateInstance(FbxStringCompareNoCase.__Internal native, bool skipVTables = false)
-{
-    return new FbxStringCompareNoCase(native, skipVTables);
-}
-
-private static void* __CopyValue(FbxStringCompareNoCase.__Internal native)
-{
-    var ret = Marshal.AllocHGlobal(0);
-    *(FbxStringCompareNoCase.__Internal*) ret = native;
-    return ret.ToPointer();
-}
-
-private FbxStringCompareNoCase(FbxStringCompareNoCase.__Internal native, bool skipVTables = false)
-    : this(__CopyValue(native), skipVTables)
-{
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-protected FbxStringCompareNoCase(void* native, bool skipVTables = false)
-{
-    if (native == null)
-        return;
-    __Instance = new global::System.IntPtr(native);
-}
-
-public FbxStringCompareNoCase()
-{
-    __Instance = Marshal.AllocHGlobal(0);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-public FbxStringCompareNoCase(fbxsdk.FbxStringCompareNoCase _0)
-{
-    __Instance = Marshal.AllocHGlobal(0);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    *((FbxStringCompareNoCase.__Internal*) __Instance) = *((FbxStringCompareNoCase.__Internal*) _0.__Instance);
-}
-
-public void Dispose()
-{
-    Dispose(disposing: true);
-}
-
-public virtual void Dispose(bool disposing)
-{
-    fbxsdk.FbxStringCompareNoCase __dummy;
-    NativeToManagedMap.TryRemove(__Instance, out __dummy);
-    if (__ownsNativeInstance)
-        Marshal.FreeHGlobal(__Instance);
-}
-}
-
-/// <summary>
-/// <para>Functor to compare &quot;C&quot; strings</para>
-/// </summary>
-public unsafe partial class FbxCharPtrCompare : IDisposable
-{
-[StructLayout(LayoutKind.Explicit, Size = 0)]
-public partial struct __Internal
-{
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk17FbxCharPtrCompareC2ERKS0_")]
-internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
-}
-
-public global::System.IntPtr __Instance { get; protected set; }
-
-protected int __PointerAdjustment;
-internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxCharPtrCompare> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxCharPtrCompare>();
-protected void*[] __OriginalVTables;
-
-protected bool __ownsNativeInstance;
-
-internal static FbxCharPtrCompare __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
-{
-    return new FbxCharPtrCompare(native.ToPointer(), skipVTables);
-}
-
-internal static FbxCharPtrCompare __CreateInstance(FbxCharPtrCompare.__Internal native, bool skipVTables = false)
-{
-    return new FbxCharPtrCompare(native, skipVTables);
-}
-
-private static void* __CopyValue(FbxCharPtrCompare.__Internal native)
-{
-    var ret = Marshal.AllocHGlobal(0);
-    *(FbxCharPtrCompare.__Internal*) ret = native;
-    return ret.ToPointer();
-}
-
-private FbxCharPtrCompare(FbxCharPtrCompare.__Internal native, bool skipVTables = false)
-    : this(__CopyValue(native), skipVTables)
-{
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-protected FbxCharPtrCompare(void* native, bool skipVTables = false)
-{
-    if (native == null)
-        return;
-    __Instance = new global::System.IntPtr(native);
-}
-
-public FbxCharPtrCompare()
-{
-    __Instance = Marshal.AllocHGlobal(0);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-public FbxCharPtrCompare(fbxsdk.FbxCharPtrCompare _0)
-{
-    __Instance = Marshal.AllocHGlobal(0);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    *((FbxCharPtrCompare.__Internal*) __Instance) = *((FbxCharPtrCompare.__Internal*) _0.__Instance);
-}
-
-public void Dispose()
-{
-    Dispose(disposing: true);
-}
-
-public virtual void Dispose(bool disposing)
-{
-    fbxsdk.FbxCharPtrCompare __dummy;
-    NativeToManagedMap.TryRemove(__Instance, out __dummy);
-    if (__ownsNativeInstance)
-        Marshal.FreeHGlobal(__Instance);
-}
-}
-
-/// <summary>
-/// <para>Functor to compare &quot;C&quot; strings without case sensitivity</para>
-/// </summary>
-public unsafe partial class FbxCharPtrCompareNoCase : IDisposable
-{
-[StructLayout(LayoutKind.Explicit, Size = 0)]
-public partial struct __Internal
-{
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk23FbxCharPtrCompareNoCaseC2ERKS0_")]
-internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
-}
-
-public global::System.IntPtr __Instance { get; protected set; }
-
-protected int __PointerAdjustment;
-internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxCharPtrCompareNoCase> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxCharPtrCompareNoCase>();
-protected void*[] __OriginalVTables;
-
-protected bool __ownsNativeInstance;
-
-internal static FbxCharPtrCompareNoCase __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
-{
-    return new FbxCharPtrCompareNoCase(native.ToPointer(), skipVTables);
-}
-
-internal static FbxCharPtrCompareNoCase __CreateInstance(FbxCharPtrCompareNoCase.__Internal native, bool skipVTables = false)
-{
-    return new FbxCharPtrCompareNoCase(native, skipVTables);
-}
-
-private static void* __CopyValue(FbxCharPtrCompareNoCase.__Internal native)
-{
-    var ret = Marshal.AllocHGlobal(0);
-    *(FbxCharPtrCompareNoCase.__Internal*) ret = native;
-    return ret.ToPointer();
-}
-
-private FbxCharPtrCompareNoCase(FbxCharPtrCompareNoCase.__Internal native, bool skipVTables = false)
-    : this(__CopyValue(native), skipVTables)
-{
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-protected FbxCharPtrCompareNoCase(void* native, bool skipVTables = false)
-{
-    if (native == null)
-        return;
-    __Instance = new global::System.IntPtr(native);
-}
-
-public FbxCharPtrCompareNoCase()
-{
-    __Instance = Marshal.AllocHGlobal(0);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-}
-
-public FbxCharPtrCompareNoCase(fbxsdk.FbxCharPtrCompareNoCase _0)
-{
-    __Instance = Marshal.AllocHGlobal(0);
-    __ownsNativeInstance = true;
-    NativeToManagedMap[__Instance] = this;
-    *((FbxCharPtrCompareNoCase.__Internal*) __Instance) = *((FbxCharPtrCompareNoCase.__Internal*) _0.__Instance);
-}
-
-public void Dispose()
-{
-    Dispose(disposing: true);
-}
-
-public virtual void Dispose(bool disposing)
-{
-    fbxsdk.FbxCharPtrCompareNoCase __dummy;
-    NativeToManagedMap.TryRemove(__Instance, out __dummy);
-    if (__ownsNativeInstance)
-        Marshal.FreeHGlobal(__Instance);
-}
-}
-
-public unsafe partial class fbxtypes
-{
-public partial struct __Internal
-{
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEa")]
-internal static extern sbyte FbxMin_0(sbyte _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEh")]
-internal static extern byte FbxMin_1(byte _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEs")]
-internal static extern short FbxMin_2(short _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEt")]
-internal static extern ushort FbxMin_3(ushort _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEi")]
-internal static extern int FbxMin_4(int _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEj")]
-internal static extern uint FbxMin_5(uint _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEx")]
-internal static extern long FbxMin_6(long _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEy")]
-internal static extern ulong FbxMin_7(ulong _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEf")]
-internal static extern float FbxMin_8(float _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMinEd")]
-internal static extern double FbxMin_9(double _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEa")]
-internal static extern sbyte FbxMax_0(sbyte _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEh")]
-internal static extern byte FbxMax_1(byte _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEs")]
-internal static extern short FbxMax_2(short _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEt")]
-internal static extern ushort FbxMax_3(ushort _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEi")]
-internal static extern int FbxMax_4(int _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEj")]
-internal static extern uint FbxMax_5(uint _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEx")]
-internal static extern long FbxMax_6(long _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEy")]
-internal static extern ulong FbxMax_7(ulong _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEf")]
-internal static extern float FbxMax_8(float _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk6FbxMaxEd")]
-internal static extern double FbxMax_9(double _0);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk16FbxAssertSetProcEPFvPKcS1_jS1_E")]
-internal static extern void FbxAssertSetProc_0(global::System.IntPtr pAssertProc);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk23FbxAssertSetDefaultProcEv")]
-internal static extern void FbxAssertSetDefaultProc_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk10_FbxAssertEPKcS1_jbS1_z")]
-internal static extern void _FbxAssert_0([MarshalAs(UnmanagedType.LPStr)] string pFileName, [MarshalAs(UnmanagedType.LPStr)] string pFunctionName, uint pLineNumber, bool pFormat, [MarshalAs(UnmanagedType.LPStr)] string pMessage);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9_FbxTraceEPKcz")]
-internal static extern void _FbxTrace_0([MarshalAs(UnmanagedType.LPStr)] string pMessage);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk19FbxSetMallocHandlerEPFPvmE")]
-internal static extern void FbxSetMallocHandler_0(global::System.IntPtr pHandler);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk19FbxSetCallocHandlerEPFPvmmE")]
-internal static extern void FbxSetCallocHandler_0(global::System.IntPtr pHandler);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk20FbxSetReallocHandlerEPFPvS0_mE")]
-internal static extern void FbxSetReallocHandler_0(global::System.IntPtr pHandler);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk17FbxSetFreeHandlerEPFvPvE")]
-internal static extern void FbxSetFreeHandler_0(global::System.IntPtr pHandler);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk19FbxGetMallocHandlerEv")]
-internal static extern global::System.IntPtr FbxGetMallocHandler_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk19FbxGetCallocHandlerEv")]
-internal static extern global::System.IntPtr FbxGetCallocHandler_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk20FbxGetReallocHandlerEv")]
-internal static extern global::System.IntPtr FbxGetReallocHandler_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk17FbxGetFreeHandlerEv")]
-internal static extern global::System.IntPtr FbxGetFreeHandler_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk26FbxGetDefaultMallocHandlerEv")]
-internal static extern global::System.IntPtr FbxGetDefaultMallocHandler_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk26FbxGetDefaultCallocHandlerEv")]
-internal static extern global::System.IntPtr FbxGetDefaultCallocHandler_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk27FbxGetDefaultReallocHandlerEv")]
-internal static extern global::System.IntPtr FbxGetDefaultReallocHandler_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk24FbxGetDefaultFreeHandlerEv")]
-internal static extern global::System.IntPtr FbxGetDefaultFreeHandler_0();
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxMallocEm")]
-internal static extern global::System.IntPtr FbxMalloc_0(ulong pSize);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxCallocEmm")]
-internal static extern global::System.IntPtr FbxCalloc_0(ulong pCount, ulong pSize);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk10FbxReallocEPvm")]
-internal static extern global::System.IntPtr FbxRealloc_0(global::System.IntPtr pData, ulong pSize);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk7FbxFreeEPv")]
-internal static extern void FbxFree_0(global::System.IntPtr pData);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk9FbxStrDupEPKc")]
-internal static extern sbyte* FbxStrDup_0([MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk11FbxStrDupWCEPKw")]
-internal static extern char* FbxStrDupWC_0([MarshalAs(UnmanagedType.LPStr)] string pString);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk14FbxMallocDebugEmiPKci")]
-internal static extern global::System.IntPtr FbxMallocDebug_0(ulong pSize, int pBlock, [MarshalAs(UnmanagedType.LPStr)] string pFile, int pLine);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk14FbxCallocDebugEmmiPKci")]
-internal static extern global::System.IntPtr FbxCallocDebug_0(ulong pCount, ulong pSize, int pBlock, [MarshalAs(UnmanagedType.LPStr)] string pFile, int pLine);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk15FbxReallocDebugEPvmiPKci")]
-internal static extern global::System.IntPtr FbxReallocDebug_0(global::System.IntPtr pData, ulong pSize, int pBlock, [MarshalAs(UnmanagedType.LPStr)] string pFile, int pLine);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk12FbxFreeDebugEPvi")]
-internal static extern void FbxFreeDebug_0(global::System.IntPtr pData, int pBlock);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk14FBXSDK_sprintfEPcmPKcz")]
-internal static extern int FBXSDK_sprintf_0(sbyte* dst, ulong dstsize, [MarshalAs(UnmanagedType.LPStr)] string format);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk15FBXSDK_snprintfEPcmPKcz")]
-internal static extern int FBXSDK_snprintf_0(sbyte* dst, ulong dstsize, [MarshalAs(UnmanagedType.LPStr)] string format);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk11FbxUTF8ToWCEPKcRPwPm")]
-internal static extern void FbxUTF8ToWC_0([MarshalAs(UnmanagedType.LPStr)] string pInUTF8, char** pOutWideChar, ulong* pOutWideCharSize);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk11FbxWCToUTF8EPKwRPcPm")]
-internal static extern void FbxWCToUTF8_0([MarshalAs(UnmanagedType.LPStr)] string pInWideChar, sbyte** pOutUTF8, ulong* pOutUTF8Size);
-
-
-[DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
-    EntryPoint="_ZN6fbxsdk13FbxRemoveCharERNS_9FbxStringEc")]
-internal static extern void FbxRemoveChar_0(global::System.IntPtr pString, sbyte pToRemove);
-}
-
-public static sbyte FbxMin(sbyte _0)
-{
-    var __ret = __Internal.FbxMin_0(_0);
-    return __ret;
-}
-
-public static byte FbxMin(byte _0)
-{
-    var __ret = __Internal.FbxMin_1(_0);
-    return __ret;
-}
-
-public static short FbxMin(short _0)
-{
-    var __ret = __Internal.FbxMin_2(_0);
-    return __ret;
-}
-
-public static ushort FbxMin(ushort _0)
-{
-    var __ret = __Internal.FbxMin_3(_0);
-    return __ret;
-}
-
-public static int FbxMin(int _0)
-{
-    var __ret = __Internal.FbxMin_4(_0);
-    return __ret;
-}
-
-public static uint FbxMin(uint _0)
-{
-    var __ret = __Internal.FbxMin_5(_0);
-    return __ret;
-}
-
-public static long FbxMin(long _0)
-{
-    var __ret = __Internal.FbxMin_6(_0);
-    return __ret;
-}
-
-public static ulong FbxMin(ulong _0)
-{
-    var __ret = __Internal.FbxMin_7(_0);
-    return __ret;
-}
-
-public static float FbxMin(float _0)
-{
-    var __ret = __Internal.FbxMin_8(_0);
-    return __ret;
-}
-
-public static double FbxMin(double _0)
-{
-    var __ret = __Internal.FbxMin_9(_0);
-    return __ret;
-}
-
-public static sbyte FbxMax(sbyte _0)
-{
-    var __ret = __Internal.FbxMax_0(_0);
-    return __ret;
-}
-
-public static byte FbxMax(byte _0)
-{
-    var __ret = __Internal.FbxMax_1(_0);
-    return __ret;
-}
-
-public static short FbxMax(short _0)
-{
-    var __ret = __Internal.FbxMax_2(_0);
-    return __ret;
-}
-
-public static ushort FbxMax(ushort _0)
-{
-    var __ret = __Internal.FbxMax_3(_0);
-    return __ret;
-}
-
-public static int FbxMax(int _0)
-{
-    var __ret = __Internal.FbxMax_4(_0);
-    return __ret;
-}
-
-public static uint FbxMax(uint _0)
-{
-    var __ret = __Internal.FbxMax_5(_0);
-    return __ret;
-}
-
-public static long FbxMax(long _0)
-{
-    var __ret = __Internal.FbxMax_6(_0);
-    return __ret;
-}
-
-public static ulong FbxMax(ulong _0)
-{
-    var __ret = __Internal.FbxMax_7(_0);
-    return __ret;
-}
-
-public static float FbxMax(float _0)
-{
-    var __ret = __Internal.FbxMax_8(_0);
-    return __ret;
-}
-
-public static double FbxMax(double _0)
-{
-    var __ret = __Internal.FbxMax_9(_0);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Change the procedure used when assertion occurs.</para>
-/// </summary>
-/// <param name="pAssertProc">
-/// <para>The procedure to be called when assertions occurs.</para>
-/// </param>
-public static void FbxAssertSetProc(fbxsdk.FbxAssertProc pAssertProc)
-{
-    var __arg0 = pAssertProc == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pAssertProc);
-    __Internal.FbxAssertSetProc_0(__arg0);
-}
-
-/// <summary>
-/// <para>Change the procedure back to the default one.</para>
-/// </summary>
-public static void FbxAssertSetDefaultProc()
-{
-    __Internal.FbxAssertSetDefaultProc_0();
-}
-
-public static void _FbxAssert(string pFileName, string pFunctionName, uint pLineNumber, bool pFormat, string pMessage)
-{
-    __Internal._FbxAssert_0(pFileName, pFunctionName, pLineNumber, pFormat, pMessage);
-}
-
-public static void _FbxTrace(string pMessage)
-{
-    __Internal._FbxTrace_0(pMessage);
-}
-
-/// <summary>
-/// <para>Set the global memory allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <param name="pHandler">
-/// <para>Function pointer that implements the necessary procedure to allocate memory in the system.</para>
-/// </param>
-public static void FbxSetMallocHandler(fbxsdk.FbxMallocProc pHandler)
-{
-    var __arg0 = pHandler == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pHandler);
-    __Internal.FbxSetMallocHandler_0(__arg0);
-}
-
-/// <summary>
-/// <para>Set the global zero'd memory allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <param name="pHandler">
-/// <para>Function pointer that implements the necessary procedure to allocate zero'd memory in the system.</para>
-/// </param>
-public static void FbxSetCallocHandler(fbxsdk.FbxCallocProc pHandler)
-{
-    var __arg0 = pHandler == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pHandler);
-    __Internal.FbxSetCallocHandler_0(__arg0);
-}
-
-/// <summary>
-/// <para>Set the global memory re-allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <param name="pHandler">
-/// <para>Function pointer that implements the necessary procedure to re-allocate memory in the system.</para>
-/// </param>
-public static void FbxSetReallocHandler(fbxsdk.FbxReallocProc pHandler)
-{
-    var __arg0 = pHandler == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pHandler);
-    __Internal.FbxSetReallocHandler_0(__arg0);
-}
-
-/// <summary>
-/// <para>Set the global memory freeing function used internally by the FBX SDK.</para>
-/// </summary>
-/// <param name="pHandler">
-/// <para>Function pointer that implements the necessary procedure to free memory in the system.</para>
-/// </param>
-public static void FbxSetFreeHandler(fbxsdk.FbxFreeProc pHandler)
-{
-    var __arg0 = pHandler == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pHandler);
-    __Internal.FbxSetFreeHandler_0(__arg0);
-}
-
-/// <summary>
-/// <para>Get the global memory allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <returns>
-/// <para>pHandler Function pointer on FBX's internal malloc</para>
-/// </returns>
-public static fbxsdk.FbxMallocProc FbxGetMallocHandler()
-{
-    var __ret = __Internal.FbxGetMallocHandler_0();
-    var __ptr0 = __ret;
-    return (fbxsdk.FbxMallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxMallocProc));
-}
-
-/// <summary>
-/// <para>Get the global zero'd memory allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <returns>
-/// <para>pHandler Function pointer on FBX's internal calloc</para>
-/// </returns>
-public static fbxsdk.FbxCallocProc FbxGetCallocHandler()
-{
-    var __ret = __Internal.FbxGetCallocHandler_0();
-    var __ptr0 = __ret;
-    return (fbxsdk.FbxCallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxCallocProc));
-}
-
-/// <summary>
-/// <para>Get the global memory re-allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <returns>
-/// <para>pHandler Function pointer on FBX's internal realloc</para>
-/// </returns>
-public static fbxsdk.FbxReallocProc FbxGetReallocHandler()
-{
-    var __ret = __Internal.FbxGetReallocHandler_0();
-    var __ptr0 = __ret;
-    return (fbxsdk.FbxReallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxReallocProc));
-}
-
-/// <summary>
-/// <para>Get the global memory freeing function used internally by the FBX SDK.</para>
-/// </summary>
-/// <returns>
-/// <para>pHandler Function pointer on FBX's internal free</para>
-/// </returns>
-public static fbxsdk.FbxFreeProc FbxGetFreeHandler()
-{
-    var __ret = __Internal.FbxGetFreeHandler_0();
-    var __ptr0 = __ret;
-    return (fbxsdk.FbxFreeProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxFreeProc));
-}
-
-/// <summary>
-/// <para>Get the default global memory allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <returns>
-/// <para>pHandler Function pointer on FBX's internal malloc</para>
-/// </returns>
-public static fbxsdk.FbxMallocProc FbxGetDefaultMallocHandler()
-{
-    var __ret = __Internal.FbxGetDefaultMallocHandler_0();
-    var __ptr0 = __ret;
-    return (fbxsdk.FbxMallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxMallocProc));
-}
-
-/// <summary>
-/// <para>Get the default global zero'd memory allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <returns>
-/// <para>pHandler Function pointer on FBX's internal calloc</para>
-/// </returns>
-public static fbxsdk.FbxCallocProc FbxGetDefaultCallocHandler()
-{
-    var __ret = __Internal.FbxGetDefaultCallocHandler_0();
-    var __ptr0 = __ret;
-    return (fbxsdk.FbxCallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxCallocProc));
-}
-
-/// <summary>
-/// <para>Get the default global memory re-allocation function used internally by the FBX SDK.</para>
-/// </summary>
-/// <returns>
-/// <para>pHandler Function pointer on FBX's internal realloc</para>
-/// </returns>
-public static fbxsdk.FbxReallocProc FbxGetDefaultReallocHandler()
-{
-    var __ret = __Internal.FbxGetDefaultReallocHandler_0();
-    var __ptr0 = __ret;
-    return (fbxsdk.FbxReallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxReallocProc));
-}
-
-/// <summary>
-/// <para>Get the default global memory freeing function used internally by the FBX SDK.</para>
-/// </summary>
-/// <returns>
-/// <para>pHandler Function pointer on FBX's internal free</para>
-/// </returns>
-public static fbxsdk.FbxFreeProc FbxGetDefaultFreeHandler()
-{
-    var __ret = __Internal.FbxGetDefaultFreeHandler_0();
-    var __ptr0 = __ret;
-    return (fbxsdk.FbxFreeProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxFreeProc));
-}
-
-public static global::System.IntPtr FbxMalloc(ulong pSize)
-{
-    var __ret = __Internal.FbxMalloc_0(pSize);
-    return __ret;
-}
-
-public static global::System.IntPtr FbxCalloc(ulong pCount, ulong pSize)
-{
-    var __ret = __Internal.FbxCalloc_0(pCount, pSize);
-    return __ret;
-}
-
-public static global::System.IntPtr FbxRealloc(global::System.IntPtr pData, ulong pSize)
-{
-    var __ret = __Internal.FbxRealloc_0(pData, pSize);
-    return __ret;
-}
-
-public static void FbxFree(global::System.IntPtr pData)
-{
-    __Internal.FbxFree_0(pData);
-}
-
-public static sbyte* FbxStrDup(string pString)
-{
-    var __ret = __Internal.FbxStrDup_0(pString);
-    return __ret;
-}
-
-public static char* FbxStrDupWC(string pString)
-{
-    var __ret = __Internal.FbxStrDupWC_0(pString);
-    return __ret;
-}
-
-public static global::System.IntPtr FbxMallocDebug(ulong pSize, int pBlock, string pFile, int pLine)
-{
-    var __ret = __Internal.FbxMallocDebug_0(pSize, pBlock, pFile, pLine);
-    return __ret;
-}
-
-public static global::System.IntPtr FbxCallocDebug(ulong pCount, ulong pSize, int pBlock, string pFile, int pLine)
-{
-    var __ret = __Internal.FbxCallocDebug_0(pCount, pSize, pBlock, pFile, pLine);
-    return __ret;
-}
-
-public static global::System.IntPtr FbxReallocDebug(global::System.IntPtr pData, ulong pSize, int pBlock, string pFile, int pLine)
-{
-    var __ret = __Internal.FbxReallocDebug_0(pData, pSize, pBlock, pFile, pLine);
-    return __ret;
-}
-
-public static void FbxFreeDebug(global::System.IntPtr pData, int pBlock)
-{
-    __Internal.FbxFreeDebug_0(pData, pBlock);
-}
-
-public static int FBXSDK_sprintf(sbyte* dst, ulong dstsize, string format)
-{
-    var __ret = __Internal.FBXSDK_sprintf_0(dst, dstsize, format);
-    return __ret;
-}
-
-public static int FBXSDK_snprintf(sbyte* dst, ulong dstsize, string format)
-{
-    var __ret = __Internal.FBXSDK_snprintf_0(dst, dstsize, format);
-    return __ret;
-}
-
-/// <summary>
-/// <para>Convert string from UTF8 to wide-char</para>
-/// </summary>
-/// <param name="pInUTF8">
-/// <para>Input string</para>
-/// </param>
-/// <param name="pOutWideChar">
-/// <para>output string</para>
-/// </param>
-/// <param name="pOutWideCharSize">
-/// <para>size of the allocated output string buffer</para>
-/// </param>
-public static void FbxUTF8ToWC(string pInUTF8, char** pOutWideChar, ref ulong pOutWideCharSize)
-{
-    fixed (ulong* __refParamPtr2 = &pOutWideCharSize)
+    namespace fbxsdk
     {
-        var __arg2 = __refParamPtr2;
-        __Internal.FbxUTF8ToWC_0(pInUTF8, pOutWideChar, __arg2);
-    }
-}
+        /// <summary>
+        /// <para>The assertion procedure signature. If a different assertion procedure must be provided, it should have this signature.</para>
+        /// </summary>
+        /// <param name="pFileName">
+        /// <para>The file name where the assertion occurred.</para>
+        /// </param>
+        /// <param name="pFunctionName">
+        /// <para>The function name where the assertion occurred.</para>
+        /// </param>
+        /// <param name="pLineNumber">
+        /// <para>The line number in the file where the assertion occurred.</para>
+        /// </param>
+        /// <param name="pMessage">
+        /// <para>The message to display when the assertion occurs.</para>
+        /// </param>
+        [UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        public unsafe delegate void FbxAssertProc([MarshalAs(UnmanagedType.LPStr)] string pFileName, [MarshalAs(UnmanagedType.LPStr)] string pFunctionName, uint pLineNumber, [MarshalAs(UnmanagedType.LPStr)] string pMessage);
 
-/// <summary>
-/// <para>Convert string from wide-char to UTF8</para>
-/// </summary>
-/// <param name="pInWideChar">
-/// <para>input string</para>
-/// </param>
-/// <param name="pOutUTF8">
-/// <para>output string</para>
-/// </param>
-/// <param name="pOutUTF8Size">
-/// <para>size of the allocated output string buffer</para>
-/// </param>
-public static void FbxWCToUTF8(string pInWideChar, sbyte** pOutUTF8, ref ulong pOutUTF8Size)
-{
-    fixed (ulong* __refParamPtr2 = &pOutUTF8Size)
-    {
-        var __arg2 = __refParamPtr2;
-        __Internal.FbxWCToUTF8_0(pInWideChar, pOutUTF8, __arg2);
-    }
-}
+        [UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        public unsafe delegate global::System.IntPtr FbxMallocProc(ulong _0);
 
-/// <summary>
-/// <para>Remove the given char in the given string.</para>
-/// </summary>
-/// <param name="pString">
-/// <para>The given string.</para>
-/// </param>
-/// <param name="pToRemove">
-/// <para>The given char that ought to be removed.</para>
-/// </param>
-public static void FbxRemoveChar(fbxsdk.FbxString pString, sbyte pToRemove)
-{
-    if (ReferenceEquals(pString, null))
-        throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
-    var __arg0 = pString.__Instance;
-    __Internal.FbxRemoveChar_0(__arg0, pToRemove);
-}
-}
-}
+        /// <summary>
+        /// <para>Function pointer signature used to replace &quot;malloc&quot;</para>
+        /// </summary>
+        [UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        public unsafe delegate global::System.IntPtr FbxCallocProc(ulong _0, ulong _1);
+
+        /// <summary>
+        /// <para>Function pointer signature used to replace &quot;calloc&quot;</para>
+        /// </summary>
+        [UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        public unsafe delegate global::System.IntPtr FbxReallocProc(global::System.IntPtr _0, ulong _1);
+
+        /// <summary>
+        /// <para>Function pointer signature used to replace &quot;realloc&quot;</para>
+        /// </summary>
+        [UnmanagedFunctionPointerAttribute(global::System.Runtime.InteropServices.CallingConvention.Cdecl)]
+        public unsafe delegate void FbxFreeProc(global::System.IntPtr _0);
+
+        namespace FbxIncompatibleWithArray
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 1)]
+            public unsafe partial struct __Internal
+            {
+                
+            }
+        }
+
+        namespace FbxSimpleType
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 0)]
+            public unsafe partial struct __Internal
+            {
+            }
+        }
+
+        /// <summary>
+        /// <para>FbxSharedPtr class describes an object that stores a pointer to a single allocated object of type </para>
+        /// <para>Type* that ensures that the object to which it points gets destroyed automatically when the control </para>
+        /// <para>leaves a scope and the reference count is 0. </para>
+        /// </summary>
+        public unsafe partial class RefCount : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 4)]
+            public partial struct __Internal
+            {
+                [FieldOffset(0)]
+                public int count;
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk8RefCountC2Ev")]
+                internal static extern void ctor_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk8RefCountC2ERKS0_")]
+                internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk8RefCountD2Ev")]
+                internal static extern void dtor_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk8RefCount4InitEv")]
+                internal static extern void Init_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk8RefCount6IncRefEv")]
+                internal static extern void IncRef_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk8RefCount6DecRefEv")]
+                internal static extern int DecRef_0(global::System.IntPtr instance);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, RefCount> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, RefCount>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static RefCount __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new RefCount(native.ToPointer(), skipVTables);
+            }
+
+            internal static RefCount __CreateInstance(RefCount.__Internal native, bool skipVTables = false)
+            {
+                return new RefCount(native, skipVTables);
+            }
+
+            private static void* __CopyValue(RefCount.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(4);
+                *(RefCount.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private RefCount(RefCount.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected RefCount(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public RefCount()
+            {
+                __Instance = Marshal.AllocHGlobal(4);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor_0((__Instance + __PointerAdjustment));
+            }
+
+            public RefCount(fbxsdk.RefCount _0)
+            {
+                __Instance = Marshal.AllocHGlobal(4);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((RefCount.__Internal*) __Instance) = *((RefCount.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                fbxsdk.RefCount __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (disposing)
+                    __Internal.dtor_0((__Instance + __PointerAdjustment));
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+            }
+
+            public void Init()
+            {
+                __Internal.Init_0((__Instance + __PointerAdjustment));
+            }
+
+            public void IncRef()
+            {
+                __Internal.IncRef_0((__Instance + __PointerAdjustment));
+            }
+
+            public int DecRef
+            {
+                get
+                {
+                    var __ret = __Internal.DecRef_0((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+        }
+
+        /// <summary>
+        /// <para>Utility class to manipulate strings.</para>
+        /// </summary>
+        public unsafe partial class FbxString : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 8)]
+            public partial struct __Internal
+            {
+                [FieldOffset(0)]
+                public global::System.IntPtr mData;
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringC2Ev")]
+                internal static extern void ctor_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringC2ERKS0_")]
+                internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringC2EPKc")]
+                internal static extern void ctor_2(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringC2Ecm")]
+                internal static extern void ctor_3(global::System.IntPtr instance, sbyte pChar, ulong pNbRepeat);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringC2EPKcm")]
+                internal static extern void ctor_4(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pCharPtr, ulong pLength);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringC2Ei")]
+                internal static extern void ctor_5(global::System.IntPtr instance, int pValue);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringC2Ef")]
+                internal static extern void ctor_6(global::System.IntPtr instance, float pValue);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringC2Ed")]
+                internal static extern void ctor_7(global::System.IntPtr instance, double pValue);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringD2Ev")]
+                internal static extern void dtor_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringeqERKS0_")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorEqualEqual_0(global::System.IntPtr instance, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringneERKS0_")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorExclaimEqual_0(global::System.IntPtr instance, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringltERKS0_")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorLess_0(global::System.IntPtr instance, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringleERKS0_")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorLessEqual_0(global::System.IntPtr instance, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringgeERKS0_")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorGreaterEqual_0(global::System.IntPtr instance, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringgtERKS0_")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorGreater_0(global::System.IntPtr instance, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringeqEPKc")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorEqualEqual_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringneEPKc")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorExclaimEqual_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringltEPKc")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorLess_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringleEPKc")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorLessEqual_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringgeEPKc")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorGreaterEqual_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringgtEPKc")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool OperatorGreater_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxStringcvPKcEv")]
+                internal static extern global::System.IntPtr OperatorConversion_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxString4CopyEPKcm")]
+                internal static extern global::System.IntPtr Copy_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString, ulong pLength);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxString6AppendEPKcm")]
+                internal static extern global::System.IntPtr Append_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString, ulong pLength);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString7CompareEPKc")]
+                internal static extern int Compare_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString13CompareNoCaseEPKc")]
+                internal static extern int CompareNoCase_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxString4SwapERS0_")]
+                internal static extern void Swap_0(global::System.IntPtr instance, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString3MidEmm")]
+                internal static extern void Mid_0(global::System.IntPtr @return, global::System.IntPtr instance, ulong pFirst, ulong pCount);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString3MidEm")]
+                internal static extern void Mid_1(global::System.IntPtr @return, global::System.IntPtr instance, ulong pFirst);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString4LeftEm")]
+                internal static extern void Left_0(global::System.IntPtr @return, global::System.IntPtr instance, ulong pCount);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString5RightEm")]
+                internal static extern void Right_0(global::System.IntPtr @return, global::System.IntPtr instance, ulong pCount);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString3PadENS0_12EPaddingTypeEmc")]
+                internal static extern void Pad_0(global::System.IntPtr @return, global::System.IntPtr instance, fbxsdk.FbxString.EPaddingType pPadding, ulong pLen, sbyte pCar);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString5UnPadENS0_12EPaddingTypeEc")]
+                internal static extern void UnPad_0(global::System.IntPtr @return, global::System.IntPtr instance, fbxsdk.FbxString.EPaddingType pPadding, sbyte pCar);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString4FindEcm")]
+                internal static extern int Find_0(global::System.IntPtr instance, sbyte pChar, ulong pStartPosition);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString4FindEPKcm")]
+                internal static extern int Find_1(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pStrSub, ulong pStartPosition);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString11ReverseFindEc")]
+                internal static extern int ReverseFind_0(global::System.IntPtr instance, sbyte pChar);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString9FindOneOfEPKcm")]
+                internal static extern int FindOneOf_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pStrCharSet, ulong pStartPosition);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxString14FindAndReplaceEPKcS2_m")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool FindAndReplace_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pFind, [MarshalAs(UnmanagedType.LPStr)] string pReplaceBy, ulong pStartPosition);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxString10ReplaceAllEPKcS2_")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool ReplaceAll_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pFind, [MarshalAs(UnmanagedType.LPStr)] string pReplaceBy);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxString10ReplaceAllEcc")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool ReplaceAll_1(global::System.IntPtr instance, sbyte pFind, sbyte pReplaceBy);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString13GetTokenCountEPKc")]
+                internal static extern int GetTokenCount_0(global::System.IntPtr instance, [MarshalAs(UnmanagedType.LPStr)] string pSpans);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString8GetTokenEiPKc")]
+                internal static extern void GetToken_0(global::System.IntPtr @return, global::System.IntPtr instance, int pTokenIndex, [MarshalAs(UnmanagedType.LPStr)] string pSpans);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringES2_")]
+                internal static extern void OperatorPlus_0(global::System.IntPtr @return, global::System.IntPtr pString1, global::System.IntPtr pString2);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEc")]
+                internal static extern void OperatorPlus_1(global::System.IntPtr @return, global::System.IntPtr pString, sbyte pChar);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplEcRKNS_9FbxStringE")]
+                internal static extern void OperatorPlus_2(global::System.IntPtr @return, sbyte pChar, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEPKc")]
+                internal static extern void OperatorPlus_3(global::System.IntPtr @return, global::System.IntPtr pString1, [MarshalAs(UnmanagedType.LPStr)] string pString2);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplEPKcRKNS_9FbxStringE")]
+                internal static extern void OperatorPlus_4(global::System.IntPtr @return, [MarshalAs(UnmanagedType.LPStr)] string pString1, global::System.IntPtr pString2);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEi")]
+                internal static extern void OperatorPlus_5(global::System.IntPtr @return, global::System.IntPtr pString, int pValue);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplEiRKNS_9FbxStringE")]
+                internal static extern void OperatorPlus_6(global::System.IntPtr @return, int pValue, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEf")]
+                internal static extern void OperatorPlus_7(global::System.IntPtr @return, global::System.IntPtr pString, float pValue);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplEfRKNS_9FbxStringE")]
+                internal static extern void OperatorPlus_8(global::System.IntPtr @return, float pValue, global::System.IntPtr pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdkplERKNS_9FbxStringEd")]
+                internal static extern void OperatorPlus_9(global::System.IntPtr @return, global::System.IntPtr pString, double pValue);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStringixEi")]
+                internal static extern sbyte* OperatorSubscript_0(global::System.IntPtr instance, int pIndex);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString6GetLenEv")]
+                internal static extern ulong GetLen_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString4SizeEv")]
+                internal static extern ulong Size_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString7IsEmptyEv")]
+                [return: MarshalAsAttribute(UnmanagedType.I1)]
+                internal static extern bool IsEmpty_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxString5ClearEv")]
+                internal static extern global::System.IntPtr Clear_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxString6BufferEv")]
+                internal static extern sbyte* Buffer_0(global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString5UpperEv")]
+                internal static extern void Upper_0(global::System.IntPtr @return, global::System.IntPtr instance);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZNK6fbxsdk9FbxString5LowerEv")]
+                internal static extern void Lower_0(global::System.IntPtr @return, global::System.IntPtr instance);
+            }
+
+            /// <remarks>
+            /// <para>- </para>
+            /// <para>- </para>
+            /// <para>- </para>
+            /// </remarks>
+            public enum EPaddingType : uint
+            {
+                eRight = 0,
+                eLeft = 1,
+                eBoth = 2
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxString> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxString>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static FbxString __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new FbxString(native.ToPointer(), skipVTables);
+            }
+
+            internal static FbxString __CreateInstance(FbxString.__Internal native, bool skipVTables = false)
+            {
+                return new FbxString(native, skipVTables);
+            }
+
+            private static void* __CopyValue(FbxString.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(8);
+                fbxsdk.FbxString.__Internal.cctor_1(ret, new global::System.IntPtr(&native));
+                return ret.ToPointer();
+            }
+
+            private FbxString(FbxString.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected FbxString(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            /// <summary>
+            /// <para>Default constructor.</para>
+            /// </summary>
+            public FbxString()
+            {
+                __Instance = Marshal.AllocHGlobal(8);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor_0((__Instance + __PointerAdjustment));
+            }
+
+            /// <summary>
+            /// <para>Copy constructor.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The FbxString to be copied.</para>
+            /// </param>
+            public FbxString(fbxsdk.FbxString pString)
+            {
+                __Instance = Marshal.AllocHGlobal(8);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString.__Instance;
+                __Internal.cctor_1((__Instance + __PointerAdjustment), __arg0);
+            }
+
+            /// <summary>
+            /// <para>String constructor.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string used to construct FbxString.</para>
+            /// </param>
+            public FbxString(string pString)
+            {
+                __Instance = Marshal.AllocHGlobal(8);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor_2((__Instance + __PointerAdjustment), pString);
+            }
+
+            /// <summary>
+            /// <para>Character constructor.</para>
+            /// </summary>
+            /// <param name="pChar">
+            /// <para>The character used to construct FbxString.</para>
+            /// </param>
+            /// <param name="pNbRepeat">
+            /// <para>The number of times to repeat the character. Default value is 1</para>
+            /// </param>
+            public FbxString(sbyte pChar, ulong pNbRepeat)
+            {
+                __Instance = Marshal.AllocHGlobal(8);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor_3((__Instance + __PointerAdjustment), pChar, pNbRepeat);
+            }
+
+            /// <summary>
+            /// <para>String constructor with maximum length.</para>
+            /// </summary>
+            /// <param name="pCharPtr">
+            /// <para>The string used to construct FbxString.</para>
+            /// </param>
+            /// <param name="pLength">
+            /// <para>Maximum length.</para>
+            /// </param>
+            public FbxString(string pCharPtr, ulong pLength)
+            {
+                __Instance = Marshal.AllocHGlobal(8);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor_4((__Instance + __PointerAdjustment), pCharPtr, pLength);
+            }
+
+            /// <summary>
+            /// <para>Integer constructor.</para>
+            /// </summary>
+            /// <param name="pValue">
+            /// <para>The int value used to construct FbxString.</para>
+            /// </param>
+            public FbxString(int pValue)
+            {
+                __Instance = Marshal.AllocHGlobal(8);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor_5((__Instance + __PointerAdjustment), pValue);
+            }
+
+            /// <summary>
+            /// <para>Float constructor.</para>
+            /// </summary>
+            /// <param name="pValue">
+            /// <para>The float value used to construct FbxString.</para>
+            /// </param>
+            public FbxString(float pValue)
+            {
+                __Instance = Marshal.AllocHGlobal(8);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor_6((__Instance + __PointerAdjustment), pValue);
+            }
+
+            /// <summary>
+            /// <para>Double constructor.</para>
+            /// </summary>
+            /// <param name="pValue">
+            /// <para>The double value used to construct FbxString.</para>
+            /// </param>
+            public FbxString(double pValue)
+            {
+                __Instance = Marshal.AllocHGlobal(8);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                __Internal.ctor_7((__Instance + __PointerAdjustment), pValue);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                fbxsdk.FbxString __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (disposing)
+                    __Internal.dtor_0((__Instance + __PointerAdjustment));
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+            }
+
+            /// <summary>
+            /// <para>Equality operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The FbxString to be compared.</para>
+            /// </param>
+            public static bool operator ==(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
+            {
+                bool __opNull = ReferenceEquals(__op, null);
+                bool pStringNull = ReferenceEquals(pString, null);
+                if (__opNull || pStringNull)
+                    return __opNull && pStringNull;
+                var __arg0 = __op.__Instance;
+                var __arg1 = pString.__Instance;
+                var __ret = __Internal.OperatorEqualEqual_0(__arg0, __arg1);
+                return __ret;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return this == obj as FbxString;
+            }
+
+            public override int GetHashCode()
+            {
+                if (__Instance == global::System.IntPtr.Zero)
+                    return global::System.IntPtr.Zero.GetHashCode();
+                return (*(__Internal*) __Instance).GetHashCode();
+            }
+
+            /// <summary>
+            /// <para>Inequality operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The FbxString to be compared.</para>
+            /// </param>
+            public static bool operator !=(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
+            {
+                bool __opNull = ReferenceEquals(__op, null);
+                bool pStringNull = ReferenceEquals(pString, null);
+                if (__opNull || pStringNull)
+                    return !(__opNull && pStringNull);
+                var __arg0 = __op.__Instance;
+                var __arg1 = pString.__Instance;
+                var __ret = __Internal.OperatorExclaimEqual_0(__arg0, __arg1);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Inferior to operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The FbxString to be compared.</para>
+            /// </param>
+            public static bool operator <(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString.__Instance;
+                var __ret = __Internal.OperatorLess_0(__arg0, __arg1);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Inferior or equal to operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The FbxString to be compared.</para>
+            /// </param>
+            public static bool operator <=(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString.__Instance;
+                var __ret = __Internal.OperatorLessEqual_0(__arg0, __arg1);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Superior or equal to operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The FbxString to be compared.</para>
+            /// </param>
+            public static bool operator >=(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString.__Instance;
+                var __ret = __Internal.OperatorGreaterEqual_0(__arg0, __arg1);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Superior to operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The FbxString to be compared.</para>
+            /// </param>
+            public static bool operator >(fbxsdk.FbxString __op, fbxsdk.FbxString pString)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString.__Instance;
+                var __ret = __Internal.OperatorGreater_0(__arg0, __arg1);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Equality operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be compared.</para>
+            /// </param>
+            public static bool operator ==(fbxsdk.FbxString __op, string pString)
+            {
+                bool __opNull = ReferenceEquals(__op, null);
+                bool pStringNull = ReferenceEquals(pString, null);
+                if (__opNull || pStringNull)
+                    return __opNull && pStringNull;
+                var __arg0 = __op.__Instance;
+                var __ret = __Internal.OperatorEqualEqual_1(__arg0, pString);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Inequality operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be compared.</para>
+            /// </param>
+            public static bool operator !=(fbxsdk.FbxString __op, string pString)
+            {
+                bool __opNull = ReferenceEquals(__op, null);
+                bool pStringNull = ReferenceEquals(pString, null);
+                if (__opNull || pStringNull)
+                    return !(__opNull && pStringNull);
+                var __arg0 = __op.__Instance;
+                var __ret = __Internal.OperatorExclaimEqual_1(__arg0, pString);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Inferior to operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be compared.</para>
+            /// </param>
+            public static bool operator <(fbxsdk.FbxString __op, string pString)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                var __ret = __Internal.OperatorLess_1(__arg0, pString);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Inferior or equal to operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be compared.</para>
+            /// </param>
+            public static bool operator <=(fbxsdk.FbxString __op, string pString)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                var __ret = __Internal.OperatorLessEqual_1(__arg0, pString);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Superior or equal to operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be compared.</para>
+            /// </param>
+            public static bool operator >=(fbxsdk.FbxString __op, string pString)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                var __ret = __Internal.OperatorGreaterEqual_1(__arg0, pString);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Superior to operator.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be compared.</para>
+            /// </param>
+            public static bool operator >(fbxsdk.FbxString __op, string pString)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                var __ret = __Internal.OperatorGreater_1(__arg0, pString);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Cast operator.</para>
+            /// </summary>
+            public static implicit operator string(fbxsdk.FbxString __op)
+            {
+                if (ReferenceEquals(__op, null))
+                    throw new global::System.ArgumentNullException("__op", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = __op.__Instance;
+                var __ret = __Internal.OperatorConversion_0(__arg0);
+                return Marshal.PtrToStringAnsi(__ret);
+            }
+
+            /// <summary>
+            /// <para>String assignment function with maximum length.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be assigned.</para>
+            /// </param>
+            /// <param name="pLength">
+            /// <para>The maximum length of string to be assigned.</para>
+            /// </param>
+            public fbxsdk.FbxString Copy(string pString, ulong pLength)
+            {
+                var __ret = __Internal.Copy_0((__Instance + __PointerAdjustment), pString, pLength);
+                fbxsdk.FbxString __result0;
+                if (__ret == IntPtr.Zero) __result0 = null;
+                else if (fbxsdk.FbxString.NativeToManagedMap.ContainsKey(__ret))
+                    __result0 = (fbxsdk.FbxString) fbxsdk.FbxString.NativeToManagedMap[__ret];
+                else __result0 = fbxsdk.FbxString.__CreateInstance(__ret);
+                return __result0;
+            }
+
+            /// <summary>
+            /// <para>Append as &quot;C&quot; strncat().</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be appended.</para>
+            /// </param>
+            /// <param name="pLength">
+            /// <para>The length of chars to be appended.</para>
+            /// </param>
+            public fbxsdk.FbxString Append(string pString, ulong pLength)
+            {
+                var __ret = __Internal.Append_0((__Instance + __PointerAdjustment), pString, pLength);
+                fbxsdk.FbxString __result0;
+                if (__ret == IntPtr.Zero) __result0 = null;
+                else if (fbxsdk.FbxString.NativeToManagedMap.ContainsKey(__ret))
+                    __result0 = (fbxsdk.FbxString) fbxsdk.FbxString.NativeToManagedMap[__ret];
+                else __result0 = fbxsdk.FbxString.__CreateInstance(__ret);
+                return __result0;
+            }
+
+            /// <summary>
+            /// <para>Compare as &quot;C&quot; strcmp().</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be compared.</para>
+            /// </param>
+            public int Compare(string pString)
+            {
+                var __ret = __Internal.Compare_0((__Instance + __PointerAdjustment), pString);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Compare as &quot;C&quot; stricmp().</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The string to be compared.</para>
+            /// </param>
+            public int CompareNoCase(string pString)
+            {
+                var __ret = __Internal.CompareNoCase_0((__Instance + __PointerAdjustment), pString);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Swap the contents of two strings.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The FbxString to be swapped.</para>
+            /// </param>
+            public void Swap(fbxsdk.FbxString pString)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString.__Instance;
+                __Internal.Swap_0((__Instance + __PointerAdjustment), __arg0);
+            }
+
+            /// <summary>
+            /// <para>Extract middle string for a given length.</para>
+            /// </summary>
+            /// <param name="pFirst">
+            /// <para>The start index of FbxString to be extracted.</para>
+            /// </param>
+            /// <param name="pCount">
+            /// <para>The length of sub-string to be extracted.</para>
+            /// </param>
+            public fbxsdk.FbxString Mid(ulong pFirst, ulong pCount)
+            {
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.Mid_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pFirst, pCount);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Extract middle string up to the end.</para>
+            /// </summary>
+            /// <param name="pFirst">
+            /// <para>The start index of FbxString to be extracted.</para>
+            /// </param>
+            public fbxsdk.FbxString Mid(ulong pFirst)
+            {
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.Mid_1(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pFirst);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Extract left string.</para>
+            /// </summary>
+            /// <param name="pCount">
+            /// <para>The length of sub-string to be extracted.</para>
+            /// </param>
+            public fbxsdk.FbxString Left(ulong pCount)
+            {
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.Left_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pCount);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Extract right string.</para>
+            /// </summary>
+            /// <param name="pCount">
+            /// <para>The length of sub-string to be extracted.</para>
+            /// </param>
+            public fbxsdk.FbxString Right(ulong pCount)
+            {
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.Right_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pCount);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Add padding characters.</para>
+            /// </summary>
+            /// <param name="pPadding">
+            /// <para>The padding type.</para>
+            /// </param>
+            /// <param name="pLen">
+            /// <para>The length limit of FbxString after padding.</para>
+            /// </param>
+            /// <param name="pCar">
+            /// <para>The character to be padded.</para>
+            /// </param>
+            public fbxsdk.FbxString Pad(fbxsdk.FbxString.EPaddingType pPadding, ulong pLen, sbyte pCar)
+            {
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.Pad_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pPadding, pLen, pCar);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Remove padding characters.</para>
+            /// </summary>
+            /// <param name="pPadding">
+            /// <para>The padding type.</para>
+            /// </param>
+            /// <param name="pCar">
+            /// <para>The character to be padded.</para>
+            /// </param>
+            public fbxsdk.FbxString UnPad(fbxsdk.FbxString.EPaddingType pPadding, sbyte pCar)
+            {
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.UnPad_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pPadding, pCar);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Look for a single character match, like &quot;C&quot; strchr().</para>
+            /// </summary>
+            /// <param name="pChar">
+            /// <para>The character to look for.</para>
+            /// </param>
+            /// <param name="pStartPosition">
+            /// <para>Start position to look for.</para>
+            /// </param>
+            /// <returns>
+            /// <para>Index or -1 if not found.</para>
+            /// </returns>
+            public int Find(sbyte pChar, ulong pStartPosition)
+            {
+                var __ret = __Internal.Find_0((__Instance + __PointerAdjustment), pChar, pStartPosition);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Look for a substring match, like &quot;C&quot; strstr().</para>
+            /// </summary>
+            /// <param name="pStrSub">
+            /// <para>The substring to look for.</para>
+            /// </param>
+            /// <param name="pStartPosition">
+            /// <para>Start position to look for.</para>
+            /// </param>
+            /// <returns>
+            /// <para>Starting index or -1 if not found.</para>
+            /// </returns>
+            public int Find(string pStrSub, ulong pStartPosition)
+            {
+                var __ret = __Internal.Find_1((__Instance + __PointerAdjustment), pStrSub, pStartPosition);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Look for the last occurrence of character in string, like &quot;C&quot; strrchr().</para>
+            /// </summary>
+            /// <param name="pChar">
+            /// <para>The character to look for.</para>
+            /// </param>
+            /// <returns>
+            /// <para>Index or -1 if not found.</para>
+            /// </returns>
+            public int ReverseFind(sbyte pChar)
+            {
+                var __ret = __Internal.ReverseFind_0((__Instance + __PointerAdjustment), pChar);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Look for a single character match, like &quot;C&quot; strpbrk().</para>
+            /// </summary>
+            /// <param name="pStrCharSet">
+            /// <para>The character set.</para>
+            /// </param>
+            /// <param name="pStartPosition">
+            /// <para>The start position.</para>
+            /// </param>
+            /// <returns>
+            /// <para>Index or -1 if not found.</para>
+            /// </returns>
+            public int FindOneOf(string pStrCharSet, ulong pStartPosition)
+            {
+                var __ret = __Internal.FindOneOf_0((__Instance + __PointerAdjustment), pStrCharSet, pStartPosition);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Replace a substring.</para>
+            /// </summary>
+            /// <param name="pFind">
+            /// <para>The substring to look for.</para>
+            /// </param>
+            /// <param name="pReplaceBy">
+            /// <para>The string to replace by.</para>
+            /// </param>
+            /// <param name="pStartPosition">
+            /// <para>The start position.</para>
+            /// </param>
+            /// <returns>
+            /// <para>if substring found and replaced.</para>
+            /// </returns>
+            public bool FindAndReplace(string pFind, string pReplaceBy, ulong pStartPosition)
+            {
+                var __ret = __Internal.FindAndReplace_0((__Instance + __PointerAdjustment), pFind, pReplaceBy, pStartPosition);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Replace all occurrence of a substring.</para>
+            /// </summary>
+            /// <param name="pFind">
+            /// <para>The substring to look for.</para>
+            /// </param>
+            /// <param name="pReplaceBy">
+            /// <para>The string to replace by.</para>
+            /// </param>
+            /// <returns>
+            /// <para>if something got replaced.</para>
+            /// </returns>
+            public bool ReplaceAll(string pFind, string pReplaceBy)
+            {
+                var __ret = __Internal.ReplaceAll_0((__Instance + __PointerAdjustment), pFind, pReplaceBy);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Replace all occurrence of character to find by replacement character.</para>
+            /// </summary>
+            /// <param name="pFind">
+            /// <para>The character to look for.</para>
+            /// </param>
+            /// <param name="pReplaceBy">
+            /// <para>The character to replace by.</para>
+            /// </param>
+            /// <returns>
+            /// <para>if character found and replaced.</para>
+            /// </returns>
+            public bool ReplaceAll(sbyte pFind, sbyte pReplaceBy)
+            {
+                var __ret = __Internal.ReplaceAll_1((__Instance + __PointerAdjustment), pFind, pReplaceBy);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Get number of tokens.</para>
+            /// </summary>
+            /// <param name="pSpans">
+            /// <para>The span</para>
+            /// </param>
+            /// <returns>
+            /// <para>The number of tokens.</para>
+            /// </returns>
+            public int GetTokenCount(string pSpans)
+            {
+                var __ret = __Internal.GetTokenCount_0((__Instance + __PointerAdjustment), pSpans);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Get token at given index.</para>
+            /// </summary>
+            /// <param name="pTokenIndex">
+            /// <para>The token index.</para>
+            /// </param>
+            /// <param name="pSpans">
+            /// <para>The span</para>
+            /// </param>
+            public fbxsdk.FbxString GetToken(int pTokenIndex, string pSpans)
+            {
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.GetToken_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment), pTokenIndex, pSpans);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            public static implicit operator fbxsdk.FbxString(string pString)
+            {
+                return new fbxsdk.FbxString(pString);
+            }
+
+            public static implicit operator fbxsdk.FbxString(int pValue)
+            {
+                return new fbxsdk.FbxString(pValue);
+            }
+
+            public static implicit operator fbxsdk.FbxString(float pValue)
+            {
+                return new fbxsdk.FbxString(pValue);
+            }
+
+            public static implicit operator fbxsdk.FbxString(double pValue)
+            {
+                return new fbxsdk.FbxString(pValue);
+            }
+
+            /// <summary>
+            /// <para>FbxString concatenation.</para>
+            /// </summary>
+            /// <param name="pString1">
+            /// <para>FbxString 1 to be concatenated to FbxString 2.</para>
+            /// </param>
+            /// <param name="pString2">
+            /// <para>FbxString 2 to be concatenated to FbxString 1</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString1, fbxsdk.FbxString pString2)
+            {
+                if (ReferenceEquals(pString1, null))
+                    throw new global::System.ArgumentNullException("pString1", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString1.__Instance;
+                if (ReferenceEquals(pString2, null))
+                    throw new global::System.ArgumentNullException("pString2", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString2.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_0(new IntPtr(&__ret), __arg0, __arg1);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Character concatenation.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>FbxString to be concatenated to Character.</para>
+            /// </param>
+            /// <param name="pChar">
+            /// <para>Character to be concatenated to FbxString</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString, sbyte pChar)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_1(new IntPtr(&__ret), __arg0, pChar);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Character concatenation.</para>
+            /// </summary>
+            /// <param name="pChar">
+            /// <para>Character to be concatenated to FbxString</para>
+            /// </param>
+            /// <param name="pString">
+            /// <para>FbxString to be concatenated to Character.</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(sbyte pChar, fbxsdk.FbxString pString)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_2(new IntPtr(&__ret), pChar, __arg1);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>String concatenation.</para>
+            /// </summary>
+            /// <param name="pString1">
+            /// <para>FbxString to be concatenated to String.</para>
+            /// </param>
+            /// <param name="pString2">
+            /// <para>String to be concatenated to FbxString</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString1, string pString2)
+            {
+                if (ReferenceEquals(pString1, null))
+                    throw new global::System.ArgumentNullException("pString1", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString1.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_3(new IntPtr(&__ret), __arg0, pString2);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>String concatenation.</para>
+            /// </summary>
+            /// <param name="pString1">
+            /// <para>String to be concatenated to FbxString</para>
+            /// </param>
+            /// <param name="pString2">
+            /// <para>FbxString to be concatenated to String.</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(string pString1, fbxsdk.FbxString pString2)
+            {
+                if (ReferenceEquals(pString2, null))
+                    throw new global::System.ArgumentNullException("pString2", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString2.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_4(new IntPtr(&__ret), pString1, __arg1);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Integer concatenation.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>FbxString to be concatenated to Integer.</para>
+            /// </param>
+            /// <param name="pValue">
+            /// <para>Integer to be concatenated to FbxString</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString, int pValue)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_5(new IntPtr(&__ret), __arg0, pValue);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Integer concatenation.</para>
+            /// </summary>
+            /// <param name="pValue">
+            /// <para>Integer to be concatenated to FbxString</para>
+            /// </param>
+            /// <param name="pString">
+            /// <para>FbxString to be concatenated to Integer.</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(int pValue, fbxsdk.FbxString pString)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_6(new IntPtr(&__ret), pValue, __arg1);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Float concatenation.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>FbxString to be concatenated to Float.</para>
+            /// </param>
+            /// <param name="pValue">
+            /// <para>Float to be concatenated to FbxString</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString, float pValue)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_7(new IntPtr(&__ret), __arg0, pValue);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Float concatenation.</para>
+            /// </summary>
+            /// <param name="pValue">
+            /// <para>Float to be concatenated to FbxString</para>
+            /// </param>
+            /// <param name="pString">
+            /// <para>FbxString to be concatenated to Float.</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(float pValue, fbxsdk.FbxString pString)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg1 = pString.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_8(new IntPtr(&__ret), pValue, __arg1);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            /// <summary>
+            /// <para>Double concatenation.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>FbxString to be concatenated to Double.</para>
+            /// </param>
+            /// <param name="pValue">
+            /// <para>Double to be concatenated to FbxString</para>
+            /// </param>
+            public static fbxsdk.FbxString operator +(fbxsdk.FbxString pString, double pValue)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString.__Instance;
+                var __ret = new fbxsdk.FbxString.__Internal();
+                __Internal.OperatorPlus_9(new IntPtr(&__ret), __arg0, pValue);
+                return fbxsdk.FbxString.__CreateInstance(__ret);
+            }
+
+            public sbyte this[int pIndex]
+            {
+                get
+                {
+                    var __ret = __Internal.OperatorSubscript_0((__Instance + __PointerAdjustment), pIndex);
+                    return *__ret;
+                }
+
+                set
+                {
+                    *__Internal.OperatorSubscript_0((__Instance + __PointerAdjustment), pIndex) = value;
+                }
+            }
+
+            /// <summary>
+            /// <para>Get string length like &quot;C&quot; strlen().</para>
+            /// </summary>
+            public ulong Len
+            {
+                get
+                {
+                    var __ret = __Internal.GetLen_0((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            /// <summary>
+            /// <para>Get string length like &quot;C&quot; strlen().</para>
+            /// </summary>
+            public ulong Size
+            {
+                get
+                {
+                    var __ret = __Internal.Size_0((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            /// <summary>
+            /// <para>Return </para>
+            /// <para>if string length equal zero.</para>
+            /// </summary>
+            public bool IsEmpty
+            {
+                get
+                {
+                    var __ret = __Internal.IsEmpty_0((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            /// <summary>
+            /// <para>Discard the content of the string.</para>
+            /// </summary>
+            public fbxsdk.FbxString Clear
+            {
+                get
+                {
+                    var __ret = __Internal.Clear_0((__Instance + __PointerAdjustment));
+                    fbxsdk.FbxString __result0;
+                    if (__ret == IntPtr.Zero) __result0 = null;
+                    else if (fbxsdk.FbxString.NativeToManagedMap.ContainsKey(__ret))
+                        __result0 = (fbxsdk.FbxString) fbxsdk.FbxString.NativeToManagedMap[__ret];
+                    else __result0 = fbxsdk.FbxString.__CreateInstance(__ret);
+                    return __result0;
+                }
+            }
+
+            /// <summary>
+            /// <para>Non-const buffer access.</para>
+            /// </summary>
+            public sbyte* Buffer
+            {
+                get
+                {
+                    var __ret = __Internal.Buffer_0((__Instance + __PointerAdjustment));
+                    return __ret;
+                }
+            }
+
+            /// <summary>
+            /// <para>Uppercase conversion.</para>
+            /// </summary>
+            public fbxsdk.FbxString Upper
+            {
+                get
+                {
+                    var __ret = new fbxsdk.FbxString.__Internal();
+                    __Internal.Upper_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment));
+                    return fbxsdk.FbxString.__CreateInstance(__ret);
+                }
+            }
+
+            /// <summary>
+            /// <para>Lowercase conversion.</para>
+            /// </summary>
+            public fbxsdk.FbxString Lower
+            {
+                get
+                {
+                    var __ret = new fbxsdk.FbxString.__Internal();
+                    __Internal.Lower_0(new IntPtr(&__ret), (__Instance + __PointerAdjustment));
+                    return fbxsdk.FbxString.__CreateInstance(__ret);
+                }
+            }
+        }
+
+        /// <summary>
+        /// <para>Functor to compare FbxString</para>
+        /// </summary>
+        public unsafe partial class FbxStringCompare : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 0)]
+            public partial struct __Internal
+            {
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk16FbxStringCompareC2ERKS0_")]
+                internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxStringCompare> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxStringCompare>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static FbxStringCompare __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new FbxStringCompare(native.ToPointer(), skipVTables);
+            }
+
+            internal static FbxStringCompare __CreateInstance(FbxStringCompare.__Internal native, bool skipVTables = false)
+            {
+                return new FbxStringCompare(native, skipVTables);
+            }
+
+            private static void* __CopyValue(FbxStringCompare.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(0);
+                *(FbxStringCompare.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private FbxStringCompare(FbxStringCompare.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected FbxStringCompare(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public FbxStringCompare()
+            {
+                __Instance = Marshal.AllocHGlobal(0);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            public FbxStringCompare(fbxsdk.FbxStringCompare _0)
+            {
+                __Instance = Marshal.AllocHGlobal(0);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((FbxStringCompare.__Internal*) __Instance) = *((FbxStringCompare.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                fbxsdk.FbxStringCompare __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+            }
+        }
+
+        /// <summary>
+        /// <para>Functor to compare FbxString without case sensitivity</para>
+        /// </summary>
+        public unsafe partial class FbxStringCompareNoCase : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 0)]
+            public partial struct __Internal
+            {
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk22FbxStringCompareNoCaseC2ERKS0_")]
+                internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxStringCompareNoCase> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxStringCompareNoCase>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static FbxStringCompareNoCase __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new FbxStringCompareNoCase(native.ToPointer(), skipVTables);
+            }
+
+            internal static FbxStringCompareNoCase __CreateInstance(FbxStringCompareNoCase.__Internal native, bool skipVTables = false)
+            {
+                return new FbxStringCompareNoCase(native, skipVTables);
+            }
+
+            private static void* __CopyValue(FbxStringCompareNoCase.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(0);
+                *(FbxStringCompareNoCase.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private FbxStringCompareNoCase(FbxStringCompareNoCase.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected FbxStringCompareNoCase(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public FbxStringCompareNoCase()
+            {
+                __Instance = Marshal.AllocHGlobal(0);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            public FbxStringCompareNoCase(fbxsdk.FbxStringCompareNoCase _0)
+            {
+                __Instance = Marshal.AllocHGlobal(0);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((FbxStringCompareNoCase.__Internal*) __Instance) = *((FbxStringCompareNoCase.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                fbxsdk.FbxStringCompareNoCase __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+            }
+        }
+
+        /// <summary>
+        /// <para>Functor to compare &quot;C&quot; strings</para>
+        /// </summary>
+        public unsafe partial class FbxCharPtrCompare : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 0)]
+            public partial struct __Internal
+            {
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk17FbxCharPtrCompareC2ERKS0_")]
+                internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxCharPtrCompare> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxCharPtrCompare>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static FbxCharPtrCompare __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new FbxCharPtrCompare(native.ToPointer(), skipVTables);
+            }
+
+            internal static FbxCharPtrCompare __CreateInstance(FbxCharPtrCompare.__Internal native, bool skipVTables = false)
+            {
+                return new FbxCharPtrCompare(native, skipVTables);
+            }
+
+            private static void* __CopyValue(FbxCharPtrCompare.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(0);
+                *(FbxCharPtrCompare.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private FbxCharPtrCompare(FbxCharPtrCompare.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected FbxCharPtrCompare(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public FbxCharPtrCompare()
+            {
+                __Instance = Marshal.AllocHGlobal(0);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            public FbxCharPtrCompare(fbxsdk.FbxCharPtrCompare _0)
+            {
+                __Instance = Marshal.AllocHGlobal(0);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((FbxCharPtrCompare.__Internal*) __Instance) = *((FbxCharPtrCompare.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                fbxsdk.FbxCharPtrCompare __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+            }
+        }
+
+        /// <summary>
+        /// <para>Functor to compare &quot;C&quot; strings without case sensitivity</para>
+        /// </summary>
+        public unsafe partial class FbxCharPtrCompareNoCase : IDisposable
+        {
+            [StructLayout(LayoutKind.Explicit, Size = 0)]
+            public partial struct __Internal
+            {
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk23FbxCharPtrCompareNoCaseC2ERKS0_")]
+                internal static extern void cctor_1(global::System.IntPtr instance, global::System.IntPtr _0);
+            }
+
+            public global::System.IntPtr __Instance { get; protected set; }
+
+            protected int __PointerAdjustment;
+            internal static readonly System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxCharPtrCompareNoCase> NativeToManagedMap = new System.Collections.Concurrent.ConcurrentDictionary<IntPtr, FbxCharPtrCompareNoCase>();
+            protected void*[] __OriginalVTables;
+
+            protected bool __ownsNativeInstance;
+
+            internal static FbxCharPtrCompareNoCase __CreateInstance(global::System.IntPtr native, bool skipVTables = false)
+            {
+                return new FbxCharPtrCompareNoCase(native.ToPointer(), skipVTables);
+            }
+
+            internal static FbxCharPtrCompareNoCase __CreateInstance(FbxCharPtrCompareNoCase.__Internal native, bool skipVTables = false)
+            {
+                return new FbxCharPtrCompareNoCase(native, skipVTables);
+            }
+
+            private static void* __CopyValue(FbxCharPtrCompareNoCase.__Internal native)
+            {
+                var ret = Marshal.AllocHGlobal(0);
+                *(FbxCharPtrCompareNoCase.__Internal*) ret = native;
+                return ret.ToPointer();
+            }
+
+            private FbxCharPtrCompareNoCase(FbxCharPtrCompareNoCase.__Internal native, bool skipVTables = false)
+                : this(__CopyValue(native), skipVTables)
+            {
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            protected FbxCharPtrCompareNoCase(void* native, bool skipVTables = false)
+            {
+                if (native == null)
+                    return;
+                __Instance = new global::System.IntPtr(native);
+            }
+
+            public FbxCharPtrCompareNoCase()
+            {
+                __Instance = Marshal.AllocHGlobal(0);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+            }
+
+            public FbxCharPtrCompareNoCase(fbxsdk.FbxCharPtrCompareNoCase _0)
+            {
+                __Instance = Marshal.AllocHGlobal(0);
+                __ownsNativeInstance = true;
+                NativeToManagedMap[__Instance] = this;
+                *((FbxCharPtrCompareNoCase.__Internal*) __Instance) = *((FbxCharPtrCompareNoCase.__Internal*) _0.__Instance);
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+            }
+
+            public virtual void Dispose(bool disposing)
+            {
+                fbxsdk.FbxCharPtrCompareNoCase __dummy;
+                NativeToManagedMap.TryRemove(__Instance, out __dummy);
+                if (__ownsNativeInstance)
+                    Marshal.FreeHGlobal(__Instance);
+            }
+        }
+
+        public unsafe partial class fbxtypes
+        {
+            public partial struct __Internal
+            {
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEa")]
+                internal static extern sbyte FbxMin_0(sbyte _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEh")]
+                internal static extern byte FbxMin_1(byte _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEs")]
+                internal static extern short FbxMin_2(short _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEt")]
+                internal static extern ushort FbxMin_3(ushort _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEi")]
+                internal static extern int FbxMin_4(int _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEj")]
+                internal static extern uint FbxMin_5(uint _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEx")]
+                internal static extern long FbxMin_6(long _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEy")]
+                internal static extern ulong FbxMin_7(ulong _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEf")]
+                internal static extern float FbxMin_8(float _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMinEd")]
+                internal static extern double FbxMin_9(double _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEa")]
+                internal static extern sbyte FbxMax_0(sbyte _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEh")]
+                internal static extern byte FbxMax_1(byte _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEs")]
+                internal static extern short FbxMax_2(short _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEt")]
+                internal static extern ushort FbxMax_3(ushort _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEi")]
+                internal static extern int FbxMax_4(int _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEj")]
+                internal static extern uint FbxMax_5(uint _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEx")]
+                internal static extern long FbxMax_6(long _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEy")]
+                internal static extern ulong FbxMax_7(ulong _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEf")]
+                internal static extern float FbxMax_8(float _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk6FbxMaxEd")]
+                internal static extern double FbxMax_9(double _0);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk16FbxAssertSetProcEPFvPKcS1_jS1_E")]
+                internal static extern void FbxAssertSetProc_0(global::System.IntPtr pAssertProc);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk23FbxAssertSetDefaultProcEv")]
+                internal static extern void FbxAssertSetDefaultProc_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk10_FbxAssertEPKcS1_jbS1_z")]
+                internal static extern void _FbxAssert_0([MarshalAs(UnmanagedType.LPStr)] string pFileName, [MarshalAs(UnmanagedType.LPStr)] string pFunctionName, uint pLineNumber, bool pFormat, [MarshalAs(UnmanagedType.LPStr)] string pMessage);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9_FbxTraceEPKcz")]
+                internal static extern void _FbxTrace_0([MarshalAs(UnmanagedType.LPStr)] string pMessage);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk19FbxSetMallocHandlerEPFPvmE")]
+                internal static extern void FbxSetMallocHandler_0(global::System.IntPtr pHandler);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk19FbxSetCallocHandlerEPFPvmmE")]
+                internal static extern void FbxSetCallocHandler_0(global::System.IntPtr pHandler);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk20FbxSetReallocHandlerEPFPvS0_mE")]
+                internal static extern void FbxSetReallocHandler_0(global::System.IntPtr pHandler);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk17FbxSetFreeHandlerEPFvPvE")]
+                internal static extern void FbxSetFreeHandler_0(global::System.IntPtr pHandler);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk19FbxGetMallocHandlerEv")]
+                internal static extern global::System.IntPtr FbxGetMallocHandler_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk19FbxGetCallocHandlerEv")]
+                internal static extern global::System.IntPtr FbxGetCallocHandler_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk20FbxGetReallocHandlerEv")]
+                internal static extern global::System.IntPtr FbxGetReallocHandler_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk17FbxGetFreeHandlerEv")]
+                internal static extern global::System.IntPtr FbxGetFreeHandler_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk26FbxGetDefaultMallocHandlerEv")]
+                internal static extern global::System.IntPtr FbxGetDefaultMallocHandler_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk26FbxGetDefaultCallocHandlerEv")]
+                internal static extern global::System.IntPtr FbxGetDefaultCallocHandler_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk27FbxGetDefaultReallocHandlerEv")]
+                internal static extern global::System.IntPtr FbxGetDefaultReallocHandler_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk24FbxGetDefaultFreeHandlerEv")]
+                internal static extern global::System.IntPtr FbxGetDefaultFreeHandler_0();
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxMallocEm")]
+                internal static extern global::System.IntPtr FbxMalloc_0(ulong pSize);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxCallocEmm")]
+                internal static extern global::System.IntPtr FbxCalloc_0(ulong pCount, ulong pSize);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk10FbxReallocEPvm")]
+                internal static extern global::System.IntPtr FbxRealloc_0(global::System.IntPtr pData, ulong pSize);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk7FbxFreeEPv")]
+                internal static extern void FbxFree_0(global::System.IntPtr pData);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk9FbxStrDupEPKc")]
+                internal static extern sbyte* FbxStrDup_0([MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk11FbxStrDupWCEPKw")]
+                internal static extern char* FbxStrDupWC_0([MarshalAs(UnmanagedType.LPStr)] string pString);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk14FbxMallocDebugEmiPKci")]
+                internal static extern global::System.IntPtr FbxMallocDebug_0(ulong pSize, int pBlock, [MarshalAs(UnmanagedType.LPStr)] string pFile, int pLine);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk14FbxCallocDebugEmmiPKci")]
+                internal static extern global::System.IntPtr FbxCallocDebug_0(ulong pCount, ulong pSize, int pBlock, [MarshalAs(UnmanagedType.LPStr)] string pFile, int pLine);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk15FbxReallocDebugEPvmiPKci")]
+                internal static extern global::System.IntPtr FbxReallocDebug_0(global::System.IntPtr pData, ulong pSize, int pBlock, [MarshalAs(UnmanagedType.LPStr)] string pFile, int pLine);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk12FbxFreeDebugEPvi")]
+                internal static extern void FbxFreeDebug_0(global::System.IntPtr pData, int pBlock);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk14FBXSDK_sprintfEPcmPKcz")]
+                internal static extern int FBXSDK_sprintf_0(sbyte* dst, ulong dstsize, [MarshalAs(UnmanagedType.LPStr)] string format);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk15FBXSDK_snprintfEPcmPKcz")]
+                internal static extern int FBXSDK_snprintf_0(sbyte* dst, ulong dstsize, [MarshalAs(UnmanagedType.LPStr)] string format);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk11FbxUTF8ToWCEPKcRPwPm")]
+                internal static extern void FbxUTF8ToWC_0([MarshalAs(UnmanagedType.LPStr)] string pInUTF8, char** pOutWideChar, ulong* pOutWideCharSize);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk11FbxWCToUTF8EPKwRPcPm")]
+                internal static extern void FbxWCToUTF8_0([MarshalAs(UnmanagedType.LPStr)] string pInWideChar, sbyte** pOutUTF8, ulong* pOutUTF8Size);
+
+                
+                [DllImport("fbxsdk.dylib", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
+                    EntryPoint="_ZN6fbxsdk13FbxRemoveCharERNS_9FbxStringEc")]
+                internal static extern void FbxRemoveChar_0(global::System.IntPtr pString, sbyte pToRemove);
+            }
+
+            public static sbyte FbxMin(sbyte _0)
+            {
+                var __ret = __Internal.FbxMin_0(_0);
+                return __ret;
+            }
+
+            public static byte FbxMin(byte _0)
+            {
+                var __ret = __Internal.FbxMin_1(_0);
+                return __ret;
+            }
+
+            public static short FbxMin(short _0)
+            {
+                var __ret = __Internal.FbxMin_2(_0);
+                return __ret;
+            }
+
+            public static ushort FbxMin(ushort _0)
+            {
+                var __ret = __Internal.FbxMin_3(_0);
+                return __ret;
+            }
+
+            public static int FbxMin(int _0)
+            {
+                var __ret = __Internal.FbxMin_4(_0);
+                return __ret;
+            }
+
+            public static uint FbxMin(uint _0)
+            {
+                var __ret = __Internal.FbxMin_5(_0);
+                return __ret;
+            }
+
+            public static long FbxMin(long _0)
+            {
+                var __ret = __Internal.FbxMin_6(_0);
+                return __ret;
+            }
+
+            public static ulong FbxMin(ulong _0)
+            {
+                var __ret = __Internal.FbxMin_7(_0);
+                return __ret;
+            }
+
+            public static float FbxMin(float _0)
+            {
+                var __ret = __Internal.FbxMin_8(_0);
+                return __ret;
+            }
+
+            public static double FbxMin(double _0)
+            {
+                var __ret = __Internal.FbxMin_9(_0);
+                return __ret;
+            }
+
+            public static sbyte FbxMax(sbyte _0)
+            {
+                var __ret = __Internal.FbxMax_0(_0);
+                return __ret;
+            }
+
+            public static byte FbxMax(byte _0)
+            {
+                var __ret = __Internal.FbxMax_1(_0);
+                return __ret;
+            }
+
+            public static short FbxMax(short _0)
+            {
+                var __ret = __Internal.FbxMax_2(_0);
+                return __ret;
+            }
+
+            public static ushort FbxMax(ushort _0)
+            {
+                var __ret = __Internal.FbxMax_3(_0);
+                return __ret;
+            }
+
+            public static int FbxMax(int _0)
+            {
+                var __ret = __Internal.FbxMax_4(_0);
+                return __ret;
+            }
+
+            public static uint FbxMax(uint _0)
+            {
+                var __ret = __Internal.FbxMax_5(_0);
+                return __ret;
+            }
+
+            public static long FbxMax(long _0)
+            {
+                var __ret = __Internal.FbxMax_6(_0);
+                return __ret;
+            }
+
+            public static ulong FbxMax(ulong _0)
+            {
+                var __ret = __Internal.FbxMax_7(_0);
+                return __ret;
+            }
+
+            public static float FbxMax(float _0)
+            {
+                var __ret = __Internal.FbxMax_8(_0);
+                return __ret;
+            }
+
+            public static double FbxMax(double _0)
+            {
+                var __ret = __Internal.FbxMax_9(_0);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Change the procedure used when assertion occurs.</para>
+            /// </summary>
+            /// <param name="pAssertProc">
+            /// <para>The procedure to be called when assertions occurs.</para>
+            /// </param>
+            public static void FbxAssertSetProc(fbxsdk.FbxAssertProc pAssertProc)
+            {
+                var __arg0 = pAssertProc == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pAssertProc);
+                __Internal.FbxAssertSetProc_0(__arg0);
+            }
+
+            /// <summary>
+            /// <para>Change the procedure back to the default one.</para>
+            /// </summary>
+            public static void FbxAssertSetDefaultProc()
+            {
+                __Internal.FbxAssertSetDefaultProc_0();
+            }
+
+            public static void _FbxAssert(string pFileName, string pFunctionName, uint pLineNumber, bool pFormat, string pMessage)
+            {
+                __Internal._FbxAssert_0(pFileName, pFunctionName, pLineNumber, pFormat, pMessage);
+            }
+
+            public static void _FbxTrace(string pMessage)
+            {
+                __Internal._FbxTrace_0(pMessage);
+            }
+
+            /// <summary>
+            /// <para>Set the global memory allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <param name="pHandler">
+            /// <para>Function pointer that implements the necessary procedure to allocate memory in the system.</para>
+            /// </param>
+            public static void FbxSetMallocHandler(fbxsdk.FbxMallocProc pHandler)
+            {
+                var __arg0 = pHandler == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pHandler);
+                __Internal.FbxSetMallocHandler_0(__arg0);
+            }
+
+            /// <summary>
+            /// <para>Set the global zero'd memory allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <param name="pHandler">
+            /// <para>Function pointer that implements the necessary procedure to allocate zero'd memory in the system.</para>
+            /// </param>
+            public static void FbxSetCallocHandler(fbxsdk.FbxCallocProc pHandler)
+            {
+                var __arg0 = pHandler == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pHandler);
+                __Internal.FbxSetCallocHandler_0(__arg0);
+            }
+
+            /// <summary>
+            /// <para>Set the global memory re-allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <param name="pHandler">
+            /// <para>Function pointer that implements the necessary procedure to re-allocate memory in the system.</para>
+            /// </param>
+            public static void FbxSetReallocHandler(fbxsdk.FbxReallocProc pHandler)
+            {
+                var __arg0 = pHandler == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pHandler);
+                __Internal.FbxSetReallocHandler_0(__arg0);
+            }
+
+            /// <summary>
+            /// <para>Set the global memory freeing function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <param name="pHandler">
+            /// <para>Function pointer that implements the necessary procedure to free memory in the system.</para>
+            /// </param>
+            public static void FbxSetFreeHandler(fbxsdk.FbxFreeProc pHandler)
+            {
+                var __arg0 = pHandler == null ? global::System.IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(pHandler);
+                __Internal.FbxSetFreeHandler_0(__arg0);
+            }
+
+            /// <summary>
+            /// <para>Get the global memory allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <returns>
+            /// <para>pHandler Function pointer on FBX's internal malloc</para>
+            /// </returns>
+            public static fbxsdk.FbxMallocProc FbxGetMallocHandler()
+            {
+                var __ret = __Internal.FbxGetMallocHandler_0();
+                var __ptr0 = __ret;
+                return (fbxsdk.FbxMallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxMallocProc));
+            }
+
+            /// <summary>
+            /// <para>Get the global zero'd memory allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <returns>
+            /// <para>pHandler Function pointer on FBX's internal calloc</para>
+            /// </returns>
+            public static fbxsdk.FbxCallocProc FbxGetCallocHandler()
+            {
+                var __ret = __Internal.FbxGetCallocHandler_0();
+                var __ptr0 = __ret;
+                return (fbxsdk.FbxCallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxCallocProc));
+            }
+
+            /// <summary>
+            /// <para>Get the global memory re-allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <returns>
+            /// <para>pHandler Function pointer on FBX's internal realloc</para>
+            /// </returns>
+            public static fbxsdk.FbxReallocProc FbxGetReallocHandler()
+            {
+                var __ret = __Internal.FbxGetReallocHandler_0();
+                var __ptr0 = __ret;
+                return (fbxsdk.FbxReallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxReallocProc));
+            }
+
+            /// <summary>
+            /// <para>Get the global memory freeing function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <returns>
+            /// <para>pHandler Function pointer on FBX's internal free</para>
+            /// </returns>
+            public static fbxsdk.FbxFreeProc FbxGetFreeHandler()
+            {
+                var __ret = __Internal.FbxGetFreeHandler_0();
+                var __ptr0 = __ret;
+                return (fbxsdk.FbxFreeProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxFreeProc));
+            }
+
+            /// <summary>
+            /// <para>Get the default global memory allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <returns>
+            /// <para>pHandler Function pointer on FBX's internal malloc</para>
+            /// </returns>
+            public static fbxsdk.FbxMallocProc FbxGetDefaultMallocHandler()
+            {
+                var __ret = __Internal.FbxGetDefaultMallocHandler_0();
+                var __ptr0 = __ret;
+                return (fbxsdk.FbxMallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxMallocProc));
+            }
+
+            /// <summary>
+            /// <para>Get the default global zero'd memory allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <returns>
+            /// <para>pHandler Function pointer on FBX's internal calloc</para>
+            /// </returns>
+            public static fbxsdk.FbxCallocProc FbxGetDefaultCallocHandler()
+            {
+                var __ret = __Internal.FbxGetDefaultCallocHandler_0();
+                var __ptr0 = __ret;
+                return (fbxsdk.FbxCallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxCallocProc));
+            }
+
+            /// <summary>
+            /// <para>Get the default global memory re-allocation function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <returns>
+            /// <para>pHandler Function pointer on FBX's internal realloc</para>
+            /// </returns>
+            public static fbxsdk.FbxReallocProc FbxGetDefaultReallocHandler()
+            {
+                var __ret = __Internal.FbxGetDefaultReallocHandler_0();
+                var __ptr0 = __ret;
+                return (fbxsdk.FbxReallocProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxReallocProc));
+            }
+
+            /// <summary>
+            /// <para>Get the default global memory freeing function used internally by the FBX SDK.</para>
+            /// </summary>
+            /// <returns>
+            /// <para>pHandler Function pointer on FBX's internal free</para>
+            /// </returns>
+            public static fbxsdk.FbxFreeProc FbxGetDefaultFreeHandler()
+            {
+                var __ret = __Internal.FbxGetDefaultFreeHandler_0();
+                var __ptr0 = __ret;
+                return (fbxsdk.FbxFreeProc)Marshal.GetDelegateForFunctionPointer(__ptr0, typeof(fbxsdk.FbxFreeProc));
+            }
+
+            public static global::System.IntPtr FbxMalloc(ulong pSize)
+            {
+                var __ret = __Internal.FbxMalloc_0(pSize);
+                return __ret;
+            }
+
+            public static global::System.IntPtr FbxCalloc(ulong pCount, ulong pSize)
+            {
+                var __ret = __Internal.FbxCalloc_0(pCount, pSize);
+                return __ret;
+            }
+
+            public static global::System.IntPtr FbxRealloc(global::System.IntPtr pData, ulong pSize)
+            {
+                var __ret = __Internal.FbxRealloc_0(pData, pSize);
+                return __ret;
+            }
+
+            public static void FbxFree(global::System.IntPtr pData)
+            {
+                __Internal.FbxFree_0(pData);
+            }
+
+            public static sbyte* FbxStrDup(string pString)
+            {
+                var __ret = __Internal.FbxStrDup_0(pString);
+                return __ret;
+            }
+
+            public static char* FbxStrDupWC(string pString)
+            {
+                var __ret = __Internal.FbxStrDupWC_0(pString);
+                return __ret;
+            }
+
+            public static global::System.IntPtr FbxMallocDebug(ulong pSize, int pBlock, string pFile, int pLine)
+            {
+                var __ret = __Internal.FbxMallocDebug_0(pSize, pBlock, pFile, pLine);
+                return __ret;
+            }
+
+            public static global::System.IntPtr FbxCallocDebug(ulong pCount, ulong pSize, int pBlock, string pFile, int pLine)
+            {
+                var __ret = __Internal.FbxCallocDebug_0(pCount, pSize, pBlock, pFile, pLine);
+                return __ret;
+            }
+
+            public static global::System.IntPtr FbxReallocDebug(global::System.IntPtr pData, ulong pSize, int pBlock, string pFile, int pLine)
+            {
+                var __ret = __Internal.FbxReallocDebug_0(pData, pSize, pBlock, pFile, pLine);
+                return __ret;
+            }
+
+            public static void FbxFreeDebug(global::System.IntPtr pData, int pBlock)
+            {
+                __Internal.FbxFreeDebug_0(pData, pBlock);
+            }
+
+            public static int FBXSDK_sprintf(sbyte* dst, ulong dstsize, string format)
+            {
+                var __ret = __Internal.FBXSDK_sprintf_0(dst, dstsize, format);
+                return __ret;
+            }
+
+            public static int FBXSDK_snprintf(sbyte* dst, ulong dstsize, string format)
+            {
+                var __ret = __Internal.FBXSDK_snprintf_0(dst, dstsize, format);
+                return __ret;
+            }
+
+            /// <summary>
+            /// <para>Convert string from UTF8 to wide-char</para>
+            /// </summary>
+            /// <param name="pInUTF8">
+            /// <para>Input string</para>
+            /// </param>
+            /// <param name="pOutWideChar">
+            /// <para>output string</para>
+            /// </param>
+            /// <param name="pOutWideCharSize">
+            /// <para>size of the allocated output string buffer</para>
+            /// </param>
+            public static void FbxUTF8ToWC(string pInUTF8, char** pOutWideChar, ref ulong pOutWideCharSize)
+            {
+                fixed (ulong* __refParamPtr2 = &pOutWideCharSize)
+                {
+                    var __arg2 = __refParamPtr2;
+                    __Internal.FbxUTF8ToWC_0(pInUTF8, pOutWideChar, __arg2);
+                }
+            }
+
+            /// <summary>
+            /// <para>Convert string from wide-char to UTF8</para>
+            /// </summary>
+            /// <param name="pInWideChar">
+            /// <para>input string</para>
+            /// </param>
+            /// <param name="pOutUTF8">
+            /// <para>output string</para>
+            /// </param>
+            /// <param name="pOutUTF8Size">
+            /// <para>size of the allocated output string buffer</para>
+            /// </param>
+            public static void FbxWCToUTF8(string pInWideChar, sbyte** pOutUTF8, ref ulong pOutUTF8Size)
+            {
+                fixed (ulong* __refParamPtr2 = &pOutUTF8Size)
+                {
+                    var __arg2 = __refParamPtr2;
+                    __Internal.FbxWCToUTF8_0(pInWideChar, pOutUTF8, __arg2);
+                }
+            }
+
+            /// <summary>
+            /// <para>Remove the given char in the given string.</para>
+            /// </summary>
+            /// <param name="pString">
+            /// <para>The given string.</para>
+            /// </param>
+            /// <param name="pToRemove">
+            /// <para>The given char that ought to be removed.</para>
+            /// </param>
+            public static void FbxRemoveChar(fbxsdk.FbxString pString, sbyte pToRemove)
+            {
+                if (ReferenceEquals(pString, null))
+                    throw new global::System.ArgumentNullException("pString", "Cannot be null because it is a C++ reference (&).");
+                var __arg0 = pString.__Instance;
+                __Internal.FbxRemoveChar_0(__arg0, pToRemove);
+            }
+        }
+    }
 
 }
