@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "targets": {
+    ".NETPortable,Version=v4.5,Profile=Profile111": {}
+  },
+  "libraries": {},
+  "projectFileDependencyGroups": {
+    "": [],
+    ".NETPortable,Version=v4.5,Profile=Profile111": []
+  },
+  "tools": {},
+  "projectFileToolGroups": {},
+  "packageFolders": {
+    "/Users/inwoods/.nuget/packages/": {}
+  }
+}

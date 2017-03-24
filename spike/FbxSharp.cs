@@ -19,14 +19,25 @@ namespace FbxSharp
         {
             driver.Options.GeneratorKind = GeneratorKind.CSharp;
             driver.Options.LibraryName = "FbxSdk";
-            driver.Options.Headers.Add("fbxsdk.h");
-            driver.Options.SharedLibraryName = "libfbxsdk.dylib";
+            // driver.Options.Headers.Add("fbxsdk.h");
+            driver.Options.Headers.Add("fbxsdk/core/base/fbxstring.h");
+
+            // NOTE: this need to change this to platform shared library
+            // Does the property setter do anything with name?
+            string PlatformLibrary = "libfbxsdk.dylib";
+                
+            driver.Options.SharedLibraryName = PlatformLibrary;
             driver.Options.OutputDir = "out/cppsharp";
-            driver.Options.CompileCode = true;
+            driver.Options.CompileCode = false;
 
             driver.ParserOptions.Abi = CppAbi.Itanium;
-            driver.ParserOptions.AddIncludeDirs(Path.Combine(Directory.GetCurrentDirectory(), "2016.0/include"));
-            driver.ParserOptions.AddLibraryDirs(Path.Combine(Directory.GetCurrentDirectory(), "2016.0/lib/clang/release"));
+
+            // NOTE; this will change dependinging on your platform installation
+            string PlatformIncludePath = "2016.0/include";
+            string PlatformLibPath = "2016.0/lib/clang/debug";
+
+            driver.ParserOptions.AddIncludeDirs(Path.Combine(Directory.GetCurrentDirectory(), PlatformIncludePath));
+            driver.ParserOptions.AddLibraryDirs(Path.Combine(Directory.GetCurrentDirectory(), PlatformLibPath));
         }
 
         public void SetupPasses(Driver driver)
