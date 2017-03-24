@@ -19,6 +19,19 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     list(APPEND FBXSDK_INCLUDE_PATHS "/Applications/Autodesk/FBX SDK/${VERSION}/include")
     list(APPEND FBXSDK_LIB_PATHS "/Applications/Autodesk/FBX SDK/${VERSION}/lib/clang/release")
   endforeach()
+
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  SET(CMAKE_FIND_LIBRARY_PREFIXES "lib")
+
+  list(APPEND CMAKE_SWIG_FLAGS "-D_WIN64")
+  list(APPEND CMAKE_SWIG_FLAGS "-D_M_X64")
+  list(APPEND CMAKE_SWIG_FLAGS "-D_MSC_VER")
+
+  foreach(VERSION ${FBXSDK_VERSIONS})
+    message("Windows: Looking for fbxsdk in C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}")
+    list(APPEND FBXSDK_INCLUDE_PATHS "C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}/include")
+    list(APPEND FBXSDK_LIB_PATHS "C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}/lib/vs2010/x64/release")
+  endforeach()  
 endif()
 
 message("Looking for fbxsdk.h in ${FBXSDK_INCLUDE_PATHS}")
