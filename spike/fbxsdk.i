@@ -6,31 +6,31 @@
 %}
  
 /* Parse the header file to generate wrappers */
-%include "2016.0/include/fbxsdk.h"
-%include "2016.0/include/fbxsdk/fbxsdk_def.h"
-%include "2016.0/include/fbxsdk/fbxsdk_nsbegin.h"
-%include "2016.0/include/fbxsdk/fbxsdk_nsend.h"
-%include "2016.0/include/fbxsdk/fbxsdk_version.h"
+%include "fbxsdk.h"
+%include "fbxsdk/fbxsdk_def.h"
+%include "fbxsdk/fbxsdk_nsbegin.h"
+%include "fbxsdk/fbxsdk_nsend.h"
+%include "fbxsdk/fbxsdk_version.h"
 
 /* For generating wrapper for FbxVector2 class */
 //#define FBXSDK_DLL
-//%include "2016.0/include/fbxsdk/core/math/fbxvector2.h"
+//%include "fbxsdk/core/math/fbxvector2.h"
 
 
 /* For generating wrapper to export an empty scene */
 #define DOXYGEN_SHOULD_SKIP_THIS // skip code that is undocumented and subject to change without notice
-%include "../2016.0/include/fbxsdk/core/arch/fbxnew.h"
-%include "../2016.0/include/fbxsdk/core/arch/fbxarch.h"
-%include "../2016.0/include/fbxsdk/fileio/fbxiosettingspath.h"
-%include "../2016.0/include/fbxsdk/core/fbxobject.h"
-%include "../2016.0/include/fbxsdk/scene/fbxdocument.h" 
+%include "fbxsdk/core/arch/fbxnew.h"
+%include "fbxsdk/core/arch/fbxarch.h"
+%include "fbxsdk/fileio/fbxiosettingspath.h"
+%include "fbxsdk/core/fbxobject.h"
+%include "fbxsdk/scene/fbxdocument.h"
 
 %nodefaultdtor;
-%include "../2016.0/include/fbxsdk/scene/fbxscene.h"
-%include "../2016.0/include/fbxsdk/fileio/fbxexporter.h"
+%include "fbxsdk/scene/fbxscene.h"
+%include "fbxsdk/fileio/fbxexporter.h"
 %nodefaultctor FbxManager;
-%include "../2016.0/include/fbxsdk/core/fbxmanager.h"
-%include "../2016.0/include/fbxsdk/fileio/fbxiosettings.h"
+%include "fbxsdk/core/fbxmanager.h"
+%include "fbxsdk/fileio/fbxiosettings.h"
 
 /* Everything */
 /*%include "2016.0/include/fbxsdk/fbxsdk_version.h"
