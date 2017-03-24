@@ -13,3 +13,14 @@ spike/2016.0/
 [Bb]in/
 [Dd]ebug/
 
+# swig output files
+*_wrap.cxx
+
+# cmake
+CMakeCache.txt
+CMakeFiles/
+Makefile
+
+# vim temp files
+*.swp
+*.swo
