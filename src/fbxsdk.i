@@ -4,6 +4,9 @@
 #define FBXSDK_SHARED // necessary for proper library linking
 #include "fbxsdk.h"
 %}
+
+/* Handle object lifetime in Fbx by adding indirection. */
+%include "FbxSharpObjectLifetime.i"
  
 // define typemaps for INOUT arguments
 %include typemaps.i
@@ -22,7 +25,8 @@
 #define DOXYGEN_SHOULD_SKIP_THIS           // skip code that is undocumented and subject to change without notice
 
 %nodefaultdtor;                               // Disable creation of default constructors
-//%include "fbxsdk/core/fbxclassid.h"
+
+%include "fbxclassid.i"
 %include "fbxemitter.i"
 %include "fbxobject.i"
 
