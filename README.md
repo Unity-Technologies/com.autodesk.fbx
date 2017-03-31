@@ -36,7 +36,7 @@ mkdir FbxSharpBuild
 cd FbxSharpBuild
 
 # TODO: don't install in the source path!
-cmake $FBXSDK_SOURCE_PATH -DCMAKE_INSTALL_PREFIX:PATH=$FBXSDK_SOURCE_PATH/tests/UnitTests/Plugins
+cmake $FBXSDK_SOURCE_PATH -DCMAKE_INSTALL_PREFIX:PATH=$FBXSDK_SOURCE_PATH/tests/UnityTests/Assets/Plugins
 make 
 make install
 ```
@@ -56,7 +56,7 @@ cmake --build . --target INSTALL --config Release
 **OSX**
 ```
 export FBXSDK_SOURCE_PATH=~/Development/FbxSharp
-export UNITY3D_PATH=/Applications/Unity\ 4.6.9f1
+export UNITY3D_PATH=/Applications/Unity
 
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${FBXSDK_SOURCE_PATH}/tests/UnityTests/Assets/Plugins/fbxsdk MONO_LOG_MASK=dll ${UNITY3D_PATH}/Unity.app/Contents/MacOS/Unity -projectpath ${FBXSDK_SOURCE_PATH}/tests/UnityTests
 ```
