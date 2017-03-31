@@ -1,5 +1,5 @@
 # Look for the executable to find the Unity editor executable.
-# If UNITY_EXECUTABLE_PATH we use it, otherwise we set it.
+# If UNITY_EDITOR_PATH we use it, otherwise we set it.
 
 # Platform-specific code.
 if (NOT DEFINED UNITY_EDITOR_PATH)
