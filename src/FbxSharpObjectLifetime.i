@@ -3,14 +3,14 @@
 #include "WeakPointerHandle.cxx"
 
 /* Allow CSharp to release references. */
-SWIGEXPORT void SWIGSTDCALL CSharp_$module_Release_WeakPointerHandle(void *handle) {
+extern "C" SWIGEXPORT void SWIGSTDCALL CSharp_$module_Release_WeakPointerHandle(void *handle) {
     if (!handle) { return; }
     ((WeakPointerHandle*)handle)->ReleaseReference();
 }
 
 /* Set up the FBX allocators. */
 #include <fbxsdk.h>
-SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
+extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   fbxsdk::FbxSetMallocHandler(WeakPointerHandle::Allocators::AllocateMemory);
   fbxsdk::FbxSetFreeHandler(WeakPointerHandle::Allocators::FreeMemory);
   fbxsdk::FbxSetCallocHandler(WeakPointerHandle::Allocators::AllocateZero);
@@ -24,11 +24,11 @@ SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
  * allocators. */
 %pragma(csharp) imclasscode=%{
   // Set up the FBX allocators at static init time.
-  [global::System.Runtime.InteropServices.DllImport("$dllimport"), EntryPoint="CSharp_$module_InitFbxAllocators"]
+  [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="CSharp_$module_InitFbxAllocators")]
   private static extern int InitFbxAllocators();
   private static int initFbx = InitFbxAllocators();
 
-  [global::System.Runtime.InteropServices.DllImport("$dllimport"), EntryPoint="CSharp_$module_Release_WeakPointerHandle"]
+  [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="CSharp_$module_Release_WeakPointerHandle")]
   public static extern void ReleaseWeakPointerHandle(global::System.IntPtr handle);
 %}
 

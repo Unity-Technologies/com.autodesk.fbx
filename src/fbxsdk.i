@@ -40,7 +40,7 @@
 %include "fbxsdk/utils/fbxrenamingstrategy.h"
 %include "fbxsdk/core/fbxstream.h"
 %include "fbxsdk/fileio/fbxiobase.h"
-%import "fbxsdk/fileio/fbx/fbxio.h"
+%include "fbxsdk/fileio/fbx/fbxio.h"
 %import "fbxsdk/fileio/fbxprogress.h"
     
 // TODO: link error fbxsdk::FbxTimeToSelection(fbxsdk::FbxTime::EMode, int)
