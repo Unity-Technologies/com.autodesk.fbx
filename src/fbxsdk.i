@@ -22,40 +22,42 @@
 #define DOXYGEN_SHOULD_SKIP_THIS           // skip code that is undocumented and subject to change without notice
 
 %nodefaultdtor;                               // Disable creation of default constructors
-%include "fbxsdk/fileio/fbxiosettingspath.h"
+//%include "fbxsdk/core/fbxclassid.h"
+%include "fbxemitter.i"
+%include "fbxobject.i"
 
-%include "fbxsdk/core/fbxclassid.h"
-%include "fbxsdk/core/fbxemitter.h"
-%include "fbxsdk/core/fbxobject.h"
-
-%include "fbxsdk/core/base/fbxstring.h"    
+//%include "fbxsdk/core/base/fbxstring.h"    
 %include "fbxsdk/scene/fbxdocument.h"
 
 %nodefaultdtor;                               // Disable creation of default constructors
-%include "fbxsdk/scene/fbxscene.h"
+%include "fbxscene.i"
 
-%include "fbxsdk/utils/fbxrenamingstrategy.h"
-%include "fbxsdk/core/fbxstream.h"
-%include "fbxsdk/fileio/fbxiobase.h"
-%import "fbxsdk/fileio/fbx/fbxio.h"
-%import "fbxsdk/fileio/fbxprogress.h"
-    
+%include "fbxsdk/fileio/fbxiosettingspath.h"
+
+//%include "fbxsdk/utils/fbxrenamingstrategy.h"
+//%include "fbxsdk/core/fbxstream.h"
+%include "fbxiobase.i"
+//%import "fbxsdk/fileio/fbx/fbxio.h"
+//%import "fbxsdk/fileio/fbxprogress.h"
+
 // TODO: link error fbxsdk::FbxTimeToSelection(fbxsdk::FbxTime::EMode, int)
 //%include "fbxsdk/core/base/fbxtime.h"
-%include "fbxsdk/core/math/fbxvector2.h"
-%include "fbxsdk/core/math/fbxvector4.h"
-%include "fbxsdk/core/fbxsystemunit.h"
+//%include "fbxsdk/core/math/fbxvector2.h"
+//%include "fbxsdk/core/math/fbxvector4.h"
+//%include "fbxsdk/core/fbxsystemunit.h"
 
 %include "fbxexporter.i"
-    
+
+%include "fbximporter.i"
+
 // TODO: typedef const double kDouble44[4][4] ;
 //%include "fbxmatrix.i"
 //%include "fbxpropertytypes.i"
 
-%include "fbxsdk/core/fbxdatatypes.h"
+//%include "fbxsdk/core/fbxdatatypes.h"
 %include "fbxmanager.i"
 
-%include "fbxsdk/fileio/fbxiosettings.h"
+%include "fbxiosettings.i"
 
 /* Everything */
 #ifdef FBXSDK_ALL_HEADERS

@@ -17,7 +17,7 @@ namespace UseCaseTests
             FbxManager lSdkManager = FbxManager.Create ();
 
             // Create an IOSettings object.
-            FbxIOSettings ios = FbxIOSettings.Create (lSdkManager, cpp.IOSROOT);
+            FbxIOSettings ios = FbxIOSettings.Create (lSdkManager, Globals.IOSROOT);
             lSdkManager.SetIOSettings (ios);
 
             // Create an exporter.
