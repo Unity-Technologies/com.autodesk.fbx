@@ -51,8 +51,9 @@ namespace UnitTests
         [Test]
         public void TestFindClass ()
         {
-            SWIGTYPE_p_FbxClassId classId = m_fbxManager.FindClass ("FbxObject");
+            FbxClassId classId = m_fbxManager.FindClass ("FbxObject");
 
+            Assert.AreEqual (classId.GetName (), "FbxObject");
         }
     }
 }

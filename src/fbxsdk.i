@@ -6,7 +6,7 @@
 %}
 
 /* Handle object lifetime in Fbx by adding indirection. */
-%include "FbxSharpObjectLifetime.i"
+//%include "FbxSharpObjectLifetime.i"
  
 // define typemaps for INOUT arguments
 %include typemaps.i
@@ -24,43 +24,19 @@
 /* For generating wrapper to export an empty scene */
 #define DOXYGEN_SHOULD_SKIP_THIS           // skip code that is undocumented and subject to change without notice
 
-%nodefaultdtor;                               // Disable creation of default constructors
+%nodefaultdtor;                            // Disable creation of default constructors
 
 %include "fbxclassid.i"
 %include "fbxemitter.i"
 %include "fbxobject.i"
-
-//%include "fbxsdk/core/base/fbxstring.h"    
-%include "fbxsdk/scene/fbxdocument.h"
-
-%nodefaultdtor;                               // Disable creation of default constructors
+%include "fbxdocument.i"
 %include "fbxscene.i"
-
-%include "fbxsdk/fileio/fbxiosettingspath.h"
-
-//%include "fbxsdk/utils/fbxrenamingstrategy.h"
-//%include "fbxsdk/core/fbxstream.h"
 %include "fbxiobase.i"
-//%import "fbxsdk/fileio/fbx/fbxio.h"
-//%import "fbxsdk/fileio/fbxprogress.h"
-
 // TODO: link error fbxsdk::FbxTimeToSelection(fbxsdk::FbxTime::EMode, int)
-//%include "fbxsdk/core/base/fbxtime.h"
-//%include "fbxsdk/core/math/fbxvector2.h"
-//%include "fbxsdk/core/math/fbxvector4.h"
-//%include "fbxsdk/core/fbxsystemunit.h"
-
 %include "fbxexporter.i"
-
 %include "fbximporter.i"
-
-// TODO: typedef const double kDouble44[4][4] ;
-//%include "fbxmatrix.i"
-//%include "fbxpropertytypes.i"
-
-//%include "fbxsdk/core/fbxdatatypes.h"
+// TODO: SyntaxError(3) fbxmatrix, typedef const double kDouble44[4][4] ;
 %include "fbxmanager.i"
-
 %include "fbxiosettings.i"
 
 /* Everything */

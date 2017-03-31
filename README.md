@@ -30,10 +30,12 @@ sdkManager.Destroy();
 
 ### Building on OSX 
 ```
-# ${dev_dir}/FbxSharp/src  SWIG files found here
-cd ${dev_dir}/FbxSharp
+export FBXSDK_SOURCE_PATH=~/Development/FbxSharp
 
-cmake -H. -Bbuild -DCMAKE_INSTALL_PREFIX:PATH=/path/to/Unity/project/Assets/Plugins
+# ${FBXSDK_SOURCE_PATH}/src  SWIG files found here
+cd $FBXSDK_SOURCE_PATH
+
+cmake -H. -Bbuild -DCMAKE_INSTALL_PREFIX:PATH=$FBXSDK_SOURCE_PATH/tests/UnitTests/Plugins
 cd build
 make 
 make install
@@ -47,6 +49,16 @@ cd %{dev_dir}/FbxSharp
 cmake -H. -Bbuild -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX:PATH=/path/to/Unity/project/Assets/Plugins
 cd build
 cmake --build . --target INSTALL --config Release
+```
+
+### Running UnitTests
+
+**OSX**
+```
+export FBXSDK_SOURCE_PATH=~/Development/FbxSharp
+export UNITY3D_PATH=/Applications/Unity\ 4.6.9f1
+
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${FBXSDK_SOURCE_PATH}/tests/UnityTests/Assets/Plugins/fbxsdk MONO_LOG_MASK=dll ${UNITY3D_PATH}/Unity.app/Contents/MacOS/Unity -projectpath ${FBXSDK_SOURCE_PATH}/tests/UnityTests
 ```
 
 **NOTES:**
