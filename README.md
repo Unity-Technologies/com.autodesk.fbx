@@ -33,7 +33,7 @@ sdkManager.Destroy();
 # ${dev_dir}/FbxSharp/src  SWIG files found here
 cd ${dev_dir}/FbxSharp
 
-cmake -H. -Bbuild -DCMAKE_INSTALL_PREFIX:PATH=/path/to/Unity/project/Assets/Plugins CMakeLists.txt
+cmake -H. -Bbuild -DCMAKE_INSTALL_PREFIX:PATH=/path/to/Unity/project/Assets/Plugins
 cd build
 make 
 make install
@@ -44,7 +44,7 @@ make install
 REM Win10
 cd %{dev_dir}/FbxSharp
 
-cmake -H. -Bbuild -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX:PATH=/path/to/Unity/project/Assets/Plugins CMakeLists.txt
+cmake -H. -Bbuild -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX:PATH=/path/to/Unity/project/Assets/Plugins
 REM you might need to edit PATH so you can find devenv & vcvarsall
 cd build
 vcvarsall amd64
