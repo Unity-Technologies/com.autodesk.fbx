@@ -10,7 +10,7 @@ include(${SWIG_USE_FILE})
 find_package(FBXSDK REQUIRED)
 
 # Set up the include directories
-include_directories(../src)
+include_directories(src)
 include_directories(${FBXSDK_INCLUDE_DIR})
 
 # Set up the swig run.
