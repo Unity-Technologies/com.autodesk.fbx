@@ -1,13 +1,16 @@
 cmake_minimum_required (VERSION 2.6)
 project (fbxsdk_csharp)
 
-list(APPEND CMAKE_MODULE_PATH deps/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 
 # Find packages that we need.
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 
 find_package(FBXSDK REQUIRED)
+
+# Unity is not required, but we can't run the tests without it.
+find_package(UNITY)
 
 # Set up the include directories
 include_directories(src)
