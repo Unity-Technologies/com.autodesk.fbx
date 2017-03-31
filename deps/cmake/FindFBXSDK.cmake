@@ -32,6 +32,18 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     list(APPEND FBXSDK_INCLUDE_PATHS "C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}/include")
     list(APPEND FBXSDK_LIB_PATHS "C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}/lib/vs2010/x64/release")
   endforeach()  
+
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND CMAKE_SWIG_FLAGS "-D__linux__")
+  list(APPEND CMAKE_SWIG_FLAGS "-D__x86_64__")
+  list(APPEND CMAKE_SWIG_FLAGS "-D__GNUC__")
+
+  foreach(VERSION ${FBXSDK_VERSIONS})
+    message("Looking for fbxsdk in /opt/Autodesk/FBX SDK/${VERSION}")
+    list(APPEND FBXSDK_INCLUDE_PATHS "/opt/Autodesk/FBX SDK/${VERSION}/include")
+    list(APPEND FBXSDK_LIB_PATHS "/opt/Autodesk/FBX SDK/${VERSION}/lib/gcc4/x64/release")
+  endforeach()
+  
 endif()
 
 message("Looking for fbxsdk.h in ${FBXSDK_INCLUDE_PATHS}")
