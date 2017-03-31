@@ -48,7 +48,7 @@ cmake -H. -Bbuild -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX:PATH=/p
 REM you might need to edit PATH so you can find devenv & vcvarsall
 cd build
 vcvarsall amd64
-devenv /Build "Release x64
+devenv /Build "Release x64"
 
 REM Maybe this works?
 devenv /Command "install"   
