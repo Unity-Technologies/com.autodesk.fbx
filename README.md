@@ -30,13 +30,13 @@ sdkManager.Destroy();
 
 ### Building on OSX 
 ```
+# Define where the FBX SDK source is, and where you want to do your build.
 export FBXSDK_SOURCE_PATH=~/Development/FbxSharp
+mkdir FbxSharpBuild
+cd FbxSharpBuild
 
-# ${FBXSDK_SOURCE_PATH}/src  SWIG files found here
-cd $FBXSDK_SOURCE_PATH
-
-cmake -H. -Bbuild -DCMAKE_INSTALL_PREFIX:PATH=$FBXSDK_SOURCE_PATH/tests/UnitTests/Plugins
-cd build
+# TODO: don't install in the source path!
+cmake $FBXSDK_SOURCE_PATH -DCMAKE_INSTALL_PREFIX:PATH=$FBXSDK_SOURCE_PATH/tests/UnitTests/Plugins
 make 
 make install
 ```
