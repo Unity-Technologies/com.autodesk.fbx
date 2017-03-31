@@ -38,28 +38,14 @@ namespace UnitTests
         [Test]
         public void TestGetFileFormatVersion ()
         {
-            SWIGTYPE_p_int major = cpp.new_intp ();
-            SWIGTYPE_p_int minor = cpp.new_intp ();
-            SWIGTYPE_p_int revision = cpp.new_intp ();
+            int major = -1, minor = -1, revision = -1;
 
-            // Assume that the revision will always be a positive number
-            cpp.intp_assign (major, -1);
-            cpp.intp_assign (minor, -1);
-            cpp.intp_assign (revision, -1);
+            FbxManager.GetFileFormatVersion (out major, out minor, out revision);
 
-            Assert.AreEqual (cpp.intp_value (major), -1);
-            Assert.AreEqual (cpp.intp_value (minor), -1);
-            Assert.AreEqual (cpp.intp_value (revision), -1);
+            Assert.GreaterOrEqual (major, 0);
+            Assert.GreaterOrEqual (minor, 0);
+            Assert.GreaterOrEqual (revision, 0);
 
-            FbxManager.GetFileFormatVersion (major, minor, revision);
-
-            Assert.GreaterOrEqual (cpp.intp_value (major), 0);
-            Assert.GreaterOrEqual (cpp.intp_value (minor), 0);
-            Assert.GreaterOrEqual (cpp.intp_value (revision), 0);
-
-            cpp.delete_intp (major);
-            cpp.delete_intp (minor);
-            cpp.delete_intp (revision);
         }
 
         [Test]

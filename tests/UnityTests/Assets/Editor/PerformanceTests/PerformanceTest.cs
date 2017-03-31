@@ -120,7 +120,7 @@ namespace PerformanceTests
                 stopwatch.Reset ();
                 stopwatch.Start ();
 
-                FbxIOSettings ioSettings = FbxIOSettings.Create (fbxManager, cpp.IOSROOT);
+                FbxIOSettings ioSettings = FbxIOSettings.Create (fbxManager, Globals.IOSROOT);
                 fbxManager.SetIOSettings (ioSettings);
 
                 FbxExporter exporter = FbxExporter.Create (fbxManager, "");

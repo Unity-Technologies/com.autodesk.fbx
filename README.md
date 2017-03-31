@@ -45,11 +45,8 @@ REM Win10
 cd %{dev_dir}/FbxSharp
 
 cmake -H. -Bbuild -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX:PATH=/path/to/Unity/project/Assets/Plugins
-REM you might need to edit PATH so you can find devenv & vcvarsall
 cd build
-vcvarsall amd64
-devenv fbxsdk_csharp.sln /Build "Release"
-devenv fbxsdk_csharp.sln /Build "Release" /project INSTALL
+cmake --build . --target INSTALL --config Release
 ```
 
 **NOTES:**
