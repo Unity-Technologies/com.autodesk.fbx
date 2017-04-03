@@ -26,4 +26,5 @@
 7. Install FBX SDK by extracting the contents of the archive, then reading install_FbxSdk.txt which is inside the archive
     * For the location to install the FBX SDK, use: /opt/Autodesk/FBX SDK/{version}/ (e.g. for Fbx sdk 2017.1: /opt/Autodesk/FBX SDK/2017.1/)
 8. Copy the libfbxsdk.so file from the FBX SDK to /opt/lib (this will be useful when running PerformanceBenchmarks.exe)
-9. Clone the github repository
+9. Clone the Github repository
+10. Follow the steps in the root readme to generate and test the bindings
