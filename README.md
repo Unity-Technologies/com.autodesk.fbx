@@ -28,7 +28,7 @@ sdkManager.Destroy();
 
 ## How to do out-of-source build
 
-### Building on OSX 
+### Building on OSX and Linux
 ```
 # Define where the FBX SDK source is, and where you want to do your build.
 export FBXSDK_SOURCE_PATH=~/Development/FbxSharp
