@@ -10,7 +10,9 @@ include(${SWIG_USE_FILE})
 find_package(FBXSDK REQUIRED)
 
 # Unity is not required, but we can't run the tests without it.
-find_package(UNITY)
+# Note: In Linux the package name and Find{package}.cmake file are case sensitive 
+# (e.g. has to be FindUNITY.cmake and UNITY or FindUnity.cmake and Unity)
+find_package(Unity)
 
 # Set up the include directories
 include_directories(src)
@@ -26,8 +28,10 @@ swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
-target_link_libraries(unity_tests ${FBXSDK_LIBRARY})
+target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
+target_compile_options(unity_tests PRIVATE -std=c++11) # needed for Linux
 set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
+set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp DESTINATION fbxsdk FILES_MATCHING PATTERN "*.cs")
 install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
