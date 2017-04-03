@@ -62,7 +62,7 @@ export FBXSDK_PATH=/Applications/Autodesk/FBX\ SDK/2017.1
 # finding fbxsdk_csharp linked against fbxsdk dynamic library
 DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:${FBXSDK_CSHARP_PATH}/tests/UnityTests/Assets/Plugins/fbxsdk:${FBXSDK_PATH}/lib/clang/release MONO_LOG_MASK=dll ${UNITY3D_PATH}/Unity.app/Contents/MacOS/Unity -projectpath ${FBXSDK_SOURCE_PATH}/tests/UnityTests
 
-# finding fbxsdk_csharp linked against fbxsdk fbxsdk_csharp library
+# finding fbxsdk_csharp linked against fbxsdk static library
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${FBXSDK_CSHARP_PATH}/tests/UnityTests/Assets/Plugins/fbxsdk MONO_LOG_MASK=dll ${UNITY3D_PATH}/Unity.app/Contents/MacOS/Unity -projectpath ${FBXSDK_SOURCE_PATH}/tests/UnityTests
 ```
 
