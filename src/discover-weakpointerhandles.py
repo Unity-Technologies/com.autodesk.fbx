@@ -4,24 +4,23 @@ import sys
 import re
 
 # Input:
-# 1- the name of the base class we care about
-# 2- the result of swig -debug-typedef
+# 1- the output .i file
+# 2- the name of the base class we care about
+# 3- the result of swig -debug-typedef
 # Output:
 # - a swig .i file to be %included at the start of the fbxsdk.i file
 # If the "base class" is actually derived from something we give an error.
 
 # This should normally be integrated as part of the build system.
-
-
-# For each class, find its "type scope" and look up what classes it derives from.
-# If it derives from the base class, then output the code we need.
-baseclass = sys.argv[1]
+output_filename = sys.argv[1]
+baseclass = sys.argv[2]
+typedefs_filename = sys.argv[3]
 
 # For each derived class, a list of classes it inherits from. If a class isn't
 # in this dict it's not a derived class (it inherits from nothing).
 baseclasses = dict()
 
-with open(sys.argv[2]) as typedef_file:
+with open(typedefs_filename) as typedef_file:
     current_scope = None
     bases = []
     def store():
@@ -58,5 +57,6 @@ for cls in baseclasses:
 derivedclasses.add(baseclass)
 
 # Emit the magic code.
-for cls in sorted(derivedclasses):
-  print ("weakpointerhandle({})".format(cls))
+with open(output_filename, 'w') as output:
+    for cls in sorted(derivedclasses):
+        print ("weakpointerhandle({})".format(cls), file=output)
