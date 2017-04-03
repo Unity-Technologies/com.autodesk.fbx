@@ -69,6 +69,7 @@ IF(UNIX)
 ENDIF(UNIX)
    
 swig_link_libraries(fbxsdk_csharp ${FBXSDK_DYLIBRARY})
+
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
 target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
