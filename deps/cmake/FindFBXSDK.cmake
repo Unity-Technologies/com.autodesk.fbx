@@ -51,7 +51,7 @@ find_path(FBXSDK_INCLUDE_DIR fbxsdk.h PATHS ${FBXSDK_INCLUDE_PATHS})
 message("Found ${FBXSDK_INCLUDE_DIR}")
 
 message("Looking for fbxsdk library in ${FBXSDK_LIB_PATHS}")
-find_library(FBXSDK_LIBRARY libfbxsdk.a fbxsdk.lib fbxsdk PATHS ${FBXSDK_LIB_PATHS})
+find_library(FBXSDK_LIBRARY libfbxsdk.so libfbxsdk.a fbxsdk.lib fbxsdk PATHS ${FBXSDK_LIB_PATHS})
 message("Found ${FBXSDK_LIBRARY}")
 
 # On OSX we need to link to Cocoa when we statically link.

@@ -33,7 +33,7 @@ namespace PerformanceTests
         {
             // run native C++ tests here + get results to compare against
             // In Windows, the exe has to be in the same folder as the fbxsdk library in order to run
-            string path = Path.Combine(Application.dataPath, "Bindings/DLL");
+            string path = Path.Combine(Application.dataPath, "Plugins/fbxsdk");
             Process cpp = new Process ();
             cpp.StartInfo.FileName = Path.Combine(path, "PerformanceBenchmarks.exe");
             cpp.StartInfo.Arguments = testName;
