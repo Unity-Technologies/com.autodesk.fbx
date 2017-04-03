@@ -53,9 +53,22 @@ SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 # Set up extra swig dependencies.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
 
-swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
-swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
+# compile flags for shared library
+add_definitions(-DFBXSDK_SHARED)
 
+swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
+
+# OSX force SWIG to generate a libXXX[.dylib] module file, not just  XXX.so
+IF(UNIX)
+    SET_TARGET_PROPERTIES(${SWIG_MODULE_fbxsdk_csharp_REAL_NAME} PROPERTIES 
+        PREFIX "lib")
+    IF(APPLE)
+      SET_TARGET_PROPERTIES(${SWIG_MODULE_fbxsdk_csharp_REAL_NAME} PROPERTIES
+        SUFFIX ".dylib")
+    ENDIF(APPLE)
+ENDIF(UNIX)
+   
+swig_link_libraries(fbxsdk_csharp ${FBXSDK_DYLIBRARY})
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
 target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
