@@ -78,7 +78,7 @@ string EmptyExportImportTest(int n) {
 		// Create the exporter.
 		FbxExporter* exporter = FbxExporter::Create(fbxManager, "");
 
-		char* filename = "test.fbx";
+		const char* filename = "test.fbx";
 
 		// Initialize the exporter.
 		bool exportStatus = exporter->Initialize(filename, -1, fbxManager->GetIOSettings());
