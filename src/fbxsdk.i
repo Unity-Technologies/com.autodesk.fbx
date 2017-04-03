@@ -6,7 +6,7 @@
 %}
 
 /* Handle object lifetime in Fbx by adding indirection. */
-//%include "FbxSharpObjectLifetime.i"
+%include "FbxSharpObjectLifetime.i"
  
 // define typemaps for INOUT arguments
 %include typemaps.i
