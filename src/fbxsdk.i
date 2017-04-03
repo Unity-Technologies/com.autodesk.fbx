@@ -1,7 +1,5 @@
 %module Globals
 %{
-/* Includes the header in the wrapper code */
-#define FBXSDK_SHARED // necessary for proper library linking
 #include "fbxsdk.h"
 %}
 
