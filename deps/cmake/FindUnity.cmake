@@ -6,7 +6,7 @@ if (NOT DEFINED UNITY_EDITOR_PATH)
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
       list(APPEND UNITY_EXECUTABLE_PATHS "/Applications/Unity/Unity.app/Contents/MacOS/")
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-      list(APPEND UNITY_EXECUTABLE_PATHS "c:/Program Files/Unity/")
+      list(APPEND UNITY_EXECUTABLE_PATHS "c:/Program Files/Unity5.5.2/Editor/")
     endif()
 
     find_program(UNITY_EDITOR_PATH Unity PATHS ${UNITY_EXECUTABLE_PATHS})
