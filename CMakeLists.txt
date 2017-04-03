@@ -53,8 +53,10 @@ SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 # Set up extra swig dependencies.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
 
+# compile flags for shared library
+add_definitions(-DFBXSDK_SHARED)
+
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
-swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
