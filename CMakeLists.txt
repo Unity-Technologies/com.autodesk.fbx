@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 2.6)
 project (fbxsdk_csharp)
 
+# We build for c++11
+set(CMAKE_CXX_STANDARD 11)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 
 # Find packages that we need.
@@ -29,7 +32,6 @@ swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
 target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
-target_compile_options(unity_tests PRIVATE -std=c++11) # needed for Linux
 set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
