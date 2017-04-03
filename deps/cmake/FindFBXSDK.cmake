@@ -51,6 +51,9 @@ find_path(FBXSDK_INCLUDE_DIR fbxsdk.h PATHS ${FBXSDK_INCLUDE_PATHS})
 message("Found ${FBXSDK_INCLUDE_DIR}")
 
 message("Looking for fbxsdk library in ${FBXSDK_LIB_PATHS}")
+find_library(FBXSDK_DYLIBRARY fbxsdk PATHS ${FBXSDK_LIB_PATHS})
+message("Found dynamic ${FBXSDK_DYLIBRARY}")
+
 find_library(FBXSDK_LIBRARY libfbxsdk.a fbxsdk.lib fbxsdk PATHS ${FBXSDK_LIB_PATHS})
 message("Found static ${FBXSDK_LIBRARY}")
 

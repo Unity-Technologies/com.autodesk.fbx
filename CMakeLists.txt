@@ -58,6 +58,18 @@ add_definitions(-DFBXSDK_SHARED)
 
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
 
+# OSX force SWIG to generate a libXXX[.dylib] module file, not just  XXX.so
+IF(UNIX)
+    SET_TARGET_PROPERTIES(${SWIG_MODULE_fbxsdk_csharp_REAL_NAME} PROPERTIES 
+        PREFIX "lib")
+    IF(APPLE)
+      SET_TARGET_PROPERTIES(${SWIG_MODULE_fbxsdk_csharp_REAL_NAME} PROPERTIES
+        SUFFIX ".dylib")
+    ENDIF(APPLE)
+ENDIF(UNIX)
+   
+swig_link_libraries(fbxsdk_csharp ${FBXSDK_DYLIBRARY})
+
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
 target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
