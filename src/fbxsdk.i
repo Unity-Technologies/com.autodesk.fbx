@@ -5,8 +5,21 @@
 #include "fbxsdk.h"
 %}
 
-/* Handle object lifetime in Fbx by adding indirection. */
+/* 
+ * Handle object lifetime in Fbx by adding indirection.
+ * Important: we need to declare all the weak-pointer classes here *before*
+ * we %include them later. Otherwise e.g. FbxObject::GetScene won't wrap
+ * up its scene.
+ */
 %include "FbxSharpObjectLifetime.i"
+weakpointerhandle(FbxCollection);
+weakpointerhandle(FbxDocument);
+weakpointerhandle(FbxEmitter);
+weakpointerhandle(FbxExporter);
+weakpointerhandle(FbxIOBase);
+weakpointerhandle(FbxNode);
+weakpointerhandle(FbxObject);
+weakpointerhandle(FbxScene);
  
 // define typemaps for INOUT arguments
 %include typemaps.i
