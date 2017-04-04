@@ -8,7 +8,7 @@ find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 
 find_package(FBXSDK REQUIRED)
-find_package(PYTHONINTERP REQUIRED)
+find_package(PythonInterp REQUIRED)
 
 # Unity is not required, but we can't run the tests without it.
 find_package(UNITY)
