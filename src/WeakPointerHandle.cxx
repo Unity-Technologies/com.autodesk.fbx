@@ -59,11 +59,14 @@ struct WeakPointerHandle {
     class Allocators {
         private:
         // Mark the pointer as being freed.
-        // If there's a weak pointer handle for p, we'll set its pointer to null.
+        // If there's a weak pointer handle for p, we'll set its pointer to null,
+        // and we'll remove it from the handles. The C# users will be responsible for
+        // releasing their references to it.
         static inline void MarkFree(void *p) {
             HandleMap::iterator it = g_handles.find(p);
             if (it != g_handles.end()) {
                 it->second->m_ptr = nullptr;
+                g_handles.erase(it);
             }
         }
 

@@ -5,8 +5,21 @@
 #include "fbxsdk.h"
 %}
 
-/* Handle object lifetime in Fbx by adding indirection. */
-//%include "FbxSharpObjectLifetime.i"
+/* 
+ * Handle object lifetime in Fbx by adding indirection.
+ *
+ * Important: we need to declare all the weak-pointer classes here *before*
+ * we %include them later. Otherwise e.g. FbxObject::GetScene won't wrap
+ * up its scene. We do that by including weakpointerhandles.i
+ *
+ * Chicken-and-egg problem: weakpointerhandles.i is generated automatically by
+ * running swig on this .i file. When we run swig on this .i file, we define
+ * SWIG_GENERATING_TYPEDEFS to avoid including a file that hasn't been generated yet.
+ */
+%include "FbxSharpObjectLifetime.i"
+#ifndef SWIG_GENERATING_TYPEDEFS
+%include "weakpointerhandles.i"
+#endif
  
 // define typemaps for INOUT arguments
 %include typemaps.i
@@ -29,6 +42,7 @@
 %include "fbxclassid.i"
 %include "fbxemitter.i"
 %include "fbxobject.i"
+%include "fbxcollection.i"
 %include "fbxdocument.i"
 %include "fbxscene.i"
 %include "fbxiobase.i"

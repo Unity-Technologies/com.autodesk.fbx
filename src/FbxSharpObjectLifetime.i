@@ -32,16 +32,23 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   public static extern void ReleaseWeakPointerHandle(global::System.IntPtr handle);
 %}
 
+/* Use:
+ *    weakpointerhandle(FbxObject)
+ * to define that FbxObject should be handled using the weakref mechanism:
+ * we wrap up the class in a weakref when we return, we check the weakref when
+ * we use it. For this to work you need to use the WeakPointerHandle allocators.
+ */
 /* When returning a pointer or a reference, wrap it up in a handle */
-%typemap(out) SWIGTYPE * %{
+%define weakpointerhandle(THETYPE)
+%typemap(out) THETYPE * %{
   $result = WeakPointerHandle::GetHandle($1);
 %}
-%typemap(out) SWIGTYPE & %{
+%typemap(out) THETYPE & %{
   $result = WeakPointerHandle::GetHandle($1);
 %}
 
 /* When using a pointer, dereference the handle */
-%typemap(in, canthrow=1) SWIGTYPE * %{
+%typemap(in, canthrow=1) THETYPE * %{
   if (!WeakPointerHandle::DerefHandle($input, &$1)) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to use destroyed $1_basetype $1_name", 0);
     return $null;
@@ -49,7 +56,7 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
 %}
 
 /* When using a reference, dereference the handle and also make sure it isn't null */
-%typemap(in, canthrow=1) SWIGTYPE & %{
+%typemap(in, canthrow=1) THETYPE & %{
   if (!WeakPointerHandle::DerefHandle($input, &$1)) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to use destroyed $1_basetype $1_name", 0);
     return $null;
@@ -59,4 +66,4 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
     return $null;
   }
 %}
-
+%enddef
