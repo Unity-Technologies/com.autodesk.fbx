@@ -55,17 +55,7 @@ list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointe
 
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
 
-# OSX force SWIG to generate a libXXX[.dylib] module file, not just  XXX.so
-IF(UNIX)
-    SET_TARGET_PROPERTIES(${SWIG_MODULE_fbxsdk_csharp_REAL_NAME} PROPERTIES 
-        PREFIX "lib")
-    IF(APPLE)
-      SET_TARGET_PROPERTIES(${SWIG_MODULE_fbxsdk_csharp_REAL_NAME} PROPERTIES
-        SUFFIX ".dylib")
-    ENDIF(APPLE)
-ENDIF(UNIX)
-   
-swig_link_libraries(fbxsdk_csharp ${FBXSDK_DYLIBRARY})
+swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
