@@ -23,6 +23,10 @@ set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
 set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;FbxSdk")
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
+
+# Set up extra swig dependencies.
+file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
+
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
 swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
