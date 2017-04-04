@@ -62,6 +62,11 @@ message("Looking for fbxsdk library in ${FBXSDK_LIB_PATHS}")
 find_library(FBXSDK_LIBRARY libfbxsdk.a libfbxsdk-mt.lib PATHS ${FBXSDK_LIB_PATHS})
 message("Found static ${FBXSDK_LIBRARY}")
 
+# On Windows the dll needs to be moved into the Unity project
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    find_file(FBXSDK_DLL libfbxsdk.dll PATHS ${FBXSDK_LIB_PATHS})
+endif()
+
 # On OSX we need to link to Cocoa when we statically link.
 # (But if we didn't find FBX, don't link to Cocoa.)
 if(APPLE)

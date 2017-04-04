@@ -27,6 +27,8 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 
+SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins")
+
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
@@ -97,9 +99,15 @@ target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to 
 set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
+# In Windows need to add the libfbxsdk.dll to the Unity project
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    install(FILES ${FBXSDK_DLL} DESTINATION fbxsdk)
+endif()
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests DESTINATION ${CMAKE_BINARY_DIR}/tests)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp DESTINATION fbxsdk FILES_MATCHING PATTERN "*.cs")
 install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
 install(TARGETS unity_tests DESTINATION fbxsdk)
 
 enable_testing()
-add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_SOURCE_DIR}/tests/UnityTests -runEditorTests)
+add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -runEditorTests)
