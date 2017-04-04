@@ -59,4 +59,4 @@ derivedclasses.add(baseclass)
 # Emit the magic code.
 with open(output_filename, 'w') as output:
     for cls in sorted(derivedclasses):
-        print ("weakpointerhandle({})".format(cls), file=output)
+        output.write("weakpointerhandle({});\n".format(cls))
