@@ -46,29 +46,16 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         ARGS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" FbxEmitter "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
         MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
 )
-list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointerhandles.i")
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 
 # Set up extra swig dependencies.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
-
-# compile flags for shared library
-add_definitions(-DFBXSDK_SHARED)
+list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointerhandles.i")
 
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
 
-# OSX force SWIG to generate a libXXX[.dylib] module file, not just  XXX.so
-IF(UNIX)
-    SET_TARGET_PROPERTIES(${SWIG_MODULE_fbxsdk_csharp_REAL_NAME} PROPERTIES 
-        PREFIX "lib")
-    IF(APPLE)
-      SET_TARGET_PROPERTIES(${SWIG_MODULE_fbxsdk_csharp_REAL_NAME} PROPERTIES
-        SUFFIX ".dylib")
-    ENDIF(APPLE)
-ENDIF(UNIX)
-   
-swig_link_libraries(fbxsdk_csharp ${FBXSDK_DYLIBRARY})
+swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
