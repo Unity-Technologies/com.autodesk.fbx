@@ -4,6 +4,12 @@ project (fbxsdk_csharp)
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
 
+# build uto se the multithread, static version of the run-time library.
+if (MSVC)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 
 # Find packages that we need.
@@ -46,14 +52,15 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         ARGS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" FbxEmitter "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
         MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
 )
-list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointerhandles.i")
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 
 # Set up extra swig dependencies.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
+list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointerhandles.i")
 
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
+
 swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
 # build the native C++ unit tests

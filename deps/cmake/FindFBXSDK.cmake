@@ -51,12 +51,13 @@ find_path(FBXSDK_INCLUDE_DIR fbxsdk.h PATHS ${FBXSDK_INCLUDE_PATHS})
 message("Found ${FBXSDK_INCLUDE_DIR}")
 
 message("Looking for fbxsdk library in ${FBXSDK_LIB_PATHS}")
-find_library(FBXSDK_LIBRARY libfbxsdk.so libfbxsdk.a fbxsdk.lib fbxsdk PATHS ${FBXSDK_LIB_PATHS})
-message("Found ${FBXSDK_LIBRARY}")
+
+find_library(FBXSDK_LIBRARY libfbxsdk.a libfbxsdk-mt.lib PATHS ${FBXSDK_LIB_PATHS})
+message("Found static ${FBXSDK_LIBRARY}")
 
 # On OSX we need to link to Cocoa when we statically link.
 # (But if we didn't find FBX, don't link to Cocoa.)
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+if(APPLE)
   if (NOT(FBXSDK_LIBRARY STREQUAL ""))
       find_library(COCOA_LIBRARY Cocoa)
       list(APPEND FBXSDK_LIBRARY ${COCOA_LIBRARY})
