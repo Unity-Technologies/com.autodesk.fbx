@@ -4,6 +4,12 @@ project (fbxsdk_csharp)
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
 
+# build uto se the multithread, static version of the run-time library.
+if (MSVC)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 
 # Find packages that we need.
