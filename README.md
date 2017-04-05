@@ -5,8 +5,8 @@
 * [cmake 3.7.2+](https://cmake.org/download/)
 * [Visual Studio Community 2015+](https://www.visualstudio.com/downloads/) (for Windows)
 * [swig 3.0.12+](http://www.swig.org/download.html)
-* [FbxSdk 2016.1+](http://www.autodesk.com/products/fbx/overview)
-* [Python 2.7.13+](https://www.python.org/downloads/)
+* [FbxSdk 2016.0+](http://www.autodesk.com/products/fbx/overview)
+* [Python 2.7.10+](https://www.python.org/downloads/)
 
 ## Overview
 
