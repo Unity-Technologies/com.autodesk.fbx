@@ -37,10 +37,8 @@
 
 %nodefaultdtor;                            // Disable creation of default constructors
 
-// enable to exclude generation of wrappers
-#define EXCLUDE_INTERFACE_FILES
-
-%include "fbxemitter.i"
+// porting: enable to exclude generation of wrappers
+//#define EXCLUDE_INTERFACE_FILES
 
 #ifndef EXCLUDE_INTERFACE_FILES
 %include "fbxclassid.i"
