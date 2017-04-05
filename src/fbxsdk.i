@@ -37,6 +37,12 @@
 
 %nodefaultdtor;                            // Disable creation of default constructors
 
+// enable to exclude generation of wrappers
+#define EXCLUDE_INTERFACE_FILES
+
+%include "fbxemitter.i"
+
+#ifndef EXCLUDE_INTERFACE_FILES
 %include "fbxclassid.i"
 %include "fbxemitter.i"
 %include "fbxobject.i"
@@ -44,13 +50,12 @@
 %include "fbxdocument.i"
 %include "fbxscene.i"
 %include "fbxiobase.i"
-// TODO: link error fbxsdk::FbxTimeToSelection(fbxsdk::FbxTime::EMode, int)
 %include "fbxexporter.i"
 %include "fbximporter.i"
-// TODO: SyntaxError(3) fbxmatrix, typedef const double kDouble44[4][4] ;
 %include "fbxmanager.i"
 %include "fbxiosettings.i"
-
+#endif
+    
 /* Everything */
 #ifdef FBXSDK_ALL_HEADERS
 %include "fbxsdk/fbxsdk_version.h"

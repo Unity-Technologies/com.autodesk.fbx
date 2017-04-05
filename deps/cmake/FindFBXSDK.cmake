@@ -14,10 +14,14 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   list(APPEND CMAKE_SWIG_FLAGS "-D__x86_64__")
   list(APPEND CMAKE_SWIG_FLAGS "-DFBXSDK_COMPILER_GNU")
 
+  # define expected installation path of FBXSDK
+  set(FBXSDK_INSTALL_PATH "~/Development/FbxSharp/spike")
+  #set(FBXSDK_INSTALL_PATH "/Applications/Autodesk/FBX SDK")
+  
   foreach(VERSION ${FBXSDK_VERSIONS})
-    message("Looking for fbxsdk in /Applications/Autodesk/FBX SDK/${VERSION}")
-    list(APPEND FBXSDK_INCLUDE_PATHS "/Applications/Autodesk/FBX SDK/${VERSION}/include")
-    list(APPEND FBXSDK_LIB_PATHS "/Applications/Autodesk/FBX SDK/${VERSION}/lib/clang/release")
+    message("Looking for fbxsdk in ${FBXSDK_INSTALL_PATH}/${VERSION}")
+    list(APPEND FBXSDK_INCLUDE_PATHS "${FBXSDK_INSTALL_PATH}/${VERSION}/include")
+    list(APPEND FBXSDK_LIB_PATHS "${FBXSDK_INSTALL_PATH}/${VERSION}/lib/clang/release")
   endforeach()
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
