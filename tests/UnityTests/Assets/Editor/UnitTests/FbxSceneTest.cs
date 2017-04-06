@@ -29,7 +29,6 @@ namespace UnitTests
 
                 newScene.Destroy();
             }
-
         }
 
         [Test]
@@ -43,14 +42,32 @@ namespace UnitTests
 
         [Test]
         [ExpectedException (typeof(System.ArgumentNullException))]
-        public void TestZombie ()
+        public void TestZombie1 ()
         {
+            FbxScene zombieScene;
+
             using (FbxScene newScene = FbxScene.Create (m_fbxManager, ""))
             {
+                zombieScene = newScene;
+
                 newScene.Destroy();
 
-                Assert.GreaterOrEqual (newScene.GetNodeCount (), 0);
+                Assert.GreaterOrEqual (zombieScene.GetNodeCount (), 0);
             }
+        }
+
+        [Test]
+        [ExpectedException (typeof(System.ArgumentNullException))]
+        [Ignore("CRASHES accessing zombie")]
+        public void TestZombie2 ()
+        {
+            FbxScene zombieScene;
+
+            using (FbxScene newScene = FbxScene.Create (m_fbxManager, ""))
+            {
+                zombieScene = newScene;
+            }
+            Assert.GreaterOrEqual (zombieScene.GetNodeCount (), 0);
         }
     }
 }
