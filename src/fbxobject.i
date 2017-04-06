@@ -7,6 +7,10 @@
 %rename("%s") FbxObject::Create(FbxManager* pManager, const char* pName); // named method
 %rename("%s") FbxObject::Destroy;
 %rename("%s") FbxObject::GetName;
+%rename("%s") FbxObject::GetNameWithoutNameSpacePrefix;
+%rename("%s") FbxObject::SetNameSpace;
+%rename("%s") FbxObject::GetNameSpaceOnly;
+%rename("%s") FbxObject::StripPrefix(const char*); // not the FbxString& one, and not RemovePrefix
 #endif
 
 %include "fbxsdk/core/fbxobject.h"

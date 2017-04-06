@@ -30,6 +30,11 @@
  */
 %naturalvar;
 
+/*
+ * How to handle strings. Must be before the includes that actually include code.
+ */
+%include "fbxstring.i"
+
 %import "fbxsdk.h"
 %import "fbxsdk/fbxsdk_def.h"
 %import "fbxsdk/fbxsdk_nsbegin.h"
