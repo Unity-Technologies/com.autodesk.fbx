@@ -104,6 +104,8 @@ namespace UnitTests
             Assert.IsFalse( obj.GetSelected () );
             obj.SetSelected (true);
             Assert.IsTrue (obj.GetSelected ());
+
+            obj.Destroy ();
         }
     }
 }
