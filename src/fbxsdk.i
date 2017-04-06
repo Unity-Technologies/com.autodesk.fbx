@@ -22,6 +22,14 @@
 // define typemaps for INOUT arguments
 %include typemaps.i
 
+/*
+ * Do null-pointer checking when setting variables of struct/class type.
+ * e.g. if we have a global
+ *      struct time_t g_startTime;
+ * setting it will raise an exception if we set it with a null pointer.
+ */
+%naturalvar;
+
 %import "fbxsdk.h"
 %import "fbxsdk/fbxsdk_def.h"
 %import "fbxsdk/fbxsdk_nsbegin.h"
