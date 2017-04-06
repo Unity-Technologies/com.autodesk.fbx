@@ -147,30 +147,6 @@ string EmptyExportImportTest(int n) {
 	return json.toString();
 }
 
-string FbxIOSettingsCreateTest(int n) {
-	ResultJson json;
-
-	int N = n < 0? 5000 : n;
-
-	FbxManager* manager = FbxManager::Create();
-
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-	for (int i = 0; i < N; i++) {
-		FbxIOSettings::Create(manager, "");
-	}
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
-
-	auto duration = duration_cast<milliseconds>(t2 - t1).count();
-
-	manager->Destroy();
-
-	json.testName = "FbxIOSettingsCreate";
-	json.result = duration;
-	json.success = true;
-
-	return json.toString();
-}
-
 typedef string(*FnPtr)(int);
 
 int main(int argc, char *argv[])

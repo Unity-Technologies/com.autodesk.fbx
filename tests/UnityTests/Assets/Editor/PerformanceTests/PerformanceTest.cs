@@ -172,37 +172,5 @@ namespace PerformanceTests
             // Ex: test that the unity test is no more than 4 times slower
             Assert.LessOrEqual (total / (float)N, 4 * cppResult.result);
         }
-
-		[Test]
-		public void FbxIOSettingsCreateTest ()
-		{
-			var stopwatch = new Stopwatch ();
-
-			FbxManager fbxManager = FbxManager.Create ();
-
-			long total = 0;
-			int N = 5000;
-
-			stopwatch.Reset ();
-			stopwatch.Start ();
-			for (int i = 0; i < N; i++) {
-				// ... run code to measure time for
-				FbxIOSettings.Create (fbxManager, "");
-			}
-			stopwatch.Stop ();
-
-			total = stopwatch.ElapsedMilliseconds;
-
-			// should destroy all objects allocated by the FbxManager
-			fbxManager.Destroy ();
-
-			// Check against Native C++ tests
-			ResultJson cppResult = RunCppTest ("FbxIOSettingsCreate:" + N);
-
-			Assert.IsNotNull (cppResult);
-
-			// Ex: test that the unity test is no more than 4 times slower
-			Assert.LessOrEqual (total, 4 * cppResult.result);
-		}
     }
 }
