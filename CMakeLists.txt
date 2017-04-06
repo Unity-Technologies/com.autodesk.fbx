@@ -58,6 +58,9 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
 )
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
+    
+# don't generate stubs for inherited virtuals e.g. GetClassId
+SET(CMAKE_SWIG_FLAGS "${CMAKE_SWIG_FLAGS} -fvirtual")
 
 # Set up extra swig dependencies.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
