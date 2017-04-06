@@ -32,7 +32,13 @@ fbxemitter.i
 %ignore AddListener;
 ```
 
-5. check global namespace has no new entries
+5. String handling: (a) given the choice between methods that use const char*
+and FbxString, use the const char * one. (b) There's no support at the moment
+for 'out' or 'ref' strings: a function that takes in a char* or a FbxString& or
+FbxString* requires extra scrutiny (taking in a const version of those is
+fine).
+
+6. check global namespace has no new entries
 
 Globals.cs
 ```
