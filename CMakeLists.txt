@@ -59,7 +59,7 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
     
-# don't generate stubs for inherited virtuals e.g. GetClassId
+# don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS "${CMAKE_SWIG_FLAGS} -fvirtual")
 
 # Set up extra swig dependencies.
