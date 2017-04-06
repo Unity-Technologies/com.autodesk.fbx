@@ -1,8 +1,5 @@
 %ignore __declspec(deprecated);
 
-//%rename($ignore, %isvariable) "";
-//%rename($ignore, %ismember) "";
-
 %ignore ""; // ignore everything
 
 // don't ignore these
