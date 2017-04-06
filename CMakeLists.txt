@@ -4,6 +4,10 @@ project (fbxsdk_csharp)
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
 
+# promote warnings to errors
+set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference")
+add_definitions(${PROJECT_COMPILE_FLAGS})
+
 # build uto se the multithread, static version of the run-time library.
 if (MSVC)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")

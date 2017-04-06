@@ -35,8 +35,21 @@
 /* For generating wrapper to export an empty scene */
 #define DOXYGEN_SHOULD_SKIP_THIS           // skip code that is undocumented and subject to change without notice
 
-%nodefaultdtor;                            // Disable creation of default constructors
+%nodefaultdtor;                             // Disable creation of default constructors
 
+#define IGNORE_ALL_INCLUDE_SOME
+
+#ifdef IGNORE_ALL_INCLUDE_SOME                  // Ignore all but unignore some
+%ignore "";                                 
+
+#else                                       // Include everything but ignore some
+%ignore __declspec(deprecated);             // Ignore deprecated anything
+#endif
+
+// porting: enable to exclude generation of wrappers
+//#define EXCLUDE_ALL_INTERFACES
+
+#ifndef EXCLUDE_ALL_INTERFACES
 %include "fbxclassid.i"
 %include "fbxemitter.i"
 %include "fbxobject.i"
@@ -44,13 +57,16 @@
 %include "fbxdocument.i"
 %include "fbxscene.i"
 %include "fbxiobase.i"
-// TODO: link error fbxsdk::FbxTimeToSelection(fbxsdk::FbxTime::EMode, int)
 %include "fbxexporter.i"
 %include "fbximporter.i"
-// TODO: SyntaxError(3) fbxmatrix, typedef const double kDouble44[4][4] ;
 %include "fbxmanager.i"
 %include "fbxiosettings.i"
-
+#else
+%include "fbxemitter.i"
+%include "fbxobject.i"
+%include "fbxmanager.i"
+#endif
+    
 /* Everything */
 #ifdef FBXSDK_ALL_HEADERS
 %include "fbxsdk/fbxsdk_version.h"

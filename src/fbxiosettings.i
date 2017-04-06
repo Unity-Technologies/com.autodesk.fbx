@@ -1,8 +1,6 @@
 #ifdef IGNORE_ALL_INCLUDE_SOME
-
-// don't ignore these
+// Unignore class
 %rename("%s") FbxIOSettings;
-
 #endif
 
 %include "fbxsdk/fileio/fbxiosettings.h"
