@@ -11,6 +11,8 @@
 %rename("%s") FbxObject::SetNameSpace;
 %rename("%s") FbxObject::GetNameSpaceOnly;
 %rename("%s") FbxObject::StripPrefix(const char*); // not the FbxString& one, and not RemovePrefix
+%rename("%s") FbxObject::GetSelected;
+%rename("%s") FbxObject::SetSelected;
 #endif
 
 %include "fbxsdk/core/fbxobject.h"

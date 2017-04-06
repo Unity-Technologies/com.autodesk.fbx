@@ -125,5 +125,18 @@ namespace UnitTests
 
             Assert.AreEqual (classId.GetName (), "FbxObject");
         }
+
+        [Test]
+        public void TestSelected ()
+        {
+            FbxObject obj = FbxObject.Create (m_fbxManager, "MyObject");
+            Assert.IsNotNull (obj);
+
+            Assert.IsFalse( obj.GetSelected () );
+            obj.SetSelected (true);
+            Assert.IsTrue (obj.GetSelected ());
+
+            obj.Destroy ();
+        }
     }
 }
