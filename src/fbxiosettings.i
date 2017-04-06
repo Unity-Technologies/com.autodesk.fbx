@@ -4,4 +4,3 @@
 #endif
 
 %include "fbxsdk/fileio/fbxiosettings.h"
-
