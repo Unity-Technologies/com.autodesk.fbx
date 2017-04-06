@@ -9,52 +9,52 @@ namespace UnitTests
 
     public class FbxExporterTest
     {
-        FbxManager manager;
-        FbxExporter exporter;
+        FbxManager m_fbxManager;
+        FbxExporter m_exporter;
 
-        string testFolder;
+        string m_testFolder;
 
         [SetUp]
         public void InitBeforeTest()
         {
-            manager = FbxManager.Create ();
-            exporter = FbxExporter.Create (manager, "exporter");
+            m_fbxManager = FbxManager.Create ();
+            m_exporter = FbxExporter.Create (m_fbxManager, "exporter");
 
-            Assert.IsNotNull (exporter);
+            Assert.IsNotNull (m_exporter);
 
             DirectoryInfo tempDir = Directory.CreateDirectory("to_delete");
 
-            testFolder = tempDir.FullName;
+            m_testFolder = tempDir.FullName;
         }
 
         [TearDown]
         public void CleanupAfterTest()
         {
             try{
-                exporter.Destroy();
-                manager.Destroy();
+                m_exporter.Destroy();
+                m_fbxManager.Destroy();
             }
             catch(System.ArgumentNullException){
                 // already destroyed in test
             }
 
             // delete all files that were created
-            Directory.Delete(testFolder, true);
+            Directory.Delete(m_testFolder, true);
         }
 
         [Test]
         public void TestExportEmptyFbxDocument ()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (manager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
-            string filename = Path.Combine(testFolder, "TestExportEmptyFbxDocument.fbx");
+            string filename = Path.Combine(m_testFolder, "TestExportEmptyFbxDocument.fbx");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename, -1, manager.GetIOSettings());
+            bool exportStatus = m_exporter.Initialize (filename, -1, m_fbxManager.GetIOSettings());
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (emptyDoc);
+            bool status = m_exporter.Export (emptyDoc);
 
             Assert.IsTrue (status);
             Assert.IsTrue (File.Exists (filename));
@@ -64,14 +64,14 @@ namespace UnitTests
         [Test]
         public void TestExportNull ()
         {
-            string filename = Path.Combine(testFolder, "TestExportNull.fbx");
+            string filename = Path.Combine(m_testFolder, "TestExportNull.fbx");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename, -1, manager.GetIOSettings());
+            bool exportStatus = m_exporter.Initialize (filename, -1, m_fbxManager.GetIOSettings());
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (null);
+            bool status = m_exporter.Export (null);
 
             Assert.IsFalse (status);
 
@@ -83,31 +83,31 @@ namespace UnitTests
         [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestDestroy ()
         {
-            exporter.Destroy ();
-            exporter.GetName ();
+            m_exporter.Destroy ();
+            m_exporter.GetName ();
         }
 
         [Test]
         [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestDestroyManager ()
         {
-            manager.Destroy ();
-            exporter.GetName ();
+            m_fbxManager.Destroy ();
+            m_exporter.GetName ();
         }
 
         [Test]
         public void TestInitializeInvalidFilenameOnly()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (manager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
-            string filename = Path.Combine(testFolder, "TestInitializeInvalidFilenameOnly.foo");
+            string filename = Path.Combine(m_testFolder, "TestInitializeInvalidFilenameOnly.foo");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename);
+            bool exportStatus = m_exporter.Initialize (filename);
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (emptyDoc);
+            bool status = m_exporter.Export (emptyDoc);
 
             Assert.IsTrue (status);
 
@@ -118,16 +118,16 @@ namespace UnitTests
         [Test]
         public void TestInitializeValidFilenameOnly()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (manager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
-            string filename = Path.Combine(testFolder, "TestInitializeValidFilenameOnly.fbx");
+            string filename = Path.Combine(m_testFolder, "TestInitializeValidFilenameOnly.fbx");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename);
+            bool exportStatus = m_exporter.Initialize (filename);
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (emptyDoc);
+            bool status = m_exporter.Export (emptyDoc);
 
             Assert.IsTrue (status);
             Assert.IsTrue (File.Exists (filename));
@@ -136,16 +136,16 @@ namespace UnitTests
         [Test]
         public void TestInitializeInvalidFileFormat()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (manager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
-            string filename = Path.Combine(testFolder, "TestInitializeInvalidFileFormat.fbx");
+            string filename = Path.Combine(m_testFolder, "TestInitializeInvalidFileFormat.fbx");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename, int.MinValue);
+            bool exportStatus = m_exporter.Initialize (filename, int.MinValue);
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (emptyDoc);
+            bool status = m_exporter.Export (emptyDoc);
 
             // looks like anything less than 0 is treated the same as -1
             Assert.IsTrue (status);
@@ -155,16 +155,16 @@ namespace UnitTests
         [Test]
         public void TestInitializeInvalidFileFormat2()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (manager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
-            string filename = Path.Combine(testFolder, "TestInitializeInvalidFileFormat2.fbx");
+            string filename = Path.Combine(m_testFolder, "TestInitializeInvalidFileFormat2.fbx");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename, int.MaxValue);
+            bool exportStatus = m_exporter.Initialize (filename, int.MaxValue);
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (emptyDoc);
+            bool status = m_exporter.Export (emptyDoc);
 
             Assert.IsFalse (status);
             Assert.IsFalse (File.Exists (filename));
@@ -173,16 +173,16 @@ namespace UnitTests
         [Test]
         public void TestInitializeValidFileFormat()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (manager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
-            string filename = Path.Combine(testFolder, "TestInitializeValidFileFormat.fbx");
+            string filename = Path.Combine(m_testFolder, "TestInitializeValidFileFormat.fbx");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename, 1);
+            bool exportStatus = m_exporter.Initialize (filename, 1);
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (emptyDoc);
+            bool status = m_exporter.Export (emptyDoc);
 
             Assert.IsTrue (status);
             Assert.IsTrue (File.Exists (filename));
@@ -191,35 +191,35 @@ namespace UnitTests
         [Test]
         public void TestInitializeNullIOSettings()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (manager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
-            string filename = Path.Combine(testFolder, "TestInitializeNullIOSettings.fbx");
+            string filename = Path.Combine(m_testFolder, "TestInitializeNullIOSettings.fbx");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename, -1, null);
+            bool exportStatus = m_exporter.Initialize (filename, -1, null);
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (emptyDoc);
+            bool status = m_exporter.Export (emptyDoc);
 
             Assert.IsTrue (status);
             Assert.IsTrue (File.Exists (filename));
         }
 
         [Test]
-        [Ignore("Crashes Unity")]
+        [Ignore("Crashes Unity when passed null FbxManager to FbxIOSettings")]
         public void TestInitializeInvalidIOSettings()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (manager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
-            string filename = Path.Combine(testFolder, "TestInitializeInvalidIOSettings.fbx");
+            string filename = Path.Combine(m_testFolder, "TestInitializeInvalidIOSettings.fbx");
 
             // Initialize the exporter.
-            bool exportStatus = exporter.Initialize (filename, -1, FbxIOSettings.Create(null, ""));
+            bool exportStatus = m_exporter.Initialize (filename, -1, FbxIOSettings.Create(null, ""));
 
             Assert.IsTrue (exportStatus);
 
-            bool status = exporter.Export (emptyDoc);
+            bool status = m_exporter.Export (emptyDoc);
 
             Assert.IsTrue (status);
             Assert.IsTrue (File.Exists (filename));
