@@ -4,7 +4,7 @@
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
-%rename("%s") FbxScene::GetGenericNodeCount;
+%rename("%s") FbxScene::GetNodeCount;
 #endif
 
 %include "fbxsdk/scene/fbxscene.h"
