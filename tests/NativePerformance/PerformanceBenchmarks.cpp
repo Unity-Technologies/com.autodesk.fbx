@@ -159,7 +159,6 @@ int main(int argc, char *argv[])
 	std::unordered_map<std::string, FnPtr> funMap;
 	funMap["FbxObjectCreate"] = FbxObjectCreateTest;
 	funMap["EmptyExportImport"] = EmptyExportImportTest;
-	funMap["FbxIOSettingsCreate"] = FbxIOSettingsCreateTest;
 
 	stringstream ss;
 
