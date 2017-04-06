@@ -2,7 +2,6 @@
 
 // don't ignore these
 %rename("%s") FbxIOSettings;
-%rename("%s") FbxIOSettings::Create(FbxManager *pManager, const char *pName);
 
 #endif
 
