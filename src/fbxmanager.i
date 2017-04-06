@@ -5,8 +5,6 @@
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
-%rename("%s") FbxManager::FbxManager;
-%rename("%s") FbxManager::~FbxManager;
 %rename("%s") FbxManager::Create; 
 %rename("%s") FbxManager::Destroy; 
 %rename("%s") FbxManager::FindClass;

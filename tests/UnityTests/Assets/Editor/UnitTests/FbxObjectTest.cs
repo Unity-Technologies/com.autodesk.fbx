@@ -27,7 +27,42 @@ namespace UnitTests
             FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
             Assert.IsNotNull (obj);
             
-            obj.Destroy();
+            // there are two destroy methods
+            obj.Destroy(true);
+        }
+
+        [Test]
+        [Ignore("CRASHES handling null FbxManager")]
+        public void TestCreateDestroy2 ()
+        {
+            FbxObject obj = FbxObject.Create(null, "MyObject");
+            Assert.IsNotNull (obj);
+            
+            // there are two destroy methods
+            obj.Destroy(true);
+        }
+
+        [Test]
+        public void TestCreateDestroy3 ()
+        {
+            FbxObject obj = FbxObject.Create(m_fbxManager, null);
+            Assert.IsNotNull (obj);
+            
+            // there are two destroy methods
+            obj.Destroy(true);
+        }
+        
+        [Test]
+        [Ignore("CRASHES handling zombie FbxManager")]
+        public void TestCreateDestroy4 ()
+        {
+            m_fbxManager.Destroy();
+            
+            FbxObject obj = FbxObject.Create(m_fbxManager, null);
+            Assert.IsNotNull (obj);
+            
+            // there are two destroy methods
+            obj.Destroy(true);
         }
 
         [Test]
@@ -43,7 +78,7 @@ namespace UnitTests
         
         [Test]
         [ExpectedException( typeof( System.ArgumentNullException ) )]
-        public void TestCallDestroyed ()
+        public void TestZombie ()
         {
             FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
             Assert.IsNotNull (obj);
