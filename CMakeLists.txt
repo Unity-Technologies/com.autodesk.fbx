@@ -2,8 +2,10 @@ cmake_minimum_required (VERSION 2.6)
 project (fbxsdk_csharp)
 
 # Default is a debug build.
-set(CMAKE_BUILD_TYPE "Debug")
-list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  set(CMAKE_BUILD_TYPE "Debug")
+  list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
+endif()
 
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
