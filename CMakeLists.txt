@@ -21,6 +21,9 @@ endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 
+# don't generate stubs for inherited virtuals e.g. GetSelected
+SET(CMAKE_SWIG_FLAGS -fvirtual)
+
 # Find packages that we need.
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
@@ -64,9 +67,6 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
     
-# don't generate stubs for inherited virtuals e.g. GetSelected
-SET(CMAKE_SWIG_FLAGS "${CMAKE_SWIG_FLAGS} -fvirtual")
-
 # Set up extra swig dependencies.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
 list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointerhandles.i")
