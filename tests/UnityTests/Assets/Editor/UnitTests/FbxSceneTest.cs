@@ -3,26 +3,18 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxSceneTest
+    public class FbxSceneTest : Base
     {
-        FbxManager m_fbxManager;
 
-        [SetUp]
-        public void Init ()
+        protected override FbxObject CreateObject ()
         {
-            m_fbxManager = FbxManager.Create ();
+            return FbxScene.Create (FbxManager, "");
         }
-
-        [TearDown]
-        public void Term ()
-        {
-            m_fbxManager.Destroy ();
-        }
-
+        
         [Test]
         public void TestCreate ()
         {
-            using (FbxScene newScene = FbxScene.Create (m_fbxManager, ""))
+            using (FbxScene newScene = FbxScene.Create (FbxManager, ""))
             {
                 Assert.IsNotNull (newScene);
                 Assert.IsInstanceOf<FbxObject> (newScene);
@@ -34,7 +26,7 @@ namespace UnitTests
         [Test]
         public void TestNodeCount ()
         {
-            using (FbxScene newScene = FbxScene.Create (m_fbxManager, ""))
+            using (FbxScene newScene = FbxScene.Create (FbxManager, ""))
             {
                 Assert.GreaterOrEqual (newScene.GetNodeCount (), 0);
             }
@@ -46,7 +38,7 @@ namespace UnitTests
         {
             FbxScene zombieScene;
 
-            using (FbxScene newScene = FbxScene.Create (m_fbxManager, ""))
+            using (FbxScene newScene = FbxScene.Create (FbxManager, ""))
             {
                 zombieScene = newScene;
 
@@ -63,7 +55,7 @@ namespace UnitTests
         {
             FbxScene zombieScene;
 
-            using (FbxScene newScene = FbxScene.Create (m_fbxManager, ""))
+            using (FbxScene newScene = FbxScene.Create (FbxManager, ""))
             {
                 zombieScene = newScene;
             }

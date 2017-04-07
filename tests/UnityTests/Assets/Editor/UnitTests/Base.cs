@@ -60,6 +60,7 @@ namespace UnitTests
         [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestZombie ()
         {
+            Assert.IsNotNull (m_testObject);
             m_testObject.Destroy ();
             m_testObject.GetName ();
         }
