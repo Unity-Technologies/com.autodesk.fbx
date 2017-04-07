@@ -68,11 +68,33 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   }
 %}
 
-%typemap(csdestruct_derived, methodname="Dispose", methodmodifiers="public") THETYPE {
-    global::UnityEngine.Debug.Log("disposing subclass $csclassname");
-    base.Dispose();
-    swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
+/*
+ * Redefine the body; principally, remove the code to handle multiple inheritance
+ * and object ownership.  There's two reasons:
+ * (1) It's broken because of the WeakPointerHandle. We could fix that though.
+ * (2) Faster performance / less memory usage -- we avoid having a handleref
+ *     per subclass, and we avoid the ownership flag.
+ * Obviously if we end up with multiple inheritance in Fbx, we'll have to revisit this.
+ */
+%typemap(csbody) THETYPE %{
+  protected global::System.Runtime.InteropServices.HandleRef swigCPtr { get ; private set; }
+
+  internal $csclassname(global::System.IntPtr cPtr, bool ignored) {
+    swigCPtr = new global::System.Runtime.InteropServices.HandleRef(this, cPtr);
   }
+  internal static global::System.Runtime.InteropServices.HandleRef getCPtr($csclassname obj) {
+    return (obj == null) ? new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero) : obj.swigCPtr;
+  }
+%}
+
+%typemap(csbody_derived) THETYPE %{
+  internal $csclassname(global::System.IntPtr cPtr, bool ignored) : base(cPtr, ignored) { }
+%}
+%typemap(csdestruct_derived, methodname="Dispose", methodmodifiers="public") THETYPE {
+    global::UnityEngine.Debug.Log("disposing $csclassname " + swigCPtr.Handle);
+    base.Dispose();
+  }
+
 %enddef
 
 /* Use:
@@ -82,37 +104,37 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
  */
 %define weakpointerhandlebase(THETYPE)
 
-/*
- * The base type needs a finalizer.
- * It won't get created unless there's a destructor.
- */
+/* We need a destructor to exist so that SWIG emits a finalizer.
+ * In the FbxEmitter hierarchy, there are no exposed destructors, so we create
+ * one. */
 %extend THETYPE { ~THETYPE() { } }
 
-/* When finalizing,
- * Base classes must dereference the underlying weak pointer handle (and potentially release it).
- * Derived classes must not, but must call the base dispose.
- * The swig default acquires a lock here (lock(this) {...}). Should we?
- */
 %typemap(csdestruct, methodname="Dispose", methodmodifiers="public") THETYPE {
     lock(this) {
       if (swigCPtr.Handle != global::System.IntPtr.Zero) {
-        global::UnityEngine.Debug.Log("releasing handle for $csclassname in Dispose()");
+        global::UnityEngine.Debug.Log("releasing handle " + swigCPtr.Handle + " for $csclassname in Dispose()");
         $modulePINVOKE.ReleaseWeakPointerHandle(swigCPtr);
         swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
       }
       global::UnityEngine.Debug.Log("disposed base class $csclassname");
     }
   }
+
 %typemap(csfinalize) THETYPE %{
   ~$csclassname() {
     lock(this) {
-      global::UnityEngine.Debug.Log("finalizing base class $csclassname");
+      global::UnityEngine.Debug.Log("finalizing base class $csclassname @ " + swigCPtr.Handle);
       if (swigCPtr.Handle != global::System.IntPtr.Zero) {
-        global::UnityEngine.Debug.Log("releasing handle for $csclassname in finalizer");
+        global::UnityEngine.Debug.Log("releasing handle " + swigCPtr.Handle + " for $csclassname in finalizer");
         $modulePINVOKE.ReleaseWeakPointerHandle(swigCPtr);
         swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
       }
     }
   }
 %}
+
+/* Otherwise it's the same as the derived classes. */
+weakpointerhandle(THETYPE)
+
+
 %enddef
