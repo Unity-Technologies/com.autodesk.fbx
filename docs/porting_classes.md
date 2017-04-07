@@ -55,4 +55,9 @@ public class Globals {
 NOTE:
 * we want to be able to move a global declaration or macro and move it to a specific namespace e.g. ```IOSROOT```
 
+7. REF and OUTPUT arguments
+
+Apply typemap per argument e.g.
+```%apply int & OUTPUT { int & pMajor };```
+
 
