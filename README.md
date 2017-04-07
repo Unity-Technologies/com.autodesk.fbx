@@ -2,11 +2,15 @@
 
 ## Requirements
 
-* [cmake 3.7.2+](https://cmake.org/download/)
-* [Visual Studio Community 2015+](https://www.visualstudio.com/downloads/) (for Windows)
-* [swig 3.0.12+](http://www.swig.org/download.html)
-* [FbxSdk 2016.0+](http://www.autodesk.com/products/fbx/overview)
-* [Python 2.7.10+](https://www.python.org/downloads/)
+* [FBX SDK](http://www.autodesk.com/products/fbx/overview) 2016.0 or 2017.1
+* [cmake](https://cmake.org/download/) 3.7.2
+* [swig](http://www.swig.org/download.html) 3.0.12
+* [Python](https://www.python.org/downloads/) 2.7.x or 3.x
+* Windows: [Visual Studio Community 2015](https://www.visualstudio.com/downloads/)
+* Ubuntu: ???
+* OSX: [Xcode](https://developer.apple.com/xcode/features/) 7.3 with command-line tools installed
+
+Newer versions of each software likely also work, except for the FBX SDK. To support newer (or older) versions of FBX SDK, you need to edit the FindFBXSDK.cmake file.
 
 ## Overview
 

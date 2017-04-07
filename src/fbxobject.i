@@ -7,6 +7,8 @@
 %rename("%s") FbxObject::Create(FbxManager* pManager, const char* pName); // named method
 %rename("%s") FbxObject::Destroy;
 %rename("%s") FbxObject::GetName;
+%rename("%s") FbxObject::GetSelected;
+%rename("%s") FbxObject::SetSelected;
 #endif
 
 %include "fbxsdk/core/fbxobject.h"
