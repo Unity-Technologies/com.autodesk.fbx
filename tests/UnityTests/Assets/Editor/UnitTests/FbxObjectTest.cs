@@ -66,16 +66,49 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestGetName ()
+        public void TestNames ()
         {
+            /*
+             * We use this also for testing that string handling works.
+             * Make sure we can pass const char*, FbxString, and const
+             * FbxString&.
+             * Make sure we can return those too (though I'm not actually
+             * seeing a return of a const-ref anywhere).
+             */
+
+            // Test a function that takes const char*.
             FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
             Assert.IsNotNull (obj);
-        
-            Assert.AreEqual (obj.GetName (), "MyObject");
-            
+
+            // Test a function that returns const char*.
+            Assert.AreEqual ("MyObject", obj.GetName ());
+
+            // Test a function that takes an FbxString with an accent in it.
+            obj.SetNameSpace("Accentué");
+
+            // Test a function that returns FbxString.
+            Assert.AreEqual ("MyObject", obj.GetNameWithoutNameSpacePrefix ());
+
+            // Test a function that returns FbxString with an accent in it.
+            Assert.AreEqual ("Accentué", obj.GetNameSpaceOnly());
+
+            // Test a function that takes a const char* and returns an FbxString.
+            // We don't want to convert the other StripPrefix functions, which
+            // modify their argument in-place.
+            Assert.AreEqual("MyObject", FbxObject.StripPrefix("NameSpace::MyObject"));
+
             obj.Destroy();
         }
-        
+
+        [Test]
+        public void TestUTF8()
+        {
+            // make sure japanese survives the round-trip.
+            string katakana = "片仮名";
+            FbxObject obj = FbxObject.Create(m_fbxManager, katakana);
+            Assert.AreEqual(katakana, obj.GetName());
+        }
+
         [Test]
         [ExpectedException( typeof( System.ArgumentNullException ) )]
         public void TestZombie ()
