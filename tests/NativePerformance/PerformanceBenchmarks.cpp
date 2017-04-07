@@ -53,7 +53,7 @@ string FbxObjectCreateTest(int n) {
 	manager->Destroy();
 
 	json.testName = "FbxObjectCreate";
-	json.result = duration;
+	json.result = (double)duration;
 	json.success = true;
 
 	return json.toString();

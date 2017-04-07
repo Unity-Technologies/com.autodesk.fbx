@@ -3,34 +3,38 @@ using UnityEditor;
 using NUnit.Framework;
 using FbxSdk;
 
-public class FbxIOSettingsTest
+namespace UnitTests
 {
 
-    [Test]
-    public void TestCreate ()
+    public class FbxIOSettingsTest
     {
-        FbxManager manager = FbxManager.Create ();
-        FbxIOSettings ioSettings = FbxIOSettings.Create (manager, "");
 
-        Assert.IsNotNull (ioSettings);
-        Assert.IsInstanceOf<FbxObject> (ioSettings);
+        [Test]
+        public void TestCreate ()
+        {
+            FbxManager manager = FbxManager.Create ();
+            FbxIOSettings ioSettings = FbxIOSettings.Create (manager, "");
 
-        manager.Destroy ();
-    }
+            Assert.IsNotNull (ioSettings);
+            Assert.IsInstanceOf<FbxObject> (ioSettings);
 
-    [Test]
-    [ExpectedException (typeof(System.ArgumentNullException))]
-    public void TestDestroyed ()
-    {
-        FbxManager manager = FbxManager.Create ();
-        FbxIOSettings ioSettings = FbxIOSettings.Create (manager, "");
+            manager.Destroy ();
+        }
 
-        Assert.IsNotNull (ioSettings);
-        Assert.IsInstanceOf<FbxObject> (ioSettings);
+        [Test]
+        [ExpectedException (typeof(System.ArgumentNullException))]
+        public void TestDestroyed ()
+        {
+            FbxManager manager = FbxManager.Create ();
+            FbxIOSettings ioSettings = FbxIOSettings.Create (manager, "");
 
-        manager.Destroy ();
+            Assert.IsNotNull (ioSettings);
+            Assert.IsInstanceOf<FbxObject> (ioSettings);
 
-        ioSettings.GetName ();
+            manager.Destroy ();
+
+            ioSettings.GetName ();
+        }
     }
 
     [Test]
