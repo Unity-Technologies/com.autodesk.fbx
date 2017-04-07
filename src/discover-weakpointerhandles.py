@@ -56,12 +56,7 @@ for cls in baseclasses:
 # Also add the class itself.
 derivedclasses.add(baseclass)
 
-# Emit the magic code:
-# weakpointerhandle(X) for each class, and
-# force the base class to have a finalizer so that the csfinalize code gets emitted.
+# Emit the magic code: weakpointerhandle(X) for each class
 with open(output_filename, 'w') as output:
     for cls in sorted(derivedclasses):
-        if cls == baseclass:
-            output.write("weakpointerhandlebase({});\n".format(cls))
-        else:
-            output.write("weakpointerhandle({});\n".format(cls))
+        output.write("weakpointerhandle({});\n".format(cls))

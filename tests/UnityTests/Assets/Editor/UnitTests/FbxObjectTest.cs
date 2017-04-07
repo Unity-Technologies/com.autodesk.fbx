@@ -105,8 +105,9 @@ namespace UnitTests
         {
             // make sure japanese survives the round-trip.
             string katakana = "片仮名";
-            FbxObject obj = FbxObject.Create(m_fbxManager, katakana);
-            Assert.AreEqual(katakana, obj.GetName());
+            using(var obj = FbxObject.Create(m_fbxManager, katakana)) {
+                Assert.AreEqual(katakana, obj.GetName());
+            }
         }
 
         [Test]

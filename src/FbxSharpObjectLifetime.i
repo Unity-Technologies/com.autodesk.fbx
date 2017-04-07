@@ -69,12 +69,16 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
 %}
 
 /*
- * Redefine the body; principally, remove the code to handle multiple inheritance
+ * Redefine the body. Principally, remove the code to handle multiple inheritance
  * and object ownership.  There's two reasons:
  * (1) It's broken because of the WeakPointerHandle. We could fix that though.
- * (2) Faster performance / less memory usage -- we avoid having a handleref
+ * (2) We never have object ownership.
+ * (3) Faster performance / less memory usage -- we avoid having a handleref
  *     per subclass, and we avoid the ownership flag.
  * Obviously if we end up with multiple inheritance in Fbx, we'll have to revisit this.
+ *
+ * The ownership flag remains in the constructor just because it's a pain to
+ * make the callers stop passing it.
  */
 %typemap(csbody) THETYPE %{
   protected global::System.Runtime.InteropServices.HandleRef swigCPtr { get ; private set; }
@@ -90,51 +94,47 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
 %typemap(csbody_derived) THETYPE %{
   internal $csclassname(global::System.IntPtr cPtr, bool ignored) : base(cPtr, ignored) { }
 %}
-%typemap(csdestruct_derived, methodname="Dispose", methodmodifiers="public") THETYPE {
-    global::UnityEngine.Debug.Log("disposing $csclassname " + swigCPtr.Handle);
-    base.Dispose();
-  }
 
-%enddef
 
-/* Use:
- *    weakpointerhandlebase(FbxEmitter)
- * to define that FbxEmitter should be handled using the weakref mechanism, and
- * that it's the base class of the hierarchy.
+/*
+ * Dispose / finalize.
+ *
+ * We need to release the reference on the handle.
+ *
+ * We also want to follow proper dispose norms, which by default SWIG doesn't
+ * do. See https://msdn.microsoft.com/en-us/library/ms244737.aspx
  */
-%define weakpointerhandlebase(THETYPE)
-
-/* We need a destructor to exist so that SWIG emits a finalizer.
- * In the FbxEmitter hierarchy, there are no exposed destructors, so we create
- * one. */
-%extend THETYPE { ~THETYPE() { } }
-
-%typemap(csdestruct, methodname="Dispose", methodmodifiers="public") THETYPE {
-    lock(this) {
-      if (swigCPtr.Handle != global::System.IntPtr.Zero) {
-        global::UnityEngine.Debug.Log("releasing handle " + swigCPtr.Handle + " for $csclassname in Dispose()");
-        $modulePINVOKE.ReleaseWeakPointerHandle(swigCPtr);
-        swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
-      }
-      global::UnityEngine.Debug.Log("disposed base class $csclassname");
-    }
+%typemap(csdestruct, methodname="Dispose", methodmodifiers="public") THETYPE %{{
+    Dispose(true);
+    global::System.GC.SuppressFinalize(this);
   }
-
-%typemap(csfinalize) THETYPE %{
   ~$csclassname() {
-    lock(this) {
-      global::UnityEngine.Debug.Log("finalizing base class $csclassname @ " + swigCPtr.Handle);
-      if (swigCPtr.Handle != global::System.IntPtr.Zero) {
-        global::UnityEngine.Debug.Log("releasing handle " + swigCPtr.Handle + " for $csclassname in finalizer");
+    Dispose(false);
+  }
+  protected void Dispose(bool disposing) {
+    if (swigCPtr.Handle != global::System.IntPtr.Zero) {
+      #if FbxSharp_Debug
+      global::UnityEngine.Debug.Log("releasing handle " + swigCPtr.Handle + " for $csclassname in " + (disposing ? "Dispose()" : "finalizer"));
+      #endif
+      lock(this) {
         $modulePINVOKE.ReleaseWeakPointerHandle(swigCPtr);
         swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
       }
     }
-  }
-%}
+  }%}
 
-/* Otherwise it's the same as the derived classes. */
-weakpointerhandle(THETYPE)
+/* We handled the finalizer already, clobber the default handling. */
+%typemap(csfinalize) THETYPE %{ %}
 
+/*
+ * Derived classes just call the superclass.
+ * Probably there's a way to not even emit this call, though it's nice for debugging.
+ */
+%typemap(csdestruct_derived, methodname="Dispose", methodmodifiers="public") THETYPE %{{
+    #if FbxSharp_Debug
+    global::UnityEngine.Debug.Log("disposing $csclassname " + swigCPtr.Handle);
+    #endif
+    base.Dispose();
+  }%}
 
 %enddef
