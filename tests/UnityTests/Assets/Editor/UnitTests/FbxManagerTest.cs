@@ -26,12 +26,13 @@ namespace UnitTests
         [Test]
         public void TestVersion ()
         {
-            string version = FbxManager.GetVersion (true);
-
+            string version = FbxManager.GetVersion ();
             Assert.IsNotEmpty (version);
+            
+            string versionLong = FbxManager.GetVersion (true);
+            Assert.IsNotEmpty (versionLong);
 
             string versionShort = FbxManager.GetVersion (false);
-
             Assert.IsNotEmpty (versionShort);
         }
 
@@ -54,6 +55,31 @@ namespace UnitTests
             FbxClassId classId = m_fbxManager.FindClass ("FbxObject");
 
             Assert.AreEqual (classId.GetName (), "FbxObject");
+        }
+
+        [Test]
+        public void TestIOSettings ()
+        {
+            FbxIOSettings ioSettings = m_fbxManager.GetIOSettings ();
+            Assert.IsNull(ioSettings);
+
+            using (FbxIOSettings ioSettings1 = FbxIOSettings.Create (m_fbxManager, "")) {
+                m_fbxManager.SetIOSettings (ioSettings1);
+
+                FbxIOSettings ioSettings2 = m_fbxManager.GetIOSettings ();
+                Assert.IsNotNull (ioSettings2);
+            }
+        }
+
+        [Test]
+        [Ignore("identify object.ReferenceEqual fails")]
+        public void TestIdentity ()
+        {
+            using (FbxObject obj = FbxObject.Create (m_fbxManager, "")) {
+                FbxManager fbxManager2 = obj.GetFbxManager();
+                
+                Assert.AreSame (m_fbxManager, fbxManager2);
+            }
         }
     }
 }
