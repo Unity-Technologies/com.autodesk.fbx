@@ -6,8 +6,13 @@ using FbxSdk;
 namespace UnitTests
 {
 
-    public class FbxIOSettingsTest : FbxSdkTestBase
+    public class FbxIOSettingsTest : Base
     {
+
+        protected override FbxObject CreateObject ()
+        {
+            return FbxIOSettings.Create (FbxManager, "");
+        }
 
         [Test]
         public void TestCreate ()
