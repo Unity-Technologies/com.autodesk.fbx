@@ -48,8 +48,10 @@ struct WeakPointerHandle {
 
     void ReleaseReference() {
 #ifdef MEMORY_DEBUG
-        fprintf(stderr, "Releasing %llx (%d refs)\n", uint64_t(m_ptr), m_numRefs);
-        if (m_ptr != 0) { assert(AllocatedBlocks.count(m_ptr) != 0); }
+        if (m_ptr != 0) {
+          fprintf(stderr, "Releasing %llx (%d refs)\n", uint64_t(m_ptr), m_numRefs);
+          assert(AllocatedBlocks.count(m_ptr) != 0);
+        }
 #endif
         if(m_numRefs == 1) {
             if (m_ptr != nullptr) {
