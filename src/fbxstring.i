@@ -1,8 +1,3 @@
-%{
-/* Do not %include, because we're replacing the string */
-#include "fbxsdk.h"
-%}
-
 /* We marshal FbxString using char*. */
 %typemap(ctype) FbxString "char *"
 
