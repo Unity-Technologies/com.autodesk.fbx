@@ -63,7 +63,7 @@ namespace UseCaseTests
             lImporter.Destroy ();
 
             // check that the scene is valid
-            Assert.GreaterOrEqual (newScene.GetGenericNodeCount (), 0);
+            Assert.GreaterOrEqual (newScene.GetNodeCount (), 0);
 
             lSdkManager.Destroy ();
 
