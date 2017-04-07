@@ -96,6 +96,8 @@ namespace UnitTests
             // We don't want to convert the other StripPrefix functions, which
             // modify their argument in-place.
             Assert.AreEqual("MyObject", FbxObject.StripPrefix("NameSpace::MyObject"));
+
+            obj.Destroy();
         }
 
         [Test]
