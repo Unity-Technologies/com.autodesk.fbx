@@ -35,21 +35,22 @@ namespace UnitTests
 
             ioSettings.GetName ();
         }
+
+        [Test]
+        public void TestFVirtual ()
+        {
+        	FbxManager manager = FbxManager.Create ();
+        	FbxIOSettings ioSettings = FbxIOSettings.Create (manager, "");
+
+        	// GetSelected is a virtual method inherited from FbxObject
+        	Assert.IsFalse (ioSettings.GetSelected ());
+        	ioSettings.SetSelected (true);
+        	Assert.IsTrue (ioSettings.GetSelected ());
+
+        	ioSettings.Destroy ();
+        	manager.Destroy ();
+        }
     }
 
-    [Test]
-    public void TestFVirtual ()
-    {
-        FbxManager manager = FbxManager.Create ();
-        FbxIOSettings ioSettings = FbxIOSettings.Create (manager, "");
 
-        // GetSelected is a virtual method inherited from FbxObject
-        Assert.IsFalse( ioSettings.GetSelected () );
-        ioSettings.SetSelected (true);
-        Assert.IsTrue (ioSettings.GetSelected ());
-
-        ioSettings.Destroy ();
-        manager.Destroy ();
-    }
-    
 }

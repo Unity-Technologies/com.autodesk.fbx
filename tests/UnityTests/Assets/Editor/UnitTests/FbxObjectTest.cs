@@ -140,5 +140,16 @@ namespace UnitTests
 
             obj.Destroy ();
         }
+        
+        [Test]
+        public void TestFbxManager ()
+        {
+            using (FbxObject obj = FbxObject.Create (m_fbxManager, "")) {
+                FbxManager fbxManager2 = obj.GetFbxManager();
+                Assert.IsNotNull(fbxManager2);
+            }
+        }
+        
+        
     }
 }
