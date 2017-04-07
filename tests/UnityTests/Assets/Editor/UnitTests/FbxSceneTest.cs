@@ -25,7 +25,10 @@ namespace UnitTests
             using (FbxScene newScene = FbxScene.Create (m_fbxManager, ""))
             {
                 Assert.IsNotNull (newScene);
+                Assert.IsInstanceOf<FbxScene> (newScene);
+                Assert.IsInstanceOf<FbxDocument> (newScene);
                 Assert.IsInstanceOf<FbxObject> (newScene);
+                Assert.IsInstanceOf<FbxEmitter> (newScene);
 
                 newScene.Destroy();
             }
