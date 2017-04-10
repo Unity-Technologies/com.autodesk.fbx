@@ -1,3 +1,29 @@
+/*
+ * Object lifetime support for FbxEmitter and a few other classes
+ * in Fbx.
+ *
+ * In C#, if we hold a reference to something that's destroyed, we get an
+ * exception -- not a crash-to-desktop! This code implements the swig hackery
+ * to make that work for FbxSharp.
+ *
+ * The key concepts:
+ * (1) The C# proxy objects actually point to a reference-counted
+ *      WeakPointerHandle.
+ * (2) When Fbx calls 'free', it actually calls our free, which checks if
+ *      there's a WeakPointerHandle. If so, it sets the WPH pointer to null.
+ * (3) When the C# calls into Fbx, we dereference the WPH. If its pointer is
+ *      null, we throw an exception mentioning the object was destroyed.
+ * (4) We also use this check to throw NREs (e.g. using a proxy that was
+ *      Dispose()d). If it's legit to pass in a null pointer for that
+ *      parameter, you need to mark it explicitly as such, e.g.:
+ *              %apply FbxManager *MAYBENULL { FbxManager * pManager };
+ * (5) Since Fbx isn't using multiple inheritance, we disable the SWIG
+ *      multiple-inheritance code. It caused a bug and is also a slight
+ *      performance issue.
+ * (6) When the C# proxies get garbage-collected or Dispose(), the underlying
+ *      object doesn't get a Destroy() call. However, the handle is released.
+ */
+
 %{
 /* Inline the weak-pointer support. */
 #include "WeakPointerHandle.cxx"
@@ -40,32 +66,30 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
  */
 %define weakpointerhandle(THETYPE)
 
-/* When returning a pointer or a reference, wrap it up in a handle */
-%typemap(out) THETYPE * %{
-  $result = WeakPointerHandle::GetHandle($1);
-%}
-%typemap(out) THETYPE & %{
+/* When returning an object, wrap it up in a handle */
+%typemap(out) THETYPE *, THETYPE & %{
   $result = WeakPointerHandle::GetHandle($1);
 %}
 
-/* When using a pointer, dereference the handle */
-%typemap(in, canthrow=1) THETYPE * %{
-  if (!WeakPointerHandle::DerefHandle($input, &$1)) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to use destroyed $1_basetype $1_name", 0);
-    return $null;
-  }
-%}
-
-/* When using a reference, dereference the handle and also make sure it isn't null */
-%typemap(in, canthrow=1) THETYPE & %{
+/* When using an object, dereference the handle and also make sure it isn't null */
+%typemap(in, canthrow=1) THETYPE *, THETYPE & %{
   if (!WeakPointerHandle::DerefHandle($input, &$1)) {
     SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to use destroyed $1_basetype $1_name", 0);
     return $null;
   }
   if (!$1) {
-    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "$1_basetype $1_name is null", 0);
+    SWIG_CSharpSetPendingException(SWIG_CSharpNullReferenceException, "$1_basetype $1_name is null");
     return $null;
   }
+%}
+
+/* Special-case you can apply to pointers that are allowed to be null */
+%typemap(in, canthrow=1) THETYPE * MAYBENULL %{
+  if (!WeakPointerHandle::DerefHandle($input, &$1)) {
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "Attempt to use destroyed $1_basetype $1_name", 0);
+    return $null;
+  }
+  /* It's ok for $1_basetype $1_name to be null */
 %}
 
 /*
