@@ -5,16 +5,16 @@ import re
 
 # Input:
 # 1- the output .i file
-# 2- the name of the base class we care about
-# 3- the result of swig -debug-typedef
+# 2- the result of swig -debug-typedef
+# 3- the name of the base class we care about
 # Output:
 # - a swig .i file to be %included at the start of the fbxsdk.i file
 # If the "base class" is actually derived from something we give an error.
 
 # This should normally be integrated as part of the build system.
 output_filename = sys.argv[1]
-baseclass = sys.argv[2]
-typedefs_filename = sys.argv[3]
+typedefs_filename = sys.argv[2]
+rootclasses = sys.argv[3:]
 
 # For each derived class, a list of classes it inherits from. If a class isn't
 # in this dict it's not a derived class (it inherits from nothing).
@@ -41,22 +41,27 @@ with open(typedefs_filename) as typedef_file:
         store()
 
 
-# Verify that the base class is actually a base class. If it derives from
-# anything, we'll crash.
-if baseclass in baseclasses:
-  print ("Error: {} is not a base class. Derives from {}.".format(
-        baseclass, ', '.join(baseclasses[baseclass])))
-  sys.exit(1)
+# Verify that each of the supposed root classes is actually a base class. If it
+# derives from anything, we'll crash because some functions will be taking a
+# handle and others a bare pointer.
+for rootclass in rootclasses:
+    ok = True
+    if rootclass in baseclasses:
+      print ("Error: {} is not a base class. Derives from {}.".format(
+            baseclass, ', '.join(baseclasses[baseclass])))
+      ok = False
+    if not ok:
+      sys.exit(1)
 
-# Find all the classes that derive from the base class.
-derivedclasses = set()
-for cls in baseclasses:
-  if baseclass in baseclasses[cls]:
-    derivedclasses.add(cls)
-# Also add the class itself.
-derivedclasses.add(baseclass)
+# Find all the classes that derive from the root classes.
+handleclasses = set()
+for rootclass in rootclasses:
+  handleclasses.add(rootclass)
+  for cls in baseclasses:
+      if rootclass in baseclasses[cls]:
+          handleclasses.add(cls)
 
 # Emit the magic code: weakpointerhandle(X) for each class
 with open(output_filename, 'w') as output:
-    for cls in sorted(derivedclasses):
+    for cls in sorted(handleclasses):
         output.write("weakpointerhandle({});\n".format(cls))

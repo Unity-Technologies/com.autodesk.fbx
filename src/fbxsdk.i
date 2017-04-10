@@ -18,7 +18,6 @@
 #ifndef SWIG_GENERATING_TYPEDEFS
 %include "weakpointerhandles.i"
 #endif
-weakpointerhandle(FbxManager);
  
 // define typemaps for INOUT arguments
 %include typemaps.i

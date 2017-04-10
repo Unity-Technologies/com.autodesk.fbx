@@ -64,7 +64,8 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
 )
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         COMMAND ${PYTHON_EXECUTABLE}
-        ARGS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" FbxEmitter "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
+        ARGS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
+                "FbxEmitter" "FbxManager"
         MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         DEPENDS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py"
 )
