@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
 using FbxSdk;
@@ -228,17 +228,15 @@ namespace UnitTests
         }
 
         [Test]
-        [ExpectedException( typeof( System.ArgumentNullException ) )]
         public void TestInitializeInvalidIOSettings()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
-
             string filename = GetRandomFilename (m_testFolder);
 
             // Initialize the exporter. Pass it zombie IO settings.
             var ioSettings = FbxIOSettings.Create(FbxManager, "");
             ioSettings.Destroy();
-            m_exporter.Initialize (filename, -1, ioSettings);
+
+            Assert.That (() => {  m_exporter.Initialize (filename, -1, ioSettings); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
     }
 }
