@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
 using FbxSdk;
@@ -62,25 +62,23 @@ namespace UnitTests
         }
 
         [Test]
-        [ExpectedException (typeof(System.NullReferenceException))]
         public void TestCreateNullManager()
         {
-            var obj = CreateObject(null, "MyObject");
+            Assert.That (() => { CreateObject(null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
         [Test]
         public void TestCreateNullName()
         {
-            var obj = CreateObject((string)null);
+            CreateObject((string)null);
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestCreateZombieManager()
         {
             var mgr = FbxManager.Create();
             mgr.Destroy();
-            var obj = CreateObject(mgr, "MyObject");
+            Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
@@ -118,7 +116,6 @@ namespace UnitTests
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestDestroyedZombie ()
         {
             // Test that if we try to use an object after Destroy()ing it,
@@ -126,11 +123,10 @@ namespace UnitTests
             var obj = CreateObject();
             Assert.IsNotNull (obj);
             obj.Destroy ();
-            obj.GetName ();
+            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestDestroyedManagerZombie ()
         {
             // Test that if we try to use an object after Destroy()ing its
@@ -138,11 +134,10 @@ namespace UnitTests
             var obj = CreateObject();
             Assert.IsNotNull (obj);
             m_fbxManager.Destroy();
-            obj.GetName ();
+            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
-        [ExpectedException (typeof(System.NullReferenceException))]
         public void TestDisposedZombie ()
         {
             // Test that if we try to use an object after Dispose()ing it,
@@ -153,7 +148,7 @@ namespace UnitTests
                 Assert.IsNotNull (obj);
                 zombie = obj;
             }
-            zombie.GetName ();
+            Assert.That (() => { zombie.GetName (); }, Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
         [Test]
