@@ -43,7 +43,7 @@ namespace UseCaseTests
         protected string fileName {
         	get {
                 if (m_fileName==null) {
-                    m_fileName = this.fileNamePrefix + Path.GetRandomFileName ();
+                    m_fileName = this.fileNamePrefix + Path.GetRandomFileName () + ".fbx";
                 }
         		return m_fileName;
         	}
@@ -89,12 +89,12 @@ namespace UseCaseTests
         {
             FbxDocumentInfo sceneInfo = scene.GetSceneInfo ();
 
-            Assert.Equals (sceneInfo.mTitle,    values["title"]);
-            Assert.Equals (sceneInfo.mSubject,  values["subject"]);
-            Assert.Equals (sceneInfo.mAuthor,   values["author"]);
-            Assert.Equals (sceneInfo.mRevision, values["revision"]);
-            Assert.Equals (sceneInfo.mKeywords, values["keywords"]);
-            Assert.Equals (sceneInfo.mComment,  values["comment"]);
+            Assert.AreEqual (sceneInfo.mTitle,    values["title"]);
+            Assert.AreEqual (sceneInfo.mSubject,  values["subject"]);
+            Assert.AreEqual (sceneInfo.mAuthor,   values["author"]);
+            Assert.AreEqual (sceneInfo.mRevision, values["revision"]);
+            Assert.AreEqual (sceneInfo.mKeywords, values["keywords"]);
+            Assert.AreEqual (sceneInfo.mComment,  values["comment"]);
         }
 
         [Test]
@@ -126,8 +126,6 @@ namespace UseCaseTests
 
                     // Check if file exists
                     Assert.IsTrue (File.Exists (fileName));
-
-                    exporter.Destroy ();
                 }
 
                 // Import the scene to make sure file is valid
@@ -146,11 +144,7 @@ namespace UseCaseTests
 
                     // check that the scene is valid
                     CheckSceneInfo (scene, this.dataValues);
-
-                    importer.Destroy ();
                 }
-
-                manager.Destroy ();
             }
         }
     }
