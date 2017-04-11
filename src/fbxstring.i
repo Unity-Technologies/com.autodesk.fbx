@@ -80,7 +80,7 @@
     set {
       $imcall;$excode
     } %}
-%typemap(csvarout, excode=SWIGEXCODE2) const FbxString & %{
+%typemap(csvarout, excode=SWIGEXCODE2) FbxString %{
     get {
       string ret = $imcall;$excode
       return ret;
