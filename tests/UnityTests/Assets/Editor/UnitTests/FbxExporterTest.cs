@@ -119,22 +119,6 @@ namespace UnitTests
             // FbxSdk creates an empty file even though the export status was false
             Assert.IsTrue (File.Exists (filename));
         }
-            
-        [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
-        public void TestDestroy ()
-        {
-            m_exporter.Destroy ();
-            m_exporter.GetName ();
-        }
-
-        [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
-        public void TestDestroyManager ()
-        {
-            FbxManager.Destroy ();
-            m_exporter.GetName ();
-        }
 
         [Test]
         public void TestInitializeInvalidFilenameOnly()

@@ -15,29 +15,6 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestCreate ()
-        {
-            FbxIOSettings ioSettings = FbxIOSettings.Create (FbxManager, "");
-
-            Assert.IsNotNull (ioSettings);
-            Assert.IsInstanceOf<FbxObject> (ioSettings);
-        }
-
-        [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
-        public void TestDestroyed ()
-        {
-            FbxIOSettings ioSettings = FbxIOSettings.Create (FbxManager, "");
-
-            Assert.IsNotNull (ioSettings);
-            Assert.IsInstanceOf<FbxObject> (ioSettings);
-
-            FbxManager.Destroy ();
-
-            ioSettings.GetName ();
-        }
-
-        [Test]
         public void TestFVirtual ()
         {
             // Test the swig -fvirtual flag works properly: we can call virtual
@@ -56,6 +33,4 @@ namespace UnitTests
             manager.Destroy ();
         }
     }
-
-
 }

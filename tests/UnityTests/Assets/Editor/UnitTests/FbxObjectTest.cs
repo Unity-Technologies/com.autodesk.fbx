@@ -12,16 +12,6 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestCreateDestroyRecursive ()
-        {
-            FbxObject obj = FbxObject.Create(FbxManager, "MyObject");
-            Assert.IsNotNull (obj);
-            
-            // Destroy object and its children (though we didn't create any).
-            obj.Destroy(true);
-        }
-
-        [Test]
         [ExpectedException( typeof( System.NullReferenceException ) )]
         public void TestCreateNullManager ()
         {
