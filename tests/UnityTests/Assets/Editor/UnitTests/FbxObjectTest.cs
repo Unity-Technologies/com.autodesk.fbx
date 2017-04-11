@@ -96,5 +96,27 @@ namespace UnitTests
 
             Assert.AreEqual (classId.GetName (), "FbxObject");
         }
+
+        [Test]
+        public void TestSelected ()
+        {
+            FbxObject obj = FbxObject.Create (FbxManager, "MyObject");
+            Assert.IsNotNull (obj);
+
+            Assert.IsFalse( obj.GetSelected () );
+            obj.SetSelected (true);
+            Assert.IsTrue (obj.GetSelected ());
+
+            obj.Destroy ();
+        }
+
+        [Test]
+        public void TestFbxManager ()
+        {
+            using (FbxObject obj = FbxObject.Create (FbxManager, "")) {
+                FbxManager fbxManager2 = obj.GetFbxManager();
+                Assert.IsNotNull(fbxManager2);
+            }
+        }
     }
 }
