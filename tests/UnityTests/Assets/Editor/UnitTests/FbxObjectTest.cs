@@ -90,44 +90,11 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestZombie ()
-        {
-            FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
-            Assert.IsNotNull (obj);
-
-            obj.Destroy();
-            obj.GetName();
-        }
-        
-        [Test]
-        public void TestZombie ()
-        {
-            FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
-            Assert.IsNotNull (obj);
-
-            obj.Destroy();
-            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
-        }
-        
-        [Test]
         public void TestFindClass ()
         {
             FbxClassId classId = FbxManager.FindClass ("FbxObject");
 
             Assert.AreEqual (classId.GetName (), "FbxObject");
-        }
-
-        [Test]
-        public void TestSelected ()
-        {
-            FbxObject obj = FbxObject.Create (FbxManager, "MyObject");
-            Assert.IsNotNull (obj);
-
-            Assert.IsFalse( obj.GetSelected () );
-            obj.SetSelected (true);
-            Assert.IsTrue (obj.GetSelected ());
-
-            obj.Destroy ();
         }
 
         [Test]

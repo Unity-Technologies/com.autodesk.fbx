@@ -57,12 +57,11 @@ namespace UnitTests
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestZombie ()
         {
             Assert.IsNotNull (m_testObject);
             m_testObject.Destroy ();
-            m_testObject.GetName ();
+            Assert.That (() => { m_testObject.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
         }
 
         [Test]
