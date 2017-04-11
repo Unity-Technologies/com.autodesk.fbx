@@ -42,7 +42,7 @@ namespace UnitTests
 
         [Test]
         [ExpectedException (typeof(System.ArgumentNullException))]
-        public void TestZombie1 ()
+        public void TestDestroyedZombie ()
         {
             FbxScene zombieScene;
 
@@ -52,14 +52,14 @@ namespace UnitTests
 
                 newScene.Destroy();
 
+                // Here we get an ANE because zombieScene is destroyed.
                 Assert.GreaterOrEqual (zombieScene.GetNodeCount (), 0);
             }
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
-        [Ignore("CRASHES accessing zombie")]
-        public void TestZombie2 ()
+        [ExpectedException (typeof(System.NullReferenceException))]
+        public void TestDisposedZombie ()
         {
             FbxScene zombieScene;
 
@@ -67,6 +67,7 @@ namespace UnitTests
             {
                 zombieScene = newScene;
             }
+            // Here we get an NRE because zombieScene is disposed.
             Assert.GreaterOrEqual (zombieScene.GetNodeCount (), 0);
         }
     }
