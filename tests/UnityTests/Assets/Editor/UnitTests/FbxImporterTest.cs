@@ -55,7 +55,6 @@ namespace UnitTests
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestZombie1 ()
         {
             FbxImporter zombieScene;
@@ -66,12 +65,11 @@ namespace UnitTests
 
                 newImporter.Destroy();
 
-                Assert.AreEqual (zombieScene.GetName (), "");
+                Assert.That (() => { zombieScene.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
             }
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         [Ignore("CRASHES accessing zombie")]
         public void TestZombie2 ()
         {
@@ -81,7 +79,7 @@ namespace UnitTests
             {
                 zombieScene = newImporter;
             }
-            Assert.AreEqual (zombieScene.GetName (), "");
+            Assert.That (() => { zombieScene.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
         }
     }
 }

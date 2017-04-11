@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using NUnit.Framework;
 using FbxSdk;
@@ -120,20 +120,18 @@ namespace UnitTests
         }
             
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestDestroy ()
         {
             m_exporter.Destroy ();
-            m_exporter.GetName ();
+            Assert.That (() => { m_exporter.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         [Ignore("Crashes as we try to destroy the manager twice. Once again in TearDown")]
         public void TestDestroyManager ()
         {
             FbxManager.Destroy ();
-            m_exporter.GetName ();
+            Assert.That (() => { m_exporter.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
         }
 
         [Test]

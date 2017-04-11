@@ -24,7 +24,6 @@ namespace UnitTests
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         [Ignore("Crashes because we try to delete the FbxManager twice (doesn't give ArgumentNullException)")]
         public void TestDestroyed ()
         {
@@ -35,7 +34,7 @@ namespace UnitTests
 
             FbxManager.Destroy ();
 
-            ioSettings.GetName ();
+            Assert.That (() => { ioSettings.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
         }
 
         [Test]

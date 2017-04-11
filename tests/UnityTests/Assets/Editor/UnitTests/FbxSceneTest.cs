@@ -36,7 +36,6 @@ namespace UnitTests
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestZombie1 ()
         {
             FbxScene zombieScene;
@@ -47,12 +46,11 @@ namespace UnitTests
 
                 newScene.Destroy();
 
-                Assert.GreaterOrEqual (zombieScene.GetNodeCount (), 0);
+                Assert.That (() => { zombieScene.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
             }
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         [Ignore("CRASHES accessing zombie")]
         public void TestZombie2 ()
         {
@@ -62,7 +60,7 @@ namespace UnitTests
             {
                 zombieScene = newScene;
             }
-            Assert.GreaterOrEqual (zombieScene.GetNodeCount (), 0);
+            Assert.That (() => { zombieScene.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>()); 
         }
     }
 }
