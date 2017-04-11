@@ -4,47 +4,8 @@ using FbxSdk;
 namespace UnitTests
 {
 
-    public class FbxObjectTest : Base
+    public class FbxObjectTest : Base<FbxObject>
     {
-        protected override FbxObject CreateObject ()
-        {
-            return FbxObject.Create (FbxManager, "");
-        }
-
-        [Test]
-        [Ignore("CRASHES handling null FbxManager")]
-        public void TestCreateDestroy2 ()
-        {
-            FbxObject obj = FbxObject.Create(null, "MyObject");
-            Assert.IsNotNull (obj);
-            
-            // there are two destroy methods
-            obj.Destroy(true);
-        }
-
-        [Test]
-        public void TestCreateDestroy3 ()
-        {
-            FbxObject obj = FbxObject.Create(FbxManager, null);
-            Assert.IsNotNull (obj);
-            
-            // there are two destroy methods
-            obj.Destroy(true);
-        }
-        
-        [Test]
-        [Ignore("CRASHES handling zombie FbxManager")]
-        public void TestCreateDestroy4 ()
-        {
-            FbxManager.Destroy();
-            
-            FbxObject obj = FbxObject.Create(FbxManager, null);
-            Assert.IsNotNull (obj);
-            
-            // there are two destroy methods
-            obj.Destroy(true);
-        }
-
         [Test]
         public void TestNames ()
         {
@@ -95,19 +56,6 @@ namespace UnitTests
             FbxClassId classId = FbxManager.FindClass ("FbxObject");
 
             Assert.AreEqual (classId.GetName (), "FbxObject");
-        }
-
-        [Test]
-        public void TestSelected ()
-        {
-            FbxObject obj = FbxObject.Create (FbxManager, "MyObject");
-            Assert.IsNotNull (obj);
-
-            Assert.IsFalse( obj.GetSelected () );
-            obj.SetSelected (true);
-            Assert.IsTrue (obj.GetSelected ());
-
-            obj.Destroy ();
         }
 
         [Test]

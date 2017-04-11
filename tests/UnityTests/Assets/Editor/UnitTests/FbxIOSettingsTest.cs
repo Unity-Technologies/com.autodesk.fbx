@@ -6,38 +6,8 @@ using FbxSdk;
 namespace UnitTests
 {
 
-    public class FbxIOSettingsTest : Base
+    public class FbxIOSettingsTest : Base<FbxIOSettings>
     {
-
-        protected override FbxObject CreateObject ()
-        {
-            return FbxIOSettings.Create (FbxManager, "");
-        }
-
-        [Test]
-        public void TestCreate ()
-        {
-            FbxIOSettings ioSettings = FbxIOSettings.Create (FbxManager, "");
-
-            Assert.IsNotNull (ioSettings);
-            Assert.IsInstanceOf<FbxObject> (ioSettings);
-        }
-
-        [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
-        [Ignore("Crashes because we try to delete the FbxManager twice (doesn't give ArgumentNullException)")]
-        public void TestDestroyed ()
-        {
-            FbxIOSettings ioSettings = FbxIOSettings.Create (FbxManager, "");
-
-            Assert.IsNotNull (ioSettings);
-            Assert.IsInstanceOf<FbxObject> (ioSettings);
-
-            FbxManager.Destroy ();
-
-            ioSettings.GetName ();
-        }
-
         [Test]
         public void TestFVirtual ()
         {
@@ -57,6 +27,4 @@ namespace UnitTests
             manager.Destroy ();
         }
     }
-
-
 }
