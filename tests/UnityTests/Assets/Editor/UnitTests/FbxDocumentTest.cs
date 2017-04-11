@@ -28,15 +28,31 @@ namespace UnitTests
         [Test]
         public void TestDocumentInfo ()
         {
-            using (FbxDocument doc = FbxDocument.Create (FbxManager, "myDocument"))
+            using (var doc = CreateObject("RootDoc"))
             {
-                using (FbxDocumentInfo docInfo = FbxDocumentInfo.Create (FbxManager, "myDocument")) {
-                    doc.SetDocumentInfo (FbxDocumentInfoTest.InitDocumentInfo(docInfo, this.dataValues));
+                // NOTE: we'll get a NullReferenceException warning if we use the using
+                // scope because doc.Clear() will destroy the FbxDocumentInfo.
+                var docInfo = FbxDocumentInfo.Create (this.FbxManager, "myDocumentInfo");
+                Assert.IsNotNull (docInfo);
 
-                    FbxDocumentInfoTest.CheckDocumentInfo (doc.GetDocumentInfo(), this.dataValues);
+                doc.SetDocumentInfo (FbxDocumentInfoTest.InitDocumentInfo (docInfo, this.dataValues));
 
-                    //  Assert.ReferenceEquals (docInfo, doc.GetDocumentInfo ());
-                }
+                var docInfo2 = doc.GetDocumentInfo ();
+                Assert.IsNotNull (docInfo2);
+
+                FbxDocumentInfoTest.CheckDocumentInfo (docInfo2, this.dataValues);
+
+                // TODO: test identity
+                // Assert.AreEqual (docInfo2, docInfo);
+                // Assert.AreSame (docInfo2, docInfo);
+
+                Assert.That (() => { doc.SetDocumentInfo (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
+                // CRASH ALERT!!! remove reference to document info before
+                // going out of using docInfo scope.
+                doc.Clear ();
+
+                Assert.IsNull (doc.GetDocumentInfo ());
             }
         }
     }

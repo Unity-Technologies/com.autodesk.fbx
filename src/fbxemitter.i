@@ -13,7 +13,7 @@
  * uses dynamic dispatch.
  */
 %extend FbxEmitter {
-  virtual void Destroy(bool recursive = false) { }
+    virtual void Destroy(bool recursive = false) { }
 }
 
 %include "fbxsdk/core/fbxemitter.h"

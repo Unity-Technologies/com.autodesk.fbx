@@ -39,18 +39,18 @@ namespace UnitTests
 
         public static void CheckDocumentInfo (FbxDocumentInfo docInfo, Dictionary<string, string> values)
         {
-        	Assert.Equals (docInfo.mTitle, values ["title"]);
-        	Assert.Equals (docInfo.mSubject, values ["subject"]);
-        	Assert.Equals (docInfo.mAuthor, values ["author"]);
-        	Assert.Equals (docInfo.mRevision, values ["revision"]);
-        	Assert.Equals (docInfo.mKeywords, values ["keywords"]);
-        	Assert.Equals (docInfo.mComment, values ["comment"]);
+        	Assert.AreEqual (docInfo.mTitle, values ["title"]);
+        	Assert.AreEqual (docInfo.mSubject, values ["subject"]);
+        	Assert.AreEqual (docInfo.mAuthor, values ["author"]);
+        	Assert.AreEqual (docInfo.mRevision, values ["revision"]);
+        	Assert.AreEqual (docInfo.mKeywords, values ["keywords"]);
+        	Assert.AreEqual (docInfo.mComment, values ["comment"]);
         }
         
         [Test]
         public void TestDocumentInfo ()
         {
-            using (FbxDocumentInfo docInfo = FbxDocumentInfo.Create (FbxManager, "myDocument")) {
+            using (FbxDocumentInfo docInfo = CreateObject()) {
 
                 CheckDocumentInfo (InitDocumentInfo (docInfo, this.dataValues), this.dataValues);
             }

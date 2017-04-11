@@ -41,9 +41,9 @@ namespace UnitTests
             return temp;
         }
 
-        public override void InitTest()
+        public override void Init()
         {
-            base.InitTest ();
+            base.Init ();
 
             m_exporter = FbxExporter.Create (FbxManager, "exporter");
 
@@ -60,7 +60,7 @@ namespace UnitTests
             Directory.CreateDirectory (m_testFolder);
         }
 
-        public override void DestroyTest()
+        public override void Term()
         {
             try{
                 m_exporter.Destroy();
@@ -69,7 +69,7 @@ namespace UnitTests
                 // already destroyed in test
             }
 
-            base.DestroyTest ();
+            base.Term ();
 
             // delete all files that were created
             Directory.Delete(m_testFolder, true);

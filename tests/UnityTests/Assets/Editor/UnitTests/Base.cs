@@ -13,8 +13,6 @@ namespace UnitTests
             }
         }
 
-        private T m_testObject;
-
         /* Create an object with the default manager. */
         protected T CreateObject (string name = "") {
             return CreateObject(m_fbxManager, name);
@@ -31,23 +29,18 @@ namespace UnitTests
         }
 
         [SetUp]
-        public virtual void InitTest ()
+        public virtual void Init ()
         {
             m_fbxManager = FbxManager.Create ();
-            m_testObject = CreateObject ();
         }
 
         [TearDown]
-        public virtual void DestroyTest ()
+        public virtual void Term ()
         {
             try {
-                m_testObject.Destroy ();
-            } catch (System.ArgumentNullException) {
-            }
-
-            try {
                 m_fbxManager.Destroy ();
-            } catch (System.ArgumentNullException) {
+            } 
+            catch (System.ArgumentNullException) {
             }
         }
 
@@ -151,11 +144,12 @@ namespace UnitTests
         [Test]
         public void TestSelected ()
         {
-            Assert.IsNotNull (m_testObject);
+            var obj = CreateObject ();
+            Assert.IsNotNull (obj);
 
-            Assert.IsFalse (m_testObject.GetSelected ());
-            m_testObject.SetSelected (true);
-            Assert.IsTrue (m_testObject.GetSelected ());
+            Assert.IsFalse (obj.GetSelected ());
+            obj.SetSelected (true);
+            Assert.IsTrue (obj.GetSelected ());
         }
     }
 }
