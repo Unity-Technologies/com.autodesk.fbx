@@ -5,8 +5,6 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
  
-using UnityEngine;
-using UnityEditor;
 using NUnit.Framework;
 using FbxSdk;
 using System.IO;

@@ -1,5 +1,3 @@
-using UnityEngine;
-using UnityEditor;
 using NUnit.Framework;
 using FbxSdk;
 using System.IO;
