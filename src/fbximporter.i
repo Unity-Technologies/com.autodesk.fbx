@@ -2,8 +2,7 @@
 // Unignore class
 %rename("%s") FbxImporter;
 
-// As the ignore everything will include the constructor, destructor, methods etc
-// in the class, these have to be explicitly unignored too:
+// explicitly unignored the following:
 %rename("%s") FbxImporter::Import;
 
 #else
