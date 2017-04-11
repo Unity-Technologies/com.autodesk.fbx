@@ -1,6 +1,12 @@
 cmake_minimum_required (VERSION 2.6)
 project (fbxsdk_csharp)
 
+# Default is a debug build.
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  set(CMAKE_BUILD_TYPE "Debug")
+  list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
+endif()
+
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
 
@@ -63,6 +69,7 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         COMMAND ${PYTHON_EXECUTABLE}
         ARGS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" FbxEmitter "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
         MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
+        DEPENDS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py"
 )
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)

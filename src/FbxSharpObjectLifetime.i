@@ -5,7 +5,7 @@
 /* Allow CSharp to release references. */
 extern "C" SWIGEXPORT void SWIGSTDCALL CSharp_$module_Release_WeakPointerHandle(void *handle) {
     if (!handle) { return; }
-    ((WeakPointerHandle*)handle)->ReleaseReference();
+    static_cast<WeakPointerHandle*>(handle)->ReleaseReference();
 }
 
 /* Set up the FBX allocators. */
@@ -29,7 +29,7 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   private static int initFbx = InitFbxAllocators();
 
   [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="CSharp_$module_Release_WeakPointerHandle")]
-  public static extern void ReleaseWeakPointerHandle(global::System.IntPtr handle);
+  public static extern void ReleaseWeakPointerHandle(global::System.Runtime.InteropServices.HandleRef handle);
 %}
 
 /* Use:
@@ -38,8 +38,9 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
  * we wrap up the class in a weakref when we return, we check the weakref when
  * we use it. For this to work you need to use the WeakPointerHandle allocators.
  */
-/* When returning a pointer or a reference, wrap it up in a handle */
 %define weakpointerhandle(THETYPE)
+
+/* When returning a pointer or a reference, wrap it up in a handle */
 %typemap(out) THETYPE * %{
   $result = WeakPointerHandle::GetHandle($1);
 %}
@@ -66,4 +67,68 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
     return $null;
   }
 %}
+
+/*
+ * Redefine the body. Principally, remove the code to handle multiple inheritance
+ * and object ownership.  There's two reasons:
+ * (1) It's broken because of the WeakPointerHandle. We could fix that though.
+ * (2) We never have object ownership.
+ * (3) Faster performance / less memory usage -- we avoid having a handleref
+ *     per subclass, and we avoid the ownership flag.
+ * Obviously if we end up with multiple inheritance in Fbx, we'll have to revisit this.
+ *
+ * The ownership flag remains in the constructor just because it's a pain to
+ * make the callers stop passing it.
+ */
+%typemap(csbody) THETYPE %{
+  protected global::System.Runtime.InteropServices.HandleRef swigCPtr { get ; private set; }
+
+  internal $csclassname(global::System.IntPtr cPtr, bool ignored) {
+    swigCPtr = new global::System.Runtime.InteropServices.HandleRef(this, cPtr);
+  }
+  internal static global::System.Runtime.InteropServices.HandleRef getCPtr($csclassname obj) {
+    return (obj == null) ? new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero) : obj.swigCPtr;
+  }
+%}
+
+%typemap(csbody_derived) THETYPE %{
+  internal $csclassname(global::System.IntPtr cPtr, bool ignored) : base(cPtr, ignored) { }
+%}
+
+
+/*
+ * Dispose / finalize.
+ *
+ * We need to release the reference on the handle.
+ *
+ * We also want to follow proper dispose norms, which by default SWIG doesn't
+ * do. See https://msdn.microsoft.com/en-us/library/ms244737.aspx
+ */
+%typemap(csdestruct, methodname="Dispose", methodmodifiers="public") THETYPE %{{
+    Dispose(true);
+    global::System.GC.SuppressFinalize(this);
+  }
+  ~$csclassname() {
+    Dispose(false);
+  }
+  protected void Dispose(bool disposing) {
+    if (swigCPtr.Handle != global::System.IntPtr.Zero) {
+      lock(this) {
+        $modulePINVOKE.ReleaseWeakPointerHandle(swigCPtr);
+        swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
+      }
+    }
+  }%}
+
+/* We handled the finalizer already, clobber the default handling. */
+%typemap(csfinalize) THETYPE %{ %}
+
+/*
+ * Derived classes just call the superclass.
+ * Probably there's a way to not even emit this call, though it's nice for debugging.
+ */
+%typemap(csdestruct_derived, methodname="Dispose", methodmodifiers="public") THETYPE %{{
+    base.Dispose();
+  }%}
+
 %enddef

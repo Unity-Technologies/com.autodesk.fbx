@@ -7,6 +7,11 @@ struct WeakPointerHandle;
 typedef std::unordered_map<void*, WeakPointerHandle*> HandleMap;
 static HandleMap g_handles;
 
+#ifdef MEMORY_DEBUG
+#include <unordered_set>
+static std::unordered_set<void*> AllocatedBlocks;
+#endif
+
 struct WeakPointerHandle {
     static inline WeakPointerHandle *GetHandle(void *p) {
         if (!p) {
@@ -42,6 +47,12 @@ struct WeakPointerHandle {
         }
 
     void ReleaseReference() {
+#ifdef MEMORY_DEBUG
+        if (m_ptr != 0) {
+          fprintf(stderr, "Releasing %llx (%d refs)\n", uint64_t(m_ptr), m_numRefs);
+          assert(AllocatedBlocks.count(m_ptr) != 0);
+        }
+#endif
         if(m_numRefs == 1) {
             if (m_ptr != nullptr) {
                 HandleMap::iterator it = g_handles.find(m_ptr);
@@ -49,6 +60,7 @@ struct WeakPointerHandle {
                     g_handles.erase(it);
                 }
             }
+            m_numRefs = -1;
             delete this;
         } else {
             assert(m_numRefs > 1);
@@ -63,25 +75,48 @@ struct WeakPointerHandle {
         // and we'll remove it from the handles. The C# users will be responsible for
         // releasing their references to it.
         static inline void MarkFree(void *p) {
+            if (!p) { return; }
+            #ifdef MEMORY_DEBUG
+            if (AllocatedBlocks.find(p) == AllocatedBlocks.end()) {
+                fprintf(stderr, "Duplicate free at %llx\n", uint64_t(p));
+                assert(AllocatedBlocks.count(p) != 0);
+            }
+            AllocatedBlocks.erase(p);
+            #endif
             HandleMap::iterator it = g_handles.find(p);
             if (it != g_handles.end()) {
                 it->second->m_ptr = nullptr;
                 g_handles.erase(it);
             }
         }
+        static inline void MarkAllocated(void *p) {
+            #ifdef MEMORY_DEBUG
+            if (!AllocatedBlocks.insert(p).second) {
+                fprintf(stderr, "Duplicate allocation at %llx\n", uint64_t(p));
+                assert(AllocatedBlocks.count(p) == 0);
+            }
+            #endif
+        }
 
         public:
         static void *AllocateMemory(size_t n) {
-            return ::malloc(n);
+            void *p = ::malloc(n);
+            MarkAllocated(p);
+            return p;
         }
 
         static void *AllocateZero(size_t n, size_t sz) {
-            return ::calloc(n, sz);
+            void *p = ::calloc(n, sz);
+            MarkAllocated(p);
+            return p;
         }
 
         static void *Reallocate(void *old, size_t n) {
             void *newPtr = ::realloc(old, n);
-            if (old && old != newPtr) { MarkFree(old); }
+            if (old != newPtr) {
+                MarkFree(old);
+                MarkAllocated(newPtr);
+            }
             return newPtr;
         }
 
@@ -96,5 +131,5 @@ struct WeakPointerHandle {
     inline ~WeakPointerHandle() { }
 
     void *m_ptr;
-    size_t m_numRefs;
+    int m_numRefs;
 };
