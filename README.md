@@ -5,6 +5,7 @@
 * [FBX SDK](http://www.autodesk.com/products/fbx/overview) 2016.0 or 2017.1
 * [cmake](https://cmake.org/download/) 3.7.2
 * [swig](http://www.swig.org/download.html) 3.0.12
+* [NUNIT](http://www.nunit.org/) 3.x
 * [Python](https://www.python.org/downloads/) 2.7.x or 3.x
 * Windows: [Visual Studio Community 2015](https://www.visualstudio.com/downloads/)
 * Ubuntu: ???
@@ -64,6 +65,8 @@ cmake --build . --target INSTALL --config Release
 ```
 
 ### Running UnitTests
+
+**Requires** [Unity 5.6+](https://store.unity.com/)
 
 **OSX**
 ```
