@@ -110,6 +110,7 @@ namespace UnitTests
 
             Assert.IsTrue (exportStatus);
 
+            // Export a null document. This is documented to fail.
             bool status = m_exporter.Export (null);
 
             Assert.IsFalse (status);
@@ -139,9 +140,10 @@ namespace UnitTests
         {
             FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
+            // Build the filename without the extension.
             string filename = GetRandomFilename (m_testFolder, false);
 
-            // Initialize the exporter.
+            // Initialize the exporter. Use default file type and IO settings.
             bool exportStatus = m_exporter.Initialize (filename);
 
             Assert.IsTrue (exportStatus);
@@ -161,7 +163,7 @@ namespace UnitTests
 
             string filename = GetRandomFilename (m_testFolder);
 
-            // Initialize the exporter.
+            // Initialize the exporter. Use default file type and IO settings.
             bool exportStatus = m_exporter.Initialize (filename);
 
             Assert.IsTrue (exportStatus);
@@ -173,32 +175,31 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestInitializeInvalidFileFormat()
+        public void TestInitializeFileFormatNegative()
         {
             FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
-            // Initialize the exporter.
+            // Initialize the exporter. Pass it a negative file format different than -1.
             bool exportStatus = m_exporter.Initialize (filename, int.MinValue);
 
             Assert.IsTrue (exportStatus);
 
             bool status = m_exporter.Export (emptyDoc);
 
-            // looks like anything less than 0 is treated the same as -1
             Assert.IsTrue (status);
             Assert.IsTrue (File.Exists (filename));
         }
 
         [Test]
-        public void TestInitializeInvalidFileFormat2()
+        public void TestInitializeFileFormatInvalid()
         {
             FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
-            // Initialize the exporter.
+            // Initialize the exporter. Pass it a file format that's not valid.
             bool exportStatus = m_exporter.Initialize (filename, int.MaxValue);
 
             Assert.IsTrue (exportStatus);
@@ -216,7 +217,7 @@ namespace UnitTests
 
             string filename = GetRandomFilename (m_testFolder);
 
-            // Initialize the exporter.
+            // Initialize the exporter. Use a valid non-default file format.
             bool exportStatus = m_exporter.Initialize (filename, 1);
 
             Assert.IsTrue (exportStatus);
@@ -234,7 +235,8 @@ namespace UnitTests
 
             string filename = GetRandomFilename (m_testFolder);
 
-            // Initialize the exporter.
+            // Initialize the exporter with explicit null IO settings (which is
+            // also the default).
             bool exportStatus = m_exporter.Initialize (filename, -1, null);
 
             Assert.IsTrue (exportStatus);
@@ -246,22 +248,17 @@ namespace UnitTests
         }
 
         [Test]
-        [Ignore("Crashes Unity when passed null FbxManager to FbxIOSettings")]
+        [ExpectedException( typeof( System.ArgumentNullException ) )]
         public void TestInitializeInvalidIOSettings()
         {
             FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
-            // Initialize the exporter.
-            bool exportStatus = m_exporter.Initialize (filename, -1, FbxIOSettings.Create(null, ""));
-
-            Assert.IsTrue (exportStatus);
-
-            bool status = m_exporter.Export (emptyDoc);
-
-            Assert.IsTrue (status);
-            Assert.IsTrue (File.Exists (filename));
+            // Initialize the exporter. Pass it zombie IO settings.
+            var ioSettings = FbxIOSettings.Create(m_fbxManager, "");
+            ioSettings.Destroy();
+            m_exporter.Initialize (filename, -1, ioSettings);
         }
     }
 }
