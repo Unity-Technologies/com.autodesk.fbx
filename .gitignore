@@ -21,6 +21,8 @@ CMakeCache.txt
 CMakeFiles/
 Makefile
 
+build/
+
 # vim temp files
 *.swp
 *.swo
@@ -28,6 +30,9 @@ Makefile
 ## Unity ##
 tests/UnityTests/Assets/Bindings
 tests/UnityTests/ProjectSettings/*
+tests/**/*.meta
+tests/**/*.unity
+tests/UnityTests/Assets/Plugins/
 !tests/UnityTests/ProjectSettings/ProjectSettings.asset
 !tests/UnityTests/ProjectSettings/EditorSettings.asset
 
