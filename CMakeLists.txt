@@ -50,6 +50,18 @@ include_directories(${FBXSDK_INCLUDE_DIR})
 set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
 set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;FbxSdk")
 
+# Set up extra swig dependencies.
+file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
+list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/fixed-headers/fbxpropertytypes.h")
+
+# Search-and-replace the parse errors to be %includable ; remember to add them as extra deps above too
+add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/fixed-headers/fbxpropertytypes.h
+        COMMAND ${PYTHON_EXECUTABLE}
+        ARGS "${CMAKE_SOURCE_DIR}/scripts/fix-headers.py" "${CMAKE_BINARY_DIR}/fixed-headers" "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxpropertytypes.h" 
+        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/scripts/fix-headers.py"
+)
+
 # Autogenerate the weakpointerhandles.i file.
 # It's a 2-step process:
 # 1. generate the typedefs map. Unfortunately we need to generate all the code for that!
@@ -65,20 +77,19 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         MAIN_DEPENDENCY ${FBXSDK_SWIG_I_FILE}
         DEPENDS ${SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS}
 )
+# important: only add this dependency *after* adding the custom command, or else we get a circular loop
+list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointerhandles.i")
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         COMMAND ${PYTHON_EXECUTABLE}
-        ARGS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
+        ARGS "${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
                 "FbxEmitter" "FbxManager"
         MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
-        DEPENDS "${CMAKE_SOURCE_DIR}/src/discover-weakpointerhandles.py"
+        DEPENDS "${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py"
 )
+
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
     
-# Set up extra swig dependencies.
-file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
-list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointerhandles.i")
-
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
 
 swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
