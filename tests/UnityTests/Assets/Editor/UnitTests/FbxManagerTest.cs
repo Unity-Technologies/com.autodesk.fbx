@@ -81,5 +81,16 @@ namespace UnitTests
                 Assert.AreSame (m_fbxManager, fbxManager2);
             }
         }
+
+        [Test]
+        public void TestUsing ()
+        {
+            // Test that the using statement works, and destroys the manager.
+            FbxObject obj;
+            using (var mgr = FbxManager.Create ()) {
+                obj = FbxObject.Create(mgr, "asdf");
+            }
+            Assert.That(() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+        }
     }
 }
