@@ -7,17 +7,12 @@ using System.IO;
 namespace UnitTests
 {
 
-    public class FbxExporterTest : Base
+    public class FbxExporterTest : Base<FbxExporter>
     {
         FbxExporter m_exporter;
 
         string m_testFolderPrefix = "to_delete_";
         string m_testFolder;
-
-        protected override FbxObject CreateObject ()
-        {
-            return FbxExporter.Create (FbxManager, "");
-        }
 
         private string GetRandomDirectory()
         {

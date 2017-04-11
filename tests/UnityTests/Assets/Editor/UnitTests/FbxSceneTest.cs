@@ -3,14 +3,8 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxSceneTest : Base
+    public class FbxSceneTest : Base<FbxScene>
     {
-
-        protected override FbxObject CreateObject ()
-        {
-            return FbxScene.Create (FbxManager, "");
-        }
-
         [Test]
         public void TestNodeCount ()
         {

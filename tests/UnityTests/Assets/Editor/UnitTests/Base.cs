@@ -6,9 +6,8 @@ using System;
 
 namespace UnitTests
 {
-    public abstract class Base
+    public abstract class Base<T> where T: FbxSdk.FbxObject
     {
-
         private FbxManager m_fbxManager;
 
         protected FbxManager FbxManager {
@@ -17,10 +16,22 @@ namespace UnitTests
             }
         }
 
-        private FbxObject m_testObject;
+        private T m_testObject;
 
-        protected abstract FbxObject CreateObject ();
+        /* Create an object with the default manager. */
+        protected T CreateObject (string name = "") {
+            return CreateObject(m_fbxManager, name);
+        }
 
+        /* Create an object with another manager. Default implementation uses
+         * reflection to call T.Create(...); override if reflection is wrong. */
+        protected virtual T CreateObject (FbxManager mgr, string name = "") {
+            try {
+                return (T)(typeof(T).GetMethod("Create").Invoke(null, new object[] {mgr, name}));
+            } catch(System.Reflection.TargetInvocationException xcp) {
+				throw xcp.GetBaseException();
+            }
+        }
 
         [SetUp]
         public virtual void InitTest ()
@@ -41,6 +52,35 @@ namespace UnitTests
                 m_fbxManager.Destroy ();
             } catch (System.ArgumentNullException) {
             }
+        }
+
+        [Test]
+        public void TestCreate()
+        {
+            var obj = CreateObject("MyObject");
+            Assert.IsInstanceOf<T> (obj);
+        }
+
+        [Test]
+        [ExpectedException (typeof(System.NullReferenceException))]
+        public void TestCreateNullManager()
+        {
+            var obj = CreateObject(null, "MyObject");
+        }
+
+        [Test]
+        public void TestCreateNullName()
+        {
+            var obj = CreateObject((string)null);
+        }
+
+        [Test]
+        [ExpectedException (typeof(System.ArgumentNullException))]
+        public void TestCreateZombieManager()
+        {
+            var mgr = FbxManager.Create();
+            mgr.Destroy();
+            var obj = CreateObject(mgr, "MyObject");
         }
 
         [Test]
@@ -108,7 +148,7 @@ namespace UnitTests
             // Test that if we try to use an object after Dispose()ing it,
             // we get an exception (not a crash). This is a regression test
             // based on some wrong code:
-            FbxObject zombie;
+            T zombie;
             using(var obj = CreateObject()) {
                 Assert.IsNotNull (obj);
                 zombie = obj;

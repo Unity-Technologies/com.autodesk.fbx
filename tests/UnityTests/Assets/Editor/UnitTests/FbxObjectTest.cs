@@ -4,44 +4,8 @@ using FbxSdk;
 namespace UnitTests
 {
 
-    public class FbxObjectTest : Base
+    public class FbxObjectTest : Base<FbxObject>
     {
-        protected override FbxObject CreateObject ()
-        {
-            return FbxObject.Create (FbxManager, "");
-        }
-
-        [Test]
-        [ExpectedException( typeof( System.NullReferenceException ) )]
-        public void TestCreateNullManager ()
-        {
-            // This caused a crash at one point.
-            FbxObject obj = FbxObject.Create(null, "MyObject");
-            Assert.IsNotNull (obj);
-            obj.Destroy();
-        }
-
-        [Test]
-        public void TestCreateNullName ()
-        {
-            FbxObject obj = FbxObject.Create(FbxManager, null);
-            Assert.IsNotNull (obj);
-            obj.Destroy();
-        }
-        
-        [Test]
-        [ExpectedException( typeof( System.ArgumentNullException ) )]
-        public void TestCreateZombieManager ()
-        {
-            // This caused a crash at one point: using a zombie manager.
-            var manager = FbxManager.Create();
-            manager.Destroy();
-
-            FbxObject obj = FbxObject.Create(manager, null);
-            Assert.IsNotNull (obj);
-            obj.Destroy();
-        }
-
         [Test]
         public void TestNames ()
         {
@@ -78,13 +42,6 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestDispose()
-        {
-            using(var obj = FbxObject.Create(FbxManager, "")) {
-            }
-        }
-
-        [Test]
         public void TestUTF8()
         {
             // make sure japanese survives the round-trip.
@@ -99,19 +56,6 @@ namespace UnitTests
             FbxClassId classId = FbxManager.FindClass ("FbxObject");
 
             Assert.AreEqual (classId.GetName (), "FbxObject");
-        }
-
-        [Test]
-        public void TestSelected ()
-        {
-            FbxObject obj = FbxObject.Create (FbxManager, "MyObject");
-            Assert.IsNotNull (obj);
-
-            Assert.IsFalse( obj.GetSelected () );
-            obj.SetSelected (true);
-            Assert.IsTrue (obj.GetSelected ());
-
-            obj.Destroy ();
         }
 
         [Test]

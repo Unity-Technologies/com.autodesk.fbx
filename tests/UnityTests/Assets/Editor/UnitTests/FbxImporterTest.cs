@@ -3,17 +3,12 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxImporterTest : Base
+    public class FbxImporterTest : Base<FbxImporter>
     {
-        protected override FbxObject CreateObject()
-        {
-            return FbxImporter.Create (FbxManager, "MyImporter");
-        }
-
         [Test]
         public void TestImport1 ()
         {
-            using (FbxImporter newImporter = FbxImporter.Create (FbxManager, "MyImporter"))
+            using (FbxImporter newImporter = CreateObject("MyImporter"))
             {
                 Assert.IsFalse (newImporter.Import (null));
             }
@@ -22,7 +17,7 @@ namespace UnitTests
         [Test]
         public void TestImport2 ()
         {
-            using (FbxImporter newImporter = FbxImporter.Create (FbxManager, "MyImporter"))
+            using (FbxImporter newImporter = CreateObject("MyImporter"))
             {
                 Assert.IsFalse (newImporter.Import (null, false));
 
