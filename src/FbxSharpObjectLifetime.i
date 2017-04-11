@@ -113,9 +113,6 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   }
   protected void Dispose(bool disposing) {
     if (swigCPtr.Handle != global::System.IntPtr.Zero) {
-      #if FbxSharp_Debug
-      global::UnityEngine.Debug.Log("releasing handle " + swigCPtr.Handle + " for $csclassname in " + (disposing ? "Dispose()" : "finalizer"));
-      #endif
       lock(this) {
         $modulePINVOKE.ReleaseWeakPointerHandle(swigCPtr);
         swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
@@ -131,9 +128,6 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
  * Probably there's a way to not even emit this call, though it's nice for debugging.
  */
 %typemap(csdestruct_derived, methodname="Dispose", methodmodifiers="public") THETYPE %{{
-    #if FbxSharp_Debug
-    global::UnityEngine.Debug.Log("disposing $csclassname " + swigCPtr.Handle);
-    #endif
     base.Dispose();
   }%}
 
