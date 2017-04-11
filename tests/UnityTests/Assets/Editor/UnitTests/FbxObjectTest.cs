@@ -27,42 +27,49 @@ namespace UnitTests
             FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
             Assert.IsNotNull (obj);
             
-            // there are two destroy methods
-            obj.Destroy(true);
+            // Destroy just the object.
+            obj.Destroy();
         }
 
         [Test]
-        [Ignore("CRASHES handling null FbxManager")]
-        public void TestCreateDestroy2 ()
+        public void TestCreateDestroyRecursive ()
         {
-            FbxObject obj = FbxObject.Create(null, "MyObject");
+            FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
             Assert.IsNotNull (obj);
             
-            // there are two destroy methods
+            // Destroy object and its children (though we didn't create any).
             obj.Destroy(true);
         }
 
         [Test]
-        public void TestCreateDestroy3 ()
+        [ExpectedException( typeof( System.NullReferenceException ) )]
+        public void TestCreateNullManager ()
+        {
+            // This caused a crash at one point.
+            FbxObject obj = FbxObject.Create(null, "MyObject");
+            Assert.IsNotNull (obj);
+            obj.Destroy();
+        }
+
+        [Test]
+        public void TestCreateNullName ()
         {
             FbxObject obj = FbxObject.Create(m_fbxManager, null);
             Assert.IsNotNull (obj);
-            
-            // there are two destroy methods
-            obj.Destroy(true);
+            obj.Destroy();
         }
         
         [Test]
-        [Ignore("CRASHES handling zombie FbxManager")]
-        public void TestCreateDestroy4 ()
+        [ExpectedException( typeof( System.ArgumentNullException ) )]
+        public void TestCreateZombieManager ()
         {
-            m_fbxManager.Destroy();
-            
-            FbxObject obj = FbxObject.Create(m_fbxManager, null);
+            // This caused a crash at one point: using a zombie manager.
+            var manager = FbxManager.Create();
+            manager.Destroy();
+
+            FbxObject obj = FbxObject.Create(manager, null);
             Assert.IsNotNull (obj);
-            
-            // there are two destroy methods
-            obj.Destroy(true);
+            obj.Destroy();
         }
 
         [Test]
@@ -98,6 +105,13 @@ namespace UnitTests
             Assert.AreEqual("MyObject", FbxObject.StripPrefix("NameSpace::MyObject"));
 
             obj.Destroy();
+        }
+
+        [Test]
+        public void TestDispose()
+        {
+            using(var obj = FbxObject.Create(m_fbxManager, "")) {
+            }
         }
 
         [Test]
