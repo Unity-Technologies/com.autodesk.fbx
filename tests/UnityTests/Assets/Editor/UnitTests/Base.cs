@@ -130,7 +130,6 @@ namespace UnitTests
         }
 
         [Test]
-        [ExpectedException (typeof(System.ArgumentNullException))]
         public void TestDestroyedManagerZombie ()
         {
             // Test that if we try to use an object after Destroy()ing its
@@ -138,11 +137,10 @@ namespace UnitTests
             var obj = CreateObject();
             Assert.IsNotNull (obj);
             m_fbxManager.Destroy();
-            obj.GetName ();
+            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
-        [ExpectedException (typeof(System.NullReferenceException))]
         public void TestDisposedZombie ()
         {
             // Test that if we try to use an object after Dispose()ing it,
@@ -153,7 +151,7 @@ namespace UnitTests
                 Assert.IsNotNull (obj);
                 zombie = obj;
             }
-            zombie.GetName ();
+            Assert.That (() => { zombie.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
