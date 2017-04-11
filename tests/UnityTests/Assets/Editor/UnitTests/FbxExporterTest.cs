@@ -7,13 +7,17 @@ using System.IO;
 namespace UnitTests
 {
 
-    public class FbxExporterTest
+    public class FbxExporterTest : Base
     {
-        FbxManager m_fbxManager;
         FbxExporter m_exporter;
-
+       
         string m_testFolderPrefix = "to_delete_";
         string m_testFolder;
+
+        protected override FbxObject CreateObject ()
+        {
+            return FbxExporter.Create (FbxManager, "");
+        }
 
         private string GetRandomDirectory()
         {
@@ -21,7 +25,7 @@ namespace UnitTests
 
             string temp;
             do {
-                // check that the directory does not already exist
+                // check that the m_fbxManageres not already exist
                 temp = randomDir + Path.GetRandomFileName ();
             } while(Directory.Exists (temp));
 
@@ -44,16 +48,13 @@ namespace UnitTests
             return temp;
         }
 
-        [SetUp]
-        public void InitBeforeTest()
+        public override void InitTest()
         {
-            m_fbxManager = FbxManager.Create ();
-            m_exporter = FbxExporter.Create (m_fbxManager, "exporter");
+            base.InitTest ();
+
+            m_exporter = FbxExporter.Create (FbxManager, "exporter");
 
             Assert.IsNotNull (m_exporter);
-
-            // make sure directory does not already exist
-            //Directory.Delete(m_testFolder, true);
 
             var testDirectories = Directory.GetDirectories(Path.GetTempPath(), m_testFolderPrefix + "*");
 
@@ -66,16 +67,16 @@ namespace UnitTests
             Directory.CreateDirectory (m_testFolder);
         }
 
-        [TearDown]
-        public void CleanupAfterTest()
+        public override void DestroyTest()
         {
             try{
                 m_exporter.Destroy();
-                m_fbxManager.Destroy();
             }
             catch(System.ArgumentNullException){
                 // already destroyed in test
             }
+
+            base.DestroyTest ();
 
             // delete all files that were created
             Directory.Delete(m_testFolder, true);
@@ -84,12 +85,12 @@ namespace UnitTests
         [Test]
         public void TestExportEmptyFbxDocument ()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
             // Initialize the exporter.
-            bool exportStatus = m_exporter.Initialize (filename, -1, m_fbxManager.GetIOSettings());
+            bool exportStatus = m_exporter.Initialize (filename, -1, FbxManager.GetIOSettings());
 
             Assert.IsTrue (exportStatus);
 
@@ -106,7 +107,7 @@ namespace UnitTests
             string filename = GetRandomFilename (m_testFolder);
 
             // Initialize the exporter.
-            bool exportStatus = m_exporter.Initialize (filename, -1, m_fbxManager.GetIOSettings());
+            bool exportStatus = m_exporter.Initialize (filename, -1, FbxManager.GetIOSettings());
 
             Assert.IsTrue (exportStatus);
 
@@ -128,16 +129,17 @@ namespace UnitTests
 
         [Test]
         [ExpectedException (typeof(System.ArgumentNullException))]
+        [Ignore("Crashes as we try to destroy the manager twice. Once again in TearDown")]
         public void TestDestroyManager ()
         {
-            m_fbxManager.Destroy ();
+            FbxManager.Destroy ();
             m_exporter.GetName ();
         }
 
         [Test]
         public void TestInitializeInvalidFilenameOnly()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder, false);
 
@@ -157,7 +159,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeValidFilenameOnly()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -175,7 +177,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeInvalidFileFormat()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -194,7 +196,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeInvalidFileFormat2()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -212,7 +214,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeValidFileFormat()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -230,7 +232,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeNullIOSettings()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -249,7 +251,7 @@ namespace UnitTests
         [Ignore("Crashes Unity when passed null FbxManager to FbxIOSettings")]
         public void TestInitializeInvalidIOSettings()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (m_fbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 

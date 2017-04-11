@@ -4,31 +4,11 @@ using FbxSdk;
 namespace UnitTests
 {
 
-    public class FbxObjectTest
+    public class FbxObjectTest : Base
     {
-
-        FbxManager m_fbxManager;
-
-        [SetUp]
-        public void Init ()
+        protected override FbxObject CreateObject ()
         {
-            m_fbxManager = FbxManager.Create ();
-        }
-
-        [TearDown]
-        public void End ()
-        {
-            m_fbxManager.Destroy ();
-        }
-
-        [Test]
-        public void TestCreateDestroy ()
-        {
-            FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
-            Assert.IsNotNull (obj);
-            
-            // there are two destroy methods
-            obj.Destroy(true);
+            return FbxObject.Create (FbxManager, "");
         }
 
         [Test]
@@ -45,7 +25,7 @@ namespace UnitTests
         [Test]
         public void TestCreateDestroy3 ()
         {
-            FbxObject obj = FbxObject.Create(m_fbxManager, null);
+            FbxObject obj = FbxObject.Create(FbxManager, null);
             Assert.IsNotNull (obj);
             
             // there are two destroy methods
@@ -56,9 +36,9 @@ namespace UnitTests
         [Ignore("CRASHES handling zombie FbxManager")]
         public void TestCreateDestroy4 ()
         {
-            m_fbxManager.Destroy();
+            FbxManager.Destroy();
             
-            FbxObject obj = FbxObject.Create(m_fbxManager, null);
+            FbxObject obj = FbxObject.Create(FbxManager, null);
             Assert.IsNotNull (obj);
             
             // there are two destroy methods
@@ -77,7 +57,7 @@ namespace UnitTests
              */
 
             // Test a function that takes const char*.
-            FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
+            FbxObject obj = FbxObject.Create(FbxManager, "MyObject");
             Assert.IsNotNull (obj);
 
             // Test a function that returns const char*.
@@ -105,25 +85,14 @@ namespace UnitTests
         {
             // make sure japanese survives the round-trip.
             string katakana = "片仮名";
-            FbxObject obj = FbxObject.Create(m_fbxManager, katakana);
+            FbxObject obj = FbxObject.Create(FbxManager, katakana);
             Assert.AreEqual(katakana, obj.GetName());
         }
 
         [Test]
-        [ExpectedException( typeof( System.ArgumentNullException ) )]
-        public void TestZombie ()
-        {
-            FbxObject obj = FbxObject.Create(m_fbxManager, "MyObject");
-            Assert.IsNotNull (obj);
-
-            obj.Destroy();
-            obj.GetName();
-        }
-        
-        [Test]
         public void TestFindClass ()
         {
-            FbxClassId classId = m_fbxManager.FindClass ("FbxObject");
+            FbxClassId classId = FbxManager.FindClass ("FbxObject");
 
             Assert.AreEqual (classId.GetName (), "FbxObject");
         }
@@ -131,7 +100,7 @@ namespace UnitTests
         [Test]
         public void TestSelected ()
         {
-            FbxObject obj = FbxObject.Create (m_fbxManager, "MyObject");
+            FbxObject obj = FbxObject.Create (FbxManager, "MyObject");
             Assert.IsNotNull (obj);
 
             Assert.IsFalse( obj.GetSelected () );
@@ -140,16 +109,14 @@ namespace UnitTests
 
             obj.Destroy ();
         }
-        
+
         [Test]
         public void TestFbxManager ()
         {
-            using (FbxObject obj = FbxObject.Create (m_fbxManager, "")) {
+            using (FbxObject obj = FbxObject.Create (FbxManager, "")) {
                 FbxManager fbxManager2 = obj.GetFbxManager();
                 Assert.IsNotNull(fbxManager2);
             }
         }
-        
-        
     }
 }
