@@ -15,7 +15,7 @@ namespace UnitTests
         			{
 						{ "title",      "Document Title" },
 						{ "subject",    "Unit Tests for DocumentInfo class." },
-						{ "author",     "Unity Technolies" },
+						{ "author",     "Unity Technologies" },
 						{ "revision",   "1.0" },
 						{ "keywords",   "do not crash" },
 						{ "comment",    "Testing the DocumentInfo object." },
