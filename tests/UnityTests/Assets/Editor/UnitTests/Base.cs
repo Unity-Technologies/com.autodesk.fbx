@@ -29,7 +29,17 @@ namespace UnitTests
             try {
                 return (T)(typeof(T).GetMethod("Create").Invoke(null, new object[] {mgr, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
-				throw xcp.GetBaseException();
+                throw xcp.GetBaseException();
+            }
+        }
+
+        /* Create an object with an object as container. Default implementation uses
+         * reflection to call T.Create(...); override if reflection is wrong. */
+        protected virtual T CreateObject (FbxObject container, string name = "") {
+            try {
+                return (T)(typeof(T).GetMethod("Create").Invoke(null, new object[] {container, name}));
+            } catch(System.Reflection.TargetInvocationException xcp) {
+                throw xcp.GetBaseException();
             }
         }
 
@@ -37,7 +47,7 @@ namespace UnitTests
         public virtual void InitTest ()
         {
             m_fbxManager = FbxManager.Create ();
-            m_testObject = CreateObject ();
+            m_testObject = CreateObject (m_fbxManager, "foo");
         }
 
         [TearDown]
@@ -62,9 +72,10 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestCreateNullManager()
+        public void TestCreateNullContainer()
         {
-            Assert.That (() => { CreateObject(null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { CreateObject((FbxManager)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { CreateObject((FbxObject)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
         [Test]
