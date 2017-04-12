@@ -57,9 +57,9 @@ make install
 ### Building on Windows 
 ```
 REM Win10
-cd %FBXSDK_CSHARP_PATH
+cd %DESIRED_BUILD_DESTINATION
 
-cmake -H. -Bbuild -G"Visual Studio 14 2015 Win64" -DCMAKE_INSTALL_PREFIX:PATH=%FBXSDK_CSHARP_PATH/tests/UnitTests/Assets/Plugins
+cmake %FBXSDK_CSHARP_PATH -G"Visual Studio 14 2015 Win64"
 cd build
 cmake --build . --target INSTALL --config Release
 ```
