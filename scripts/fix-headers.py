@@ -31,6 +31,8 @@ for inname in sys.argv[2:]:
       for line in filein:
         # this appears in fbxpropertytypes.h
         line = re.sub('unsigned const short', 'unsigned short', line)
+        # this appears in fbxmatrix.h and in fbxaffinematrix.h (with different whitespace)
+        line = re.sub(r'typedef const double\s*\(([A-Za-z0-9_]+)\)', r'typedef const double \1', line)
 
         # remember to write it out!
         fileout.write(line)
