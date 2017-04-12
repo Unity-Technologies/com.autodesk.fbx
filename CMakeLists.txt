@@ -37,6 +37,7 @@ include(${SWIG_USE_FILE})
 include(deps/cmake/UseFixHeaders.cmake)
 
 find_package(FBXSDK REQUIRED)
+set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(PythonInterp REQUIRED)
 
 # Unity is not required, but we can't run the tests without it.
@@ -52,8 +53,11 @@ include_directories(${FBXSDK_INCLUDE_DIR})
 set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
 set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;FbxSdk")
 
-# Set up extra swig dependencies.
+# Set up extra swig dependencies. Must be before building the typemaps.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
+
+# Fix the header files we need to fix. Must be before building the typemaps.
+swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxpropertytypes.h")
 
 # Autogenerate the weakpointerhandles.i file.
 # It's a 2-step process:
@@ -80,8 +84,6 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         DEPENDS "${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py"
 )
 
-# Fix the header files we need to fix.
-swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxpropertytypes.h")
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
     
