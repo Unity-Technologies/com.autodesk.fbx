@@ -37,6 +37,7 @@ include(${SWIG_USE_FILE})
 include(deps/cmake/UseFixHeaders.cmake)
 
 find_package(FBXSDK REQUIRED)
+set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(PythonInterp REQUIRED)
 
 # Unity is not required, but we can't run the tests without it.
