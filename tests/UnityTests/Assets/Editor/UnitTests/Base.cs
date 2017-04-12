@@ -25,9 +25,10 @@ namespace UnitTests
 
         /* Create an object with another manager. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
+        System.Reflection.MethodInfo m_createFromMgrAndName = typeof(T).GetMethod("Create", new Type[] {typeof(FbxManager), typeof(string)});
         protected virtual T CreateObject (FbxManager mgr, string name = "") {
             try {
-                return (T)(typeof(T).GetMethod("Create").Invoke(null, new object[] {mgr, name}));
+                return (T)(m_createFromMgrAndName.Invoke(null, new object[] {mgr, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
                 throw xcp.GetBaseException();
             }
@@ -35,9 +36,10 @@ namespace UnitTests
 
         /* Create an object with an object as container. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
+        System.Reflection.MethodInfo m_createFromObjAndName = typeof(T).GetMethod("Create", new Type[] {typeof(FbxObject), typeof(string)});
         protected virtual T CreateObject (FbxObject container, string name = "") {
             try {
-                return (T)(typeof(T).GetMethod("Create").Invoke(null, new object[] {container, name}));
+                return (T)(m_createFromObjAndName.Invoke(null, new object[] {container, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
                 throw xcp.GetBaseException();
             }
