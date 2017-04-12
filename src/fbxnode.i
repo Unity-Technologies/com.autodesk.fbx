@@ -9,7 +9,7 @@
 %rename("%s") FbxNode::AddChild(FbxNode*);
 %rename("%s") FbxNode::RemoveChild(FbxNode*);
 %rename("%s") FbxNode::GetChild(int);
-%rename("%s") FbxNode::GetChildCount(bool pRecursive = false);
+%rename("%s") FbxNode::GetChildCount(bool pRecursive = false) const;
 %rename("%s") FbxNode::FindChild;
 #endif
 
