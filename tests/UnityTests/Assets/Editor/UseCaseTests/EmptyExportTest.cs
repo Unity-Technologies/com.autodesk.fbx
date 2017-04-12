@@ -168,8 +168,8 @@ namespace UseCaseTests
                 // Import the contents of the file into the scene.
                 importer.Import (scene);
 
-				// check that the scene is valid
-				CheckScene (scene, this.dataValues);
+                // check that the scene is valid
+                CheckScene (scene, this.dataValues);
             }
         }
 
