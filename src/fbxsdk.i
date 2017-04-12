@@ -63,6 +63,7 @@
 //#define EXCLUDE_ALL_INTERFACES
 
 #ifndef EXCLUDE_ALL_INTERFACES
+%include "fbxproperty.i"
 %include "fbxclassid.i"
 %include "fbxemitter.i"
 %include "fbxobject.i"
