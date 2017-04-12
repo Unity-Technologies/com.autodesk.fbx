@@ -1,3 +1,9 @@
+// ***********************************************************************
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
+//
+// Licensed under the ##LICENSENAME##.
+// See LICENSE.md file in the project root for full license information.
+// ***********************************************************************
 %module Globals
 %{
 #include "fbxsdk.h"
@@ -68,6 +74,7 @@
 %include "fbxemitter.i"
 %include "fbxobject.i"
 %include "fbxcollection.i"
+%include "fbxdocumentinfo.i"
 %include "fbxdocument.i"
 %include "fbxscene.i"
 %include "fbxiobase.i"
@@ -75,10 +82,6 @@
 %include "fbximporter.i"
 %include "fbxmanager.i"
 %include "fbxiosettings.i"
-#else
-%include "fbxemitter.i"
-%include "fbxobject.i"
-%include "fbxmanager.i"
 #endif
     
 /* Everything */

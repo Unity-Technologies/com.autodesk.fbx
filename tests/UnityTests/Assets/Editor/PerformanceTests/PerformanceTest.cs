@@ -1,5 +1,9 @@
-﻿using UnityEngine;
-using UnityEditor;
+﻿// ***********************************************************************
+// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+//
+// Licensed under the ##LICENSENAME##. 
+// See LICENSE.md file in the project root for full license information.
+// ***********************************************************************
 using NUnit.Framework;
 using FbxSdk;
 using System.Diagnostics;
@@ -13,6 +17,24 @@ namespace PerformanceTests
 
     public class PerformanceTest
     {
+        protected string exeFileName {
+            get {
+#if UNITY_EDITOR
+                string path = Path.Combine (UnityEngine.Application.dataPath, "Plugins/fbxsdk");
+                return Path.Combine (path, "PerformanceBenchmarks.exe");
+#else
+                throw new NotImplementedException();
+#endif
+            }
+        }
+
+        protected void LogError (string msg)
+        {
+#if UNITY_EDITY
+            UnityEngine.Debug.LogError (msg);
+#endif
+        }
+
 
         [System.Serializable]
         public class ResultJsonList
@@ -33,43 +55,49 @@ namespace PerformanceTests
         {
             // run native C++ tests here + get results to compare against
             // In Windows, the exe has to be in the same folder as the fbxsdk library in order to run
-            string path = Path.Combine(Application.dataPath, "Plugins/fbxsdk");
+
             Process cpp = new Process ();
-            cpp.StartInfo.FileName = Path.Combine(path, "PerformanceBenchmarks.exe");
+            cpp.StartInfo.FileName = this.exeFileName;
             cpp.StartInfo.Arguments = testName;
             cpp.StartInfo.RedirectStandardOutput = true;
             cpp.StartInfo.UseShellExecute = false;
             cpp.Start ();
 
+            // TODO: fix mono warning about compatibility with .NET
             StringBuilder output = new StringBuilder ();
             while (!cpp.HasExited) {
                 output.Append (cpp.StandardOutput.ReadToEnd ());
             }
 
             try {
-                ResultJsonList cppJson = JsonUtility.FromJson<ResultJsonList> (output.ToString ());
-
+#if UNITY_EDITOR
+                ResultJsonList cppJson = UnityEngine.JsonUtility.FromJson<ResultJsonList> (output.ToString ());
+#else
+                var cppJson = null;
+                throw new NotImplementedException();
+#endif
                 if(cppJson == null){
-                    UnityEngine.Debug.LogError("CppError [" + testName + "]:" + output);
+                    this.LogError("CppError [" + testName + "]:" + output);
                     return null;
                 }
 
                 if (cppJson.tests.Count <= 0) {
-                    UnityEngine.Debug.LogError ("Error: No json test results received");
+                    this.LogError ("Error: No json test results received");
                     return null;
                 }
 
-                ResultJson cppResult = cppJson.tests [0];
-
+                var cppResult = cppJson.tests [0];
+                Assert.IsNotNull (cppResult);
                 Assert.IsTrue (cppResult.success);
 
                 if (!String.IsNullOrEmpty (cppResult.error)) {
-                    UnityEngine.Debug.LogError ("CppError [" + testName + "]: " + cppResult.error);
+                    this.LogError ("CppError [" + testName + "]: " + cppResult.error);
                 }
 
                 return cppResult;
+
             } catch (System.ArgumentException) {
-                UnityEngine.Debug.LogError ("Error [" + testName + "]: Malformed json string: " + output);
+                this.LogError ("Error [" + testName + "]: Malformed json string: " + output);
                 return null;
             }
         }
@@ -98,7 +126,7 @@ namespace PerformanceTests
             fbxManager.Destroy ();
 
             // Check against Native C++ tests
-            ResultJson cppResult = RunCppTest ("FbxObjectCreate:" + N);
+            var cppResult = RunCppTest ("FbxObjectCreate:" + N);
 
             Assert.IsNotNull (cppResult);
 
@@ -165,7 +193,7 @@ namespace PerformanceTests
 
             fbxManager.Destroy ();
 
-            ResultJson cppResult = RunCppTest ("EmptyExportImport:" + N);
+            var cppResult = RunCppTest ("EmptyExportImport:" + N);
 
             Assert.IsNotNull (cppResult);
 
