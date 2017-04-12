@@ -1,5 +1,9 @@
-using UnityEngine;
-using UnityEditor;
+// ***********************************************************************
+// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+//
+// Licensed under the ##LICENSENAME##. 
+// See LICENSE.md file in the project root for full license information.
+// ***********************************************************************
 using NUnit.Framework;
 using FbxSdk;
 using System.IO;
@@ -43,9 +47,9 @@ namespace UnitTests
             return temp;
         }
 
-        public override void InitTest()
+        public override void Init()
         {
-            base.InitTest ();
+            base.Init ();
 
             m_exporter = FbxExporter.Create (FbxManager, "exporter");
 
@@ -62,7 +66,7 @@ namespace UnitTests
             Directory.CreateDirectory (m_testFolder);
         }
 
-        public override void DestroyTest()
+        public override void Term()
         {
             try{
                 m_exporter.Destroy();
@@ -71,7 +75,7 @@ namespace UnitTests
                 // already destroyed in test
             }
 
-            base.DestroyTest ();
+            base.Term ();
 
             // delete all files that were created
             Directory.Delete(m_testFolder, true);
