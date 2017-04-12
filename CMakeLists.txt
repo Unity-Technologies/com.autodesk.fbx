@@ -34,6 +34,8 @@ SET(CMAKE_SWIG_FLAGS -fvirtual)
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 
+include(deps/cmake/UseFixHeaders.cmake)
+
 find_package(FBXSDK REQUIRED)
 find_package(PythonInterp REQUIRED)
 
@@ -52,15 +54,6 @@ set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;FbxSd
 
 # Set up extra swig dependencies.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
-list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/fixed-headers/fbxpropertytypes.h")
-
-# Search-and-replace the parse errors to be %includable ; remember to add them as extra deps above too
-add_custom_command(
-        OUTPUT ${CMAKE_BINARY_DIR}/fixed-headers/fbxpropertytypes.h
-        COMMAND ${PYTHON_EXECUTABLE}
-        ARGS "${CMAKE_SOURCE_DIR}/scripts/fix-headers.py" "${CMAKE_BINARY_DIR}/fixed-headers" "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxpropertytypes.h" 
-        MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/scripts/fix-headers.py"
-)
 
 # Autogenerate the weakpointerhandles.i file.
 # It's a 2-step process:
@@ -87,6 +80,8 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         DEPENDS "${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py"
 )
 
+# Fix the header files we need to fix.
+swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxpropertytypes.h")
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
     
