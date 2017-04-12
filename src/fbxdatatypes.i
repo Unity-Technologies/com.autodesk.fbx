@@ -7,4 +7,4 @@
 #endif
 
 %include "fbxsdk/core/fbxdatatypes.h"
-%include "fixed-headers/fbxpropertytypes.h"
+%include "fbxsdk_csharp-fixed-headers/fbxpropertytypes.h"
