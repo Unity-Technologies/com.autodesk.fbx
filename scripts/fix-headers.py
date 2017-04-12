@@ -20,7 +20,8 @@ if len(sys.argv) < 3:
   sys.exit(1)
 
 outdir = sys.argv[1]
-os.makedirs(outdir, exist_ok = True)
+if not os.path.isdir(outdir):
+    os.makedirs(outdir)
 
 for inname in sys.argv[2:]:
     outname = os.path.join(outdir, os.path.basename(inname))
