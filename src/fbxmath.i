@@ -25,7 +25,11 @@ class FbxDouble4 { };
 %rename("%s") FbxVector4;
 %ignore FbxVector4::FbxVector4(const double pValue[4]);
 %ignore FbxVector4::FbxVector4(const FbxDouble3&);
+/* For some reason it doesn't notice there's an implicit destructor. */
 %rename("%s") FbxVector4::~FbxVector4();
+%extend FbxVector4 {
+  ~FbxVector4() { }
+}
 #endif
 
 %include "fbxsdk/core/math/fbxvector4.h"
