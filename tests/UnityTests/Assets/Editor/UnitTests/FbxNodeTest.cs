@@ -74,6 +74,12 @@ namespace UnitTests
             // Recursively destroying the root does not destroy the grandchild.
             root.Destroy(pRecursive: true);
             Assert.AreEqual("grandchild2", grandchild.GetName()); // actually compare by name => check it doesn't throw
+
+            // Test we can remove a child.
+            var fooNode = FbxNode.Create(grandchild, "foo");
+            grandchild.RemoveChild(fooNode);
+            Assert.IsNull(fooNode.GetParent());
+            Assert.AreEqual(0, grandchild.GetChildCount());
         }
     }
 }
