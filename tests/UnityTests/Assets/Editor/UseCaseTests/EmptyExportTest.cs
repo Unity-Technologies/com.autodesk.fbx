@@ -4,79 +4,110 @@
 // Licensed under the ##LICENSENAME##. 
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
- 
+
 using NUnit.Framework;
 using FbxSdk;
 using System.IO;
 using System.Collections.Generic;
-            
+
 namespace UseCaseTests
 {
 
     public class EmptyExportTest
     {
-        protected string fileNamePrefix { get { return "safe_to_delete_"; } }
+        protected string filePath       { get { return "."; } }
+        protected string fileNamePrefix { get { return "_safe_to_delete__empty_export_test_"; } }
+        protected string fileNameExt    { get { return ".fbx"; } }
 
-        private static Dictionary<string, string> m_dataValues = null;
+        private static Dictionary<string, string> m_dataValues = new Dictionary<string, string> ()
+        {
+            { "title",      "Empty scene" },
+            { "subject",    "Example of an empty scene with document information settings" },
+            { "author",     "Unit Technologies" },
+            { "revision",   "1.0" },
+            { "keywords",   "example empty scene" },
+            { "comment",    "basic scene settings. Note that the scene thumnail is not set." },
+        };
 
-        protected Dictionary<string, string> dataValues {
-            get {
-                if (m_dataValues == null) {
-                    m_dataValues = new Dictionary<string, string> ()
-                    {
-                        { "title",      "Empty scene" },
-                        { "subject",    "Example of an empty scene with document information settings" },
-                        { "author",     "Unit Technologies" },
-                        { "revision",   "1.0" },
-                        { "keywords",   "example empty scene" },
-                        { "comment",    "basic scene settings. Note that the scene thumnail is not set." },
-                    };
-                }
-                return m_dataValues;
-            }
+        protected Dictionary<string, string> dataValues { get { return m_dataValues; } }
+
+        private string MakeFileName(string baseName = null, string prefixName = null, string extName = null)
+        {
+            if (baseName==null)
+                baseName = Path.GetRandomFileName();
+            
+            if (prefixName==null)
+                prefixName = this.fileNamePrefix;
+            
+            if (extName==null)
+                extName = this.fileNameExt;
+                
+            return prefixName + baseName + extName;
         }
 
-        // Declare the path and filename for the scene to be exported.
-        // In this case, the file will be in the same directory as the executable.
-        private string m_fileName = null;
+        private string GetRandomFileNamePath(string pathName = null, string prefixName = null, string extName = null)
+        {
+            string temp;
 
-        protected string fileName {
-        	get {
-                if (m_fileName==null) {
-                    m_fileName = this.fileNamePrefix + Path.GetRandomFileName () + ".fbx";
-                }
-        		return m_fileName;
-        	}
+            if (pathName==null)
+                pathName = this.filePath;
+
+            if (prefixName==null)
+                prefixName = this.fileNamePrefix;
+                
+            if (extName==null)
+                extName = this.fileNameExt;
+            
+            // repeat until you find a file that does not already exist
+            do {
+                temp = Path.Combine (pathName, MakeFileName(prefixName: prefixName, extName: extName));
+                
+            } while(File.Exists (temp));
+            
+            return temp;
         }
+
+        private FbxManager m_fbxManager;
+
+        protected FbxManager FbxManager { get { return m_fbxManager; } }
 
         [SetUp]
         public virtual void Init ()
         {
-            foreach (string file in Directory.GetFiles (".", this.fileNamePrefix + "*.fbx")) {
+            foreach (string file in Directory.GetFiles (this.filePath, MakeFileName("*"))) {
                 File.Delete (file);
             }
+
+            // create fbx manager.
+            m_fbxManager = FbxManager.Create ();
+
+            // configure IO settings.
+            m_fbxManager.SetIOSettings (FbxIOSettings.Create (m_fbxManager, Globals.IOSROOT));
         }
 
         [TearDown]
         public virtual void Term ()
         {
-            // Delete the file once the test is complete
-            File.Delete (fileName);
+            try {
+                m_fbxManager.Destroy ();
+            } 
+            catch (System.ArgumentNullException) {
+            }
         }
 
-        private FbxScene CreateScene(FbxManager manager)
+        private FbxScene CreateScene (FbxManager manager)
         {
             FbxScene scene = FbxScene.Create (manager, "myScene");
 
             // create scene info
             FbxDocumentInfo sceneInfo = FbxDocumentInfo.Create (manager, "mySceneInfo");
 
-            sceneInfo.mTitle      = dataValues["title"];
-            sceneInfo.mSubject    = dataValues["subject"];
-            sceneInfo.mAuthor     = dataValues["author"];
-            sceneInfo.mRevision   = dataValues["revision"];
-            sceneInfo.mKeywords   = dataValues["keywords"];
-            sceneInfo.mComment    = dataValues["comment"];
+            sceneInfo.mTitle = dataValues ["title"];
+            sceneInfo.mSubject = dataValues ["subject"];
+            sceneInfo.mAuthor = dataValues ["author"];
+            sceneInfo.mRevision = dataValues ["revision"];
+            sceneInfo.mKeywords = dataValues ["keywords"];
+            sceneInfo.mComment = dataValues ["comment"];
 
             scene.SetSceneInfo (sceneInfo);
 
@@ -85,67 +116,82 @@ namespace UseCaseTests
             return scene;
         }
 
-        private void CheckSceneInfo(FbxScene scene, Dictionary<string,string> values)
+        private void CheckScene (FbxScene scene, Dictionary<string, string> values)
         {
             FbxDocumentInfo sceneInfo = scene.GetSceneInfo ();
 
-            Assert.AreEqual (sceneInfo.mTitle,    values["title"]);
-            Assert.AreEqual (sceneInfo.mSubject,  values["subject"]);
-            Assert.AreEqual (sceneInfo.mAuthor,   values["author"]);
-            Assert.AreEqual (sceneInfo.mRevision, values["revision"]);
-            Assert.AreEqual (sceneInfo.mKeywords, values["keywords"]);
-            Assert.AreEqual (sceneInfo.mComment,  values["comment"]);
+            Assert.AreEqual (sceneInfo.mTitle, values ["title"]);
+            Assert.AreEqual (sceneInfo.mSubject, values ["subject"]);
+            Assert.AreEqual (sceneInfo.mAuthor, values ["author"]);
+            Assert.AreEqual (sceneInfo.mRevision, values ["revision"]);
+            Assert.AreEqual (sceneInfo.mKeywords, values ["keywords"]);
+            Assert.AreEqual (sceneInfo.mComment, values ["comment"]);
+        }
+
+        private void ExportScene (string fileName)
+        {
+            // Export the scene
+            using (FbxExporter exporter = FbxExporter.Create (FbxManager, "myExporter")) {
+
+                // Initialize the exporter.
+                bool status = exporter.Initialize (fileName, -1, FbxManager.GetIOSettings ());
+
+                // Check that export status is True
+                Assert.IsTrue (status);
+
+                // Create a new scene so it can be populated by the imported file.
+                FbxScene scene = CreateScene (FbxManager);
+
+                CheckScene (scene, this.dataValues);
+
+                // Export the scene to the file.
+                exporter.Export (scene);
+
+                // Check if file exists
+                Assert.IsTrue (File.Exists (fileName));
+            }
+        }
+
+        private void ImportScene (string fileName)
+        {
+            // Import the scene to make sure file is valid
+            using (FbxImporter importer = FbxImporter.Create (FbxManager, "myImporter")) {
+
+                // Initialize the importer.
+                bool status = importer.Initialize (fileName, -1, FbxManager.GetIOSettings ());
+
+                Assert.IsTrue (status);
+
+                // Create a new scene so it can be populated by the imported file.
+                FbxScene scene = FbxScene.Create (FbxManager, "myScene");
+
+                // Import the contents of the file into the scene.
+                importer.Import (scene);
+
+				// check that the scene is valid
+				CheckScene (scene, this.dataValues);
+            }
         }
 
         [Test]
-        public void EditorTest ()
+        public void ExportSceneTest ()
         {
-            // Create the FBX SDK manager
-            using (FbxManager manager = FbxManager.Create ()) {
-                
-                // Create an IOSettings object.
-                FbxIOSettings iosettings = FbxIOSettings.Create (manager, Globals.IOSROOT);
-                manager.SetIOSettings (iosettings);
+            var fileName = GetRandomFileNamePath ();
 
-                // Export the scene
-                using (FbxExporter exporter = FbxExporter.Create (manager, "myExporter")) {
+            this.ExportScene (fileName);
 
-                    // Initialize the exporter.
-                    bool status = exporter.Initialize (this.fileName, -1, manager.GetIOSettings ());
+            File.Delete (fileName);
+        }
 
-                    // Check that export status is True
-                    Assert.IsTrue (status);
+        [Test]
+        public void RoundTripTest ()
+        {
+            var fileName = GetRandomFileNamePath ();
+            
+            this.ExportScene (fileName);
+            this.ImportScene (fileName);
 
-                    // Create a new scene so it can be populated by the imported file.
-                    FbxScene scene = CreateScene (manager);
-
-                    CheckSceneInfo (scene, this.dataValues);
-
-                    // Export the scene to the file.
-                    exporter.Export (scene);
-
-                    // Check if file exists
-                    Assert.IsTrue (File.Exists (fileName));
-                }
-
-                // Import the scene to make sure file is valid
-                using (FbxImporter importer = FbxImporter.Create (manager, "myImporter")) {
-
-                    // Initialize the importer.
-                    bool status = importer.Initialize (this.fileName, -1, manager.GetIOSettings ());
-
-                    Assert.IsTrue (status);
-
-                    // Create a new scene so it can be populated by the imported file.
-                    FbxScene scene = FbxScene.Create (manager, "myScene");
-
-                    // Import the contents of the file into the scene.
-                    importer.Import (scene);
-
-                    // check that the scene is valid
-                    CheckSceneInfo (scene, this.dataValues);
-                }
-            }
+            File.Delete (fileName);
         }
     }
 }

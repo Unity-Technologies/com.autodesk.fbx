@@ -12,24 +12,17 @@ namespace UnitTests
 {
     public class FbxDocumentTest : Base<FbxDocument>
     {
-        private static Dictionary<string, string> m_dataValues = null;
+        private static Dictionary<string, string> m_dataValues = new Dictionary<string, string> ()
+        {
+            { "title",      "Document Title" },
+            { "subject",    "Unit Tests for DocumentInfo class." },
+            { "author",     "Unity Technologies" },
+            { "revision",   "1.0" },
+            { "keywords",   "do not crash" },
+            { "comment",    "Testing the DocumentInfo object." },
+        };
 
-        protected Dictionary<string, string> dataValues {
-        	get {
-        		if (m_dataValues == null) {
-        			m_dataValues = new Dictionary<string, string> ()
-        			{
-						{ "title",      "Document Title" },
-						{ "subject",    "Unit Tests for DocumentInfo class." },
-						{ "author",     "Unity Technologies" },
-						{ "revision",   "1.0" },
-						{ "keywords",   "do not crash" },
-						{ "comment",    "Testing the DocumentInfo object." },
-					};
-        		}
-        		return m_dataValues;
-        	}
-        }
+        protected Dictionary<string, string> dataValues { get { return m_dataValues; } }
 
         [Test]
         public void TestDocumentInfo ()

@@ -30,9 +30,10 @@ build/
 ## Unity ##
 tests/UnityTests/Assets/Bindings
 tests/UnityTests/ProjectSettings/*
-tests/**/*.meta
-tests/**/*.unity
-tests/UnityTests/Assets/Plugins/
+tests/UnityTests/Assets/Editor/**/*.meta
+tests/**/*.unity*
+tests/UnityTests/Assets/Plugins*
+tests/UnityTests/Assets/Bindings*
 !tests/UnityTests/ProjectSettings/ProjectSettings.asset
 !tests/UnityTests/ProjectSettings/EditorSettings.asset
 
