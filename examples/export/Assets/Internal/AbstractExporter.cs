@@ -29,7 +29,7 @@ namespace FbxSdk.Examples
         /// </summary>
         protected AbstractExporter (ExportSettings settings)
         {
-        	Settings = settings;
+            Settings = settings;
         }
 
         /// <summary>
@@ -37,8 +37,8 @@ namespace FbxSdk.Examples
         /// </summary>
         public void Export (GameObject gameObject)
         {
-        	m_stack.Add (gameObject);
-        	DFS ();
+            m_stack.Add (gameObject);
+            DFS ();
         }
 
         /// <summary>
@@ -46,8 +46,8 @@ namespace FbxSdk.Examples
         /// </summary>
         public void Export (IEnumerable<GameObject> gameObjects)
         {
-        	m_stack.AddRange (gameObjects);
-        	DFS ();
+            m_stack.AddRange (gameObjects);
+            DFS ();
         }
 
         /// <summary>
@@ -55,35 +55,35 @@ namespace FbxSdk.Examples
         /// </summary>
         void DFS ()
         {
-        	while (m_stack.Count > 0) {
-        		var top = m_stack [m_stack.Count - 1];
-        		m_stack.RemoveAt (m_stack.Count - 1);
+            while (m_stack.Count > 0) {
+                var top = m_stack [m_stack.Count - 1];
+                m_stack.RemoveAt (m_stack.Count - 1);
 
-        		if (!top.activeInHierarchy) {
-        			continue;
-        		}
+                if (!top.activeInHierarchy) {
+                    continue;
+                }
 
-        		if (!m_visited.Add (top)) {
-        			// Already exported? Then we don't look at it again.
-        			continue;
-        		}
+                if (!m_visited.Add (top)) {
+                    // Already exported? Then we don't look at it again.
+                    continue;
+                }
 
                 bool exportSelf = true;
                 bool exportChildren = true;
 
-        		if (exportChildren) {
-        			var xform = top.transform;
-        			for (int i = 0, n = xform.childCount; i < n; ++i) {
-        				m_stack.Add (top.transform.GetChild (i).gameObject);
-        			}
-        		}
+                if (exportChildren) {
+                    var xform = top.transform;
+                    for (int i = 0, n = xform.childCount; i < n; ++i) {
+                        m_stack.Add (top.transform.GetChild (i).gameObject);
+                    }
+                }
 
                 // Now export the object itself.
                 if (exportSelf) {
                     ExportComponents (top);
                 }
 
-        	}
+            }
         }
 
         /// <summary>

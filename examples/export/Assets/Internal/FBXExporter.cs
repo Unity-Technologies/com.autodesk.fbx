@@ -34,13 +34,13 @@ namespace FbxSdk.Examples
         /// </summary>
         public FBXExporter (ExportSettings settings) : base (settings)
                 {
-        	//check to make sure the path exists, and if it doesn't then
-        	//create all the missing directories.
-        	FileInfo fileInfo = new FileInfo (settings.DestinationPath);
+            //check to make sure the path exists, and if it doesn't then
+            //create all the missing directories.
+            FileInfo fileInfo = new FileInfo (settings.DestinationPath);
 
-        	if (!fileInfo.Exists) {
-        		Directory.CreateDirectory (fileInfo.Directory.FullName);
-        	}
+            if (!fileInfo.Exists) {
+                Directory.CreateDirectory (fileInfo.Directory.FullName);
+            }
         }
 
         public override void BeginExport ()
@@ -90,21 +90,21 @@ namespace FbxSdk.Examples
         {
             FbxScene scene = FbxScene.Create (manager, MakeObjectName("Scene"));
 
-        	// create scene info
+            // create scene info
             FbxDocumentInfo sceneInfo = FbxDocumentInfo.Create (manager, MakeObjectName("SceneInfo"));
 
-        	sceneInfo.mTitle = "bob";
-        	sceneInfo.mSubject = "bob";
-        	sceneInfo.mAuthor = "bob";
-        	sceneInfo.mRevision = "bob";
-        	sceneInfo.mKeywords = "bob";
-        	sceneInfo.mComment = "bob";
+            sceneInfo.mTitle = "bob";
+            sceneInfo.mSubject = "bob";
+            sceneInfo.mAuthor = "bob";
+            sceneInfo.mRevision = "bob";
+            sceneInfo.mKeywords = "bob";
+            sceneInfo.mComment = "bob";
 
-        	scene.SetSceneInfo (sceneInfo);
+            scene.SetSceneInfo (sceneInfo);
 
-        	// TODO: port SetSceneThumbnail
+            // TODO: port SetSceneThumbnail
 
-        	return scene;
+            return scene;
         }
 
 
