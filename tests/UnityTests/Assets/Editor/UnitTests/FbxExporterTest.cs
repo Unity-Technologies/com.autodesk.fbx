@@ -24,7 +24,7 @@ namespace UnitTests
 
             string temp;
             do {
-                // check that the m_fbxManageres not already exist
+                // check that the directory does not already exist
                 temp = randomDir + Path.GetRandomFileName ();
             } while(Directory.Exists (temp));
 
@@ -51,7 +51,7 @@ namespace UnitTests
         {
             base.Init ();
 
-            m_exporter = FbxExporter.Create (FbxManager, "exporter");
+            m_exporter = FbxExporter.Create (Manager, "exporter");
 
             Assert.IsNotNull (m_exporter);
 
@@ -84,12 +84,12 @@ namespace UnitTests
         [Test]
         public void TestExportEmptyFbxDocument ()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (Manager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
             // Initialize the exporter.
-            bool exportStatus = m_exporter.Initialize (filename, -1, FbxManager.GetIOSettings());
+            bool exportStatus = m_exporter.Initialize (filename, -1, Manager.GetIOSettings());
 
             Assert.IsTrue (exportStatus);
 
@@ -106,7 +106,7 @@ namespace UnitTests
             string filename = GetRandomFilename (m_testFolder);
 
             // Initialize the exporter.
-            bool exportStatus = m_exporter.Initialize (filename, -1, FbxManager.GetIOSettings());
+            bool exportStatus = m_exporter.Initialize (filename, -1, Manager.GetIOSettings());
 
             Assert.IsTrue (exportStatus);
 
@@ -122,7 +122,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeInvalidFilenameOnly()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (Manager, "empty");
 
             // Build the filename without the extension.
             string filename = GetRandomFilename (m_testFolder, false);
@@ -143,7 +143,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeValidFilenameOnly()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (Manager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -161,7 +161,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeFileFormatNegative()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (Manager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -179,7 +179,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeFileFormatInvalid()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (Manager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -197,7 +197,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeValidFileFormat()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (Manager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -215,7 +215,7 @@ namespace UnitTests
         [Test]
         public void TestInitializeNullIOSettings()
         {
-            FbxDocument emptyDoc = FbxDocument.Create (FbxManager, "empty");
+            FbxDocument emptyDoc = FbxDocument.Create (Manager, "empty");
 
             string filename = GetRandomFilename (m_testFolder);
 
@@ -237,7 +237,7 @@ namespace UnitTests
             string filename = GetRandomFilename (m_testFolder);
 
             // Initialize the exporter. Pass it zombie IO settings.
-            var ioSettings = FbxIOSettings.Create(FbxManager, "");
+            var ioSettings = FbxIOSettings.Create(Manager, "");
             ioSettings.Destroy();
 
             Assert.That (() => {  m_exporter.Initialize (filename, -1, ioSettings); }, Throws.Exception.TypeOf<System.ArgumentNullException>());

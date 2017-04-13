@@ -8,7 +8,7 @@ namespace UnitTests
         [Test]
         public void TestNodeCount ()
         {
-            using (FbxScene newScene = FbxScene.Create (FbxManager, ""))
+            using (FbxScene newScene = FbxScene.Create (Manager, ""))
             {
                 Assert.GreaterOrEqual (newScene.GetNodeCount (), 0);
             }

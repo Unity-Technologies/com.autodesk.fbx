@@ -11,17 +11,14 @@ namespace UnitTests
 {
     public abstract class Base<T> where T: FbxSdk.FbxObject
     {
-        private FbxManager m_fbxManager;
-
-        protected FbxManager FbxManager {
-            get {
-                return m_fbxManager;
-            }
+        protected FbxManager Manager {
+            get;
+            private set;
         }
 
         /* Create an object with the default manager. */
         protected T CreateObject (string name = "") {
-            return CreateObject(m_fbxManager, name);
+            return CreateObject(Manager, name);
         }
 
         /* Create an object with another manager. Default implementation uses
@@ -37,14 +34,14 @@ namespace UnitTests
         [SetUp]
         public virtual void Init ()
         {
-            m_fbxManager = FbxManager.Create ();
+            Manager = FbxManager.Create ();
         }
 
         [TearDown]
         public virtual void Term ()
         {
             try {
-                m_fbxManager.Destroy ();
+                Manager.Destroy ();
             } 
             catch (System.ArgumentNullException) {
             }
@@ -129,7 +126,7 @@ namespace UnitTests
             // manager, the object was destroyed as well.
             var obj = CreateObject();
             Assert.IsNotNull (obj);
-            m_fbxManager.Destroy();
+            Manager.Destroy();
             Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 

@@ -18,7 +18,7 @@ namespace UnitTests
              */
 
             // Test a function that takes const char*.
-            FbxObject obj = FbxObject.Create(FbxManager, "MyObject");
+            FbxObject obj = FbxObject.Create(Manager, "MyObject");
             Assert.IsNotNull (obj);
 
             // Test a function that returns const char*.
@@ -46,14 +46,14 @@ namespace UnitTests
         {
             // make sure japanese survives the round-trip.
             string katakana = "片仮名";
-            FbxObject obj = FbxObject.Create(FbxManager, katakana);
+            FbxObject obj = FbxObject.Create(Manager, katakana);
             Assert.AreEqual(katakana, obj.GetName());
         }
 
         [Test]
         public void TestFindClass ()
         {
-            FbxClassId classId = FbxManager.FindClass ("FbxObject");
+            FbxClassId classId = Manager.FindClass ("FbxObject");
 
             Assert.AreEqual (classId.GetName (), "FbxObject");
         }
@@ -61,7 +61,7 @@ namespace UnitTests
         [Test]
         public void TestFbxManager ()
         {
-            using (FbxObject obj = FbxObject.Create (FbxManager, "")) {
+            using (FbxObject obj = FbxObject.Create (Manager, "")) {
                 FbxManager fbxManager2 = obj.GetFbxManager();
                 Assert.IsNotNull(fbxManager2);
             }
