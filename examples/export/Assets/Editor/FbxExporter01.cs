@@ -17,65 +17,45 @@ namespace FbxSdk.Examples
     namespace Editor {
 
         //
-        // The FbxExporter01 example illustrates how to:
+        // The exporter01 example illustrates how to:
         //
         //        1) create and initialize an exporter
         //        2) create a scene
         //        3) export a scene to a .FBX file (ASCII mode)
         //
 
-        public class FbxExporter01 : System.IDisposable
+        public class exporter01 : System.IDisposable
         {
-            private FbxManager m_fbxManager;
-            private FbxManager FbxManager   { get { return m_fbxManager; } }
+            public void Dispose () { }
 
-            private FbxExporter m_fbxExporter;
-            private FbxExporter FbxExporter { get { return m_fbxExporter; } }
-
-            private FbxScene m_fbxScene;
-            private FbxScene FbxScene       { get { return m_fbxScene; } }
-
-            public void Dispose ()
+            /// <summary>
+            /// Export all the objects in the set.
+            /// Return the number of objects in the set that we exported.
+            /// </summary>
+            public int ExportAll (IEnumerable<UnityEngine.Object> exportSet)
             {
-                // FbxManager is disposable so when this class is disposed it  
-                // will also be disposed so we have nothing to do anything here.
-            }
+                // Create fbx manager
+                var manager = FbxManager.Create ();
 
-            private bool BeginExport ()
-            {
-                // create fbx manager
-                m_fbxManager = FbxManager.Create ();
+                // Configure fbx IO settings.
+                manager.SetIOSettings (FbxIOSettings.Create (manager, Globals.IOSROOT));
 
-                // configure fbx IO settings.
-                m_fbxManager.SetIOSettings (FbxIOSettings.Create (m_fbxManager, Globals.IOSROOT));
-
-                // create exporter for the scene
-                m_fbxExporter = FbxExporter.Create (FbxManager, MakeObjectName ("Exporter"));
-
-                // ensure output directory exists
-                EnsureDirectory (LastFilePath);
+                // Create the exporter 
+                var exporter = FbxExporter.Create (manager, MakeObjectName ("Exporter"));
 
                 // Initialize the exporter.
-                bool status = m_fbxExporter.Initialize (LastFilePath, -1, FbxManager.GetIOSettings ());
+                bool status = exporter.Initialize (LastFilePath, -1, manager.GetIOSettings ());
                 // Check that initialization of the exporter was successful
                 if (!status)
-                    return false;
+                    return 0;
                 
-                // Create a new scene
-                m_fbxScene = CreateScene (FbxManager);
-
-                return true;
-            }
-
-            private FbxScene CreateScene (FbxManager manager)
-            {
-            	// create the scene
-            	FbxScene scene = FbxScene.Create (manager, MakeObjectName ("Scene"));
+                // Create a scene
+                var scene = FbxScene.Create (manager, MakeObjectName ("Scene"));
 
             	// create scene info
             	FbxDocumentInfo sceneInfo = FbxDocumentInfo.Create (manager, MakeObjectName ("SceneInfo"));
 
-            	// set some values on the scene
+            	// set some scene info values
             	sceneInfo.mTitle = " Example 01: empty scene";
             	sceneInfo.mSubject = "Example of an empty scene with document information settings";
             	sceneInfo.mAuthor = "Unit Technologies";
@@ -85,25 +65,15 @@ namespace FbxSdk.Examples
 
             	scene.SetSceneInfo (sceneInfo);
 
-            	return scene;
-            }
-
-            private bool EndExport ()
-            {
                 // Export the scene to the file.
-                return FbxExporter.Export (FbxScene);
-            }
+                status = exporter.Export (scene);
 
-            /// <summary>
-            /// Export all the objects in the set.
-            /// Return the number of objects in the set that we exported.
-            /// </summary>
-            public int ExportAll(IEnumerable<UnityEngine.Object> exportSet)
-            {
-                if (!BeginExport ())
-                    return 0;
-                
-                return EndExport()==true ? 1 : 0; 
+                // cleanup
+                scene.Destroy ();
+                exporter.Destroy ();
+                manager.Destroy ();
+
+                return status==true ? 1 : 0; 
             }
 
             // 
@@ -162,7 +132,11 @@ namespace FbxSdk.Examples
                 }
                 LastFilePath = filePath;
 
-                using (FbxExporter01 exporter = new FbxExporter01()) {
+                using (exporter01 exporter = new exporter01()) {
+                    
+    				// ensure output directory exists
+    				EnsureDirectory (filePath);
+
                     if (exporter.ExportAll(Selection.objects) > 0)
                     {
                         string message = string.Format ("Successfully exported scene: {0}", filePath);
