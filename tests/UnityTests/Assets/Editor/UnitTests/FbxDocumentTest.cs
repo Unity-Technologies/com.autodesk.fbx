@@ -31,7 +31,7 @@ namespace UnitTests
             {
                 // NOTE: we'll get a NullReferenceException warning if we use the using
                 // scope because doc.Clear() will destroy the FbxDocumentInfo.
-                var docInfo = FbxDocumentInfo.Create (this.FbxManager, "myDocumentInfo");
+                var docInfo = FbxDocumentInfo.Create (this.Manager, "myDocumentInfo");
                 Assert.IsNotNull (docInfo);
 
                 doc.SetDocumentInfo (FbxDocumentInfoTest.InitDocumentInfo (docInfo, this.dataValues));
