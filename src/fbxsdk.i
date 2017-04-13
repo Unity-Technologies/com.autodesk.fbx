@@ -82,6 +82,7 @@
 %include "fbximporter.i"
 %include "fbxmanager.i"
 %include "fbxiosettings.i"
+%include "fbxnode.i"
 #endif
     
 /* Everything */
