@@ -7,10 +7,45 @@
 using NUnit.Framework;
 using FbxSdk;
 
+using System.Collections.Generic;
+
 namespace UnitTests
 {
     public abstract class Base<T> where T: FbxSdk.FbxObject
     {
+		static Base() {
+			s_createFromMgrAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxManager), typeof(string)});
+			s_createFromObjAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxObject), typeof(string)});
+
+			#if ENABLE_COVERAGE_TEST
+			// Register the calls we make through reflection.
+			// We use reflection in CreateObject(FbxManager, string) and CreateObject(FbxObject, string).
+			var CreateObjectMethods = typeof(Base<T>).GetMethods(
+				System.Reflection.BindingFlags.Instance | 
+				System.Reflection.BindingFlags.NonPublic |
+				System.Reflection.BindingFlags.Public
+			);
+			foreach(var com in CreateObjectMethods) {
+				if (com.Name != "CreateObject") {
+					continue;
+				}
+				var parms = com.GetParameters();
+				if (parms.Length != 2) {
+					continue;
+				}
+				if (parms[1].ParameterType != typeof(string)) {
+					continue;
+				}
+				if (parms[1].ParameterType == typeof(FbxManager)) {
+					CoverageTester.RegisterReflectionCall(com, s_createFromMgrAndName);
+				}
+				if (parms[1].ParameterType == typeof(FbxObject)) {
+					CoverageTester.RegisterReflectionCall(com, s_createFromObjAndName);
+				}
+			}
+			#endif
+		}
+
         protected FbxManager Manager {
             get;
             private set;
@@ -21,12 +56,36 @@ namespace UnitTests
             return CreateObject(Manager, name);
         }
 
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage()
+        {
+			// We want to call all the functions of the proxy.
+            var proxyMethods = typeof(T).GetMethods();
+
+			// Our functions are what we can use to call that with.
+			var selfMethods = new HashSet<System.Reflection.MethodInfo>(this.GetType().GetMethods());
+
+            // Don't include this function.
+			selfMethods.Remove(typeof(Base<T>).GetMethod("Coverage", new System.Type[] {}));
+
+			HashSet<System.Reflection.MethodInfo> hitMethods;
+			HashSet<System.Reflection.MethodInfo> missedMethods;
+
+			var coverageComplete = CoverageTester.TestCoverage(proxyMethods, selfMethods, out hitMethods, out missedMethods);
+
+			Assert.That(
+				() => coverageComplete,
+				() => CoverageTester.MakeCoverageMessage(hitMethods, missedMethods));
+        }
+#endif
+
         /* Create an object with another manager. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
-        System.Reflection.MethodInfo m_createFromMgrAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxManager), typeof(string)});
+		static System.Reflection.MethodInfo s_createFromMgrAndName;
         protected virtual T CreateObject (FbxManager mgr, string name = "") {
             try {
-                return (T)(m_createFromMgrAndName.Invoke(null, new object[] {mgr, name}));
+                return (T)(s_createFromMgrAndName.Invoke(null, new object[] {mgr, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
                 throw xcp.GetBaseException();
             }
@@ -34,10 +93,10 @@ namespace UnitTests
 
         /* Create an object with an object as container. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
-        System.Reflection.MethodInfo m_createFromObjAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxObject), typeof(string)});
+		static System.Reflection.MethodInfo s_createFromObjAndName;
         protected virtual T CreateObject (FbxObject container, string name = "") {
             try {
-                return (T)(m_createFromObjAndName.Invoke(null, new object[] {container, name}));
+                return (T)(s_createFromObjAndName.Invoke(null, new object[] {container, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
                 throw xcp.GetBaseException();
             }
