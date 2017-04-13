@@ -20,8 +20,8 @@ namespace FbxSdk.Examples
         // The FbxExporter01 example illustrates how to:
         //
         //        1) create and initialize an exporter
-        //        2) create scene
-        //        3) export a scene in a .FBX file (ASCII mode)
+        //        2) create a scene
+        //        3) export a scene to a .FBX file (ASCII mode)
         //
 
         public class FbxExporter01 : System.IDisposable
@@ -67,31 +67,31 @@ namespace FbxSdk.Examples
                 return true;
             }
 
+            private FbxScene CreateScene (FbxManager manager)
+            {
+            	// create the scene
+            	FbxScene scene = FbxScene.Create (manager, MakeObjectName ("Scene"));
+
+            	// create scene info
+            	FbxDocumentInfo sceneInfo = FbxDocumentInfo.Create (manager, MakeObjectName ("SceneInfo"));
+
+            	// set some values on the scene
+            	sceneInfo.mTitle = " Example 01: empty scene";
+            	sceneInfo.mSubject = "Example of an empty scene with document information settings";
+            	sceneInfo.mAuthor = "Unit Technologies";
+            	sceneInfo.mRevision = "1.0";
+            	sceneInfo.mKeywords = "example empty scene";
+            	sceneInfo.mComment = "Set some scene settings. Note that the scene thumnail has not been set.";
+
+            	scene.SetSceneInfo (sceneInfo);
+
+            	return scene;
+            }
+
             private bool EndExport ()
             {
                 // Export the scene to the file.
                 return FbxExporter.Export (FbxScene);
-            }
-
-            private FbxScene CreateScene (FbxManager manager)
-            {
-                // create the scene
-                FbxScene scene = FbxScene.Create (manager, MakeObjectName ("Scene"));
-
-                // create scene info
-                FbxDocumentInfo sceneInfo = FbxDocumentInfo.Create (manager, MakeObjectName ("SceneInfo"));
-
-                // set some values on the scene
-                sceneInfo.mTitle = " Example 01: empty scene";
-                sceneInfo.mSubject = "Example of an empty scene with document information settings";
-                sceneInfo.mAuthor = "Unit Technologies";
-                sceneInfo.mRevision = "1.0";
-                sceneInfo.mKeywords = "example empty scene";
-                sceneInfo.mComment = "Set some scene settings. Note that the scene thumnail has not been set.";
-
-                scene.SetSceneInfo (sceneInfo);
-
-                return scene;
             }
 
             /// <summary>
@@ -107,7 +107,7 @@ namespace FbxSdk.Examples
             }
 
             // 
-            // Create simple user interface (menu items) to access exporter
+            // Create a simple user interface (menu items)
             //
             /// <summary>
             /// create menu item in the File menu
@@ -129,7 +129,7 @@ namespace FbxSdk.Examples
             }
 
             //
-            // manage selecting a filename
+            // manage the selection of a filename
             //
             static string m_LastFilePath = "";
             static string LastFilePath { get { return m_LastFilePath; } set { m_LastFilePath = value; } }
@@ -148,7 +148,7 @@ namespace FbxSdk.Examples
                 return basename + "." + extension;
             }
 
-            // use the SaveFile dialog to allow user to enter a file name
+            // use the SaveFile panel to allow user to enter a file name
             private static void OnExport()
             {
                 // Now that we know we have stuff to export, get the user-desired path.
@@ -165,7 +165,7 @@ namespace FbxSdk.Examples
                 using (FbxExporter01 exporter = new FbxExporter01()) {
                     if (exporter.ExportAll(Selection.objects) > 0)
                     {
-                        string message = string.Format ("Successfully exported scene: {0}", filename);
+                        string message = string.Format ("Successfully exported scene: {0}", filePath);
                         UnityEngine.Debug.Log (message);
                     }
                 }
@@ -184,7 +184,7 @@ namespace FbxSdk.Examples
 
              private static string MakeObjectName (string name)
             {
-                return "_example_export_empty_scene_" + name;
+                return "_fbxexporter01_" + name;
             }
         }
     }
