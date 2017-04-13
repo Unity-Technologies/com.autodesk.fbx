@@ -122,14 +122,22 @@ namespace FbxSdk.Examples
             private static void OnExport()
             {
                 // Now that we know we have stuff to export, get the user-desired path.
-                var directory = string.IsNullOrEmpty (LastFilePath) ? Application.dataPath : System.IO.Path.GetDirectoryName (LastFilePath);
-                var filename = string.IsNullOrEmpty (LastFilePath) ? MakeFileName(basename: Basename, extension: Extension) : System.IO.Path.GetFileName (LastFilePath);
+                var directory = string.IsNullOrEmpty (LastFilePath) 
+                                      ? Application.dataPath 
+                                      : System.IO.Path.GetDirectoryName (LastFilePath);
+                
+                var filename = string.IsNullOrEmpty (LastFilePath) 
+                                     ? MakeFileName(basename: Basename, extension: Extension) 
+                                     : System.IO.Path.GetFileName (LastFilePath);
+                
                 var title = string.Format ("Export FBX ({0})", Basename);
 
                 var filePath = EditorUtility.SaveFilePanel (title, directory, filename, "");
+
                 if (string.IsNullOrEmpty (filePath)) {
                     return;
                 }
+
                 LastFilePath = filePath;
 
                 using (exporter01 exporter = new exporter01()) {
