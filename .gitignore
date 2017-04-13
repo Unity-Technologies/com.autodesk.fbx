@@ -28,7 +28,7 @@ build/
 *.swo
 
 ## Unity ##
-tests/UnityTests/Assets/Bindings
+tests/UnityTests/Assets/Plugins
 tests/UnityTests/ProjectSettings/*
 tests/UnityTests/Assets/Editor/**/*.meta
 tests/**/*.unity*

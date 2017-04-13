@@ -1,4 +1,9 @@
 cmake_minimum_required (VERSION 2.6)
+
+# has to be done before project is set, or else CMAKE_INSTALL_PREFIX will already by set to a default value
+SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins" CACHE PATH "Install path prefix")
+MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
+
 project (fbxsdk_csharp)
 
 # Default is a debug build.
@@ -97,9 +102,10 @@ target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to 
 set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests DESTINATION ${CMAKE_BINARY_DIR}/tests)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp DESTINATION fbxsdk FILES_MATCHING PATTERN "*.cs")
 install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
 install(TARGETS unity_tests DESTINATION fbxsdk)
 
 enable_testing()
-add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_SOURCE_DIR}/tests/UnityTests -runEditorTests)
+add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -runEditorTests)
