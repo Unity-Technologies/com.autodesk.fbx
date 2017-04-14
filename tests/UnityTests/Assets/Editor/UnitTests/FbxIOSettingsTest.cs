@@ -24,5 +24,16 @@ namespace UnitTests
             ioSettings.Destroy ();
             manager.Destroy ();
         }
+		
+        [Test]
+        public void TestIdentity ()
+        {
+            using (FbxIOSettings ioSettings1 = FbxIOSettings.Create (Manager, "")) {
+                Manager.SetIOSettings (ioSettings1);
+
+                FbxIOSettings ioSettings2 = Manager.GetIOSettings ();
+                Assert.AreEqual (ioSettings1, ioSettings2);
+            }
+        }
     }
 }

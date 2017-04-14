@@ -9,7 +9,6 @@ namespace UnitTests
         [Test]
         public void TestNodeBasics ()
         {
-            // TODO: UNI-13959 comparisons by name should just be ==
             bool ok;
             FbxNode found;
 
@@ -27,9 +26,9 @@ namespace UnitTests
             Assert.AreEqual(1, root.GetChildCount()); // non-recursive
             Assert.AreEqual(1, root.GetChildCount(true)); // recursive
             found = child.GetParent();
-            Assert.AreEqual(root.GetName(), found.GetName());
+            Assert.AreEqual(root, found);
             found = root.GetChild(0);
-            Assert.AreEqual(child.GetName(), found.GetName());
+            Assert.AreEqual(child, found);
 
             var grandchild = CreateObject("grandchild");
             ok = child.AddChild(grandchild);
@@ -41,18 +40,18 @@ namespace UnitTests
             Assert.AreEqual(1, root.GetChildCount()); // non-recursive
             Assert.AreEqual(2, root.GetChildCount(true)); // recursive
             found = root.GetChild(0);
-            Assert.AreEqual(child.GetName(), found.GetName());
+            Assert.AreEqual(child, found);
             found = child.GetChild(0);
-            Assert.AreEqual(grandchild.GetName(), found.GetName());
+            Assert.AreEqual(grandchild, found);
 
             // Create a node from the grandchild. That's a child.
             var grandchildOwned = FbxNode.Create(grandchild, "grandchild-owned");
             Assert.AreEqual(1, grandchild.GetChildCount());
 
             found = root.FindChild("child"); // recursive
-            Assert.AreEqual(child.GetName(), found.GetName());
+            Assert.AreEqual(child, found);
             found = root.FindChild("grandchild"); // recursive
-            Assert.AreEqual(grandchild.GetName(), found.GetName());
+            Assert.AreEqual(grandchild, found);
             found = root.FindChild("grandchild", pRecursive: false);
             Assert.IsNull(found);
 
