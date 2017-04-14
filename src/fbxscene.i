@@ -13,6 +13,7 @@
 %rename("%s") FbxScene::GetNodeCount;
 %rename("%s") FbxScene::GetSceneInfo;
 %rename("%s") FbxScene::SetSceneInfo;
+%rename("%s") FbxScene::GetRootNode;
 #endif
 
 %include "fbxsdk/scene/fbxscene.h"
