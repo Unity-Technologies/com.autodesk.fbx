@@ -70,13 +70,12 @@ namespace UnitTests
         }
 
         [Test]
-        [Ignore("identify object.ReferenceEqual fails")]
         public void TestIdentity ()
         {
             using (FbxObject obj = FbxObject.Create (m_fbxManager, "")) {
                 FbxManager fbxManager2 = obj.GetFbxManager();
                 
-                Assert.AreSame (m_fbxManager, fbxManager2);
+                Assert.AreEqual (m_fbxManager, fbxManager2);
             }
         }
 
