@@ -17,16 +17,34 @@ namespace FbxSdk.Examples
     namespace Editor {
 
         //
-        // The exporter01 example illustrates how to:
+        // The exporter02 example illustrates how to:
         //
         //        1) create and initialize an exporter
         //        2) create a scene
-        //        3) export a scene to a .FBX file (ASCII mode)
+        //        3) export the selected node and scene graph to a .FBX file (ASCII mode)
         //
 
-        public class exporter01 : System.IDisposable
+        public class exporter02 : System.IDisposable
         {
             public void Dispose () { }
+
+            public void ExportComponents(FbxScene scene, FbxNode parent, IEnumerable<GameObject> exportSet)
+            {
+                foreach (GameObject go in exportSet) {
+                    // create an FbxNode and add it as a child of parent
+                    FbxNode node = FbxNode.Create (scene, go.name);
+                    parent.AddChild (node);
+
+                    List<GameObject> childSet = new List<GameObject>();
+                    // now go through our children and recurse
+                    foreach (Transform childT in go.transform) {
+                        childSet.Add (childT.gameObject);
+                    }
+
+                    ExportComponents (scene, node, childSet);
+                }
+
+            }
 
             /// <summary>
             /// Export all the objects in the set.
@@ -56,14 +74,27 @@ namespace FbxSdk.Examples
             	FbxDocumentInfo sceneInfo = FbxDocumentInfo.Create (manager, MakeObjectName ("SceneInfo"));
 
             	// set some scene info values
-            	sceneInfo.mTitle = " Example 01: empty scene";
-            	sceneInfo.mSubject = "Example of an empty scene with document information settings";
+            	sceneInfo.mTitle = " Example 02: node and scene graph";
+            	sceneInfo.mSubject = "Example of a scene with a node hierarchy and document information settings";
             	sceneInfo.mAuthor = "Unit Technologies";
             	sceneInfo.mRevision = "1.0";
-            	sceneInfo.mKeywords = "example empty scene";
-            	sceneInfo.mComment = "Set some scene settings. Note that the scene thumnail has not been set.";
+            	sceneInfo.mKeywords = "example scene with node hierarchy";
+            	sceneInfo.mComment = "Export names and hierarchy of selected GameObjects.";
 
             	scene.SetSceneInfo (sceneInfo);
+
+                // add the Unity scene hierarchy to the scene for export
+                // only interested in GameObjects for now
+                List<GameObject> gos = new List<GameObject> ();
+                foreach (UnityEngine.Object obj in exportSet) {
+                    GameObject go = obj as GameObject;
+                    if (!go) {
+                        continue;
+                    }
+                    gos.Add (go);
+                }
+                FbxNode root = scene.GetRootNode ();
+                ExportComponents (scene, root, gos);
 
                 // Export the scene to the file.
                 status = exporter.Export (scene);
@@ -82,7 +113,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// create menu item in the File menu
             /// </summary>
-            [MenuItem ("File/Export/Export (Scene only) to FBX", false)]
+            [MenuItem ("File/Export/Export (Scene graph) to FBX", false)]
             public static void OnMenuItem ()
             {
                 OnExport();
@@ -91,7 +122,7 @@ namespace FbxSdk.Examples
             /// <summary>
             // Validate the menu item defined by the function above.
             /// </summary>
-            [MenuItem ("File/Export/Export (Scene only) to FBX", true)]
+            [MenuItem ("File/Export/Export (Scene graph) to FBX", true)]
             public static bool OnValidateMenuItem ()
             {
                 // Return true
@@ -140,10 +171,10 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (exporter01 exporter = new exporter01()) {
+                using (exporter02 exporter = new exporter02()) {
                     
     				// ensure output directory exists
-    				EnsureDirectory (filePath);
+                    EnsureDirectory (filePath);
 
                     if (exporter.ExportAll(Selection.objects) > 0)
                     {
@@ -166,7 +197,7 @@ namespace FbxSdk.Examples
 
              private static string MakeObjectName (string name)
             {
-                return "_fbxexporter01_" + name;
+                return "_fbxexporter02_" + name;
             }
         }
     }
