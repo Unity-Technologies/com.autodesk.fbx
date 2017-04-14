@@ -69,8 +69,13 @@
 //#define EXCLUDE_ALL_INTERFACES
 
 #ifndef EXCLUDE_ALL_INTERFACES
+/* Core classes */
+%include "fbxmath.i"
 %include "fbxproperty.i"
 %include "fbxclassid.i"
+%include "fbxmanager.i"
+
+/* The emitter hierarchy. */
 %include "fbxemitter.i"
 %include "fbxobject.i"
 %include "fbxcollection.i"
@@ -80,7 +85,6 @@
 %include "fbxiobase.i"
 %include "fbxexporter.i"
 %include "fbximporter.i"
-%include "fbxmanager.i"
 %include "fbxiosettings.i"
 %include "fbxnode.i"
 #endif
