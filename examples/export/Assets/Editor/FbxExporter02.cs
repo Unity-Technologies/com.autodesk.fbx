@@ -105,7 +105,7 @@ namespace FbxSdk.Examples
                             Debug.Log ("skipping {0}", obj);
                         continue;
                     }
-                     gos.Add (go);
+                    gos.Add (go);
                 }
                 FbxNode root = scene.GetRootNode ();
                 ExportComponents (scene, root, gos);
