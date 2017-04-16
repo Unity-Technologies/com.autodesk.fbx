@@ -24,8 +24,10 @@ namespace FbxSdk.Examples
         //        3) export the selected node and scene graph to a .FBX file (ASCII mode)
         //
 
-        public class exporter02 : System.IDisposable
+        public class FbxExporter02 : System.IDisposable
         {
+            bool Verbose { get { return true; } }
+
             public void Dispose () { }
 
             public void ExportComponents(FbxScene scene, FbxNode parent, IEnumerable<GameObject> exportSet)
@@ -33,6 +35,8 @@ namespace FbxSdk.Examples
                 foreach (GameObject go in exportSet) {
                     // create an FbxNode and add it as a child of parent
                     FbxNode node = FbxNode.Create (scene, go.name);
+                    if (Verbose) 
+                        Debug.Log (string.Format("exporting {0}",node.GetName()));
                     parent.AddChild (node);
 
                     List<GameObject> childSet = new List<GameObject>();
@@ -87,11 +91,21 @@ namespace FbxSdk.Examples
                 // only interested in GameObjects for now
                 List<GameObject> gos = new List<GameObject> ();
                 foreach (UnityEngine.Object obj in exportSet) {
-                    GameObject go = obj as GameObject;
-                    if (!go) {
+                    GameObject go;
+                    if (obj is UnityEngine.Transform) {
+                        var xform = obj as UnityEngine.Transform;
+                        go = xform.gameObject;
+                    } else if (obj is UnityEngine.GameObject) {
+                        go = obj as UnityEngine.GameObject;
+                    } else if (obj is MonoBehaviour) {
+                        var mono = obj as MonoBehaviour;
+                        go = mono.gameObject;
+                    } else {
+                        if (Verbose) 
+                            Debug.Log ("skipping {0}", obj);
                         continue;
                     }
-                    gos.Add (go);
+                     gos.Add (go);
                 }
                 FbxNode root = scene.GetRootNode ();
                 ExportComponents (scene, root, gos);
@@ -113,7 +127,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// create menu item in the File menu
             /// </summary>
-            [MenuItem ("File/Export/Export (Scene graph) to FBX", false)]
+            [MenuItem ("File/Export/Export (Node hierarchy) to FBX", false)]
             public static void OnMenuItem ()
             {
                 OnExport();
@@ -122,7 +136,7 @@ namespace FbxSdk.Examples
             /// <summary>
             // Validate the menu item defined by the function above.
             /// </summary>
-            [MenuItem ("File/Export/Export (Scene graph) to FBX", true)]
+            [MenuItem ("File/Export/Export (Node hierarchy) to FBX", true)]
             public static bool OnValidateMenuItem ()
             {
                 // Return true
@@ -171,7 +185,7 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (exporter02 exporter = new exporter02()) {
+                using (FbxExporter02 exporter = new FbxExporter02()) {
                     
     				// ensure output directory exists
                     EnsureDirectory (filePath);

@@ -24,7 +24,7 @@ namespace FbxSdk.Examples
         //        3) export a scene to a .FBX file (ASCII mode)
         //
 
-        public class exporter01 : System.IDisposable
+        public class FbxExporter01 : System.IDisposable
         {
             public void Dispose () { }
 
@@ -140,7 +140,7 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (exporter01 exporter = new exporter01()) {
+                using (FbxExporter01 exporter = new FbxExporter01()) {
                     
     				// ensure output directory exists
     				EnsureDirectory (filePath);
