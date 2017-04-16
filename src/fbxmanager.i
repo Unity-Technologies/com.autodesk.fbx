@@ -21,5 +21,24 @@
 %apply int & OUTPUT { int & pMinor };
 %apply int & OUTPUT { int & pRevision };
 
+/*
+ * Add a GetHashCode() and Equals() function to allow
+ * us to perform identity tests in C#.
+ * Use the swigCPtr to check for equality.
+ */
+%typemap(cscode) FbxManager %{ 
+  public override int GetHashCode(){
+      return swigCPtr.Handle.GetHashCode();
+  }
+
+  public override bool Equals(object obj){
+      if (obj == null || GetType() != obj.GetType()) 
+          return false;
+
+      FbxManager fm = (FbxManager)obj;
+      return this.swigCPtr.Handle.Equals (fm.swigCPtr.Handle);
+  }
+%}
+
 %include "fbxsdk/core/fbxmanager.h"
 
