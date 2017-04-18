@@ -1,3 +1,10 @@
+# ***********************************************************************
+# Copyright (c) 2017 Unity Technologies. All rights reserved.
+#
+# Licensed under the ##LICENSENAME##.
+# See LICENSE.md file in the project root for full license information.
+# ***********************************************************************
+
 # Look for the executable to find the Unity editor executable.
 # If UNITY_EDITOR_PATH we use it, otherwise we set it.
 
