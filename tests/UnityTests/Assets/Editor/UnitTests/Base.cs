@@ -146,9 +146,9 @@ namespace UnitTests
                 obj.GetName ();
             }
 
-			// Test also that an explicit Dispose works.
-			var obj2 = CreateObject();
-			obj2.Dispose();
+            // Test also that an explicit Dispose works.
+            var obj2 = CreateObject();
+            obj2.Dispose();
         }
 
         [Test]
