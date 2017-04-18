@@ -15,7 +15,12 @@ namespace UnitTests
             mx = new FbxAMatrix(new FbxAMatrix());
             mx = new FbxAMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
 
-            // TODO: more operations
+            // check that the matrix is the id matrix */
+            for(int y = 0; y < 4; ++y) {
+                for(int x = 0; x < 4; ++x) {
+                    Assert.AreEqual(x == y ? 1 : 0, mx.Get(y, x));
+                }
+            }
         }
 
         [Test]
