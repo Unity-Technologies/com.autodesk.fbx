@@ -1,5 +1,13 @@
 #! /usr/bin/python
 
+# ***********************************************************************
+# Copyright (c) 2017 Unity Technologies. All rights reserved.
+#
+# Licensed under the ##LICENSENAME##.
+# See LICENSE.md file in the project root for full license information.
+# ***********************************************************************
+
+
 # Read the FBX header files and fix the bit that swig can't parse.
 #
 # To fix a new header file that's giving you grief:
