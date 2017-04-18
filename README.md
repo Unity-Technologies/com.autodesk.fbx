@@ -60,7 +60,6 @@ REM Win10
 cd %DESIRED_BUILD_DESTINATION
 
 cmake %FBXSDK_CSHARP_PATH -G"Visual Studio 14 2015 Win64" [-DCMAKE_INSTALL_PREFIX:PATH=$FBXSDK_CSHARP_PATH/tests/UnityTests/Assets/Plugins]
-cd build
 cmake --build . --target INSTALL --config Release
 ```
 
