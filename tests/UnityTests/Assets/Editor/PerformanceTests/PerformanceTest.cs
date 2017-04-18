@@ -207,7 +207,7 @@ namespace PerformanceTests
 
         private void LogResult(string testName, double native, double managed, int n){
             UnityEngine.Debug.Log (
-                String.Format ("Test [{0}]: Managed must run at most {1} times slower than native to pass. (Native = {2}, Managed = {3})",
+                String.Format ("Test [{0}]: Managed must run at most {1} times slower than native to pass. (Native = {2} ms, Managed = {3} ms)",
                     testName, n, native, managed)
             );
         }
