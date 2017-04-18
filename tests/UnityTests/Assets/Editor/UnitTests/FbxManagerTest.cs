@@ -88,6 +88,15 @@ namespace UnitTests
                 obj = FbxObject.Create(mgr, "asdf");
             }
             Assert.That(() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+            // Also test explicit dispose.
+            var mgr2 = FbxManager.Create();
+            obj = FbxObject.Create(mgr2, "hjkl");
+            mgr2.Dispose();
+            Assert.That(() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
+
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxManager), this.GetType()); }
     }
 }

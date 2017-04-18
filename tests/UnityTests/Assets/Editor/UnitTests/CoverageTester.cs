@@ -4,7 +4,7 @@
 // Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 //
-// This script depends on the Mono.Reflection.MethodBodyReader by the JB Evain,
+// This script depends on the Mono.Reflection.Disassembler by the JB Evain,
 // see https://github.com/jbevain/mono.reflection (it's under an MIT license).
 // ***********************************************************************
 #if ENABLE_COVERAGE_TEST
@@ -14,8 +14,31 @@ using System.Reflection;
 
 static class CoverageTester
 {
-    static Dictionary<MethodInfo, HashSet<MethodInfo>> s_calls = new Dictionary<MethodInfo, HashSet<MethodInfo>>();
-    static Dictionary<MethodInfo, HashSet<MethodInfo>> s_reflectionCalls = new Dictionary<MethodInfo, HashSet<MethodInfo>>();
+    // Important fact: MethodInfo doesn't implement equality like you'd expect.
+    // So we need to use RuntimeMethodHandle for keys.
+    static Dictionary<System.RuntimeMethodHandle, List<MethodInfo>> s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodInfo>>();
+    static Dictionary<System.RuntimeMethodHandle, List<MethodInfo>> s_reflectionCalls = new Dictionary<System.RuntimeMethodHandle, List<MethodInfo>>();
+
+    static void PreloadCache()
+    {
+        if (s_calls.Count != 0) { return; }
+
+        var types = new System.Type[] {
+                typeof(object),
+                typeof(string),
+                typeof(int),
+                typeof(System.Array),
+                typeof(System.Type),
+                typeof(System.Text.StringBuilder),
+                typeof(CoverageTester),
+                typeof(NUnit.Framework.Assert)
+        };
+        foreach(var typ in types) {
+            foreach(var method in typ.GetMethods()) {
+                GetCalls(method);
+            }
+        }
+    }
 
     /// <summary>
     /// Dig through the instructions for 'method' and see which methods it
@@ -27,36 +50,40 @@ static class CoverageTester
     /// This is very weak analysis: we do zero devirtualization, dead code
     /// elimination, or constant propagation, or anything.
     /// </summary>
-    public static HashSet<MethodInfo> GetCalls(MethodInfo method)
+    public static List<MethodInfo> GetCalls(MethodInfo method)
     {
-        if(s_calls.ContainsKey(method)) {
-            return s_calls[method];
+        if (s_calls.ContainsKey(method.MethodHandle)) {
+            return s_calls[method.MethodHandle];
         }
 
         // Look at the current method and in DFS, find all the methods it calls.
         var stack = new List<MethodInfo>();
-        var visited = new HashSet<MethodInfo>();
+        var calls = new List<MethodInfo>();
+        var visited = new HashSet<System.RuntimeMethodHandle>();
         stack.Add(method);
         while(stack.Count > 0) {
             var top = stack[stack.Count - 1];
             stack.RemoveAt(stack.Count - 1);
 
-            if (visited.Contains(top)) {
+            if (visited.Contains(top.MethodHandle)) {
                 continue;
             }
-            visited.Add(top);
+            visited.Add(top.MethodHandle);
+            calls.Add(top);
 
             // If we have already seen this method, we can copy all its calls in and stop
             // our search here.
-            if (s_calls.ContainsKey(top)) {
-                visited.UnionWith(s_calls[top]);
+            if (s_calls.ContainsKey(top.MethodHandle)) {
+                foreach(var calledMethod in s_calls[top.MethodHandle]) {
+                    visited.Add(calledMethod.MethodHandle);
+                    calls.Add(calledMethod);
+                }
                 continue;
             }
 
-
-            List<Mono.Reflection.Instruction> instructions;
+            IEnumerable<Mono.Reflection.Instruction> instructions;
             try {
-                instructions = Mono.Reflection.MethodBodyReader.GetInstructions(top);
+                instructions = Mono.Reflection.Disassembler.GetInstructions(top);
             } catch (System.ArgumentException xcp) {
                 // ignore the method having no body
                 continue;
@@ -75,15 +102,15 @@ static class CoverageTester
             }
 
             // Also add in the calls that have been registered to be made.
-            HashSet<MethodInfo> reflectionCalls;
-            if (s_reflectionCalls.TryGetValue(top, out reflectionCalls)) {
+            List<MethodInfo> reflectionCalls;
+            if (s_reflectionCalls.TryGetValue(top.MethodHandle, out reflectionCalls)) {
                 stack.AddRange(reflectionCalls);
             }
         }
 
-        // Every function we visited is a function that this function calls!
-        s_calls[method] = visited;
-        return visited;
+        // Store the result and return it.
+        s_calls[method.MethodHandle] = calls;
+        return calls;
     }
 
     /// <summary>
@@ -91,7 +118,7 @@ static class CoverageTester
     /// </summary>
     public static void ClearCache()
     {
-        s_calls = new Dictionary<MethodInfo, HashSet<MethodInfo>>();
+        s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodInfo>>();
     }
 
     /// <summary>
@@ -102,13 +129,13 @@ static class CoverageTester
     /// </summary>
     public static void RegisterReflectionCall(MethodInfo from, MethodInfo to)
     {
-        HashSet<MethodInfo> calls;
-        if (s_reflectionCalls.TryGetValue(from, out calls)) {
+        List<MethodInfo> calls;
+        if (s_reflectionCalls.TryGetValue(from.MethodHandle, out calls)) {
             calls.Add(to);
         } else {
-            HashSet<MethodInfo> tos = new HashSet<MethodInfo>();
+            List<MethodInfo> tos = new List<MethodInfo>();
             tos.Add(to);
-            s_reflectionCalls[from] = tos;
+            s_reflectionCalls[from.MethodHandle] = tos;
         }
     }
 
@@ -120,11 +147,12 @@ static class CoverageTester
     /// be added to the 'hit' output. Functions that *definitely* won't be
     /// called get added to the 'missed' output.
     ///
-    /// "Definite" fails in the face of reflection; use RegisterReflectionCall
-    /// to handle that.
+    /// "Definite" fails in the face of reflection and virtual functions.
+    /// Use RegisterReflectionCall to handle reflection.
     ///
-    /// "Might" includes virtual function dispatch. If there's a call to a base
-    /// method, we say that call covers any derived method.
+    /// For virtuals, we rely on the tests being simple (not calling virtualized
+    /// hierarchies of test frameworks). If there's a call to a base method,
+    /// we say that call covers any derived method.
     ///
     /// The static analysis is very simplistic: we don't fold constants or
     /// eliminate dead code or devirtualize calls.
@@ -137,20 +165,25 @@ static class CoverageTester
     /// <param name="allowVirtual">If set to <c>true</c> allow virtual.</param>
     public static bool TestCoverage(IEnumerable<MethodInfo> MethodsToCover,
             IEnumerable<MethodInfo> RootMethods,
-            out HashSet<MethodInfo> out_HitMethods,
-            out HashSet<MethodInfo> out_MissedMethods
+            out List<MethodInfo> out_HitMethods,
+            out List<MethodInfo> out_MissedMethods
             )
     {
-        var calledMethods = new HashSet<MethodInfo>();
+        PreloadCache();
+
+        // Collect up the handles we called.
+        var calledMethods = new HashSet<System.RuntimeMethodHandle>();
         foreach(var rootMethod in RootMethods) {
-            calledMethods.UnionWith(GetCalls(rootMethod));
+            foreach(var called in GetCalls(rootMethod)) {
+                calledMethods.Add(called.MethodHandle);
+            }
         }
 
-        out_MissedMethods = new HashSet<MethodInfo>();
-        out_HitMethods = new HashSet<MethodInfo>();
+        out_MissedMethods = new List<MethodInfo>();
+        out_HitMethods = new List<MethodInfo>();
         foreach(var methodToCover in MethodsToCover) {
             // Did we call the method?
-            if (calledMethods.Contains(methodToCover)) {
+            if (calledMethods.Contains(methodToCover.MethodHandle)) {
                 out_HitMethods.Add(methodToCover);
                 continue;
             }
@@ -161,7 +194,7 @@ static class CoverageTester
             var didHit = false;
             var baseBaseMethod = methodToCover.GetBaseDefinition();
             if(baseBaseMethod != methodToCover) {
-                if (calledMethods.Contains(methodToCover.GetBaseDefinition())) {
+                if (calledMethods.Contains(baseBaseMethod.MethodHandle)) {
                     out_HitMethods.Add(methodToCover);
                     didHit = true;
                 } else {
@@ -181,7 +214,7 @@ static class CoverageTester
                     do {
                         baseClass = baseClass.BaseType;
                         baseMethod = baseClass.GetMethod(methodToCover.Name, parameterTypes);
-                        if (calledMethods.Contains(baseMethod)) {
+                        if (calledMethods.Contains(baseMethod.MethodHandle)) {
                             out_HitMethods.Add(methodToCover);
                             didHit = true;
                             break;
@@ -199,6 +232,37 @@ static class CoverageTester
         } else {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Simple interface for running an NUnit test.
+    /// <code>
+    ///    [Test]
+    ///    public void TestCoverage() { CoverageTester.TestCoverage(typeof(ThingWeAreTesting), this.GetType()); }
+    /// </code>
+    /// </summary>
+    public static void TestCoverage(System.Type TypeToCover, System.Type NUnitTestFramework)
+    {
+        // We want to call all the functions of the proxy.
+        var methodsToCover = TypeToCover.GetMethods();
+
+        // Our public test functions are what we can use to call that with.
+        var testMethods = new List<MethodInfo>();
+        foreach(var method in NUnitTestFramework.GetMethods()) {
+            // Check that the method is tagged [Test]
+            if (method.GetCustomAttributes(typeof(NUnit.Framework.TestAttribute), true).Length > 0) {
+                testMethods.Add(method);
+            }
+        }
+
+        List<MethodInfo> hitMethods;
+        List<MethodInfo> missedMethods;
+
+        var coverageComplete = CoverageTester.TestCoverage(methodsToCover, testMethods, out hitMethods, out missedMethods);
+
+        NUnit.Framework.Assert.That(
+                () => coverageComplete,
+                () => CoverageTester.MakeCoverageMessage(hitMethods, missedMethods));
     }
 
     public static string GetMethodSignature(MethodInfo info)
@@ -223,8 +287,8 @@ static class CoverageTester
     }
 
     public static string MakeCoverageMessage(
-            HashSet<MethodInfo> HitMethods,
-            HashSet<MethodInfo> MissedMethods)
+            IEnumerable<MethodInfo> HitMethods,
+            IEnumerable<MethodInfo> MissedMethods)
     {
         var missed = new List<string>();
         var hit = new List<string>();

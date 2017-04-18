@@ -20,28 +20,13 @@ namespace UnitTests
 #if ENABLE_COVERAGE_TEST
             // Register the calls we make through reflection.
             // We use reflection in CreateObject(FbxManager, string) and CreateObject(FbxObject, string).
-            var CreateObjectMethods = typeof(Base<T>).GetMethods(
-                    System.Reflection.BindingFlags.Instance |
-                    System.Reflection.BindingFlags.NonPublic |
-                    System.Reflection.BindingFlags.Public
-                    );
-            foreach(var com in CreateObjectMethods) {
-                if (com.Name != "CreateObject") {
-                    continue;
-                }
-                var parms = com.GetParameters();
-                if (parms.Length != 2) {
-                    continue;
-                }
-                if (parms[1].ParameterType != typeof(string)) {
-                    continue;
-                }
-                if (parms[1].ParameterType == typeof(FbxManager)) {
-                    CoverageTester.RegisterReflectionCall(com, s_createFromMgrAndName);
-                }
-                if (parms[1].ParameterType == typeof(FbxObject)) {
-                    CoverageTester.RegisterReflectionCall(com, s_createFromObjAndName);
-                }
+            if (s_createFromMgrAndName != null) {
+                var createFromMgrAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxManager), typeof(string)});
+                CoverageTester.RegisterReflectionCall(createFromMgrAndName, s_createFromMgrAndName);
+            }
+            if (s_createFromObjAndName != null) {
+                var createFromObjAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxObject), typeof(string)});
+                CoverageTester.RegisterReflectionCall(createFromObjAndName, s_createFromObjAndName);
             }
 #endif
         }
@@ -52,44 +37,19 @@ namespace UnitTests
         }
 
         /* Create an object with the default manager. */
-        protected T CreateObject (string name = "") {
+        public T CreateObject (string name = "") {
             return CreateObject(Manager, name);
         }
 
 #if ENABLE_COVERAGE_TEST
         [Test]
-        public void TestCoverage()
-        {
-            // We want to call all the functions of the proxy.
-            var proxyMethods = typeof(T).GetMethods();
-
-            // Our public test functions are what we can use to call that with.
-            var selfMethods = new HashSet<System.Reflection.MethodInfo>();
-            foreach(var method in this.GetType().GetMethods()) {
-                // Check that the method is tagged [Test]
-                if (method.GetCustomAttributes(typeof(TestAttribute), true).Length > 0) {
-                    selfMethods.Add(method);
-                }
-            }
-
-            // Don't include this function.
-            selfMethods.Remove(typeof(Base<T>).GetMethod("TestCoverage", new System.Type[] {}));
-
-            HashSet<System.Reflection.MethodInfo> hitMethods;
-            HashSet<System.Reflection.MethodInfo> missedMethods;
-
-            var coverageComplete = CoverageTester.TestCoverage(proxyMethods, selfMethods, out hitMethods, out missedMethods);
-
-            Assert.That(
-                    () => coverageComplete,
-                    () => CoverageTester.MakeCoverageMessage(hitMethods, missedMethods));
-        }
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
 #endif
 
         /* Create an object with another manager. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
         static System.Reflection.MethodInfo s_createFromMgrAndName;
-        protected virtual T CreateObject (FbxManager mgr, string name = "") {
+        public virtual T CreateObject (FbxManager mgr, string name = "") {
             try {
                 return (T)(s_createFromMgrAndName.Invoke(null, new object[] {mgr, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
@@ -100,7 +60,7 @@ namespace UnitTests
         /* Create an object with an object as container. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
         static System.Reflection.MethodInfo s_createFromObjAndName;
-        protected virtual T CreateObject (FbxObject container, string name = "") {
+        public virtual T CreateObject (FbxObject container, string name = "") {
             try {
                 return (T)(s_createFromObjAndName.Invoke(null, new object[] {container, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
@@ -129,6 +89,7 @@ namespace UnitTests
         {
             var obj = CreateObject("MyObject");
             Assert.IsInstanceOf<T> (obj);
+            Assert.AreEqual(Manager, obj.GetFbxManager());
         }
 
         [Test]
@@ -235,6 +196,41 @@ namespace UnitTests
             Assert.IsFalse (obj.GetSelected ());
             obj.SetSelected (true);
             Assert.IsTrue (obj.GetSelected ());
+        }
+
+        [Test]
+        public void TestNames ()
+        {
+            /*
+             * We use this also for testing that string handling works.
+             * Make sure we can pass const char*, FbxString, and const
+             * FbxString&.
+             * Make sure we can return those too (though I'm not actually
+             * seeing a return of a const-ref anywhere).
+             */
+
+            // Test a function that takes const char*.
+            FbxObject obj = FbxObject.Create(Manager, "MyObject");
+            Assert.IsNotNull (obj);
+
+            // Test a function that returns const char*.
+            Assert.AreEqual ("MyObject", obj.GetName ());
+
+            // Test a function that takes an FbxString with an accent in it.
+            obj.SetNameSpace("Accentué");
+
+            // Test a function that returns FbxString.
+            Assert.AreEqual ("MyObject", obj.GetNameWithoutNameSpacePrefix ());
+
+            // Test a function that returns FbxString with an accent in it.
+            Assert.AreEqual ("Accentué", obj.GetNameSpaceOnly());
+
+            // Test a function that takes a const char* and returns an FbxString.
+            // We don't want to convert the other StripPrefix functions, which
+            // modify their argument in-place.
+            Assert.AreEqual("MyObject", FbxObject.StripPrefix("NameSpace::MyObject"));
+
+            obj.Destroy();
         }
     }
 }

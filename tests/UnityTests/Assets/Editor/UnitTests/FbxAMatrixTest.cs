@@ -23,6 +23,12 @@ namespace UnitTests
         {
             /* make sure that the using form compiles and doesn't crash */
             using (new FbxAMatrix()) { }
+
+            // Make sure we can explicitly dispose as well.
+            new FbxAMatrix().Dispose();
         }
+
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxAMatrix), this.GetType()); }
     }
 }

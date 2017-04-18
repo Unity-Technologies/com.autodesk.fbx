@@ -22,6 +22,12 @@ namespace UnitTests
         {
             /* make sure that the using form compiles and doesn't crash */
             using (new FbxVector4()) { }
+
+            // Make sure we can explicitly dispose as well.
+            new FbxVector4().Dispose();
         }
+
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxVector4), this.GetType()); }
     }
 }
