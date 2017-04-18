@@ -64,6 +64,8 @@ cd build
 cmake --build . --target INSTALL --config Release
 ```
 
+Note: For out of source builds the entire Unity project at test/UnityTests will be copied over.
+
 ### Running UnitTests
 
 **Requires** [Unity 5.6+](https://store.unity.com/)
