@@ -10,12 +10,8 @@
 // Unignore class
 %rename("%s") FbxExporter;
 
-%apply FbxDocument * MAYBENULL { FbxDocument *pDocument };
-%rename("%s") FbxExporter::Export(FbxDocument *pDocument);
 
-// TODO: should we be more specific, test each function in turn for whether it can
-// actually take null?
-%apply FbxIOSettings * MAYBENULL { FbxIOSettings * };
+%rename("%s") FbxExporter::Export(FbxDocument *pDocument);
 
 #else
 
@@ -23,6 +19,13 @@
 %apply bool & OUTPUT { bool & pExportResult };
 %nodefaultdtor;                                 // Disable creation of default constructors
 
+#endif
+
+#ifndef SWIG_GENERATING_TYPEDEFS
+// TODO: should we be more specific, test each function in turn for whether it can
+// actually take null?
+%apply FbxIOSettings * MAYBENULL { FbxIOSettings * };
+%apply FbxDocument * MAYBENULL { FbxDocument *pDocument };
 #endif
 
 %include "fbxsdk/fileio/fbxexporter.h"
