@@ -47,7 +47,6 @@ class FbxDouble4 { };
 %rename("%s") FbxAMatrix;
 %rename("%s") FbxAMatrix::~FbxAMatrix();
 %rename("%s") FbxAMatrix::Get;
-%rename("%s") FbxAMatrix::Set;
 #endif
 
 %include "fbxsdk_csharp-fixed-headers/fbxaffinematrix.h"
