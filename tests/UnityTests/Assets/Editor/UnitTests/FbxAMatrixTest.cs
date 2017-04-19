@@ -14,12 +14,10 @@ namespace UnitTests
         [Test]
         public void BasicTests ()
         {
-            FbxAMatrix mx;
-
             // make sure the constructors compile and don't crash
-            mx = new FbxAMatrix();
-            mx = new FbxAMatrix(new FbxAMatrix());
-            mx = new FbxAMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
+            new FbxAMatrix();
+            new FbxAMatrix(new FbxAMatrix());
+            new FbxAMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
 
             // check that the matrix is the id matrix */
             for(int y = 0; y < 4; ++y) {
@@ -34,6 +32,14 @@ namespace UnitTests
         {
             /* make sure that the using form compiles and doesn't crash */
             using (new FbxAMatrix()) { }
+
+            // Make sure we can explicitly dispose as well.
+            new FbxAMatrix().Dispose();
         }
+
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxAMatrix), this.GetType()); }
+#endif
     }
 }
