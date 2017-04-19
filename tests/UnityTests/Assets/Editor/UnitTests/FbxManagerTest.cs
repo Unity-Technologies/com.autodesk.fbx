@@ -96,7 +96,9 @@ namespace UnitTests
             Assert.That(() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
+#if ENABLE_COVERAGE_TEST
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxManager), this.GetType()); }
+#endif
     }
 }

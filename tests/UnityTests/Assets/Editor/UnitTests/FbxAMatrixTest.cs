@@ -28,7 +28,9 @@ namespace UnitTests
             new FbxAMatrix().Dispose();
         }
 
+#if ENABLE_COVERAGE_TEST
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxAMatrix), this.GetType()); }
+#endif
     }
 }

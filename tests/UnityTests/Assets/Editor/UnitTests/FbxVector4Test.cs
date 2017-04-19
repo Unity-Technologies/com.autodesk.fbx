@@ -27,7 +27,9 @@ namespace UnitTests
             new FbxVector4().Dispose();
         }
 
+#if ENABLE_COVERAGE_TEST
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxVector4), this.GetType()); }
+#endif
     }
 }
