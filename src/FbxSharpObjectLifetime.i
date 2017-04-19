@@ -118,7 +118,7 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
     swigCPtr = new global::System.Runtime.InteropServices.HandleRef(this, cPtr);
   }
   internal static global::System.Runtime.InteropServices.HandleRef getCPtr($csclassname obj) {
-    return (obj == null) ? new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero) : obj.swigCPtr;
+    return ((object)obj == null) ? new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero) : obj.swigCPtr;
   }
 %}
 
