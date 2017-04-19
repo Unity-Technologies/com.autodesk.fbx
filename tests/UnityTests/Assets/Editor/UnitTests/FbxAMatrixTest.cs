@@ -17,7 +17,7 @@ namespace UnitTests
             // make sure the constructors compile and don't crash
             new FbxAMatrix();
             new FbxAMatrix(new FbxAMatrix());
-            new FbxAMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
+            var mx = new FbxAMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
 
             // check that the matrix is the id matrix */
             for(int y = 0; y < 4; ++y) {
