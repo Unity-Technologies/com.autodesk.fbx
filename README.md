@@ -13,6 +13,13 @@
 
 Newer versions of each software likely also work, except for the FBX SDK. To support newer (or older) versions of FBX SDK, you need to edit the FindFBXSDK.cmake file.
 
+This project uses git submodules. After cloning you need to do:
+```
+git submodule update --init --recursive
+```
+You need to do this occasionally also when submodules are updated. See e.g.
+https://gist.github.com/gitaarik/8735255
+
 ## Overview
 
 **Writing C# code**
