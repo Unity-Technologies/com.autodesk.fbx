@@ -87,6 +87,10 @@
 %include "fbximporter.i"
 %include "fbxiosettings.i"
 %include "fbxnode.i"
+%include "fbxnodeattribute.i"
+%include "fbxlayercontainer.i"
+%include "fbxgeometrybase.i"
+%include "fbxgeometry.i"
 %include "fbxmesh.i"
 #endif
     

@@ -13,11 +13,12 @@ namespace UnitTests
         [Test]
         public void TestCreateFromObject ()
         {
-            FbxObject obj = CreateObject("object");
+            using (FbxObject obj = FbxObject.Create (Manager, "object")) {
 
-            FbxMesh mesh = FbxMesh.Create (obj, "mesh");
+                FbxMesh mesh = FbxMesh.Create (obj, "mesh");
 
-            Assert.IsInstanceOf<FbxMesh> (obj);
+                Assert.IsInstanceOf<FbxMesh> (mesh);
+            }
         }
     }
 }
