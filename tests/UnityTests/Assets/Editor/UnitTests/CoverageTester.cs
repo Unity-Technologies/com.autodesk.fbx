@@ -84,7 +84,7 @@ static class CoverageTester
             IEnumerable<Mono.Reflection.Instruction> instructions;
             try {
                 instructions = Mono.Reflection.Disassembler.GetInstructions(top);
-            } catch (System.ArgumentException xcp) {
+            } catch (System.ArgumentException) {
                 // ignore the method having no body
                 continue;
             }
