@@ -11,6 +11,9 @@
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxMesh::Create;
+%rename("%s") FbxMesh::BeginPolygon;
+%rename("%s") FbxMesh::AddPolygon;
+%rename("%s") FbxMesh::EndPolygon;
 
 #endif
 
