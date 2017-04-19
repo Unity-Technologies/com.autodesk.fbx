@@ -169,7 +169,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// create menu item in the File menu
             /// </summary>
-            [MenuItem (FbxExporter03.MenuItemName, false)]
+            [MenuItem (MenuItemName, false)]
             public static void OnMenuItem () 
             {
                 OnExport();
@@ -177,16 +177,12 @@ namespace FbxSdk.Examples
 
             /// <summary>
             /// Validate the menu item defined by the function above.
+            /// Return false if no transform is selected.
             /// </summary>
-            [MenuItem (FbxExporter03.MenuItemName, true)]
+            [MenuItem (MenuItemName, true)]
             public static bool OnValidateMenuItem ()
             {
-                foreach (var obj in Selection.objects) {
-                    if (GetGameObject (obj) != null) {
-                        return true;
-                    }
-                }
-                return false;
+                return Selection.activeTransform != null;
             }
 
             /// <summary>
