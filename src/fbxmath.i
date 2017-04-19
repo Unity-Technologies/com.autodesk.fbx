@@ -1,3 +1,10 @@
+// ***********************************************************************
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
+//
+// Licensed under the ##LICENSENAME##.
+// See LICENSE.md file in the project root for full license information.
+// ***********************************************************************
+
 /*
  * This is initial work on defining the math types:
  * - matrix (FbxMatrix)
@@ -39,8 +46,7 @@ class FbxDouble4 { };
 // Unignore class
 %rename("%s") FbxAMatrix;
 %rename("%s") FbxAMatrix::~FbxAMatrix();
-%rename("%s") FbxMatrix::Get;
-%rename("%s") FbxMatrix::Set;
+%rename("%s") FbxAMatrix::Get;
 #endif
 
 %include "fbxsdk_csharp-fixed-headers/fbxaffinematrix.h"

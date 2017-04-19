@@ -1,32 +1,57 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
 using FbxSdk;
 
+using System.Collections.Generic;
+
 namespace UnitTests
 {
     public abstract class Base<T> where T: FbxSdk.FbxObject
     {
+        static Base() {
+            s_createFromMgrAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxManager), typeof(string)});
+            s_createFromObjAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxObject), typeof(string)});
+
+#if ENABLE_COVERAGE_TEST
+            // Register the calls we make through reflection.
+            // We use reflection in CreateObject(FbxManager, string) and CreateObject(FbxObject, string).
+            if (s_createFromMgrAndName != null) {
+                var createFromMgrAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxManager), typeof(string)});
+                CoverageTester.RegisterReflectionCall(createFromMgrAndName, s_createFromMgrAndName);
+            }
+            if (s_createFromObjAndName != null) {
+                var createFromObjAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxObject), typeof(string)});
+                CoverageTester.RegisterReflectionCall(createFromObjAndName, s_createFromObjAndName);
+            }
+#endif
+        }
+
         protected FbxManager Manager {
             get;
             private set;
         }
 
         /* Create an object with the default manager. */
-        protected T CreateObject (string name = "") {
+        public T CreateObject (string name = "") {
             return CreateObject(Manager, name);
         }
 
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
+#endif
+
         /* Create an object with another manager. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
-        System.Reflection.MethodInfo m_createFromMgrAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxManager), typeof(string)});
-        protected virtual T CreateObject (FbxManager mgr, string name = "") {
+        static System.Reflection.MethodInfo s_createFromMgrAndName;
+        public virtual T CreateObject (FbxManager mgr, string name = "") {
             try {
-                return (T)(m_createFromMgrAndName.Invoke(null, new object[] {mgr, name}));
+                return (T)(s_createFromMgrAndName.Invoke(null, new object[] {mgr, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
                 throw xcp.GetBaseException();
             }
@@ -34,10 +59,10 @@ namespace UnitTests
 
         /* Create an object with an object as container. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
-        System.Reflection.MethodInfo m_createFromObjAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxObject), typeof(string)});
-        protected virtual T CreateObject (FbxObject container, string name = "") {
+        static System.Reflection.MethodInfo s_createFromObjAndName;
+        public virtual T CreateObject (FbxObject container, string name = "") {
             try {
-                return (T)(m_createFromObjAndName.Invoke(null, new object[] {container, name}));
+                return (T)(s_createFromObjAndName.Invoke(null, new object[] {container, name}));
             } catch(System.Reflection.TargetInvocationException xcp) {
                 throw xcp.GetBaseException();
             }
@@ -54,7 +79,7 @@ namespace UnitTests
         {
             try {
                 Manager.Destroy ();
-            } 
+            }
             catch (System.ArgumentNullException) {
             }
         }
@@ -64,6 +89,7 @@ namespace UnitTests
         {
             var obj = CreateObject("MyObject");
             Assert.IsInstanceOf<T> (obj);
+            Assert.AreEqual(Manager, obj.GetFbxManager());
         }
 
         [Test]
@@ -119,6 +145,10 @@ namespace UnitTests
             using (var obj = CreateObject ()) {
                 obj.GetName ();
             }
+
+            // Test also that an explicit Dispose works.
+            var obj2 = CreateObject();
+            obj2.Dispose();
         }
 
         [Test]
@@ -166,6 +196,41 @@ namespace UnitTests
             Assert.IsFalse (obj.GetSelected ());
             obj.SetSelected (true);
             Assert.IsTrue (obj.GetSelected ());
+        }
+
+        [Test]
+        public void TestNames ()
+        {
+            /*
+             * We use this also for testing that string handling works.
+             * Make sure we can pass const char*, FbxString, and const
+             * FbxString&.
+             * Make sure we can return those too (though I'm not actually
+             * seeing a return of a const-ref anywhere).
+             */
+
+            // Test a function that takes const char*.
+            FbxObject obj = FbxObject.Create(Manager, "MyObject");
+            Assert.IsNotNull (obj);
+
+            // Test a function that returns const char*.
+            Assert.AreEqual ("MyObject", obj.GetName ());
+
+            // Test a function that takes an FbxString with an accent in it.
+            obj.SetNameSpace("Accentué");
+
+            // Test a function that returns FbxString.
+            Assert.AreEqual ("MyObject", obj.GetNameWithoutNameSpacePrefix ());
+
+            // Test a function that returns FbxString with an accent in it.
+            Assert.AreEqual ("Accentué", obj.GetNameSpaceOnly());
+
+            // Test a function that takes a const char* and returns an FbxString.
+            // We don't want to convert the other StripPrefix functions, which
+            // modify their argument in-place.
+            Assert.AreEqual("MyObject", FbxObject.StripPrefix("NameSpace::MyObject"));
+
+            obj.Destroy();
         }
     }
 }

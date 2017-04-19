@@ -1,4 +1,10 @@
-﻿using NUnit.Framework;
+﻿// ***********************************************************************
+// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+//
+// Licensed under the ##LICENSENAME##. 
+// See LICENSE.md file in the project root for full license information.
+// ***********************************************************************
+using NUnit.Framework;
 using FbxSdk;
 
 namespace UnitTests
@@ -88,6 +94,17 @@ namespace UnitTests
                 obj = FbxObject.Create(mgr, "asdf");
             }
             Assert.That(() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+            // Also test explicit dispose.
+            var mgr2 = FbxManager.Create();
+            obj = FbxObject.Create(mgr2, "hjkl");
+            mgr2.Dispose();
+            Assert.That(() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
+
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxManager), this.GetType()); }
+#endif
     }
 }
