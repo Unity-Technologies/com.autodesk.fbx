@@ -13,11 +13,18 @@
 %ignore THETYPE::operator=;
 
 
-/* Handle equality in C# via calls to Equals. */
+/* Handle equality in C# via calls to Equals.
+ * Remember to implement Equals to the exact type and also to object. */
 %rename("Equals") THETYPE::operator==;
 %ignore THETYPE::operator!=;
 %extend THETYPE {
   %proxycode %{
+  public override bool Equals(object other) {
+    var typedOther = other as $csclassname;
+    if (object.ReferenceEquals(typedOther, null)) { return false; }
+    return typedOther.Equals(this);
+  }
+
   public static bool operator == ($csclassname a, $csclassname b) {
     if (object.ReferenceEquals(a, b)) { return true; }
     if ((object)a == null || (object)b == null) { return false; }
@@ -38,7 +45,7 @@
   }
 
   public override string ToString() {
-    var builder = new System.Text.StringBuilder("(");
+    var builder = new System.Text.StringBuilder("$csclassname(");
     for(int i = 0; i < N; ++i) {
       builder.Append(this[i].ToString());
       builder.Append(',');

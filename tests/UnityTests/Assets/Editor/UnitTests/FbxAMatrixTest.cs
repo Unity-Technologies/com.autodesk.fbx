@@ -75,7 +75,6 @@ namespace UnitTests
             Assert.That(() => v[ 4] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
 
             // Test members W/X/Y/Z
-            v = mx;
             Assert.AreEqual(a, v.X);
             Assert.AreEqual(b, v.Y);
             Assert.AreEqual(c, v.Z);
