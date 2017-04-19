@@ -56,7 +56,7 @@ struct WeakPointerHandle {
     void ReleaseReference() {
 #ifdef MEMORY_DEBUG
         if (m_ptr != 0) {
-          fprintf(stderr, "Releasing %llx (%d refs)\n", uint64_t(m_ptr), m_numRefs);
+          fprintf(stderr, "Releasing %p (%d refs)\n", m_ptr, m_numRefs);
           assert(AllocatedBlocks.count(m_ptr) != 0);
         }
 #endif
@@ -85,7 +85,7 @@ struct WeakPointerHandle {
             if (!p) { return; }
             #ifdef MEMORY_DEBUG
             if (AllocatedBlocks.find(p) == AllocatedBlocks.end()) {
-                fprintf(stderr, "Duplicate free at %llx\n", uint64_t(p));
+                fprintf(stderr, "Duplicate free at %p\n", p);
                 assert(AllocatedBlocks.count(p) != 0);
             }
             AllocatedBlocks.erase(p);
@@ -99,7 +99,7 @@ struct WeakPointerHandle {
         static inline void MarkAllocated(void *p) {
             #ifdef MEMORY_DEBUG
             if (!AllocatedBlocks.insert(p).second) {
-                fprintf(stderr, "Duplicate allocation at %llx\n", uint64_t(p));
+                fprintf(stderr, "Duplicate allocation at %p\n", p);
                 assert(AllocatedBlocks.count(p) == 0);
             }
             #endif
