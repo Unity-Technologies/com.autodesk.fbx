@@ -8,12 +8,10 @@ namespace UnitTests
         [Test]
         public void BasicTests ()
         {
-            FbxAMatrix mx;
-
             // make sure the constructors compile and don't crash
-            mx = new FbxAMatrix();
-            mx = new FbxAMatrix(new FbxAMatrix());
-            mx = new FbxAMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
+            new FbxAMatrix();
+            new FbxAMatrix(new FbxAMatrix());
+            new FbxAMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
 
             // TODO: more operations
         }

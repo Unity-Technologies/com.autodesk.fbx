@@ -8,13 +8,11 @@ namespace UnitTests
         [Test]
         public void BasicTests ()
         {
-            FbxVector4 v;
-
             // make sure the constructors compile and don't crash
-            v = new FbxVector4();
-            v = new FbxVector4(new FbxVector4());
-            v = new FbxVector4(1, 2, 3, 4);
-            v = new FbxVector4(1, 2, 3);
+            new FbxVector4();
+            new FbxVector4(new FbxVector4());
+            new FbxVector4(1, 2, 3, 4);
+            new FbxVector4(1, 2, 3);
         }
 
         [Test]
