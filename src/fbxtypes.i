@@ -8,19 +8,101 @@
 %ignore FbxMin;
 %ignore FbxMax;
 
-%define %rename_vector_operators(THETYPE)
-%ignore THETYPE::operator[]; // TODO: support operator[]
+%define %rename_vector_operators(THETYPE, N)
+/* No operator=, just a copy constructor */
 %ignore THETYPE::operator=;
+
+
+/* Handle equality in C# via calls to Equals. */
 %rename("Equals") THETYPE::operator==;
 %ignore THETYPE::operator!=;
+%extend THETYPE {
+  %proxycode %{
+  public static bool operator == ($csclassname a, $csclassname b) {
+    if (object.ReferenceEquals(a, b)) { return true; }
+    if ((object)a == null || (object)b == null) { return false; }
+    return a.Equals(b);
+  }
+
+  public static bool operator != ($csclassname a, $csclassname b) {
+    return ! (a == b);
+  }
+
+  public override int GetHashCode() {
+    uint hash = 0;
+    for(int i = 0; i < N; ++i) {
+      hash = (hash << (32 / N)) | (hash >> (32 - (32 / N)));
+      hash ^= (uint)this[i].GetHashCode();
+    }
+    return (int)hash;
+  }
+
+  public override string ToString() {
+    var builder = new System.Text.StringBuilder("(");
+    for(int i = 0; i < N; ++i) {
+      builder.Append(this[i].ToString());
+      builder.Append(',');
+    }
+    builder.Replace(',', ')', builder.Length - 1, 1);
+    return builder.ToString();
+  }
+  %}
+}
 %ignore THETYPE::Buffer;
 %ignore THETYPE::mData;
 %ignore operator THETYPE<T>&;
+%ignore THETYPE::operator[];
+%extend THETYPE {
+  %csmethodmodifiers _get "private";
+  %csmethodmodifiers _set "private";
+  const T& _get(int i) const { return self->mData[i]; }
+  void _set(int i, const T& v) { self->mData[i] = v; }
+  %proxycode %{
+  public $typemap(cstype, T) this[int index] {
+    get {
+      if (index < 0 || index >= N) {
+        throw new System.IndexOutOfRangeException();
+      } else {
+        return this._get(index);
+      }
+    }
+    set {
+      if (index < 0 || index >= N) {
+        throw new System.IndexOutOfRangeException();
+      } else {
+        this._set(index, value);
+      }
+    }
+  }
+  %}
+}
 %enddef
 
-%rename_vector_operators(FbxVectorTemplate2);
-%rename_vector_operators(FbxVectorTemplate3);
-%rename_vector_operators(FbxVectorTemplate4);
+%define %implement_vector_variables(THETYPE, NAME, INDEX)
+%extend THETYPE {
+  %proxycode %{
+  public $typemap(cstype, T) NAME {
+    get { return this._get(INDEX); }
+    set { this._set(INDEX, value); }
+  }
+  %}
+}
+%enddef
+
+%rename_vector_operators(FbxVectorTemplate2, 2);
+%implement_vector_variables(FbxVectorTemplate2, X, 0);
+%implement_vector_variables(FbxVectorTemplate2, Y, 1);
+
+%rename_vector_operators(FbxVectorTemplate3, 3);
+%implement_vector_variables(FbxVectorTemplate3, X, 0);
+%implement_vector_variables(FbxVectorTemplate3, Y, 1);
+%implement_vector_variables(FbxVectorTemplate3, Z, 2);
+
+%rename_vector_operators(FbxVectorTemplate4, 4);
+%implement_vector_variables(FbxVectorTemplate4, X, 0);
+%implement_vector_variables(FbxVectorTemplate4, Y, 1);
+%implement_vector_variables(FbxVectorTemplate4, Z, 2);
+%implement_vector_variables(FbxVectorTemplate4, W, 3);
 
 /* We aren't ignoring everything, so we need to explicitly ignore all these
  * constants. */
@@ -65,3 +147,4 @@
 %template("FbxDouble3") FbxVectorTemplate3<double>;
 %template("FbxDouble4") FbxVectorTemplate4<double>;
 %template("FbxDouble4x4") FbxVectorTemplate4<FbxDouble4>;
+
