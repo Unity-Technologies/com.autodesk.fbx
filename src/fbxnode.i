@@ -18,6 +18,10 @@
 %rename("%s") FbxNode::GetChild(int);
 %rename("%s") FbxNode::GetChildCount(bool pRecursive = false) const;
 %rename("%s") FbxNode::FindChild;
+%rename("%s") FbxNode::SetNodeAttribute;
+%rename("%s") FbxNode::SetShadingMode;
+%rename("%s") FbxNode::EShadingMode;
+%rename("%s") FbxNode::eWireFrame;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxnode.h"
