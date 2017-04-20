@@ -23,4 +23,16 @@
 %rename("%s") FbxObject::GetFbxManager;
 #endif
 
+%extend FbxObject {
+  %proxycode %{
+  public override string ToString() {
+    string name;
+    try { name = GetName(); }
+    catch (System.ArgumentNullException) { name = "(destroyed)"; }
+    catch (System.NullReferenceException) { name = "(disposed)"; }
+    return string.Format("{0}({1})", name, GetType().Name);
+  }
+  %}
+}
+
 %include "fbxsdk/core/fbxobject.h"
