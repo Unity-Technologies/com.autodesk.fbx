@@ -157,15 +157,15 @@ namespace FbxSdk.Examples
             /// 
             public void ExportVertexColors (MeshInfo mesh, FbxMesh fbxMesh)
             {
-            	// Set the normals on Layer 0.
-            	FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
-            	if (fbxLayer == null) 
+                // Set the normals on Layer 0.
+                FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+                if (fbxLayer == null) 
                 {
-            		fbxMesh.CreateLayer ();
-            		fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
-            	}
+                    fbxMesh.CreateLayer ();
+                    fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+                }
 
-            	using (var fbxLayerElement = FbxLayerElementVertexColor::Create (fbxMesh, MakeObjectName ("VertexColor"));
+               using (var fbxLayerElement = FbxLayerElementVertexColor::Create (fbxMesh, MakeObjectName ("VertexColor"));
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
@@ -194,26 +194,26 @@ namespace FbxSdk.Examples
             /// 
             public void ExportUVs (MeshInfo mesh, FbxMesh fbxMesh)
             {
-            	// Set the normals on Layer 0.
-            	FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
-            	if (fbxLayer == null) 
+                // Set the normals on Layer 0.
+                FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+                if (fbxLayer == null) 
                 {
-            		fbxMesh.CreateLayer ();
-            		fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
-            	}
+                    fbxMesh.CreateLayer ();
+                    fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+                }
 
-            	using (var fbxLayerElement = FbxLayerElementVertexColor::Create (fbxMesh, MakeObjectName ("UVSet"))
-            	{
-            		fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygonVertex);
-            		fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
+                using (var fbxLayerElement = FbxLayerElementVertexColor::Create (fbxMesh, MakeObjectName ("UVSet"))
+                {
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygonVertex);
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
 
-            		// set texture coordinates per vertex
-            		FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+                    // set texture coordinates per vertex
+                    FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
 
-            		for (int n = 0; n < mesh.UV.Length; n++) {
-            			fbxElementArray.Add (new FbxVector2 (mesh.UV [n] [0],
-            											     mesh.UV [n] [1]));
-            		}
+                    for (int n = 0; n < mesh.UV.Length; n++) {
+                    fbxElementArray.Add (new FbxVector2 (mesh.UV [n] [0],
+                                                      mesh.UV [n] [1]));
+                    }
 
                     // For each face index, point to a texture uv
                     FbxLayerElementArray fbxIndexArray = fbxLayerElement.GetIndexArray ();
@@ -224,8 +224,8 @@ namespace FbxSdk.Examples
                         fbxIndexArray.GetIndexArray ().SetAt (vertIndex, mesh.Indices [vertIndex]);
                     }
 
-            		fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.eTextureDiffuse);
-            	}
+                    fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.eTextureDiffuse);
+                }
             }
 
             /// <summary>
