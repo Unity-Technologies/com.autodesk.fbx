@@ -90,14 +90,10 @@ namespace FbxSdk.Examples
                 // Create control points.
                 fbxMesh.InitControlPoints (mesh.VertexCount);
 
-                // NOTE: we expect this is a reference to the array held by the mesh.
-                // This seems to be the only way to copy across vertex data
-                FbxVector4 [] vertex = fbxMesh.GetControlPoints ();
-
                 // copy control point data from Unity to FBX
                 for (int v = 0; v < mesh.VertexCount; v++)
                 {
-                    vertex [v].Set(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z);
+                    fbxMesh.SetControlPointAt(new FbxVector4(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z), v);
                 }
 
 #if UNI_12952_STRETCH_MATERIALS

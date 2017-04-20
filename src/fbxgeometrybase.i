@@ -10,6 +10,9 @@
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
+%rename("%s") FbxGeometryBase::InitControlPoints;
+%rename("%s") FbxGeometryBase::GetControlPointAt;
+%rename("%s") FbxGeometryBase::SetControlPointAt(const FbxVector4& pCtrlPoint, int pIndex);
 #endif
 
 %include "fbxsdk/scene/geometry/fbxgeometrybase.h"
