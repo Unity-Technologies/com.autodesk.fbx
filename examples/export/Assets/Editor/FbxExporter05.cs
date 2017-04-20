@@ -287,18 +287,6 @@ namespace FbxSdk.Examples
                 ExportVertexColors (mesh, fbxMesh);
                 ExportUVs (mesh, fbxMesh);
 
-#if UNI_12952_STRETCH_UVSET
-                // create UVset
-                FbxGeometryElementUV[] lUVElement1 = fbxMesh.CreateElementUV ("UVSet1");
-
-                lUVElement1.SetMappingMode (FbxGeometryElement::eByPolygonVertex);
-                lUVElement1.SetReferenceMode (FbxGeometryElement::eIndexToDirect);
-                for (int i = 0; i<4; i++)
-                    lUVElement1.GetDirectArray ().Add (FbxVector2(lUVs [i] [0], lUVs [i] [1]));
-                for (int i = 0; i<24; i++)
-                    lUVElement1.GetIndexArray ().Add (uvsId [i % 4]);
-#endif
-
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
                 fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
