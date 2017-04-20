@@ -93,7 +93,7 @@ list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointe
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         COMMAND ${PYTHON_EXECUTABLE}
         ARGS "${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
-                "FbxEmitter" "FbxManager" "FbxProperty"
+                "FbxEmitter" "FbxManager"
         MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         DEPENDS "${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py"
 )
