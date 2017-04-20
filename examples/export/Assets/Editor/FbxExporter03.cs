@@ -16,7 +16,6 @@ namespace FbxSdk.Examples
 {
     namespace Editor
     {
-
         public class FbxExporter03 : System.IDisposable
         {
             const string Title = 
@@ -24,11 +23,11 @@ namespace FbxSdk.Examples
             
             const string Subject = 
                 @"Example FbxExporter03 illustrates how to:
-                    1) create and initialize an fbxExporter        
-                    2) create a fbxScene                           
+                    1) create and initialize an exporter        
+                    2) create a scene                           
                     3) create a hierarchy of nodes              
-                    4) add transform data to each fbxNode          
-                    5) export the nodes to a .FBX file (ASCII mode)
+                    4) add transform data to each node          
+                    5) export the nodes to a FBX file (ASCII mode)
                 ";
             
             const string Keywords = 
@@ -37,7 +36,7 @@ namespace FbxSdk.Examples
             const string Comments = 
                 @"We are exporting rotations using the Euler angles from Unity.";
 
-            const string MenuItemName = "File/Export/Export (Node hierarchy) to FBX";
+            const string MenuItemName = "File/Export/Export (nodes with transforms) to FBX";
 
             /// <summary>
             /// Number of nodes exported including siblings and decendents
@@ -97,8 +96,9 @@ namespace FbxSdk.Examples
                 fbxParentNode.AddChild (fbxNode);
 
                 // now uniGo through our children and recurse
-                foreach (Transform childT in uniGo.transform) {
-                    ExportComponents (childT.gameObject, fbxScene, fbxNode);
+                foreach (Transform uniChildT in uniGo.transform) 
+                {
+                    ExportComponents (uniChildT.gameObject, fbxScene, fbxNode);
                 }
 
                 return;
@@ -108,10 +108,11 @@ namespace FbxSdk.Examples
             /// Export all the objects in the set.
             /// Return the number of objects in the set that we exported.
             /// </summary>
-            public int ExportAll (IEnumerable<UnityEngine.Object> exportSet)
+            public int ExportAll (IEnumerable<UnityEngine.Object> uniExportSet)
             {
                 // Create fbxManager
-                using (var fbxManager = FbxManager.Create ()) {
+                using (var fbxManager = FbxManager.Create ()) 
+                {
                     // Configure fbx IO settings.
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
@@ -122,7 +123,8 @@ namespace FbxSdk.Examples
                     bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
 
                     // Check that initialization of the fbxExporter was successful
-                    if (!status) {
+                    if (!status) 
+                    {
                         return 0;
                     }
 
@@ -145,10 +147,12 @@ namespace FbxSdk.Examples
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
                     // export set of objects
-                    foreach (var obj in exportSet) {
+                    foreach (var obj in uniExportSet) 
+                    {
                         var uniGo = GetGameObject (obj);
 
-                        if (uniGo) {
+                        if (uniGo) 
+                        {
                             this.ExportComponents (uniGo, fbxScene, fbxRootNode);
                         }
                     }
@@ -198,12 +202,17 @@ namespace FbxSdk.Examples
             /// </summary>
             private static GameObject GetGameObject (Object obj)
             {
-                if (obj is UnityEngine.Transform) {
+                if (obj is UnityEngine.Transform) 
+                {
                     var xform = obj as UnityEngine.Transform;
                     return xform.gameObject;
-                } else if (obj is UnityEngine.GameObject) {
+                } 
+                else if (obj is UnityEngine.GameObject) 
+                {
                     return obj as UnityEngine.GameObject;
-                } else if (obj is MonoBehaviour) {
+                } 
+                else if (obj is MonoBehaviour) 
+                {
                     var mono = obj as MonoBehaviour;
                     return mono.gameObject;
                 }
@@ -244,13 +253,15 @@ namespace FbxSdk.Examples
 
                 var filePath = EditorUtility.SaveFilePanel (title, directory, filename, "");
 
-                if (string.IsNullOrEmpty (filePath)) {
+                if (string.IsNullOrEmpty (filePath)) 
+                {
                     return;
                 }
 
                 LastFilePath = filePath;
 
-                using (var fbxExporter = Create()) {
+                using (var fbxExporter = Create()) 
+                {
                     
                     // ensure output directory exists
                     EnsureDirectory (filePath);
@@ -269,7 +280,8 @@ namespace FbxSdk.Examples
                 //create all the missing directories.
                 FileInfo fileInfo = new FileInfo (path);
 
-                if (!fileInfo.Exists) {
+                if (!fileInfo.Exists) 
+                {
                     Directory.CreateDirectory (fileInfo.Directory.FullName);
                 }
             }

@@ -10,33 +10,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-using FbxSdk;
 
 namespace FbxSdk.Examples
 {
     namespace Editor
     {
-        public class FbxExporter04 : System.IDisposable
+        public class FbxExporter05 : System.IDisposable
         {
             const string Title =
-                "Example 04: exporting a static mesh";
+                "Example 05: exporting a static mesh with normals, binormals and tangents";
 
             const string Subject =
-                @"Example FbxExporter04 illustrates how to:
+                @"Example FbxExporter05 illustrates how to:
                     1) create and initialize an exporter
                     2) create a scene
                     3) create a node with transform data
-                    4) add static mesh data to a node
-                    5) export a scene to a FBX file (ASCII mode)
+                    4) add static mesh to a node
+                    5) add normals, binormals and tangents to the static mesh 
+                    6) export the static mesh to a FBX file (ASCII mode)
                             ";
 
             const string Keywords =
                 "export mesh node transform";
 
             const string Comments =
-                @"We are exporting rotations using the Euler angles from Unity.";
+                @"The example uses layers to add normals, binormals and tangents. Adding normals using the geometry element management convenience functions is not supported.";
 
-            const string MenuItemName = "File/Export/Export (static meshes) to FBX";
+            const string MenuItemName = "File/Export/Export (mesh with normals, binormals and tangents) to FBX";
 
             /// <summary>
             /// Number of nodes exported including siblings and decendents
@@ -61,15 +61,172 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Create instance of example
             /// </summary>
-            public static FbxExporter04 Create ()
+            public static FbxExporter05 Create ()
             {
-                return new FbxExporter04 ();
+                return new FbxExporter05 ();
             }
 
             /// <summary>
             /// Clean up this class on garbage collection
             /// </summary>
             public void Dispose () { }
+
+            /// <summary>
+            /// Export the mesh's normals, binormals and tangents using 
+            /// layer 0.
+            /// </summary>
+            /// 
+            public void ExportNormalsEtc (MeshInfo mesh, FbxMesh fbxMesh)
+            {
+                /// Set the Normals on Layer 0.
+                FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+                if (fbxLayer == null)
+                {
+                    fbxMesh.CreateLayer ();
+                    fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+                }
+
+                using (var fbxLayerElement = FbxLayerElementNormal::Create (fbxMesh, MakeObjectName ("Normals")))
+                {
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
+
+                    // TODO: normals for each triangle vertex instead of averaged per control point
+                    //fbxNormalLayer.SetMappingMode (FbxLayerElement.eByPolygonVertex);
+
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eDirect);
+
+                    // Add one normal per each vertex face index (3 per triangle)
+                    FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                    for (int n = 0; n < mesh.Normals.Length; n++) 
+                    {
+                        fbxElementArray.Add (new FbxVector4 (mesh.Normals [n] [0], 
+                                                             mesh.Normals [n] [1], 
+                                                             mesh.Normals [n] [2]));
+                    }
+                    fbxLayer.SetNormals (fbxLayerElement);
+                }
+
+                /// Set the binormals on Layer 0. 
+                using (var fbxLayerElement = FbxLayerElementBinormal::Create (fbxMesh, MakeObjectName ("Binormals"))) 
+                {
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
+
+                    // TODO: normals for each triangle vertex instead of averaged per control point
+                    //fbxBinormalLayer.SetMappingMode (FbxLayerElement.eByPolygonVertex);
+
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eDirect);
+
+                    // Add one normal per each vertex face index (3 per triangle)
+                    FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                    for (int n = 0; n < mesh.Binormals.Length; n++) {
+                        fbxElementArray.Add (new FbxVector4 (mesh.Binormals [n] [0], 
+                                                             mesh.Binormals [n] [1], 
+                                                             mesh.Binormals [n] [2]));
+                    }
+                    fbxLayer.SetNormals (fbxLayerElement);
+                }
+
+                /// Set the tangents on Layer 0.
+                using (var fbxLayerElement = FbxLayerElementTangent::Create (fbxMesh, MakeObjectName ("Tangents"))) 
+                {
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
+
+                    // TODO: normals for each triangle vertex instead of averaged per control point
+                    //fbxBinormalLayer.SetMappingMode (FbxLayerElement.eByPolygonVertex);
+
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eDirect);
+
+                    // Add one normal per each vertex face index (3 per triangle)
+                    FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                    for (int n = 0; n<mesh.Normals.Length; n++) {
+                        fbxElementArray.Add (new FbxVector4 (mesh.Tangents [n] [0],
+                                                             mesh.Tangents [n] [1],
+                                                             mesh.Tangents [n] [2]));
+                    }
+                    fbxLayer.SetNormals (fbxLayerElement);
+                }
+
+            }
+
+            /// <summary>
+            /// Export the mesh's vertex color using layer 0.
+            /// </summary>
+            /// 
+            public void ExportVertexColors (MeshInfo mesh, FbxMesh fbxMesh)
+            {
+            	// Set the normals on Layer 0.
+            	FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+            	if (fbxLayer == null) 
+                {
+            		fbxMesh.CreateLayer ();
+            		fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+            	}
+
+            	using (var fbxLayerElement = FbxLayerElementVertexColor::Create (fbxMesh, MakeObjectName ("VertexColor"));
+                {
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
+
+                    // TODO: normals for each triangle vertex instead of averaged per control point
+                    //fbxNormalLayer.SetMappingMode (FbxLayerElement.eByPolygonVertex);
+
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eDirect);
+
+                    // Add one normal per each vertex face index (3 per triangle)
+                    FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                    for (int n = 0; n < mesh.VertexColors.Length; n++) 
+                    {
+                        fbxElementArray.Add (new FbxColor(mesh.VertexColor[n][0], 
+                                                          mesh.VertexColor[n][1], 
+                                                          mesh.VertexColor[n][2]));
+                    }
+
+                    fbxLayer.SetVertexColor(fbxLayerElement);
+                }
+            }
+
+            /// <summary>
+            /// Export the mesh's UVs using layer 0.
+            /// </summary>
+            /// 
+            public void ExportUVs (MeshInfo mesh, FbxMesh fbxMesh)
+            {
+            	// Set the normals on Layer 0.
+            	FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+            	if (fbxLayer == null) 
+                {
+            		fbxMesh.CreateLayer ();
+            		fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+            	}
+
+            	using (var fbxLayerElement = FbxLayerElementVertexColor::Create (fbxMesh, MakeObjectName ("UVSet"))
+            	{
+            		fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygonVertex);
+            		fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
+
+            		// set texture coordinates per vertex
+            		FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+            		for (int n = 0; n < mesh.UV.Length; n++) {
+            			fbxElementArray.Add (new FbxVector2 (mesh.UV [n] [0],
+            											     mesh.UV [n] [1]));
+            		}
+
+                    // For each face index, point to a texture uv
+                    FbxLayerElementArray fbxIndexArray = fbxLayerElement.GetIndexArray ();
+                    fbxIndexArray.SetCount (mesh.Indices.Length);
+
+                    for (int vertIndex = 0; vertIndex < mesh.Indices.Length; vertIndex++)
+                    {
+                        fbxIndexArray.GetIndexArray ().SetAt (vertIndex, mesh.Indices [vertIndex]);
+                    }
+
+            		fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.eTextureDiffuse);
+            	}
+            }
 
             /// <summary>
             /// Unconditionally export this mesh object to the file.
@@ -88,18 +245,29 @@ namespace FbxSdk.Examples
                 FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Scene"));
 
                 // Create control points.
-#if BLAH
-                fbxMesh.InitControlPoints (mesh.VertexCount);
+                int NumControlPoints = mesh.VertexCount;
+
+                fbxMesh.InitControlPoints (NumControlPoints);
 
                 // NOTE: we expect this is a reference to the array held by the mesh.
                 // This seems to be the only way to copy across vertex data
                 FbxVector4 [] vertex = fbxMesh.GetControlPoints ();
 
                 // copy control point data from Unity to FBX
-                for (int v = 0; v < mesh.VertexCount; v++)
+                for (int v = 0; v < NumControlPoints; v++)
                 {
                     vertex [v].Set(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z);
                 }
+
+#if UNI_12952_STRETCH_MATERIALS
+                /* create the materials.
+                 * Each polygon face will be assigned a unique material.
+                 */
+                FbxGeometryElementMaterial lMaterialElement = fbxMesh.CreateElementMaterial ();
+
+                lMaterialElement.SetMappingMode (FbxGeometryElement.eAllSame);
+                lMaterialElement.SetReferenceMode (FbxGeometryElement.eIndexToDirect);
+                lMaterialElement.GetIndexArray ().Add (0);
 #endif
 
                 /* 
@@ -114,6 +282,22 @@ namespace FbxSdk.Examples
                     fbxMesh.AddPolygon (mesh.Triangles[vId++]);
                     fbxMesh.EndPolygon ();
                 }
+
+                ExportNormalsEtc (mesh, fbxMesh);
+                ExportVertexColors (mesh, fbxMesh);
+                ExportUVs (mesh, fbxMesh);
+
+#if UNI_12952_STRETCH_UVSET
+                // create UVset
+                FbxGeometryElementUV[] lUVElement1 = fbxMesh.CreateElementUV ("UVSet1");
+
+                lUVElement1.SetMappingMode (FbxGeometryElement::eByPolygonVertex);
+                lUVElement1.SetReferenceMode (FbxGeometryElement::eIndexToDirect);
+                for (int i = 0; i<4; i++)
+                    lUVElement1.GetDirectArray ().Add (FbxVector2(lUVs [i] [0], lUVs [i] [1]));
+                for (int i = 0; i<24; i++)
+                    lUVElement1.GetIndexArray ().Add (uvsId [i % 4]);
+#endif
 
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
@@ -302,6 +486,63 @@ namespace FbxSdk.Examples
                 /// </summary>
                 /// <value>The normals.</value>
                 public Vector3 [] Normals { get { return mesh.normals; } }
+
+                /// <summary>
+                /// TODO: Gets the binormals for the vertices.
+                /// </summary>
+                /// <value>The normals.</value>
+                private Vector3 [] m_Binormals;
+                public Vector3 [] Binormals { get {
+                    if (m_Binormals.Length == 0) {
+                        m_Binormals = new Vector3 [mesh.normals.Length];
+
+                        for (int i = 0; i < mesh.normals.Length; i++)
+                            m_Binormals [i] = Vector3.Cross (mesh.normals [i], 
+                                                             mesh.tangents [i]) 
+                                                     * mesh.tangents [i].w;
+
+                    }
+                    return m_Binormals;
+
+                    /// NOTE: LINQ
+                    ///    return mesh.normals.Zip (mesh.tangents, (first, second)
+                    ///    => Math.cross (normal, tangent.xyz) * tangent.w
+                }
+
+                /// <summary>
+                /// TODO: Gets the triangle vertex indices
+                /// </summary>
+                /// <value>The normals.</value>
+                int [] m_Indices;
+
+                public int [] Indices {
+                    get {
+                        if (m_Indices.Length == 0) {
+                            m_Indices = new int [mesh.triangles.Length * 3];
+                            int i = 0;
+                            for (int triIndex = 0; triIndex < mesh.triangles.Length; triIndex++)
+                            {
+                                for (int vtxIndex = 0; vtxIndex < 3; vtxIndex++)
+                                {
+                                    m_Indices[i++] = (triIndex * 3) + vtxIndex;
+                                }
+                           }
+                        }
+                        return m_Indices;
+                    }
+                }
+
+                /// <summary>
+                /// TODO: Gets the tangents for the vertices.
+                /// </summary>
+                /// <value>The tangents.</value>
+                public Vector4 [] Tangents { get { return mesh.tangents; } }
+
+                /// <summary>
+                /// TODO: Gets the tangents for the vertices.
+                /// </summary>
+                /// <value>The tangents.</value>
+                public Color [] VertexColors { get { return mesh.colors; } }
 
                 /// <summary>
                 /// Gets the uvs.
