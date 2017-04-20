@@ -21,6 +21,12 @@
 %rename("%s") FbxNode::LclTranslation;
 %rename("%s") FbxNode::LclRotation;
 %rename("%s") FbxNode::LclScaling;
+%rename("%s") FbxNode::SetNodeAttribute;
+%rename("%s") FbxNode::GetNodeAttribute();
+%rename("%s") FbxNode::SetShadingMode;
+%rename("%s") FbxNode::GetShadingMode;
+%rename("%s") FbxNode::EShadingMode;
+%rename("%s") FbxNode::eWireFrame;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxnode.h"
