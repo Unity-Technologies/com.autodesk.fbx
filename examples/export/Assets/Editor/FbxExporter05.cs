@@ -203,7 +203,7 @@ namespace FbxSdk.Examples
 
                     for (int vertIndex = 0; vertIndex < mesh.Indices.Length; vertIndex++)
                     {
-                        fbxIndexArray.GetIndexArray ().SetAt (vertIndex, mesh.Indices [vertIndex]);
+                        fbxIndexArray.SetAt (vertIndex, mesh.Indices [vertIndex]);
                     }
 
                     fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.eTextureDiffuse);
