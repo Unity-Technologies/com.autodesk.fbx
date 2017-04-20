@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
 // Licensed under the ##LICENSENAME##. 
@@ -100,8 +100,6 @@ namespace FbxSdk.Examples
                 {
                     vertex [v].Set(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z);
                 }
-#endif
-
                 /* 
                  * Create polygons after FbxGeometryElementMaterial are created. 
                  * TODO: Assign material indices.
