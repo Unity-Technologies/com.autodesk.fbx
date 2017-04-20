@@ -116,7 +116,7 @@ namespace UnitTests
         public void TestSetNullNodeAttribute()
         {
             using (FbxNode node = CreateObject ("root")) {
-                // returns previous node attribute that was set (or null if there was none)
+                // passing a null NodeAttribute throws a NullReferenceException
                 Assert.That (() => { node.SetNodeAttribute (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
                 Assert.IsNull (node.GetNodeAttribute ());
             }
