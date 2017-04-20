@@ -9,9 +9,16 @@
 %ignore FbxMax;
 
 %define %rename_vector_operators(THETYPE, N)
+
 /* No operator=, just a copy constructor */
 %ignore THETYPE::operator=;
-
+%extend THETYPE {
+  THETYPE(const THETYPE<T>& other) {
+    THETYPE<T> *self = new THETYPE<T>();
+    *self = other;
+    return self;
+  }
+}
 
 /* Handle equality in C# via calls to Equals.
  * Remember to implement Equals to the exact type and also to object. */

@@ -29,6 +29,8 @@ namespace UnitTests
         [Test]
         public void TestBasics()
         {
+            FbxDouble3 v;
+
             // make sure the no-arg constructor doesn't crash
             new FbxDouble3();
 
@@ -57,8 +59,23 @@ namespace UnitTests
             Assert.IsFalse(new FbxDouble3(1,2,0) == new FbxDouble3(1,2,3));
             Assert.IsTrue(new FbxDouble3(1,2,0) != new FbxDouble3(1,2,3));
 
+            v = new FbxDouble3(1,2,3);
+            Assert.AreEqual(v, v);
+
+            // Test other constructors
+            v = new FbxDouble3(1, 2, 3);
+            var u = new FbxDouble3(v);
+            Assert.AreEqual(v, u);
+            u[0] = 5;
+            Assert.AreEqual(5, u[0]);
+            Assert.AreEqual(1, v[0]); // check that setting u doesn't set v
+            var w = new FbxDouble3(3);
+            Assert.AreEqual(3, w[0]);
+            Assert.AreEqual(3, w[1]);
+            Assert.AreEqual(3, w[2]);
+
             // Test operator[]
-            var v = new FbxDouble3();
+            v = new FbxDouble3();
             v[0] = 1;
             Assert.AreEqual(1, v[0]);
             v[1] = 2;

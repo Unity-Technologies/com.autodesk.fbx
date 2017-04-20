@@ -29,6 +29,14 @@ namespace UnitTests
         [Test]
         public void TestBasics()
         {
+            FbxDouble4x4 v;
+
+            // We use these later.
+            var a = new FbxDouble4(1,2,3,4);
+            var b = new FbxDouble4(5,6,7,8);
+            var c = new FbxDouble4(9,8,7,6);
+            var d = new FbxDouble4(5,4,3,2);
+
             // make sure the no-arg constructor doesn't crash
             new FbxDouble4x4();
 
@@ -51,12 +59,21 @@ namespace UnitTests
             Assert.IsTrue((FbxDouble4x4)null == (FbxDouble4x4)null);
             Assert.IsFalse((FbxDouble4x4)null != (FbxDouble4x4)null);
 
+            // Test other constructors
+            v = new FbxDouble4x4(a, b, c, d);
+            var u = new FbxDouble4x4(v);
+            Assert.AreEqual(v, u);
+            u[0] = c;
+            Assert.AreEqual(c, u[0]);
+            Assert.AreEqual(a, v[0]); // check that setting u doesn't set v
+            var w = new FbxDouble4x4(c);
+            Assert.AreEqual(c, w[0]);
+            Assert.AreEqual(c, w[1]);
+            Assert.AreEqual(c, w[2]);
+            Assert.AreEqual(c, w[3]);
+
             // Test operator[]
-            var v = new FbxDouble4x4();
-            var a = new FbxDouble4(1,2,3,4);
-            var b = new FbxDouble4(5,6,7,8);
-            var c = new FbxDouble4(9,8,7,6);
-            var d = new FbxDouble4(5,4,3,2);
+            v = new FbxDouble4x4();
             v[0] = a;
             Assert.AreEqual(a.X, v[0].X);
             Assert.AreEqual(a.Y, v[0].Y);

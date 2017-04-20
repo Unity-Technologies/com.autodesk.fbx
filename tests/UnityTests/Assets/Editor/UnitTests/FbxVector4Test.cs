@@ -1,7 +1,7 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
@@ -14,6 +14,8 @@ namespace UnitTests
         [Test]
         public void BasicTests ()
         {
+            FbxVector4 v;
+
             // make sure the no-arg constructor doesn't crash
             new FbxVector4();
 
@@ -36,8 +38,24 @@ namespace UnitTests
             Assert.IsTrue((FbxVector4)null == (FbxVector4)null);
             Assert.IsFalse((FbxVector4)null != (FbxVector4)null);
 
+            // Test other constructors
+            v = new FbxVector4(1, 2, 3, 4);
+            var u = new FbxVector4(v);
+            Assert.AreEqual(v, u);
+            u[0] = 5;
+            Assert.AreEqual(5, u[0]);
+            Assert.AreEqual(1, v[0]); // check that setting u doesn't set v
+
+            v = new FbxVector4(1, 2, 3);
+            Assert.AreEqual(1, v[3]); // w is assumed to be a homogenous coordinate
+            v = new FbxVector4(new FbxDouble3(1, 2, 3));
+            Assert.AreEqual(1, v[3]); // w is assumed to be a homogenous coordinate
+            Assert.AreEqual(1, v[0]);
+            Assert.AreEqual(2, v[1]);
+            Assert.AreEqual(3, v[2]);
+
             // Test operator[]
-            var v = new FbxVector4();
+            v = new FbxVector4();
             v[0] = 1;
             Assert.AreEqual(1, v[0]);
             v[1] = 2;
