@@ -56,6 +56,10 @@
 
 %nodefaultdtor;                             // Disable creation of default constructors
 
+/* Include all the code that uses templates here. It's important to include
+ * them *before* the %ignore "" directive. */
+%include "fbxtemplates.i"
+
 #define IGNORE_ALL_INCLUDE_SOME
 
 #ifdef IGNORE_ALL_INCLUDE_SOME                  // Ignore all but unignore some

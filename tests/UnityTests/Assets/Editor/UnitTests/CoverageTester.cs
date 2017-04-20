@@ -14,10 +14,10 @@ using System.Reflection;
 
 static class CoverageTester
 {
-    // Important fact: MethodInfo doesn't implement equality like you'd expect.
+    // Important fact: MethodBase doesn't implement equality like you'd expect.
     // So we need to use RuntimeMethodHandle for keys.
-    static Dictionary<System.RuntimeMethodHandle, List<MethodInfo>> s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodInfo>>();
-    static Dictionary<System.RuntimeMethodHandle, List<MethodInfo>> s_reflectionCalls = new Dictionary<System.RuntimeMethodHandle, List<MethodInfo>>();
+    static Dictionary<System.RuntimeMethodHandle, List<MethodBase>> s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
+    static Dictionary<System.RuntimeMethodHandle, List<MethodBase>> s_reflectionCalls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
 
     static void PreloadCache()
     {
@@ -50,15 +50,15 @@ static class CoverageTester
     /// This is very weak analysis: we do zero devirtualization, dead code
     /// elimination, or constant propagation, or anything.
     /// </summary>
-    public static List<MethodInfo> GetCalls(MethodInfo method)
+    public static List<MethodBase> GetCalls(MethodBase method)
     {
         if (s_calls.ContainsKey(method.MethodHandle)) {
             return s_calls[method.MethodHandle];
         }
 
         // Look at the current method and in DFS, find all the methods it calls.
-        var stack = new List<MethodInfo>();
-        var calls = new List<MethodInfo>();
+        var stack = new List<MethodBase>();
+        var calls = new List<MethodBase>();
         var visited = new HashSet<System.RuntimeMethodHandle>();
         stack.Add(method);
         while(stack.Count > 0) {
@@ -91,7 +91,7 @@ static class CoverageTester
             foreach (var instruction in instructions) {
                 // look at the instructions of this method; see if they are a function call.
                 // if so, recursively look into that function
-                var calledMethod = instruction.Operand as MethodInfo;
+                var calledMethod = instruction.Operand as MethodBase;
                 if (calledMethod == null) { continue; }
 
                 // It's a function call, so recursively look into it.
@@ -102,7 +102,7 @@ static class CoverageTester
             }
 
             // Also add in the calls that have been registered to be made.
-            List<MethodInfo> reflectionCalls;
+            List<MethodBase> reflectionCalls;
             if (s_reflectionCalls.TryGetValue(top.MethodHandle, out reflectionCalls)) {
                 stack.AddRange(reflectionCalls);
             }
@@ -118,7 +118,7 @@ static class CoverageTester
     /// </summary>
     public static void ClearCache()
     {
-        s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodInfo>>();
+        s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
     }
 
     /// <summary>
@@ -127,16 +127,66 @@ static class CoverageTester
     ///
     /// You might want to clear the cache afterwards.
     /// </summary>
-    public static void RegisterReflectionCall(MethodInfo from, MethodInfo to)
+    public static void RegisterReflectionCall(MethodBase from, MethodBase to)
     {
-        List<MethodInfo> calls;
+        List<MethodBase> calls;
         if (s_reflectionCalls.TryGetValue(from.MethodHandle, out calls)) {
             calls.Add(to);
         } else {
-            List<MethodInfo> tos = new List<MethodInfo>();
+            List<MethodBase> tos = new List<MethodBase>();
             tos.Add(to);
             s_reflectionCalls[from.MethodHandle] = tos;
         }
+    }
+
+    /// <summary>
+    /// Helper for TestCoverage, determines whether we called a function
+    /// we're looking for -- just via a base class.
+    /// </summary>
+    private static bool DidCallBaseMethod(MethodInfo methodToCover,
+        HashSet<System.RuntimeMethodHandle> calledMethods)
+    {
+        if ((object)methodToCover == null) {
+            // mTC is a constructor, which means it can't have been called via
+            // virtual function dispatch.
+            return false;
+        }
+
+        var baseBaseMethod = methodToCover.GetBaseDefinition();
+        if(baseBaseMethod.MethodHandle == methodToCover.MethodHandle) {
+            // mTC is the base definition, which means it can't have been called
+            // via virtual function dispatch.
+            return false;
+        }
+
+        if (calledMethods.Contains(baseBaseMethod.MethodHandle)) {
+            // mTC's base method got called, so it might have been called via
+            // virtual function dispatch.
+            return true;
+        }
+
+        // The base-base method is at the top of the hierarchy. We might have
+        // called something in the middle of the hierarchy, and neither test above
+        // will have noticed.
+        //
+        // Look up the parent class. Find the method with the same name and types.
+        // Repeat.
+        var parameters = methodToCover.GetParameters();
+        var parameterTypes = new System.Type[parameters.Length];
+        for(int i = 0; i < parameters.Length; ++i) {
+            parameterTypes[i] = parameters[i].ParameterType;
+        }
+        System.Type baseClass = methodToCover.DeclaringType;
+        MethodBase baseMethod;
+        do {
+            baseClass = baseClass.BaseType;
+            baseMethod = baseClass.GetMethod(methodToCover.Name, parameterTypes);
+            if (calledMethods.Contains(baseMethod.MethodHandle)) {
+                return true;
+            }
+        } while (baseMethod != baseBaseMethod);
+
+        return false;
     }
 
     /// <summary>
@@ -157,16 +207,10 @@ static class CoverageTester
     /// The static analysis is very simplistic: we don't fold constants or
     /// eliminate dead code or devirtualize calls.
     /// </summary>
-    /// <returns><c>true</c>, if coverage was tested, <c>false</c> otherwise.</returns>
-    /// <param name="MethodsToCover">Methods to cover.</param>
-    /// <param name="RootMethods">Root methods.</param>
-    /// <param name="out_HitMethods">Out hit methods.</param>
-    /// <param name="out_MissedMethods">Out missed methods.</param>
-    /// <param name="allowVirtual">If set to <c>true</c> allow virtual.</param>
-    public static bool TestCoverage(IEnumerable<MethodInfo> MethodsToCover,
-            IEnumerable<MethodInfo> RootMethods,
-            out List<MethodInfo> out_HitMethods,
-            out List<MethodInfo> out_MissedMethods
+    public static bool TestCoverage(IEnumerable<MethodBase> MethodsToCover,
+            IEnumerable<MethodBase> RootMethods,
+            out List<MethodBase> out_HitMethods,
+            out List<MethodBase> out_MissedMethods
             )
     {
         PreloadCache();
@@ -179,8 +223,8 @@ static class CoverageTester
             }
         }
 
-        out_MissedMethods = new List<MethodInfo>();
-        out_HitMethods = new List<MethodInfo>();
+        out_MissedMethods = new List<MethodBase>();
+        out_HitMethods = new List<MethodBase>();
         foreach(var methodToCover in MethodsToCover) {
             // Did we call the method?
             if (calledMethods.Contains(methodToCover.MethodHandle)) {
@@ -191,40 +235,13 @@ static class CoverageTester
             // Did we call a base class declaration of the method?
             // If so, we might call the method we're looking for through
             // virtual function dispatch.
-            var didHit = false;
-            var baseBaseMethod = methodToCover.GetBaseDefinition();
-            if(baseBaseMethod != methodToCover) {
-                if (calledMethods.Contains(baseBaseMethod.MethodHandle)) {
-                    out_HitMethods.Add(methodToCover);
-                    didHit = true;
-                } else {
-                    // The base-base method is at the top of the hierarchy. We might have
-                    // called something in the middle of the hierarchy, and neither test above
-                    // will have noticed.
-                    //
-                    // Look up the parent class. Find the method with the same name and types.
-                    // Repeat.
-                    var parameters = methodToCover.GetParameters();
-                    var parameterTypes = new System.Type[parameters.Length];
-                    for(int i = 0; i < parameters.Length; ++i) {
-                        parameterTypes[i] = parameters[i].ParameterType;
-                    }
-                    System.Type baseClass = methodToCover.DeclaringType;
-                    MethodInfo baseMethod;
-                    do {
-                        baseClass = baseClass.BaseType;
-                        baseMethod = baseClass.GetMethod(methodToCover.Name, parameterTypes);
-                        if (calledMethods.Contains(baseMethod.MethodHandle)) {
-                            out_HitMethods.Add(methodToCover);
-                            didHit = true;
-                            break;
-                        }
-                    } while (baseMethod != baseBaseMethod);
-                }
+            if (DidCallBaseMethod(methodToCover as MethodInfo, calledMethods)) {
+                out_HitMethods.Add(methodToCover);
+                continue;
             }
-            if (!didHit) {
-                out_MissedMethods.Add(methodToCover);
-            }
+
+            // No other excuses? We must have missed it.
+            out_MissedMethods.Add(methodToCover);
         }
 
         if (out_MissedMethods.Count == 0) {
@@ -243,11 +260,12 @@ static class CoverageTester
     /// </summary>
     public static void TestCoverage(System.Type TypeToCover, System.Type NUnitTestFramework)
     {
-        // We want to call all the functions of the proxy.
-        var methodsToCover = TypeToCover.GetMethods();
+        // We want to call all the methods of the proxy, including all the constructors.
+        var methodsToCover = new List<MethodBase>(TypeToCover.GetMethods());
+        methodsToCover.AddRange(TypeToCover.GetConstructors());
 
         // Our public test functions are what we can use to call that with.
-        var testMethods = new List<MethodInfo>();
+        var testMethods = new List<MethodBase>();
         foreach(var method in NUnitTestFramework.GetMethods()) {
             // Check that the method is tagged [Test]
             if (method.GetCustomAttributes(typeof(NUnit.Framework.TestAttribute), true).Length > 0) {
@@ -255,8 +273,8 @@ static class CoverageTester
             }
         }
 
-        List<MethodInfo> hitMethods;
-        List<MethodInfo> missedMethods;
+        List<MethodBase> hitMethods;
+        List<MethodBase> missedMethods;
 
         var coverageComplete = CoverageTester.TestCoverage(methodsToCover, testMethods, out hitMethods, out missedMethods);
 
@@ -265,14 +283,23 @@ static class CoverageTester
                 () => CoverageTester.MakeCoverageMessage(hitMethods, missedMethods));
     }
 
-    public static string GetMethodSignature(MethodInfo info)
+    public static string GetMethodSignature(MethodBase info)
     {
         var builder = new System.Text.StringBuilder();
-        builder.Append(info.ReturnType.Name);
-        builder.Append(' ');
-        builder.Append(info.DeclaringType.Name);
-        builder.Append('.');
-        builder.Append(info.Name);
+        if (info.IsConstructor) {
+            builder.Append(info.DeclaringType.Name);
+        } else {
+            var method = info as MethodInfo;
+            if (method != null) {
+                builder.Append(method.ReturnType.Name);
+                builder.Append(' ');
+            }
+            if (info.DeclaringType != null) {
+                builder.Append(info.DeclaringType.Name);
+                builder.Append('.');
+            }
+            builder.Append(info.Name);
+        }
         builder.Append('(');
         var args = info.GetParameters();
         if (args.Length > 0) {
@@ -287,8 +314,8 @@ static class CoverageTester
     }
 
     public static string MakeCoverageMessage(
-            IEnumerable<MethodInfo> HitMethods,
-            IEnumerable<MethodInfo> MissedMethods)
+            IEnumerable<MethodBase> HitMethods,
+            IEnumerable<MethodBase> MissedMethods)
     {
         var missed = new List<string>();
         var hit = new List<string>();

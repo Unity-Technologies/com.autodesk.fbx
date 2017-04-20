@@ -12,9 +12,6 @@
  * - vector (FbxVector4)
  */
 
-class FbxDouble4x4 { };
-class FbxDouble4 { };
-
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
 %rename("%s") FbxMatrix;
@@ -31,11 +28,9 @@ class FbxDouble4 { };
 // Unignore class
 %rename("%s") FbxVector4;
 %ignore FbxVector4::FbxVector4(const double pValue[4]);
-%ignore FbxVector4::FbxVector4(const FbxDouble3&);
-/* For some reason it doesn't notice there's an implicit destructor. */
-%rename("%s") FbxVector4::~FbxVector4();
+%rename("%s") FbxVector4::~FbxVector4;
 %extend FbxVector4 {
-  ~FbxVector4() { }
+  ~FbxVector4() { delete self; }
 }
 #endif
 
