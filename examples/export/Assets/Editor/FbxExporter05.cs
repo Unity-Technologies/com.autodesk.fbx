@@ -44,27 +44,9 @@ namespace FbxSdk.Examples
             public int NumNodes { private set; get; }
 
             /// <summary>
-            /// Number of meshes exported
-            /// </summary>
-            public int NumMeshes { private set; get; }
-
-            /// <summary>
-            /// Number of triangles exported
-            /// </summary>
-            public int NumTriangles { private set; get; }
-
-            /// <summary>
-            /// Number of vertices
-            /// </summary>
-            public int NumVertices { private set; get; }
-
-            /// <summary>
             /// Create instance of example
             /// </summary>
-            public static FbxExporter05 Create ()
-            {
-                return new FbxExporter05 ();
-            }
+            public static FbxExporter05 Create () { return new FbxExporter05 (); }
 
             /// <summary>
             /// Clean up this class on garbage collection
@@ -386,10 +368,6 @@ namespace FbxSdk.Examples
                             this.ExportComponents (uniGo, fbxScene, fbxRootNode);
                         }
                     }
-
-                    fbxSceneInfo.mComment =
-                        string.Format ("Mesh Count : {0}, Triangle Count: {1}, Vertex Count: {2} ",
-                                       NumMeshes, NumTriangles, NumVertices);
 
                     // Export the fbxScene to the file.
                     status = fbxExporter.Export (fbxScene);
