@@ -147,7 +147,7 @@ namespace FbxSdk.Examples
 
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
-                fbxNode.SetShadingMode (FbxNode.eWireFrame);
+                fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
             }
 
             // get a fbxNode's global default position.
@@ -453,7 +453,7 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (FbxExporter03 fbxExporter = new FbxExporter03()) {
+                using (FbxExporter04 fbxExporter = new FbxExporter04()) {
                     
                     // ensure output directory exists
                     EnsureDirectory (filePath);

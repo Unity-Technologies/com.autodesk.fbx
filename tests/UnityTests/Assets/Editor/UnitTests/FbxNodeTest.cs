@@ -86,5 +86,50 @@ namespace UnitTests
             Assert.IsNull(fooNode.GetParent());
             Assert.AreEqual(0, grandchild.GetChildCount());
         }
+        
+        [Test]
+        public void TestSetNodeAttribute()
+        {
+            using (FbxNode node = CreateObject ("root")) {
+                var nodeAttribute = FbxNodeAttribute.Create (Manager, "node attribute");
+
+                // from Fbx Sdk 2017 docs:
+                //    Returns pointer to previous node attribute. NULL if the node didn't have a node
+                //    attribute, or if the new node attribute is equal to the one currently set.
+                FbxNodeAttribute prevNodeAttribute = node.SetNodeAttribute (nodeAttribute);
+
+                Assert.IsNull (prevNodeAttribute);
+                Assert.AreEqual (nodeAttribute, node.GetNodeAttribute ());
+
+                prevNodeAttribute = node.SetNodeAttribute (nodeAttribute);
+
+                Assert.IsNull(prevNodeAttribute);
+                Assert.AreEqual (nodeAttribute, node.GetNodeAttribute ());
+
+                prevNodeAttribute = node.SetNodeAttribute(FbxNodeAttribute.Create(Manager, "node attribute 2"));
+
+                Assert.AreEqual (prevNodeAttribute, nodeAttribute);
+            }
+        }
+
+        [Test]
+        public void TestSetNullNodeAttribute()
+        {
+            using (FbxNode node = CreateObject ("root")) {
+                // passing a null NodeAttribute throws a NullReferenceException
+                Assert.That (() => { node.SetNodeAttribute (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.IsNull (node.GetNodeAttribute ());
+            }
+        }
+
+        [Test]
+        public void TestSetShadingModeToWireFrame()
+        {
+            using (FbxNode node = CreateObject ("root")) {
+                node.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+
+                Assert.AreEqual (FbxNode.EShadingMode.eWireFrame, node.GetShadingMode ());
+            }
+        }
     }
 }
