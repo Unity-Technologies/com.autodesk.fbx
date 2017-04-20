@@ -13,6 +13,7 @@
 %rename("%s") FbxGeometryBase::InitControlPoints;
 %rename("%s") FbxGeometryBase::GetControlPointAt;
 %rename("%s") FbxGeometryBase::SetControlPointAt(const FbxVector4& pCtrlPoint, int pIndex);
+%rename("%s") FbxGeometryBase::GetControlPointsCount;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxgeometrybase.h"
