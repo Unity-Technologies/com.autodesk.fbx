@@ -334,7 +334,7 @@ namespace FbxSdk.Examples
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
                     // Create the fbxExporter 
-                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
+                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
 
                     // Initialize the fbxExporter.
                     bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
@@ -630,7 +630,7 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (FbxExporter04 fbxExporter = new FbxExporter04()) {
+                using (var fbxExporter = Create()) {
                     
                     // ensure output directory exists
                     EnsureDirectory (filePath);
@@ -653,7 +653,6 @@ namespace FbxSdk.Examples
                     Directory.CreateDirectory (fileInfo.Directory.FullName);
                 }
             }
-
         }
     }
 }
