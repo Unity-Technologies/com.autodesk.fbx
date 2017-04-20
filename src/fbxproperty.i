@@ -20,6 +20,9 @@
 %ignore FbxProperty::FbxProperty;
 %ignore FbxProperty::Create;
 %ignore FbxProperty::CreateFrom;
+%ignore FbxProperty::Destroy;
+%ignore FbxProperty::DestroyChildren;
+%ignore FbxProperty::DestroyRecursively;
 %ignore FbxProperty::GetPropertyDataType;
 %ignore FbxProperty::SetUserTag;
 %ignore FbxProperty::GetUserTag;
