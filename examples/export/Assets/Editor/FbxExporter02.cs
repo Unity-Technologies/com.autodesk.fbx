@@ -16,109 +16,134 @@ namespace FbxSdk.Examples
 {
     namespace Editor {
 
-        //
-        // The exporter02 example illustrates how to:
-        //
-        //        1) create and initialize an exporter
-        //        2) create a scene
-        //        3) export the selected node and scene graph to a .FBX file (ASCII mode)
-        //
-
         public class FbxExporter02 : System.IDisposable
         {
-            bool Verbose { get { return true; } }
+                fbxSceneInfo.mTitle = " Example 02: node hierarchy";
+                fbxSceneInfo.mSubject = "Example of a scene with a fbxNode hierarchy and document information settings";
+                fbxSceneInfo.mAuthor = "Unit Technologies";
+                fbxSceneInfo.mRevision = "1.0";
+                fbxSceneInfo.mKeywords = "example fbxScene with fbxNode hierarchy";
+                fbxSceneInfo.mComment = "Export names and hierarchy of selected GameObjects.";
+            
+            const string Title =
+            	"Example 02: exporting a node hierarchy";
 
+            const string Subject =
+            	@"Example FbxExporter01 illustrates how to:
+                                            1) create and initialize an exporter
+                                            2) create a scene
+                                            3) traverse hierarchy and add nodes
+                                            4) export a scene to a FBX file (ASCII mode)
+                                                    ";
+
+            const string Keywords =
+            	"export scene node hierarchy";
+
+            const string Comments =
+            	@"Export hierarchy of selected GameObjects.";
+
+            const string MenuItemName = "File/Export/Export (node hierarchy) to FBX";
+
+            /// <summary>
+            /// Number of nodes exported including siblings and decendents
+            /// </summary>
+            public int NumNodes { private set; get; }
+
+            /// <summary>
+            /// Create instance of example
+            /// </summary>
+            public static FbxExporter02 Create ()
+            {
+            	return new FbxExporter02 ();
+            }
+
+            /// <summary>
+            /// Clean up this class on garbage collection
+            /// </summary>
             public void Dispose () { }
 
-            public void ExportComponents(FbxScene scene, FbxNode parent, IEnumerable<GameObject> exportSet)
+            /// <summary>
+            /// Unconditionally export components on this game object
+            /// </summary>
+            protected void ExportComponents (GameObject uniGo, FbxScene fbxScene, FbxNode fbxNodeParent)
             {
-                foreach (GameObject go in exportSet) {
-                    // create an FbxNode and add it as a child of parent
-                    FbxNode node = FbxNode.Create (scene, go.name);
-                    if (Verbose) 
-                        Debug.Log (string.Format("exporting {0}",node.GetName()));
-                    parent.AddChild (node);
+            	// create an FbxNode and add it as a child of parent
+            	FbxNode fbxNode = FbxNode.Create (fbxScene, uniGo.name);
+            	NumNodes++;
 
-                    List<GameObject> childSet = new List<GameObject>();
-                    // now go through our children and recurse
-                    foreach (Transform childT in go.transform) {
-                        childSet.Add (childT.gameObject);
-                    }
+            	if (Verbose)
+            		Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
 
-                    ExportComponents (scene, node, childSet);
-                }
+            	fbxNodeParent.AddChild (fbxNode);
 
+            	// now uniGo through our children and recurse
+            	foreach (Transform childT in uniGo.transform) {
+            		ExportComponents (childT.gameObject, fbxScene, fbxNode);
+            	}
+
+            	return;
             }
 
             /// <summary>
             /// Export all the objects in the set.
             /// Return the number of objects in the set that we exported.
             /// </summary>
-            public int ExportAll (IEnumerable<UnityEngine.Object> exportSet)
+            public int ExportAll (IEnumerable<UnityEngine.Object> uniExportSet)
             {
-                // Create fbx manager
-                var manager = FbxManager.Create ();
+                // Create fbx fbxManager
+                var fbxManager = FbxManager.Create ();
 
                 // Configure fbx IO settings.
-                manager.SetIOSettings (FbxIOSettings.Create (manager, Globals.IOSROOT));
+                fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
-                // Create the exporter 
-                var exporter = FbxExporter.Create (manager, MakeObjectName ("Exporter"));
+                // Create the fbxExporter 
+                var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
 
-                // Initialize the exporter.
-                bool status = exporter.Initialize (LastFilePath, -1, manager.GetIOSettings ());
-                // Check that initialization of the exporter was successful
+                // Initialize the fbxExporter.
+                bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
+                // Check that initialization of the fbxExporter was successful
                 if (!status)
                     return 0;
                 
-                // Create a scene
-                var scene = FbxScene.Create (manager, MakeObjectName ("Scene"));
+                // Create a fbxScene
+                var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("fbxScene"));
 
-            	// create scene info
-            	FbxDocumentInfo sceneInfo = FbxDocumentInfo.Create (manager, MakeObjectName ("SceneInfo"));
+            	// create fbxScene info
+            	FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
 
-            	// set some scene info values
-            	sceneInfo.mTitle = " Example 02: node and scene graph";
-            	sceneInfo.mSubject = "Example of a scene with a node hierarchy and document information settings";
-            	sceneInfo.mAuthor = "Unit Technologies";
-            	sceneInfo.mRevision = "1.0";
-            	sceneInfo.mKeywords = "example scene with node hierarchy";
-            	sceneInfo.mComment = "Export names and hierarchy of selected GameObjects.";
+            	// set some fbxScene info values
+                fbxSceneInfo.mTitle = Title;
+                fbxSceneInfo.mSubject = Subject;
+                fbxSceneInfo.mAuthor = "Unit Technologies";
+                fbxSceneInfo.mRevision = "1.0";
+                fbxSceneInfo.mKeywords = Keywords;
+                fbxSceneInfo.mComment = Comments;
 
-            	scene.SetSceneInfo (sceneInfo);
+            	fbxScene.SetSceneInfo (fbxSceneInfo);
 
-                // add the Unity scene hierarchy to the scene for export
-                // only interested in GameObjects for now
-                List<GameObject> gos = new List<GameObject> ();
-                foreach (UnityEngine.Object obj in exportSet) {
-                    GameObject go;
-                    if (obj is UnityEngine.Transform) {
-                        var xform = obj as UnityEngine.Transform;
-                        go = xform.gameObject;
-                    } else if (obj is UnityEngine.GameObject) {
-                        go = obj as UnityEngine.GameObject;
-                    } else if (obj is MonoBehaviour) {
-                        var mono = obj as MonoBehaviour;
-                        go = mono.gameObject;
-                    } else {
-                        if (Verbose) 
-                            Debug.Log ("skipping {0}", obj);
-                        continue;
+                FbxNode fbxRootNode = fbxScene.GetRootNode ();
+
+                // export set of object
+                foreach (var obj in uniExportSet) 
+                {
+                    var uniGo = GetGameObject (obj);
+
+                    if (uniGo) 
+                    {
+
+    					this.ExportComponents (uniGo, fbxScene, fbxRootNode);
                     }
-                    gos.Add (go);
                 }
-                FbxNode root = scene.GetRootNode ();
-                ExportComponents (scene, root, gos);
 
-                // Export the scene to the file.
-                status = exporter.Export (scene);
+                // Export the fbxScene to the file.
+                status = fbxExporter.Export (fbxScene);
 
                 // cleanup
-                scene.Destroy ();
-                exporter.Destroy ();
-                manager.Destroy ();
+                fbxScene.Destroy ();
+                fbxExporter.Destroy ();
+                fbxManager.Destroy ();
 
-                return status==true ? 1 : 0; 
+                return status==true ? NumNodes : 0; 
             }
 
             // 
@@ -127,7 +152,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// create menu item in the File menu
             /// </summary>
-            [MenuItem ("File/Export/Export (Node hierarchy) to FBX", false)]
+            [MenuItem (MenuItemName, false)]
             public static void OnMenuItem ()
             {
                 OnExport();
@@ -136,26 +161,51 @@ namespace FbxSdk.Examples
             /// <summary>
             // Validate the menu item defined by the function above.
             /// </summary>
-            [MenuItem ("File/Export/Export (Node hierarchy) to FBX", true)]
+            [MenuItem (MenuItemName, true)]
             public static bool OnValidateMenuItem ()
             {
                 // Return true
                 return true;
             }
 
-            //
-            // manage the selection of a filename
-            //
-            static string m_LastFilePath = "";
-            static string LastFilePath { get { return m_LastFilePath; } set { m_LastFilePath = value; } }
+            /// <summary>
+            /// Get the GameObject
+            /// </summary>
+            private GameObject GetGameObject (Object obj)
+            {
+            	if (obj is UnityEngine.Transform) {
+            		var xform = obj as UnityEngine.Transform;
+            		return xform.gameObject;
+            	} else if (obj is UnityEngine.GameObject) {
+            		return obj as UnityEngine.GameObject;
+            	} else if (obj is MonoBehaviour) {
+            		var mono = obj as MonoBehaviour;
+            		return mono.gameObject;
+            	}
+
+            	return null;
+            }
+
+            /// <summary>
+            /// manage the selection of a filename
+            /// </summary>
+            static string LastFilePath { get; set; }
             static string Basename { get { return GetActiveSceneName (); } }
-            static string Extension { get { return "fbx"; } }
+            const string Extension = "fbx";
+
+            const string NamePrefix = "";
+            bool Verbose { get { return true; } }
 
             private static string GetActiveSceneName()
             {
-                var scene = SceneManager.GetActiveScene();
+                var uniScene = SceneManager.GetActiveScene();
 
-                return string.IsNullOrEmpty(scene.name) ? "Untitled" : scene.name;    
+                return string.IsNullOrEmpty(uniScene.name) ? "Untitled" : uniScene.name;    
+            }
+
+            private static string MakeObjectName (string name)
+            {
+            	return NamePrefix + name;
             }
 
             private static string MakeFileName(string basename = "test", string extension = "fbx")
@@ -185,14 +235,15 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (FbxExporter02 exporter = new FbxExporter02()) {
+                using (FbxExporter02 fbxExporter = Create()) 
+                {
                     
     				// ensure output directory exists
                     EnsureDirectory (filePath);
 
-                    if (exporter.ExportAll(Selection.objects) > 0)
+                    if (fbxExporter.ExportAll(Selection.objects) > 0)
                     {
-                        string message = string.Format ("Successfully exported scene: {0}", filePath);
+                        string message = string.Format ("Successfully exported fbxScene: {0}", filePath);
                         UnityEngine.Debug.Log (message);
                     }
                 }
@@ -204,14 +255,10 @@ namespace FbxSdk.Examples
                 //create all the missing directories.
                 FileInfo fileInfo = new FileInfo (path);
 
-                if (!fileInfo.Exists) {
+                if (!fileInfo.Exists) 
+                {
                     Directory.CreateDirectory (fileInfo.Directory.FullName);
                 }
-            }
-
-             private static string MakeObjectName (string name)
-            {
-                return "_fbxexporter02_" + name;
             }
         }
     }
