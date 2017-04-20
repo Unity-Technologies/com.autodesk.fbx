@@ -34,11 +34,20 @@
   }
 
   public override bool Equals(object obj){
-      if (obj == null || GetType() != obj.GetType()) 
-          return false;
-
-      FbxEmitter fe = (FbxEmitter)obj;
-      return this.swigCPtr.Handle.Equals (fe.swigCPtr.Handle);
+    var fe = obj as FbxEmitter;
+    if (object.ReferenceEquals(fe, null)) { return false; }
+    return fe.Equals(this);
+  }
+  public bool Equals(FbxEmitter other) {
+    return this.swigCPtr.Handle.Equals (other.swigCPtr.Handle);
+  }
+  public static bool operator == (FbxEmitter a, FbxEmitter b) {
+    if (object.ReferenceEquals(a, b)) { return true; }
+    if (object.ReferenceEquals(a, null) || object.ReferenceEquals(b, null)) { return false; }
+    return a.Equals(b);
+  }
+  public static bool operator != (FbxEmitter a, FbxEmitter b) {
+    return !(a == b);
   }
 %}
 
