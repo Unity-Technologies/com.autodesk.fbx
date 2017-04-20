@@ -59,6 +59,35 @@ string FbxObjectCreateTest(int n) {
 	return json.toString();
 }
 
+string SetControlPointAtTest(int n) {
+    ResultJson json;
+
+	int N = n < 0? 10000 : n;
+    
+	FbxManager* manager = FbxManager::Create();
+
+	high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    
+	FbxGeometryBase* geometryBase = FbxGeometryBase::Create(manager, "");
+    geometryBase->InitControlPoints(1);
+    for(int i = 0; i < N; i ++){
+        FbxVector4 vector(0,0,0);
+        geometryBase->SetControlPointAt(vector, 0);
+    }
+    
+	high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+	auto duration = duration_cast<milliseconds>(t2 - t1).count();
+
+	manager->Destroy();
+
+	json.testName = "SetControlPointAt";
+	json.result = (double)duration;
+	json.success = true;
+
+	return json.toString();
+}
+
 string EmptyExportImportTest(int n) {
 	ResultJson json;
 
@@ -159,6 +188,7 @@ int main(int argc, char *argv[])
 	std::unordered_map<std::string, FnPtr> funMap;
 	funMap["FbxObjectCreate"] = FbxObjectCreateTest;
 	funMap["EmptyExportImport"] = EmptyExportImportTest;
+    funMap["SetControlPointAt"] = SetControlPointAtTest;
 
 	stringstream ss;
 
