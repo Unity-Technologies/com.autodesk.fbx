@@ -25,6 +25,7 @@ namespace UnitTests
                 property.SetLabel("label");
                 Assert.AreEqual("label", property.GetLabel());
                 Assert.AreEqual(node, property.GetFbxObject());
+                Assert.AreEqual(property.GetFbxObject(), node); // test it both ways just in case equals is busted
 
                 var dbl3 = property.Get();
                 Assert.AreEqual(new FbxDouble3(), dbl3);
