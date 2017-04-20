@@ -67,7 +67,6 @@ namespace FbxSdk.Examples
                 var unityRotate = unityTransform.localRotation.eulerAngles;
                 var unityScale = unityTransform.localScale;
 
-#if UNI_14037_TO_IMPLEMENT
                 // transfer transform data from Unity to Fbx
                 var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
                 var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
@@ -77,7 +76,6 @@ namespace FbxSdk.Examples
                 fbxNode.LclTranslation.Set(fbxTranslate);
                 fbxNode.LclRotation.Set(fbxRotate);
                 fbxNode.LclScaling.Set(fbxScale);
-#endif
 
                 return;
             }
