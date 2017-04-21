@@ -325,7 +325,8 @@ namespace FbxSdk.Examples
             public int ExportAll (IEnumerable<UnityEngine.Object> unityExportSet)
             {
                 // Create the FBX manager
-                using (var fbxManager = FbxManager.Create ()) {
+                using (var fbxManager = FbxManager.Create ()) 
+                {
                     // Configure fbx IO settings.
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 

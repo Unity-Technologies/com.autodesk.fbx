@@ -71,57 +71,57 @@ namespace FbxSdk.Examples
             public int ExportAll (IEnumerable<UnityEngine.Object> unityExportSet)
             {
                 // Create the FBX manager
-                var fbxManager = FbxManager.Create ();
-
-                // Configure the IO settings.
-                fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
-
-                // Create the exporter 
-                var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
-
-                // Initialize the exporter.
-                bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
-                // Check that initialization of the fbxExporter was successful
-                if (!status)
-                    return 0;
-                
-                // Create a scene
-                var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
-
-                 // create scene info
-                 FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
-
-                 // set some scene info values
-                fbxSceneInfo.mTitle = Title;
-                fbxSceneInfo.mSubject = Subject;
-                fbxSceneInfo.mAuthor = "Unity Technologies";
-                fbxSceneInfo.mRevision = "1.0";
-                fbxSceneInfo.mKeywords = Keywords;
-                fbxSceneInfo.mComment = Comments;
-
-                 fbxScene.SetSceneInfo (fbxSceneInfo);
-
-                FbxNode fbxRootNode = fbxScene.GetRootNode ();
-
-                // export set of object
-                foreach (var obj in unityExportSet) 
+                using (var fbxManager = FbxManager.Create ()) 
                 {
-                    var  unityGo  = GetGameObject (obj);
+                    // Configure the IO settings.
+                    fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
-                    if ( unityGo ) 
+                    // Create the exporter 
+                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
+
+                    // Initialize the exporter.
+                    bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
+                    // Check that initialization of the fbxExporter was successful
+                    if (!status)
+                        return 0;
+
+                    // Create a scene
+                    var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
+
+                    // create scene info
+                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
+
+                    // set some scene info values
+                    fbxSceneInfo.mTitle = Title;
+                    fbxSceneInfo.mSubject = Subject;
+                    fbxSceneInfo.mAuthor = "Unity Technologies";
+                    fbxSceneInfo.mRevision = "1.0";
+                    fbxSceneInfo.mKeywords = Keywords;
+                    fbxSceneInfo.mComment = Comments;
+
+                    fbxScene.SetSceneInfo (fbxSceneInfo);
+
+                    FbxNode fbxRootNode = fbxScene.GetRootNode ();
+
+                    // export set of object
+                    foreach (var obj in unityExportSet) 
                     {
+                        var unityGo = GetGameObject (obj);
 
-                             this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
+                        if (unityGo) 
+                        {
+
+                            this.ExportComponents (unityGo, fbxScene, fbxRootNode);
+                        }
                     }
+
+                    // Export the scene to the file.
+                    status = fbxExporter.Export (fbxScene);
+
+                    // cleanup
+                    fbxScene.Destroy ();
+                    fbxExporter.Destroy ();
                 }
-
-                // Export the scene to the file.
-                status = fbxExporter.Export (fbxScene);
-
-                // cleanup
-                fbxScene.Destroy ();
-                fbxExporter.Destroy ();
-                fbxManager.Destroy ();
 
                 return status==true ? NumNodes : 0; 
             }
