@@ -80,6 +80,8 @@
 %include "fbxmath.i"
 %include "fbxclassid.i"
 %include "fbxmanager.i"
+%include "fbxaxissystem.i"
+%include "fbxsystemunit.i"
 
 /* The emitter hierarchy. */
 %include "fbxemitter.i"
@@ -98,6 +100,7 @@
 %include "fbxgeometrybase.i"
 %include "fbxgeometry.i"
 %include "fbxmesh.i"
+%include "fbxglobalsettings.i"
 #endif
 
 /* Everything */
