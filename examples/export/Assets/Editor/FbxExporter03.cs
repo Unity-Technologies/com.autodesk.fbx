@@ -142,6 +142,9 @@ namespace FbxSdk.Examples
 
                     fbxScene.SetSceneInfo (fbxSceneInfo);
 
+                    var fbxSettings = fbxScene.GetGlobalSettings();
+                    fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
+
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
                     // export set of objects
