@@ -28,7 +28,7 @@ struct ResultJson {
             ss << "}";
         }
         else {
-            ss << "\"error\":" << error << "}";
+            ss << ",\"error\":\"" << error << "\"}";
         }
 
         return ss.str();

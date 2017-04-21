@@ -31,7 +31,7 @@ namespace PerformanceTests
 
         protected void LogError (string msg)
         {
-#if UNITY_EDITY
+#if UNITY_EDITOR
             UnityEngine.Debug.LogError (msg);
 #endif
         }
@@ -172,7 +172,7 @@ namespace PerformanceTests
         [Test]
         public void SetControlPointAtTest()
         {
-            int N = 10000;
+            int N = 1000000;
             DefaultTest (
                 "SetControlPointAt",
                 N,
@@ -181,7 +181,8 @@ namespace PerformanceTests
                     FbxGeometryBase geometryBase = FbxGeometryBase.Create(m_fbxManager, "");
                     geometryBase.InitControlPoints(1);
                     for(int i = 0; i < N; i ++){
-                        geometryBase.SetControlPointAt(new FbxVector4(), 0);
+                        FbxVector4 vector = new FbxVector4(0,0,0);
+                        geometryBase.SetControlPointAt(vector, 0);
                     }
                 }
             );
