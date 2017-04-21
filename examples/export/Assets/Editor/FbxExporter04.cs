@@ -171,6 +171,12 @@ namespace FbxSdk.Examples
 
                     fbxScene.SetSceneInfo (fbxSceneInfo);
 
+                    var fbxSettings = fbxScene.GetGlobalSettings ();
+                    fbxSettings.SetSystemUnit(FbxSystemUnit.m);      // Unity unit is meters
+
+                    // TODO: Uni-15896 
+                    //fbxSettings.SetAxisSystem(FbxAxisSystem.OpenGL); // Unity axes are Y-up, odd parity, right-handed
+
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
                     // export set of object
