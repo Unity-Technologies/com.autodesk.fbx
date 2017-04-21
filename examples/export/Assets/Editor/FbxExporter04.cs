@@ -38,6 +38,8 @@ namespace FbxSdk.Examples
 
             const string MenuItemName = "File/Export/Export (static meshes) to FBX";
 
+            const string FileBaseName = "example_static_mesh";
+
             /// <summary>
             /// Create instance of example
             /// </summary>
@@ -373,15 +375,7 @@ namespace FbxSdk.Examples
             /// manage the selection of a filename
             /// </summary>
             static string LastFilePath { get; set; }
-            static string Basename { get { return GetActiveSceneName (); } }
             const string Extension = "fbx";
-
-            private static string GetActiveSceneName ()
-            {
-                var unityScene = SceneManager.GetActiveScene ();
-
-                return string.IsNullOrEmpty (unityScene.name) ? "Untitled" : unityScene.name;
-            }
 
             private static string MakeObjectName (string name)
             {
@@ -402,10 +396,10 @@ namespace FbxSdk.Examples
                                       : System.IO.Path.GetDirectoryName (LastFilePath);
 
                 var filename = string.IsNullOrEmpty (LastFilePath)
-                                     ? MakeFileName (basename: Basename, extension: Extension)
+                                     ? MakeFileName (basename: FileBaseName, extension: Extension)
                                      : System.IO.Path.GetFileName (LastFilePath);
 
-                var title = string.Format ("Export FBX ({0})", Basename);
+                var title = string.Format ("Export FBX ({0})", FileBaseName);
 
                 var filePath = EditorUtility.SaveFilePanel (title, directory, filename, "");
 
