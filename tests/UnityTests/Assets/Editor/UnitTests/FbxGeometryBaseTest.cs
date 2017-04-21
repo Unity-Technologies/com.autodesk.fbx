@@ -30,6 +30,7 @@ namespace UnitTests
         public void TestInitNegativeControlPoints ()
         {
             using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
+                // make sure this doesn't crash
                 geometryBase.InitControlPoints (-1);
             }
         }
@@ -75,15 +76,56 @@ namespace UnitTests
         }
 
         [Test]
-        [Ignore("Calling SetControlPointAt with a negative index crashes Unity")]
         public void TestSetControlPointAtInvalidIndex ()
         {
             using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
                 geometryBase.InitControlPoints (5);
                 FbxVector4 vector = new FbxVector4 ();
-                geometryBase.SetControlPointAt (vector, -1);
+                Assert.That (() => { geometryBase.SetControlPointAt (vector, -1); }, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             }
         }
 
+        [Test]
+        public void TestSetControlPointAtInvalidIndex2 ()
+        {
+            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
+                geometryBase.InitControlPoints (5);
+                FbxVector4 vector = new FbxVector4 ();
+                Assert.That (() => { geometryBase.SetControlPointAt (vector, 6); }, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            }
+        }
+
+        [Test]
+        public void TestGetControlPointAtInvalidIndex ()
+        {
+            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
+                geometryBase.InitControlPoints (5);
+                // make sure it doesn't crash
+                FbxVector4 vector = geometryBase.GetControlPointAt (-1);
+                vector.X = 0;
+            }
+        }
+
+        [Test]
+        public void TestGetControlPointAtInvalidIndex2 ()
+        {
+            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
+                geometryBase.InitControlPoints (5);
+                // make sure it doesn't crash
+                FbxVector4 vector = geometryBase.GetControlPointAt (6);
+                vector.X = 0;
+            }
+        }
+
+        [Test]
+        public void TestGetUninitializedControlPoint ()
+        {
+            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
+                geometryBase.InitControlPoints (5);
+                // just make sure it doesn't crash
+                FbxVector4 vector = geometryBase.GetControlPointAt (0);
+                vector.X = 0;
+            }
+        }
     }
 }
