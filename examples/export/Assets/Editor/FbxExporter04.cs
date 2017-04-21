@@ -88,6 +88,7 @@ namespace FbxSdk.Examples
                 FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Scene"));
 
                 // Create control points.
+#if BLAH
                 fbxMesh.InitControlPoints (mesh.VertexCount);
 
                 // NOTE: we expect this is a reference to the array held by the mesh.
@@ -99,6 +100,7 @@ namespace FbxSdk.Examples
                 {
                     vertex [v].Set(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z);
                 }
+#endif
 
 #if UNI_12952_STRETCH_MATERIALS
                 /* create the materials.

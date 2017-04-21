@@ -60,24 +60,22 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export GameObject's Transform component
             /// </summary>
-            protected void ExportTransform (Transform uniTransform, FbxNode fbxNode)
+            protected void ExportTransform (Transform unityTransform, FbxNode fbxNode)
             {
                 // get local position of fbxNode (from Unity)
-                UnityEngine.Vector3 ulT = uniTransform.localPosition;
-                UnityEngine.Vector3 ulR = uniTransform.localRotation.eulerAngles;
-                UnityEngine.Vector3 ulS = uniTransform.localScale;
+                var unityTranslate = unityTransform.localPosition;
+                var unityRotate = unityTransform.localRotation.eulerAngles;
+                var unityScale = unityTransform.localScale;
 
-#if UNI_15317_TO_IMPLEMENT
                 // transfer transform data from Unity to Fbx
-                FbxVector4 lT = new FbxVector4 (ulT.x, ulT.y, ulT.z);
-                FbxVector4 lR = new FbxVector4 (ulR.x, ulR.y, ulR.z);
-                FbxVector4 lS = new FbxVector4 (ulS.x, ulS.y, ulS.z);
+                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
 
                 // set the local position of fbxNode
-                fbxNode.LclTranslation.Set(lT);
-                fbxNode.LclRotation.Set(lR);
-                fbxNode.LclScaling.Set(lS);
-#endif
+                fbxNode.LclTranslation.Set(fbxTranslate);
+                fbxNode.LclRotation.Set(fbxRotate);
+                fbxNode.LclScaling.Set(fbxScale);
 
                 return;
             }

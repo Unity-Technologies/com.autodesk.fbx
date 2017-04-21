@@ -113,6 +113,7 @@ set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
 include(deps/cmake/InstallMonoReflection.cmake)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests DESTINATION ${CMAKE_BINARY_DIR}/tests)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/Editor DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp DESTINATION fbxsdk FILES_MATCHING PATTERN "*.cs")
 install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
 install(TARGETS unity_tests DESTINATION fbxsdk)
