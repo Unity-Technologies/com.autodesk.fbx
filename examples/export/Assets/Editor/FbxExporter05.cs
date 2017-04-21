@@ -224,7 +224,6 @@ namespace FbxSdk.Examples
                 // Create control points.
                 int NumControlPoints = mesh.VertexCount;
 
-#if UNI_15314
                 fbxMesh.InitControlPoints (NumControlPoints);
 
                 // copy control point data from Unity to FBX
@@ -232,7 +231,6 @@ namespace FbxSdk.Examples
                 {
                     fbxMesh.SetControlPointAt(new FbxVector4 (mesh.Vertices [v].x, mesh.Vertices [v].y, mesh.Vertices [v].z), v);
                 }
-#endif
 
 #if UNI_12952_STRETCH_MATERIALS
                 /* create the materials.
@@ -262,32 +260,28 @@ namespace FbxSdk.Examples
                 ExportVertexColors (mesh, fbxMesh);
                 ExportUVs (mesh, fbxMesh);
 
-#if UNI_15314
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
                 fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
-#endif
             }
 
             // get a fbxNode's global default position.
-            protected void ExportTransform (UnityEngine.Transform transform, FbxNode fbxNode)
+            protected void ExportTransform (UnityEngine.Transform unityTransform, FbxNode fbxNode)
             {
                 // get local position of fbxNode (from Unity)
-                UnityEngine.Vector3 ulT = transform.localPosition;
-                UnityEngine.Vector3 ulR = transform.localRotation.eulerAngles;
-                UnityEngine.Vector3 ulS = transform.localScale;
+                UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
+                UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
+                UnityEngine.Vector3 unityScale = unityTransform.localScale;
 
-#if UNI_15317_TO_IMPLEMENT
                 // transfer transform data from Unity to Fbx
-                FbxVector4 lT = new FbxVector4 (ulT.x, ulT.y, ulT.z);
-                FbxVector4 lR = new FbxVector4 (ulR.x, ulR.y, ulR.z);
-                FbxVector4 lS = new FbxVector4 (ulS.x, ulS.y, ulS.z);
+                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
 
                 // set the local position of fbxNode
-                fbxNode.LclTranslation.Set(lT);
-                fbxNode.LclRotation.Set(lR);
-                fbxNode.LclScaling.Set(lS);
-#endif
+                fbxNode.LclTranslation.Set(fbxTranslate);
+                fbxNode.LclRotation.Set(fbxRotate);
+                fbxNode.LclScaling.Set(fbxScale);
 
                 return;
             }
