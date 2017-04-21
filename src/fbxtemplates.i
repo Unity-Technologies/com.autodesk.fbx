@@ -9,3 +9,4 @@
  * we don't accidentally nuke just part of the template mechanism. */
 
 %include "fbxtypes.i"
+%include "fbxproperty.i"

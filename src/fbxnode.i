@@ -18,6 +18,9 @@
 %rename("%s") FbxNode::GetChild(int);
 %rename("%s") FbxNode::GetChildCount(bool pRecursive = false) const;
 %rename("%s") FbxNode::FindChild;
+%rename("%s") FbxNode::LclTranslation;
+%rename("%s") FbxNode::LclRotation;
+%rename("%s") FbxNode::LclScaling;
 %rename("%s") FbxNode::SetNodeAttribute;
 %rename("%s") FbxNode::GetNodeAttribute();
 %rename("%s") FbxNode::SetShadingMode;

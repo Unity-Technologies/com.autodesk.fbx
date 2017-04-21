@@ -75,7 +75,6 @@
 #ifndef EXCLUDE_ALL_INTERFACES
 /* Core classes */
 %include "fbxmath.i"
-%include "fbxproperty.i"
 %include "fbxclassid.i"
 %include "fbxmanager.i"
 

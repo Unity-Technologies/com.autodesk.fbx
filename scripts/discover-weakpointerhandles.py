@@ -27,6 +27,12 @@ rootclasses = sys.argv[3:]
 # in this dict it's not a derived class (it inherits from nothing).
 baseclasses = dict()
 
+def fix_classname(clsname):
+    """
+    Template arguments get wrapped in parens for some reason.
+    """
+    return re.sub(r'<\(', '<', re.sub(r'\)>', '>', clsname))
+
 with open(typedefs_filename) as typedef_file:
     current_scope = None
     bases = []
@@ -38,11 +44,11 @@ with open(typedefs_filename) as typedef_file:
         if m:
             # changing scope; store the old one, clear the accumulating list
             store()
-            current_scope = m.group(1)
+            current_scope = fix_classname(m.group(1))
             bases = []
         m = re.search("Inherits from '(.*)'", line)
         if m:
-            bases.append(m.group(1))
+            bases.append(fix_classname(m.group(1)))
     # end of file; remember the last block we read
     if current_scope and bases:
         store()
