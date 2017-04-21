@@ -69,13 +69,13 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Unconditionally export components on this game object
             /// </summary>
-            protected void ExportComponents (GameObject  unityGo , FbxScene fbxScene, FbxNode fbxParentNode)
+            protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
             {
                 // create an FbxNode and add it as a child of fbxParentNode
-                FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo .name);
+                FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
                 NumNodes++;
 
-                ExportTransform ( unityGo .transform, fbxNode);
+                ExportTransform ( unityGo.transform, fbxNode);
 
                 if (Verbose)
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
@@ -83,7 +83,7 @@ namespace FbxSdk.Examples
                 fbxParentNode.AddChild (fbxNode);
 
                 // now  unityGo  through our children and recurse
-                foreach (Transform uniChildT in  unityGo .transform) 
+                foreach (Transform uniChildT in  unityGo.transform) 
                 {
                     ExportComponents (uniChildT.gameObject, fbxScene, fbxNode);
                 }
@@ -140,7 +140,7 @@ namespace FbxSdk.Examples
 
                         if ( unityGo ) 
                         {
-                            this.ExportComponents ( unityGo , fbxScene, fbxRootNode);
+                            this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
                         }
                     }
 
@@ -219,9 +219,9 @@ namespace FbxSdk.Examples
 
             private static string GetActiveSceneName()
             {
-                var fbxScene = SceneManager.GetActiveScene();
+                var unityScene = SceneManager.GetActiveScene();
 
-                return string.IsNullOrEmpty(fbxScene.name) ? "Untitled" : fbxScene.name;    
+                return string.IsNullOrEmpty(unityScene.name) ? "Untitled" : unityScene.name;    
             }
 
             private static string MakeObjectName (string name)
@@ -259,7 +259,6 @@ namespace FbxSdk.Examples
 
                 using (var fbxExporter = Create()) 
                 {
-                    
                     // ensure output directory exists
                     EnsureDirectory (filePath);
 

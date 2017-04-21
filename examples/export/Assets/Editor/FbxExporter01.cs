@@ -177,9 +177,8 @@ namespace FbxSdk.Examples
 
                 using (var fbxExporter = Create()) 
                 {
-                    
-                        // ensure output directory exists
-                        EnsureDirectory (filePath);
+                    // ensure output directory exists
+                    EnsureDirectory (filePath);
 
                     if (fbxExporter.ExportAll(Selection.objects) > 0)
                     {
