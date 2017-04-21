@@ -49,9 +49,9 @@ namespace FbxSdk.Examples
             protected void ExportTransform (Transform unityTransform, FbxNode fbxNode)
             {
                 // get local position of fbxNode (from Unity)
-                UnityEngine.Vector3 ulT =  unityTransform.localPosition;
-                UnityEngine.Vector3 ulR =  unityTransform.localRotation.eulerAngles;
-                UnityEngine.Vector3 ulS =  unityTransform.localScale;
+                UnityEngine.Vector3 unityTranslate  =  unityTransform.localPosition;
+                UnityEngine.Vector3 unityRotate     =  unityTransform.localRotation.eulerAngles;
+                UnityEngine.Vector3 unityScale      =  unityTransform.localScale;
 
                 // transfer transform data from Unity to Fbx
                 var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);

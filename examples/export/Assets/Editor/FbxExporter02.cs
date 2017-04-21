@@ -121,9 +121,11 @@ namespace FbxSdk.Examples
                     // cleanup
                     fbxScene.Destroy ();
                     fbxExporter.Destroy ();
-                }
 
-                return status==true ? NumNodes : 0; 
+                    if (!status)
+                        return 0;
+                }
+                return NumNodes;
             }
 
             // 
