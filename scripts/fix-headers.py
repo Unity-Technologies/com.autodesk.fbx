@@ -41,6 +41,8 @@ for inname in sys.argv[2:]:
         line = re.sub('unsigned const short', 'unsigned short', line)
         # this appears in fbxmatrix.h and in fbxaffinematrix.h (with different whitespace)
         line = re.sub(r'typedef const double\s*\(([A-Za-z0-9_]+)\)', r'typedef const double \1', line)
-
+        # this appears in fbxlayer.h
+        line = re.sub('const static', 'static const', line)
+        
         # remember to write it out!
         fileout.write(line)
