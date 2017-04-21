@@ -166,45 +166,9 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   }%}
 
 /*
- * Add a GetHashCode() and Equals() function to allow
- * us to perform identity tests in C# for weak-pointer types.
- * Use the swigCPtr to check for equality.
- *
- * Really we only need this in the base class of each weak-pointer hierarchy.
+ * Equality and letting everyone know it's equatable.
  */
-%typemap(cscode) THETYPE %{
-  public override int GetHashCode(){
-      return swigCPtr.Handle.GetHashCode();
-  }
-
-  public override bool Equals(object obj){
-    if (object.ReferenceEquals(obj, null)) { return false; }
-    /* is obj a subclass of this type; if so use our Equals */
-    var typed = obj as THETYPE;
-    if (!object.ReferenceEquals(typed, null)) {
-      return this.Equals(typed);
-    }
-    /* are we a subclass of the other type; if so use their Equals */
-    if (typeof(THETYPE).IsSubclassOf(obj.GetType())) {
-      return obj.Equals(this);
-    }
-    /* types are unrelated; can't be a match */
-    return false;
-  }
-
-  public bool Equals(THETYPE other) {
-    return this.swigCPtr.Handle.Equals (other.swigCPtr.Handle);
-  }
-
-  public static bool operator == (THETYPE a, THETYPE b) {
-    if (object.ReferenceEquals(a, b)) { return true; }
-    if (object.ReferenceEquals(a, null) || object.ReferenceEquals(b, null)) { return false; }
-    return a.Equals(b);
-  }
-
-  public static bool operator != (THETYPE a, THETYPE b) {
-    return !(a == b);
-  }
-%}
+%define_pointer_equality_functions(THETYPE);
+%typemap(csinterfaces) THETYPE "System.IDisposable, System.IEquatable<THETYPE>";
 
 %enddef

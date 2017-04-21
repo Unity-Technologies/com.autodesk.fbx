@@ -20,28 +20,12 @@
   }
 }
 
-/* Handle equality in C# via calls to Equals.
- * Remember to implement Equals to the exact type and also to object. */
+/* Handle equality in C#. Also define a ToString operation. */
 %rename("Equals") THETYPE::operator==;
 %ignore THETYPE::operator!=;
+%define_generic_equality_functions(THETYPE);
 %extend THETYPE {
   %proxycode %{
-  public override bool Equals(object other) {
-    var typedOther = other as $csclassname;
-    if (object.ReferenceEquals(typedOther, null)) { return false; }
-    return typedOther.Equals(this);
-  }
-
-  public static bool operator == ($csclassname a, $csclassname b) {
-    if (object.ReferenceEquals(a, b)) { return true; }
-    if ((object)a == null || (object)b == null) { return false; }
-    return a.Equals(b);
-  }
-
-  public static bool operator != ($csclassname a, $csclassname b) {
-    return ! (a == b);
-  }
-
   public override int GetHashCode() {
     uint hash = 0;
     for(int i = 0; i < N; ++i) {

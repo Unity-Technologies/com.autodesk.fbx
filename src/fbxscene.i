@@ -14,6 +14,7 @@
 %rename("%s") FbxScene::GetSceneInfo;
 %rename("%s") FbxScene::SetSceneInfo;
 %rename("%s") FbxScene::GetRootNode;
+%rename("%s") FbxScene::GetGlobalSettings();
 #endif
 
 %include "fbxsdk/scene/fbxscene.h"
