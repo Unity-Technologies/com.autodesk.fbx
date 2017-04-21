@@ -9,6 +9,12 @@
 #include "fbxsdk.h"
 %}
 
+/* helpers for defining equality correctly */
+%include "equality.i"
+
+// define typemaps for INOUT arguments
+%include typemaps.i
+
 /* 
  * Handle object lifetime in Fbx by adding indirection.
  *
@@ -24,9 +30,6 @@
 #ifndef SWIG_GENERATING_TYPEDEFS
 %include "weakpointerhandles.i"
 #endif
- 
-// define typemaps for INOUT arguments
-%include typemaps.i
 
 /*
  * Do null-pointer checking when setting variables of struct/class type.
@@ -96,7 +99,7 @@
 %include "fbxgeometry.i"
 %include "fbxmesh.i"
 #endif
-    
+
 /* Everything */
 #ifdef FBXSDK_ALL_HEADERS
 %include "fbxsdk/fbxsdk_version.h"
