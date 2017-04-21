@@ -177,11 +177,11 @@ namespace FbxSdk.Examples
                     // export set of object
                     foreach (var obj in unityExportSet) 
                     {
-                        var  unityGo  =  scene Object (obj);
+                        var  unityGo  =  GetGameObject (obj);
 
                         if ( unityGo ) 
                         {
-                            this.ExportComponents ( unityGo , fbxScene, fb scene de);
+                            this.ExportComponents ( unityGo , fbxScene, fbxRootNode);
                         }
                     }
 
@@ -196,7 +196,8 @@ namespace FbxSdk.Examples
                     fbxScene.Destroy ();
                     fbxExporter.Destroy ();
 
-                    return status == true ? NumNodes : 0;unityExportSet   }
+                    return status == true ? NumNodes : 0;
+                }
             }
 
             // 

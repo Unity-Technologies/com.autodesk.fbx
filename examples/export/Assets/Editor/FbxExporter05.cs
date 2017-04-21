@@ -58,7 +58,7 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementNormal::Create (fbxMesh, MakeObjectName ("Normals")))
+                using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, MakeObjectName ("Normals")))
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
@@ -80,7 +80,7 @@ namespace FbxSdk.Examples
                 }
 
                 /// Set the binormals on Layer 0. 
-                using (var fbxLayerElement = FbxLayerElementBinormal::Create (fbxMesh, MakeObjectName ("Binormals"))) 
+                using (var fbxLayerElement = FbxLayerElementBinormal.Create (fbxMesh, MakeObjectName ("Binormals"))) 
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
@@ -101,7 +101,7 @@ namespace FbxSdk.Examples
                 }
 
                 /// Set the tangents on Layer 0.
-                using (var fbxLayerElement = FbxLayerElementTangent::Create (fbxMesh, MakeObjectName ("Tangents"))) 
+                using (var fbxLayerElement = FbxLayerElementTangent.Create (fbxMesh, MakeObjectName ("Tangents"))) 
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
@@ -136,7 +136,7 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementVertexColor::Create (fbxMesh, MakeObjectName ("VertexColor"));
+                using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, MakeObjectName ("VertexColor")))
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
@@ -173,7 +173,7 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementVertexColor::Create (fbxMesh, MakeObjectName ("UVSet"))
+                using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, MakeObjectName ("UVSet")))
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygonVertex);
                     fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
@@ -446,32 +446,39 @@ namespace FbxSdk.Examples
                 /// </summary>
                 /// <value>The normals.</value>
                 private Vector3 [] m_Binormals;
-                public Vector3 [] Binormals { get {
-                    if (m_Binormals.Length == 0) {
-                        m_Binormals = new Vector3 [mesh.normals.Length];
+                public Vector3 [] Binormals 
+                { 
+                    get 
+                    {
+                        /// NOTE: LINQ
+                        ///    return mesh.normals.Zip (mesh.tangents, (first, second)
+                        ///    => Math.cross (normal, tangent.xyz) * tangent.w
+                        if (m_Binormals.Length == 0) 
+                        {
+                            m_Binormals = new Vector3 [mesh.normals.Length];
 
-                        for (int i = 0; i < mesh.normals.Length; i++)
-                            m_Binormals [i] = Vector3.Cross (mesh.normals [i], 
-                                                             mesh.tangents [i]) 
-                                                     * mesh.tangents [i].w;
+                            for (int i = 0; i < mesh.normals.Length; i++)
+                                m_Binormals [i] = Vector3.Cross (mesh.normals [i],
+                                                                 mesh.tangents [i])
+                                                         * mesh.tangents [i].w;
 
+                        }
+                        return m_Binormals;
                     }
-                    return m_Binormals;
-
-                    /// NOTE: LINQ
-                    ///    return mesh.normals.Zip (mesh.tangents, (first, second)
-                    ///    => Math.cross (normal, tangent.xyz) * tangent.w
                 }
 
                 /// <summary>
                 /// TODO: Gets the triangle vertex indices
                 /// </summary>
                 /// <value>The normals.</value>
-                int [] m_Indices;
+                int[] m_Indices;
 
-                public int [] Indices {
-                    get {
-                        if (m_Indices.Length == 0) {
+                public int [] Indices 
+                {
+                    get 
+                    {
+                        if (m_Indices.Length == 0) 
+                        {
                             m_Indices = new int [mesh.triangles.Length * 3];
                             int i = 0;
                             for (int triIndex = 0; triIndex < mesh.triangles.Length; triIndex++)
@@ -512,6 +519,8 @@ namespace FbxSdk.Examples
                     this.mesh = mesh;
                     this.xform = Matrix4x4.identity;
                     this.unityObject = null;
+                    this.m_Indices = null;
+                    this.m_Binormals = null;
                 }
 
                 /// <summary>
@@ -523,6 +532,8 @@ namespace FbxSdk.Examples
                     this.mesh = mesh;
                     this.xform = gameObject.transform.localToWorldMatrix;
                     this.unityObject = gameObject;
+                    this.m_Indices = null;
+                    this.m_Binormals = null;
                 }
             }
 
@@ -573,6 +584,21 @@ namespace FbxSdk.Examples
             /// Number of nodes exported including siblings and decendents
             /// </summary>
             public int NumNodes { private set; get; }
+
+            /// <summary>
+            /// Number of meshes exported
+            /// </summary>
+            public int NumMeshes { private set; get; }
+
+            /// <summary>
+            /// Number of triangles exported
+            /// </summary>
+            public int NumTriangles { private set; get; }
+
+            /// <summary>
+            /// Number of vertices
+            /// </summary>
+            public int NumVertices { private set; get; }
 
             /// <summary>
             /// Clean up this class on garbage collection
