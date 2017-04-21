@@ -61,7 +61,7 @@ namespace FbxSdk.Examples
 
                 // Create control points.
                 int NumControlPoints = mesh.VertexCount;
-#if UNI_15314
+#if BLAH
                 fbxMesh.InitControlPoints (NumControlPoints);
 
                 // copy control point data from Unity to FBX
@@ -83,7 +83,7 @@ namespace FbxSdk.Examples
                     fbxMesh.EndPolygon ();
                 }
 
-#if UNI_15314
+#if BLAH
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
                 fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
@@ -98,7 +98,7 @@ namespace FbxSdk.Examples
                 UnityEngine.Vector3 ulR = transform.localRotation.eulerAngles;
                 UnityEngine.Vector3 ulS = transform.localScale;
 
-#if UNI_15317
+#if UNI_15317_TO_IMPLEMENT
                 // transfer transform data from Unity to Fbx
                 FbxVector4 lT = new FbxVector4 (ulT.x, ulT.y, ulT.z);
                 FbxVector4 lR = new FbxVector4 (ulR.x, ulR.y, ulR.z);
@@ -384,9 +384,9 @@ namespace FbxSdk.Examples
 
             private static string GetActiveSceneName()
             {
-                var unityScene = SceneManager.GetActiveScene();
+                var uniScene = SceneManager.GetActiveScene();
 
-                return string.IsNullOrEmpty(unityScene.name) ? "Untitled" : unityScene.name;    
+                return string.IsNullOrEmpty(uniScene.name) ? "Untitled" : uniScene.name;    
             }
 
             private static string MakeObjectName (string name)
@@ -421,8 +421,8 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (FbxExporter04 fbxExporter = new FbxExporter04()) {
-                    
+                using (var fbxExporter = Create()) 
+                {
                     // ensure output directory exists
                     EnsureDirectory (filePath);
 
@@ -446,5 +446,7 @@ namespace FbxSdk.Examples
             }
 
         }
+    }
+}   }
     }
 }

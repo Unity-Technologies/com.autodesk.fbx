@@ -45,10 +45,10 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Unconditionally export components on this game object
             /// </summary>
-            protected void ExportComponents (GameObject  unityGo , FbxScene fbxScene, FbxNode fbxNodeParent)
+            protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxNodeParent)
             {
                  // create an node and add it as a child of parent
-                 FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo .name);
+                 FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
                  NumNodes++;
 
                  if (Verbose)
@@ -57,7 +57,7 @@ namespace FbxSdk.Examples
                  fbxNodeParent.AddChild (fbxNode);
 
                  // now  unityGo  through our children and recurse
-                 foreach (Transform childT in  unityGo .transform) {
+                 foreach (Transform childT in  unityGo.transform) {
                       ExportComponents (childT.gameObject, fbxScene, fbxNode);
                  }
 
@@ -111,7 +111,7 @@ namespace FbxSdk.Examples
                     if ( unityGo ) 
                     {
 
-                             this.ExportComponents ( unityGo , fbxScene, fbxRootNode);
+                             this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
                     }
                 }
 
@@ -225,15 +225,14 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (FbxExporter02 fbxExporter = Create()) 
+                using (var fbxExporter = Create()) 
                 {
-                    
-                        // ensure output directory exists
+                    // ensure output directory exists
                     EnsureDirectory (filePath);
 
                     if (fbxExporter.ExportAll(Selection.objects) > 0)
                     {
-                        string message = string.Format ("Successfully exported fbxScene: {0}", filePath);
+                        string message = string.Format ("Successfully exported: {0}", filePath);
                         UnityEngine.Debug.Log (message);
                     }
                 }
