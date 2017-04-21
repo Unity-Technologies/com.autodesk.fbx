@@ -23,7 +23,7 @@
   %proxycode %{
   public virtual void SetControlPointAt(FbxVector4 pCtrlPoint, int pIndex)
   {
-    if(pIndex < 0 || pIndex > this.GetControlPointsCount()){
+    if(pIndex < 0 || pIndex >= this.GetControlPointsCount()){
         throw new System.IndexOutOfRangeException();
     }
     else{
