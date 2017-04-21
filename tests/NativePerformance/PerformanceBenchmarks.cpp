@@ -12,202 +12,232 @@ using namespace std;
 using namespace std::chrono;
 
 struct ResultJson {
-	string testName;
-	double result;
-	bool success;
-	string error = "";
+    string testName;
+    double result;
+    bool success;
+    string error = "";
 
-	string toString() {
-		stringstream ss;
+    string toString() {
+        stringstream ss;
 
-		ss << "{\"testName\":\"" << testName << "\",";
-		ss << "\"result\":" << result << ",";
-		ss << "\"success\":" << success;
+        ss << "{\"testName\":\"" << testName << "\",";
+        ss << "\"result\":" << result << ",";
+        ss << "\"success\":" << success;
 
-		if (error.empty()) {
-			ss << "}";
-		}
-		else {
-			ss << "\"error\":" << error << "}";
-		}
+        if (error.empty()) {
+            ss << "}";
+        }
+        else {
+            ss << ",\"error\":\"" << error << "\"}";
+        }
 
-		return ss.str();
-	}
+        return ss.str();
+    }
 };
 
 string FbxObjectCreateTest(int n) {
-	ResultJson json;
+    ResultJson json;
 
-	int N = n < 0? 5000 : n;
+    int N = n < 0? 5000 : n;
 
-	FbxManager* manager = FbxManager::Create();
+    FbxManager* manager = FbxManager::Create();
 
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-	for (int i = 0; i < N; i++) {
-		FbxObject::Create(manager, "");
-	}
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    for (int i = 0; i < N; i++) {
+        FbxObject::Create(manager, "");
+    }
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
-	auto duration = duration_cast<milliseconds>(t2 - t1).count();
+    auto duration = duration_cast<milliseconds>(t2 - t1).count();
 
-	manager->Destroy();
+    manager->Destroy();
 
-	json.testName = "FbxObjectCreate";
-	json.result = (double)duration;
-	json.success = true;
+    json.testName = "FbxObjectCreate";
+    json.result = (double)duration;
+    json.success = true;
 
-	return json.toString();
+    return json.toString();
+}
+
+string SetControlPointAtTest(int n) {
+    ResultJson json;
+
+    int N = n < 0? 10000 : n;
+    
+    FbxManager* manager = FbxManager::Create();
+
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    
+    FbxGeometryBase* geometryBase = FbxGeometryBase::Create(manager, "");
+    geometryBase->InitControlPoints(1);
+    for(int i = 0; i < N; i ++){
+        FbxVector4 vector(0,0,0);
+        geometryBase->SetControlPointAt(vector, 0);
+    }
+    
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+    auto duration = duration_cast<milliseconds>(t2 - t1).count();
+
+    manager->Destroy();
+
+    json.testName = "SetControlPointAt";
+    json.result = (double)duration;
+    json.success = true;
+
+    return json.toString();
 }
 
 string EmptyExportImportTest(int n) {
-	ResultJson json;
+    ResultJson json;
 
-	json.testName = "EmptyExportImport";
+    json.testName = "EmptyExportImport";
 
-	int N = n < 0? 10 : n;
-	long long total = 0;
+    int N = n < 0? 10 : n;
+    long long total = 0;
 
-	FbxManager* fbxManager = FbxManager::Create();
+    FbxManager* fbxManager = FbxManager::Create();
 
-	for (int i = 0; i < N; i++) {
-		high_resolution_clock::time_point t1 = high_resolution_clock::now();
+    for (int i = 0; i < N; i++) {
+        high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
-		FbxIOSettings* ioSettings = FbxIOSettings::Create(fbxManager, IOSROOT);
-		fbxManager->SetIOSettings(ioSettings);
+        FbxIOSettings* ioSettings = FbxIOSettings::Create(fbxManager, IOSROOT);
+        fbxManager->SetIOSettings(ioSettings);
 
-		// Create the exporter.
-		FbxExporter* exporter = FbxExporter::Create(fbxManager, "");
+        // Create the exporter.
+        FbxExporter* exporter = FbxExporter::Create(fbxManager, "");
 
-		const char* filename = "test.fbx";
+        const char* filename = "test.fbx";
 
-		// Initialize the exporter.
-		bool exportStatus = exporter->Initialize(filename, -1, fbxManager->GetIOSettings());
+        // Initialize the exporter.
+        bool exportStatus = exporter->Initialize(filename, -1, fbxManager->GetIOSettings());
 
-		if (!exportStatus) {
-			fbxManager->Destroy();
+        if (!exportStatus) {
+            fbxManager->Destroy();
 
-			json.success = false;
-			json.error = "Failed to initialize exporter";
-			return json.toString();
-		}
+            json.success = false;
+            json.error = "Failed to initialize exporter";
+            return json.toString();
+        }
 
-		// Create the empty scene to export
-		FbxScene* lScene = FbxScene::Create(fbxManager, "myScene");
+        // Create the empty scene to export
+        FbxScene* lScene = FbxScene::Create(fbxManager, "myScene");
 
-		// Export the scene
-		exporter->Export(lScene);
+        // Export the scene
+        exporter->Export(lScene);
 
-		exporter->Destroy();
+        exporter->Destroy();
 
-		// Import to make sure file is valid
+        // Import to make sure file is valid
 
-		// Create an importer.
-		FbxImporter* importer = FbxImporter::Create(fbxManager, "");
+        // Create an importer.
+        FbxImporter* importer = FbxImporter::Create(fbxManager, "");
 
-		// Initialize the importer.
-		bool importStatus = importer->Initialize(filename, -1, fbxManager->GetIOSettings());
+        // Initialize the importer.
+        bool importStatus = importer->Initialize(filename, -1, fbxManager->GetIOSettings());
 
-		if (!importStatus) {
-			fbxManager->Destroy();
+        if (!importStatus) {
+            fbxManager->Destroy();
 
-			json.success = false;
-			json.error = "Failed to initialize importer";
-			return json.toString();
-		}
+            json.success = false;
+            json.error = "Failed to initialize importer";
+            return json.toString();
+        }
 
-		// Create a new scene to import to
-		FbxScene* newScene = FbxScene::Create(fbxManager, "myScene2");
+        // Create a new scene to import to
+        FbxScene* newScene = FbxScene::Create(fbxManager, "myScene2");
 
-		// Import the contents of the file into the scene
-		importer->Import(newScene);
+        // Import the contents of the file into the scene
+        importer->Import(newScene);
 
-		importer->Destroy();
+        importer->Destroy();
 
-		high_resolution_clock::time_point t2 = high_resolution_clock::now();
+        high_resolution_clock::time_point t2 = high_resolution_clock::now();
 
-		auto duration = duration_cast<milliseconds>(t2 - t1).count();
+        auto duration = duration_cast<milliseconds>(t2 - t1).count();
 
-		total += duration;
+        total += duration;
 
-		// Delete the file once the test is complete
-		if (remove(filename) != 0) {
-			fbxManager->Destroy();
+        // Delete the file once the test is complete
+        if (remove(filename) != 0) {
+            fbxManager->Destroy();
 
-			json.success = false;
-			json.error = "Failed to destroy file";
-			return json.toString();
-		}
-	}
+            json.success = false;
+            json.error = "Failed to destroy file";
+            return json.toString();
+        }
+    }
 
-	fbxManager->Destroy();
+    fbxManager->Destroy();
 
-	json.success = true;
-	json.result = total / (double)N;
+    json.success = true;
+    json.result = total / (double)N;
 
-	return json.toString();
+    return json.toString();
 }
 
 typedef string(*FnPtr)(int);
 
 int main(int argc, char *argv[])
 {
-	// have command line arguments specifying which tests to run
-	// output the results as a json string
-	// optionally, can include how many samples to take for a test by adding
-	// :N after the function name in the command line. e.g. funName:100
+    // have command line arguments specifying which tests to run
+    // output the results as a json string
+    // optionally, can include how many samples to take for a test by adding
+    // :N after the function name in the command line. e.g. funName:100
 
-	std::unordered_map<std::string, FnPtr> funMap;
-	funMap["FbxObjectCreate"] = FbxObjectCreateTest;
-	funMap["EmptyExportImport"] = EmptyExportImportTest;
+    std::unordered_map<std::string, FnPtr> funMap;
+    funMap["FbxObjectCreate"] = FbxObjectCreateTest;
+    funMap["EmptyExportImport"] = EmptyExportImportTest;
+    funMap["SetControlPointAt"] = SetControlPointAtTest;
 
-	stringstream ss;
+    stringstream ss;
 
-	ss << "{\"tests\": [";
-	if (argc <= 1) {
-		// run all tests
-		for (auto it = funMap.begin(); it != funMap.end(); ++it) {
-			if (funMap.begin() != it) {
-				ss << ",";
-			}
-			ss << (it->second)(-1);
-		}
-	}
-	else {
-		// run only tests specified on the command line
-		for (int i = 1; i < argc; i++) {
-			// check if there is a sample number included
-			string s = argv[i];
-			string delimiter = ":";
-			string token = s.substr(0, s.find(delimiter));
+    ss << "{\"tests\": [";
+    if (argc <= 1) {
+        // run all tests
+        for (auto it = funMap.begin(); it != funMap.end(); ++it) {
+            if (funMap.begin() != it) {
+                ss << ",";
+            }
+            ss << (it->second)(-1);
+        }
+    }
+    else {
+        // run only tests specified on the command line
+        for (int i = 1; i < argc; i++) {
+            // check if there is a sample number included
+            string s = argv[i];
+            string delimiter = ":";
+            string token = s.substr(0, s.find(delimiter));
 
-			// if the strings are not equal then get the number
-			string N = "-1";
-			if (s.compare(token) != 0) {
-				N = s.substr(s.find(delimiter)+1);
-			}
+            // if the strings are not equal then get the number
+            string N = "-1";
+            if (s.compare(token) != 0) {
+                N = s.substr(s.find(delimiter)+1);
+            }
 
-			if (funMap.find(token) == funMap.end()) {
-				cout << "Error: Could not find test function: " << argv[i];
-				return 0;
-			}
+            if (funMap.find(token) == funMap.end()) {
+                cout << "Error: Could not find test function: " << argv[i];
+                return 0;
+            }
 
-			try {
-				ss << funMap[token](stoi(N));
-			}
-			catch (invalid_argument) {
-				cout << "Error: Could not convert \"" << N << "\" to an integer";
-				return 0;
-			}
+            try {
+                ss << funMap[token](stoi(N));
+            }
+            catch (invalid_argument) {
+                cout << "Error: Could not convert \"" << N << "\" to an integer";
+                return 0;
+            }
 
-			if (i < argc - 1) {
-				ss << ",";
-			}
-		}
-	}
-	ss << "]}";
+            if (i < argc - 1) {
+                ss << ",";
+            }
+        }
+    }
+    ss << "]}";
 
-	// print json so we can pick it up in Unity
-	cout << ss.str();
+    // print json so we can pick it up in Unity
+    cout << ss.str();
 
     return 0;
 }

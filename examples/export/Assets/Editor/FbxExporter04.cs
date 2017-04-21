@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
 // Licensed under the ##LICENSENAME##. 
@@ -19,57 +19,29 @@ namespace FbxSdk.Examples
         public class FbxExporter04 : System.IDisposable
         {
             const string Title =
-                "Example 04: exporting a fbxNode hierarchy with transforms";
+                "Example 04: exporting a static mesh";
 
             const string Subject =
                 @"Example FbxExporter04 illustrates how to:
-                    1) create and initialize an fbxExporter
-                    2) create a fbxScene
-                    3) create a fbxNode with transform data
-                    4) add static mesh data to a fbxNode
-                    5) export a fbxScene to a.FBX file (ASCII mode)
+                    1) create and initialize an exporter
+                    2) create a scene
+                    3) create a node with transform data
+                    4) add static mesh data to a node
+                    5) export a scene to a FBX file (ASCII mode)
                             ";
 
             const string Keywords =
-                "export node transform mesh";
+                "export mesh node transform";
 
             const string Comments =
                 @"We are exporting rotations using the Euler angles from Unity.";
 
-            const string MenuItemName = "File/Export/Export (Mesh only) to FBX";
-
-            /// <summary>
-            /// Number of nodes exported including siblings and decendents
-            /// </summary>
-            public int NumNodes { private set; get; }
-
-            /// <summary>
-            /// Number of meshes exported
-            /// </summary>
-            public int NumMeshes { private set; get; }
-
-            /// <summary>
-            /// Number of triangles exported
-            /// </summary>
-            public int NumTriangles { private set; get; }
-
-            /// <summary>
-            /// Number of vertices
-            /// </summary>
-            public int NumVertices { private set; get; }
+            const string MenuItemName = "File/Export/Export (static meshes) to FBX";
 
             /// <summary>
             /// Create instance of example
             /// </summary>
-            public static FbxExporter04 Create ()
-            {
-                return new FbxExporter04 ();
-            }
-
-            /// <summary>
-            /// Clean up this class on garbage collection
-            /// </summary>
-            public void Dispose () { }
+            public static FbxExporter04 Create () { return new FbxExporter04 (); }
 
             /// <summary>
             /// Unconditionally export this mesh object to the file.
@@ -88,30 +60,14 @@ namespace FbxSdk.Examples
                 FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Scene"));
 
                 // Create control points.
-#if BLAH
-                fbxMesh.InitControlPoints (mesh.VertexCount);
-
-                // NOTE: we expect this is a reference to the array held by the mesh.
-                // This seems to be the only way to copy across vertex data
-                FbxVector4 [] vertex = fbxMesh.GetControlPoints ();
+                int NumControlPoints = mesh.VertexCount;
+                fbxMesh.InitControlPoints (NumControlPoints);
 
                 // copy control point data from Unity to FBX
-                for (int v = 0; v < mesh.VertexCount; v++)
+                for (int v = 0; v < NumControlPoints; v++)
                 {
-                    vertex [v].Set(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z);
+                    fbxMesh.SetControlPointAt(new FbxVector4(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z), v);
                 }
-#endif
-
-#if UNI_12952_STRETCH_MATERIALS
-                /* create the materials.
-                 * Each polygon face will be assigned a unique material.
-                 */
-                FbxGeometryElementMaterial lMaterialElement = fbxMesh.CreateElementMaterial ();
-
-                lMaterialElement.SetMappingMode (FbxGeometryElement.eAllSame);
-                lMaterialElement.SetReferenceMode (FbxGeometryElement.eIndexToDirect);
-                lMaterialElement.GetIndexArray ().Add (0);
-#endif
 
                 /* 
                  * Create polygons after FbxGeometryElementMaterial are created. 
@@ -120,32 +76,11 @@ namespace FbxSdk.Examples
                 int vId = 0;
                 for (int f = 0; f < mesh.Triangles.Length / 3; f++) {
                     fbxMesh.BeginPolygon ();
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
                     fbxMesh.EndPolygon ();
                 }
-
-#if UNI_12952_STRETCH_NORMALS
-                // specify normals per control point.
-                FbxGeometryElementNormal[] lNormalElement = fbxMesh.CreateElementNormal ();
-                lNormalElement.SetMappingMode (FbxGeometryElement.eByControlPoint);
-                lNormalElement.SetReferenceMode (FbxGeometryElement.eDirect);
-                for (int n = 0; n < lNumControlPoints; n++)
-                    lNormalElement->GetDirectArray ().Add (FbxVector4 (lNormals [n] [0], lNormals [n] [1], lNormals [n] [2]));
-#endif
-
-#if UNI_12952_STRETCH_UVSET
-                // create UVset
-                FbxGeometryElementUV[] lUVElement1 = fbxMesh.CreateElementUV ("UVSet1");
-
-                lUVElement1.SetMappingMode (FbxGeometryElement::eByPolygonVertex);
-                lUVElement1.SetReferenceMode (FbxGeometryElement::eIndexToDirect);
-                for (int i = 0; i<4; i++)
-                    lUVElement1.GetDirectArray ().Add (FbxVector2(lUVs [i] [0], lUVs [i] [1]));
-                for (int i = 0; i<24; i++)
-                    lUVElement1.GetIndexArray ().Add (uvsId [i % 4]);
-#endif
 
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
@@ -153,24 +88,22 @@ namespace FbxSdk.Examples
             }
 
             // get a fbxNode's global default position.
-            protected void ExportTransform (UnityEngine.Transform transform, FbxNode fbxNode)
+            protected void ExportTransform (UnityEngine.Transform unityTransform, FbxNode fbxNode)
             {
                 // get local position of fbxNode (from Unity)
-                UnityEngine.Vector3 ulT = transform.localPosition;
-                UnityEngine.Vector3 ulR = transform.localRotation.eulerAngles;
-                UnityEngine.Vector3 ulS = transform.localScale;
+                UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
+                UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
+                UnityEngine.Vector3 unityScale = unityTransform.localScale;
 
-#if UNI_15317_TO_IMPLEMENT
                 // transfer transform data from Unity to Fbx
-                FbxVector4 lT = new FbxVector4 (ulT.x, ulT.y, ulT.z);
-                FbxVector4 lR = new FbxVector4 (ulR.x, ulR.y, ulR.z);
-                FbxVector4 lS = new FbxVector4 (ulS.x, ulS.y, ulS.z);
+                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
 
                 // set the local position of fbxNode
-                fbxNode.LclTranslation.Set(lT);
-                fbxNode.LclRotation.Set(lR);
-                fbxNode.LclScaling.Set(lS);
-#endif
+                fbxNode.LclTranslation.Set(fbxTranslate);
+                fbxNode.LclRotation.Set(fbxRotate);
+                fbxNode.LclScaling.Set(fbxScale);
 
                 return;
             }
@@ -178,72 +111,72 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Unconditionally export components on this game object
             /// </summary>
-            protected void ExportComponents (GameObject uniGo, FbxScene fbxScene, FbxNode fbxNodeParent)
+            protected void ExportComponents (GameObject unityGo, FbxScene fbxScene, FbxNode fbxNodeParent)
             {
                 // create an FbxNode and add it as a child of parent
-                FbxNode fbxNode = FbxNode.Create (fbxScene, uniGo.name);
+                FbxNode fbxNode = FbxNode.Create (fbxScene, unityGo.name);
                 NumNodes++;
 
-                ExportTransform (uniGo.transform, fbxNode);
-                ExportMesh (GetMeshInfo(uniGo), fbxNode, fbxScene);
+                ExportTransform (unityGo.transform, fbxNode);
+                ExportMesh (GetMeshInfo (unityGo), fbxNode, fbxScene);
 
                 if (Verbose)
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
 
                 fbxNodeParent.AddChild (fbxNode);
 
-                // now uniGo through our children and recurse
-                foreach (Transform childT in uniGo.transform) {
+                // now  unityGo  through our children and recurse
+                foreach (Transform childT in unityGo.transform) {
                     ExportComponents (childT.gameObject, fbxScene, fbxNode);
                 }
 
-                return ;
+                return;
             }
 
             /// <summary>
             /// Export all the objects in the set.
             /// Return the number of objects in the set that we exported.
             /// </summary>
-            public int ExportAll (IEnumerable<UnityEngine.Object> uniExportSet)
+            public int ExportAll (IEnumerable<UnityEngine.Object> unityExportSet)
             {
-                // Create fbx fbxManager
+                // Create the FBX manager
                 using (var fbxManager = FbxManager.Create ()) {
-                    // Configure fbx IO settings.
+                    // Configure the IO settings.
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
-                    // Create the fbxExporter 
-                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
+                    // Create the exporter 
+                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
 
-                    // Initialize the fbxExporter.
+                    // Initialize the exporter.
                     bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
                     // Check that initialization of the fbxExporter was successful
                     if (!status)
                         return 0;
 
-                    // Create a fbxScene
+                    // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
 
-                    // create fbxScene info
+                    // create scene info
                     FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
 
-                    // set some fbxScene info values
-                    fbxSceneInfo.mTitle     = Title;
-                    fbxSceneInfo.mSubject   = Subject;
-                    fbxSceneInfo.mAuthor    = "Unit Technologies";
-                    fbxSceneInfo.mRevision  = "1.0";
-                    fbxSceneInfo.mKeywords  = Keywords;
-                    fbxSceneInfo.mComment   = Comments;
+                    // set some scene info values
+                    fbxSceneInfo.mTitle = Title;
+                    fbxSceneInfo.mSubject = Subject;
+                    fbxSceneInfo.mAuthor = "Unity Technologies";
+                    fbxSceneInfo.mRevision = "1.0";
+                    fbxSceneInfo.mKeywords = Keywords;
+                    fbxSceneInfo.mComment = Comments;
 
                     fbxScene.SetSceneInfo (fbxSceneInfo);
 
-                    FbxNode root = fbxScene.GetRootNode ();
+                    FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
                     // export set of object
-                    foreach (var obj in uniExportSet) {
-                        var uniGo = GetGameObject (obj);
+                    foreach (var obj in unityExportSet) {
+                        var unityGo = GetGameObject (obj);
 
-                        if (uniGo) {
-                            this.ExportComponents (uniGo, fbxScene, root);
+                        if (unityGo) {
+                            this.ExportComponents (unityGo, fbxScene, fbxRootNode);
                         }
                     }
 
@@ -251,7 +184,7 @@ namespace FbxSdk.Examples
                         string.Format ("Mesh Count : {0}, Triangle Count: {1}, Vertex Count: {2} ",
                                        NumMeshes, NumTriangles, NumVertices);
 
-                    // Export the fbxScene to the file.
+                    // Export the scene to the file.
                     status = fbxExporter.Export (fbxScene);
 
                     // cleanup
@@ -271,7 +204,7 @@ namespace FbxSdk.Examples
             [MenuItem (MenuItemName, false)]
             public static void OnMenuItem ()
             {
-                OnExport();
+                OnExport ();
             }
 
             /// <summary>
@@ -299,7 +232,7 @@ namespace FbxSdk.Examples
                 public Mesh mesh;
 
                 /// <summary>
-                /// The gameobject in the fbxScene to which this mesh is attached.
+                /// The gameobject in the scene to which this mesh is attached.
                 /// This can be null: don't rely on it existing!
                 /// </summary>
                 public GameObject unityObject;
@@ -345,7 +278,8 @@ namespace FbxSdk.Examples
                 /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
                 /// </summary>
                 /// <param name="mesh">A mesh we want to export</param>
-                public MeshInfo(Mesh mesh) {
+                public MeshInfo (Mesh mesh)
+                {
                     this.mesh = mesh;
                     this.xform = Matrix4x4.identity;
                     this.unityObject = null;
@@ -356,7 +290,8 @@ namespace FbxSdk.Examples
                 /// </summary>
                 /// <param name="gameObject">The GameObject the mesh is attached to.</param>
                 /// <param name="mesh">A mesh we want to export</param>
-                public MeshInfo(GameObject gameObject, Mesh mesh) {
+                public MeshInfo (GameObject gameObject, Mesh mesh)
+                {
                     this.mesh = mesh;
                     this.xform = gameObject.transform.localToWorldMatrix;
                     this.unityObject = gameObject;
@@ -390,21 +325,49 @@ namespace FbxSdk.Examples
                     // Verify that we are rendering. Otherwise, don't export.
                     var renderer = gameObject.gameObject.GetComponent<MeshRenderer> ();
                     if (!renderer || !renderer.enabled) {
-                        return new MeshInfo();
+                        return new MeshInfo ();
                     }
                 }
 
                 var meshFilter = gameObject.GetComponent<MeshFilter> ();
                 if (!meshFilter) {
-                    return new MeshInfo();
+                    return new MeshInfo ();
                 }
-                var mesh = meshFilter.sharedMesh; 
+                var mesh = meshFilter.sharedMesh;
                 if (!mesh) {
-                    return new MeshInfo();
+                    return new MeshInfo ();
                 }
 
                 return new MeshInfo (gameObject, mesh);
             }
+
+            /// <summary>
+            /// Number of nodes exported including siblings and decendents
+            /// </summary>
+            public int NumNodes { private set; get; }
+
+            /// <summary>
+            /// Number of meshes exported
+            /// </summary>
+            public int NumMeshes { private set; get; }
+
+            /// <summary>
+            /// Number of triangles exported
+            /// </summary>
+            public int NumTriangles { private set; get; }
+
+            /// <summary>
+            /// Number of vertices
+            /// </summary>
+            public int NumVertices { private set; get; }
+
+            /// <summary>
+            /// Clean up this class on garbage collection
+            /// </summary>
+            public void Dispose () { }
+
+            const string NamePrefix = "";
+            public bool Verbose { private set; get; }
 
             /// <summary>
             /// manage the selection of a filename
@@ -413,14 +376,11 @@ namespace FbxSdk.Examples
             static string Basename { get { return GetActiveSceneName (); } }
             const string Extension = "fbx";
 
-            const string NamePrefix = "";
-            public bool Verbose { private set; get; }
-
-            private static string GetActiveSceneName()
+            private static string GetActiveSceneName ()
             {
-                var fbxScene = SceneManager.GetActiveScene();
+                var unityScene = SceneManager.GetActiveScene ();
 
-                return string.IsNullOrEmpty(fbxScene.name) ? "Untitled" : fbxScene.name;    
+                return string.IsNullOrEmpty (unityScene.name) ? "Untitled" : unityScene.name;
             }
 
             private static string MakeObjectName (string name)
@@ -428,23 +388,23 @@ namespace FbxSdk.Examples
                 return NamePrefix + name;
             }
 
-            private static string MakeFileName(string basename = "test", string extension = "fbx")
+            private static string MakeFileName (string basename = "test", string extension = "fbx")
             {
                 return basename + "." + extension;
             }
 
             // use the SaveFile panel to allow user to enter a file name
-            private static void OnExport()
+            private static void OnExport ()
             {
                 // Now that we know we have stuff to export, get the user-desired path.
-                var directory = string.IsNullOrEmpty (LastFilePath) 
-                                      ? Application.dataPath 
+                var directory = string.IsNullOrEmpty (LastFilePath)
+                                      ? Application.dataPath
                                       : System.IO.Path.GetDirectoryName (LastFilePath);
-                
-                var filename = string.IsNullOrEmpty (LastFilePath) 
-                                     ? MakeFileName(basename: Basename, extension: Extension) 
+
+                var filename = string.IsNullOrEmpty (LastFilePath)
+                                     ? MakeFileName (basename: Basename, extension: Extension)
                                      : System.IO.Path.GetFileName (LastFilePath);
-                
+
                 var title = string.Format ("Export FBX ({0})", Basename);
 
                 var filePath = EditorUtility.SaveFilePanel (title, directory, filename, "");
@@ -455,20 +415,18 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (FbxExporter04 fbxExporter = new FbxExporter04()) {
-                    
+                using (var fbxExporter = Create ()) {
                     // ensure output directory exists
                     EnsureDirectory (filePath);
 
-                    if (fbxExporter.ExportAll(Selection.objects) > 0)
-                    {
+                    if (fbxExporter.ExportAll (Selection.objects) > 0) {
                         string message = string.Format ("Successfully exported: {0}", filePath);
                         UnityEngine.Debug.Log (message);
                     }
                 }
             }
 
-            private static void EnsureDirectory(string path)
+            private static void EnsureDirectory (string path)
             {
                 //check to make sure the path exists, and if it doesn't then
                 //create all the missing directories.
@@ -478,7 +436,6 @@ namespace FbxSdk.Examples
                     Directory.CreateDirectory (fileInfo.Directory.FullName);
                 }
             }
-
         }
     }
 }

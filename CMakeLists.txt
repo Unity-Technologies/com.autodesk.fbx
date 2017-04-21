@@ -42,6 +42,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
+###########################################################################
 # Find packages that we need.
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
@@ -61,6 +62,7 @@ find_package(Unity)
 include_directories(src)
 include_directories(${FBXSDK_INCLUDE_DIR})
 
+###########################################################################
 # Set up the swig run.
 set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
 set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;FbxSdk")
@@ -105,12 +107,19 @@ swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
 
 swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
+# hide FBX symbols in case the target application also has a copy of FBX
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+  set_target_properties(fbxsdk_csharp PROPERTIES LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt")
+endif()
+
+###########################################################################
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
 target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
 set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
+###########################################################################
 include(deps/cmake/InstallMonoReflection.cmake)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests DESTINATION ${CMAKE_BINARY_DIR}/tests)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/Editor DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples FILES_MATCHING PATTERN "*.cs")
