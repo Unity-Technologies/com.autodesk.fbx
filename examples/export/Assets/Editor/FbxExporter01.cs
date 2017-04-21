@@ -19,51 +19,41 @@ namespace FbxSdk.Examples
         public class FbxExporter01 : System.IDisposable
         {
             const string Title =
-            	"Example 01: exporting an empty scene";
+                 "Example 01: exporting an empty scene";
 
             const string Subject =
-            	@"Example FbxExporter01 illustrates how to:
+                 @"Example FbxExporter01 illustrates how to:
                                 1) create and initialize an exporter
                                 2) create a scene
                                 3) export a scene to a FBX file (ASCII mode)
                                         ";
 
             const string Keywords =
-            	"export scene";
+                 "export scene";
 
             const string Comments =
-            	@"Set some fbxScene settings. Note that the scene thumnail has not been set.";
+                 @"Set some scene settings. Note that the scene thumnail has not been set.";
 
             const string MenuItemName = "File/Export/Export (empty scene) to FBX";
-
-            /// <summary>
-            /// Number of nodes exported including siblings and decendents
-            /// </summary>
-            public int NumNodes { private set; get; }
 
             /// <summary>
             /// Create instance of example
             /// </summary>
             public static FbxExporter01 Create ()
             {
-            	return new FbxExporter01 ();
+                 return new FbxExporter01 ();
             }
-
-            /// <summary>
-            /// Clean up this class on garbage collection
-            /// </summary>
-            public void Dispose () { }
 
             /// <summary>
             /// Export all the objects in the set.
             /// Return the number of objects in the set that we exported.
             /// </summary>
-            public int ExportAll (IEnumerable<UnityEngine.Object> uniExportSet)
+            public int ExportAll (IEnumerable<UnityEngine.Object> unityExportSet)
             {
-                // Create fbx fbxManager
+                // Create the FBX manager
                 using (var fbxManager = FbxManager.Create ()) 
                 {
-                    // Configure fbx IO settings.
+                    // Configure the IO settings.
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
                     // Create the exporter 
@@ -76,22 +66,22 @@ namespace FbxSdk.Examples
                         return 0;
 
                     // Create a scene
-                    var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("fbxScene"));
+                    var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
 
-                    // create fbxScene info
+                    // create scene info
                     FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
 
-                    // set some fbxScene info values
+                    // set some scene info values
                     fbxSceneInfo.mTitle = Title;
                     fbxSceneInfo.mSubject = Subject;
-                    fbxSceneInfo.mAuthor = "Unit Technologies";
+                    fbxSceneInfo.mAuthor = "Unity Technologies";
                     fbxSceneInfo.mRevision = "1.0";
                     fbxSceneInfo.mKeywords = Keywords;
                     fbxSceneInfo.mComment = Comments;
 
                     fbxScene.SetSceneInfo (fbxSceneInfo);
 
-                    // Export the fbxScene to the file.
+                    // Export the scene to the file.
                     status = fbxExporter.Export (fbxScene);
 
                     // cleanup
@@ -125,14 +115,25 @@ namespace FbxSdk.Examples
             }
 
             /// <summary>
+            /// Number of nodes exported including siblings and decendents
+            /// </summary>
+            public int NumNodes { private set; get; }
+
+            /// <summary>
+            /// Clean up this class on garbage collection
+            /// </summary>
+            public void Dispose () { }
+
+
+            const string NamePrefix = "";
+            public bool Verbose { private set; get; }
+
+            /// <summary>
             /// manage the selection of a filename
             /// </summary>
             static string LastFilePath { get; set; }
             static string Basename { get { return GetActiveSceneName (); } }
             const string Extension = "fbx";
-
-            const string NamePrefix = "";
-            public bool Verbose { private set; get; }
 
             private static string GetActiveSceneName()
             {
@@ -143,7 +144,7 @@ namespace FbxSdk.Examples
 
             private static string MakeObjectName (string name)
             {
-            	return NamePrefix + name;
+                 return NamePrefix + name;
             }
 
             private static string MakeFileName(string basename = "test", string extension = "fbx")
@@ -177,8 +178,8 @@ namespace FbxSdk.Examples
                 using (var fbxExporter = Create()) 
                 {
                     
-    				// ensure output directory exists
-    				EnsureDirectory (filePath);
+                        // ensure output directory exists
+                        EnsureDirectory (filePath);
 
                     if (fbxExporter.ExportAll(Selection.objects) > 0)
                     {
