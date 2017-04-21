@@ -50,6 +50,7 @@ namespace FbxSdk.Examples
             /// 
             public void ExportNormalsEtc (MeshInfo mesh, FbxMesh fbxMesh)
             {
+#if UNI_15773
                 /// Set the Normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null)
@@ -120,6 +121,7 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetNormals (fbxLayerElement);
                 }
+#endif
             }
 
             /// <summary>
@@ -128,6 +130,7 @@ namespace FbxSdk.Examples
             /// 
             public void ExportVertexColors (MeshInfo mesh, FbxMesh fbxMesh)
             {
+#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) 
@@ -157,6 +160,7 @@ namespace FbxSdk.Examples
 
                     fbxLayer.SetVertexColor(fbxLayerElement);
                 }
+#endif
             }
 
             /// <summary>
@@ -165,6 +169,7 @@ namespace FbxSdk.Examples
             /// 
             public void ExportUVs (MeshInfo mesh, FbxMesh fbxMesh)
             {
+#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) 
@@ -197,6 +202,7 @@ namespace FbxSdk.Examples
 
                     fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.eTextureDiffuse);
                 }
+#endif
             }
 
             /// <summary>
@@ -218,6 +224,7 @@ namespace FbxSdk.Examples
                 // Create control points.
                 int NumControlPoints = mesh.VertexCount;
 
+#if UNI_15314
                 fbxMesh.InitControlPoints (NumControlPoints);
 
                 // copy control point data from Unity to FBX
@@ -225,6 +232,7 @@ namespace FbxSdk.Examples
                 {
                     fbxMesh.SetControlPointAt(new FbxVector4 (mesh.Vertices [v].x, mesh.Vertices [v].y, mesh.Vertices [v].z), v);
                 }
+#endif
 
 #if UNI_12952_STRETCH_MATERIALS
                 /* create the materials.
@@ -244,9 +252,9 @@ namespace FbxSdk.Examples
                 int vId = 0;
                 for (int f = 0; f < mesh.Triangles.Length / 3; f++) {
                     fbxMesh.BeginPolygon ();
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
                     fbxMesh.EndPolygon ();
                 }
 
@@ -254,9 +262,11 @@ namespace FbxSdk.Examples
                 ExportVertexColors (mesh, fbxMesh);
                 ExportUVs (mesh, fbxMesh);
 
+#if UNI_15314
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
                 fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+#endif
             }
 
             // get a fbxNode's global default position.
@@ -617,9 +627,9 @@ namespace FbxSdk.Examples
 
             private static string GetActiveSceneName()
             {
-                var uniScene = SceneManager.GetActiveScene();
+                var unityScene = SceneManager.GetActiveScene();
 
-                return string.IsNullOrEmpty(uniScene.name) ? "Untitled" : uniScene.name;    
+                return string.IsNullOrEmpty(unityScene.name) ? "Untitled" : unityScene.name;    
             }
 
             private static string MakeObjectName (string name)

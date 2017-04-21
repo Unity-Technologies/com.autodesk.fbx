@@ -61,7 +61,7 @@ namespace FbxSdk.Examples
 
                 // Create control points.
                 int NumControlPoints = mesh.VertexCount;
-
+#if UNI_15314
                 fbxMesh.InitControlPoints (NumControlPoints);
 
                 // copy control point data from Unity to FBX
@@ -69,6 +69,7 @@ namespace FbxSdk.Examples
                 {
                     fbxMesh.SetControlPointAt(new FbxVector4(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z), v);
                 }
+#endif
                 /* 
                  * Create polygons after FbxGeometryElementMaterial are created. 
                  * TODO: Assign material indices.
@@ -76,15 +77,17 @@ namespace FbxSdk.Examples
                 int vId = 0;
                 for (int f = 0; f < mesh.Triangles.Length / 3; f++) {
                     fbxMesh.BeginPolygon ();
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
-                    fbxMesh.AddPolygon (mesh.Triangles[vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
                     fbxMesh.EndPolygon ();
                 }
 
+#if UNI_15314
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
                 fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+#endif
             }
 
             // get a fbxNode's global default position.
@@ -95,7 +98,7 @@ namespace FbxSdk.Examples
                 UnityEngine.Vector3 ulR = transform.localRotation.eulerAngles;
                 UnityEngine.Vector3 ulS = transform.localScale;
 
-#if UNI_15317_TO_IMPLEMENT
+#if UNI_15317
                 // transfer transform data from Unity to Fbx
                 FbxVector4 lT = new FbxVector4 (ulT.x, ulT.y, ulT.z);
                 FbxVector4 lR = new FbxVector4 (ulR.x, ulR.y, ulR.z);
@@ -381,9 +384,9 @@ namespace FbxSdk.Examples
 
             private static string GetActiveSceneName()
             {
-                var uniScene = SceneManager.GetActiveScene();
+                var unityScene = SceneManager.GetActiveScene();
 
-                return string.IsNullOrEmpty(uniScene.name) ? "Untitled" : uniScene.name;    
+                return string.IsNullOrEmpty(unityScene.name) ? "Untitled" : unityScene.name;    
             }
 
             private static string MakeObjectName (string name)
