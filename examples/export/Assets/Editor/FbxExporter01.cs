@@ -137,9 +137,9 @@ namespace FbxSdk.Examples
 
             private static string GetActiveSceneName()
             {
-                var uniScene = SceneManager.GetActiveScene();
+                var unityScene = SceneManager.GetActiveScene();
 
-                return string.IsNullOrEmpty(uniScene.name) ? "Untitled" : uniScene.name;    
+                return string.IsNullOrEmpty(unityScene.name) ? "Untitled" : unityScene.name;    
             }
 
             private static string MakeObjectName (string name)
