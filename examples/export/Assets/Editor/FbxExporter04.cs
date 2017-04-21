@@ -61,7 +61,6 @@ namespace FbxSdk.Examples
 
                 // Create control points.
                 int NumControlPoints = mesh.VertexCount;
-#if UNI_15314
                 fbxMesh.InitControlPoints (NumControlPoints);
 
                 // copy control point data from Unity to FBX
@@ -69,7 +68,7 @@ namespace FbxSdk.Examples
                 {
                     fbxMesh.SetControlPointAt(new FbxVector4(mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z), v);
                 }
-#endif
+
                 /* 
                  * Create polygons after FbxGeometryElementMaterial are created. 
                  * TODO: Assign material indices.

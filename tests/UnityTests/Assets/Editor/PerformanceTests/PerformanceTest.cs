@@ -11,6 +11,7 @@ using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using System;
+using UnityEditorInternal;
 
 namespace PerformanceTests
 {
@@ -30,7 +31,7 @@ namespace PerformanceTests
 
         protected void LogError (string msg)
         {
-#if UNITY_EDITY
+#if UNITY_EDITOR
             UnityEngine.Debug.LogError (msg);
 #endif
         }
@@ -102,68 +103,115 @@ namespace PerformanceTests
             }
         }
 
-        [Test]
-        public void FbxObjectCreateTest ()
+        private FbxManager m_fbxManager;
+        private Stopwatch m_stopwatch;
+
+        [SetUp]
+        public void Init()
         {
-            var stopwatch = new Stopwatch ();
+            m_stopwatch = new Stopwatch ();
+            m_fbxManager = FbxManager.Create ();
+        }
 
-            FbxManager fbxManager = FbxManager.Create ();
+        [TearDown]
+        public void Term()
+        {
+            m_fbxManager.Destroy ();
+        }
 
-            long total = 0;
-            int N = 5000;
-
-            stopwatch.Reset ();
-            stopwatch.Start ();
-            for (int i = 0; i < N; i++) {
-                // ... run code to measure time for
-                FbxObject.Create (fbxManager, "");
-            }
-            stopwatch.Stop ();
-
-            total = stopwatch.ElapsedMilliseconds;
-
-            // should destroy all objects allocated by the FbxManager
-            fbxManager.Destroy ();
-
+        private void CheckAgainstNative (string testName, double managedResult, int sampleSize, int threshold)
+        {
             // Check against Native C++ tests
-            var cppResult = RunCppTest ("FbxObjectCreate:" + N);
+            var cppResult = RunCppTest (testName + ":" + sampleSize);
 
             Assert.IsNotNull (cppResult);
 
-            LogResult ("FbxObjectCreate", cppResult.result, total, 4);
+            LogResult (testName, cppResult.result, managedResult, threshold, sampleSize);
 
             // Ex: test that the unity test is no more than 4 times slower
-            Assert.LessOrEqual (total, 4 * cppResult.result);
+            Assert.LessOrEqual (managedResult, threshold * cppResult.result);
+        }
+        
+        // function to run for the test
+        private delegate void TestFunc();
+
+        /*
+         * Default function for running a block of code a bunch of times. 
+         */
+        private void DefaultTest(string testName, int sampleSize, int threshold, TestFunc codeToExecute)
+        {
+            long total = 0;
+
+            m_stopwatch.Reset ();
+            m_stopwatch.Start ();
+
+            codeToExecute ();
+
+            m_stopwatch.Stop ();
+            total = m_stopwatch.ElapsedMilliseconds;
+
+            CheckAgainstNative (testName, total, sampleSize, threshold);
+        }
+
+        [Test]
+        public void FbxObjectCreateTest ()
+        {
+            int N = 5000;
+            DefaultTest (
+                "FbxObjectCreate",
+                N,
+                4,
+                () => {
+                    for (int i = 0; i < N; i++) {
+                        FbxObject.Create (m_fbxManager, "");
+                    }
+                }
+            );
+        }
+
+        [Test]
+        public void SetControlPointAtTest()
+        {
+            int N = 1000000;
+            DefaultTest (
+                "SetControlPointAt",
+                N,
+                4,
+                () => {
+                    FbxGeometryBase geometryBase = FbxGeometryBase.Create(m_fbxManager, "");
+                    geometryBase.InitControlPoints(1);
+                    for(int i = 0; i < N; i ++){
+                        FbxVector4 vector = new FbxVector4(0,0,0);
+                        geometryBase.SetControlPointAt(vector, 0);
+                    }
+                }
+            );
         }
 
         [Test]
         public void EmptyExportImportTest ()
         {
-            var stopwatch = new Stopwatch ();
-
-            FbxManager fbxManager = FbxManager.Create ();
-
             int N = 10;
             long total = 0;
 
             for (int i = 0; i < N; i++) {
-                stopwatch.Reset ();
-                stopwatch.Start ();
+                m_stopwatch.Reset ();
+                m_stopwatch.Start ();
 
-                FbxIOSettings ioSettings = FbxIOSettings.Create (fbxManager, Globals.IOSROOT);
-                fbxManager.SetIOSettings (ioSettings);
+                FbxIOSettings ioSettings = FbxIOSettings.Create (m_fbxManager, Globals.IOSROOT);
+                m_fbxManager.SetIOSettings (ioSettings);
 
-                FbxExporter exporter = FbxExporter.Create (fbxManager, "");
+                FbxExporter exporter = FbxExporter.Create (m_fbxManager, "");
 
                 string filename = "test.fbx";
 
-                bool exportStatus = exporter.Initialize (filename, -1, fbxManager.GetIOSettings ());
+                bool exportStatus = exporter.Initialize (filename, -1, m_fbxManager.GetIOSettings ());
 
                 // Check that export status is True
                 Assert.IsTrue (exportStatus);
 
                 // Create an empty scene to export
-                FbxScene scene = FbxScene.Create (fbxManager, "myScene");
+                FbxScene scene = FbxScene.Create (m_fbxManager, "myScene");
 
                 // Export the scene to the file.
                 exporter.Export (scene);
@@ -172,43 +220,34 @@ namespace PerformanceTests
 
                 // Import to make sure file is valid
 
-                FbxImporter importer = FbxImporter.Create (fbxManager, "");
+                FbxImporter importer = FbxImporter.Create (m_fbxManager, "");
 
-                bool importStatus = importer.Initialize (filename, -1, fbxManager.GetIOSettings ());
+                bool importStatus = importer.Initialize (filename, -1, m_fbxManager.GetIOSettings ());
 
                 Assert.IsTrue (importStatus);
 
                 // Create a new scene so it can be populated
-                FbxScene newScene = FbxScene.Create (fbxManager, "myScene2");
+                FbxScene newScene = FbxScene.Create (m_fbxManager, "myScene2");
 
                 importer.Import (newScene);
 
                 importer.Destroy ();
 
-                stopwatch.Stop ();
+                m_stopwatch.Stop ();
 
-                total += stopwatch.ElapsedMilliseconds;
+                total += m_stopwatch.ElapsedMilliseconds;
 
                 // Delete the file once the test is complete
                 File.Delete (filename);
             }
 
-            fbxManager.Destroy ();
-
-            var cppResult = RunCppTest ("EmptyExportImport:" + N);
-
-            Assert.IsNotNull (cppResult);
-
-            LogResult ("EmptyExportImport", cppResult.result, total / (float)N, 4); 
-
-            // Ex: test that the unity test is no more than 4 times slower
-            Assert.LessOrEqual (total / (float)N, 4 * cppResult.result);
+            CheckAgainstNative ("EmptyExportImport", total / (float)N, N, 4);
         }
 
-        private void LogResult(string testName, double native, double managed, int n){
+        private void LogResult(string testName, double native, double managed, int n, int sampleSize){
             UnityEngine.Debug.Log (
-                String.Format ("Test [{0}]: Managed must run at most {1} times slower than native to pass. (Native = {2} ms, Managed = {3} ms)",
-                    testName, n, native, managed)
+                String.Format ("Test [{0}]: Managed must run at most {1} times slower than native to pass. (Native = {2} ms, Managed = {3} ms, SampleSize = {4}, UnityVersion = {5})",
+                    testName, n, native, managed, sampleSize, InternalEditorUtility.GetFullUnityVersion())
             );
         }
     }
