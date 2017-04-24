@@ -64,7 +64,8 @@
 
 // ignore what we don't need for FbxLayerElementTemplate and FbxLayerElement
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTemplate::.*";
-%rename("$ignore", regextarget=1, fullname=1) "FbxLayerElement::.*";
+// don't ignore enum items (will only show up in C# if we unignore the enum itself)
+%rename("$ignore", "not" %$isenumitem, regextarget=1, fullname=1) "FbxLayerElement::.*";
 
 // unignore enum that we need
 %rename("%s") "FbxLayerElement::EType";
