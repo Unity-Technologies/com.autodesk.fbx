@@ -90,6 +90,15 @@ namespace UnitTests
             var obj = CreateObject("MyObject");
             Assert.IsInstanceOf<T> (obj);
             Assert.AreEqual(Manager, obj.GetFbxManager());
+
+            using(var manager2 = FbxManager.Create()) {
+                var obj2 = CreateObject(manager2, "MyOtherObject");
+                Assert.AreEqual(manager2, obj2.GetFbxManager());
+                Assert.AreNotEqual(Manager, obj2.GetFbxManager());
+            }
+
+            var obj3 = CreateObject(obj, "MySubObject");
+            Assert.AreEqual(Manager, obj3.GetFbxManager());
         }
 
         [Test]
