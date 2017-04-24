@@ -13,12 +13,45 @@
 
 Newer versions of each software likely also work, except for the FBX SDK. To support newer (or older) versions of FBX SDK, you need to edit the FindFBXSDK.cmake file.
 
-This project uses git submodules. After cloning you need to do:
+## Installing from source
+
+First, get the requirements above. Then:
+```
+git clone https://github.com/Unity-Technologies/FbxSharp.git
+```
+This project uses git submodules. After cloning you need to enter the FbxSharp directory and do:
 ```
 git submodule update --init --recursive
 ```
-You need to do this occasionally also when submodules are updated. See e.g.
+If you are developing FbxSharp, you will need to re-issue that command whenever submodules are updated. See e.g.
 https://gist.github.com/gitaarik/8735255
+
+
+Copy-paste to begin developing for OSX or linux:
+```
+# get the source
+git clone https://github.com/Unity-Technologies/FbxSharp.git
+pushd FbxSharp
+git submodule update --init --recursive
+popd
+
+# build the project
+mkdir FbxSharpBuild
+cd FbxSharpBuild
+cmake ../FbxSharp
+make && make install
+
+# run the sample Unity code
+BUILD_PATH=`pwd`
+if test `uname -s` = 'Darwin' ; then
+  UNITY3D_PATH=/Applications/Unity/Unity.app/Contents/MacOS
+else
+  UNITY3D_PATH=/opt/Unity/Editor/Unity
+fi
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${BUILD_PATH}/tests/UnityTests/Assets/Plugins/fbxsdk MONO_LOG_MASK=dll ${UNITY3D_PATH}/Unity -projectpath ${BUILD_PATH}/tests/UnityTests
+```
+
+To build a release version, give `cmake` the `-DCMAKE_BUILD_TYPE=Release` flag.
 
 ## Overview
 
