@@ -1,3 +1,5 @@
+//#define UNI_15935
+//#define UNI_15773
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -10,6 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
+
 
 namespace FbxSdk.Examples
 {
@@ -46,13 +49,17 @@ namespace FbxSdk.Examples
             public static FbxExporter05 Create () { return new FbxExporter05 (); }
 
             /// <summary>
+            /// Map Unity Material Name to FbxMaterial object
+            /// </summary>
+            protected Dictionary<string, object> MaterialMap { private set; get; }
+
+            /// <summary>
             /// Export the mesh's normals, binormals and tangents using 
             /// layer 0.
             /// </summary>
             /// 
             public void ExportNormalsEtc (MeshInfo mesh, FbxMesh fbxMesh)
             {
-#if UNI_15773
                 /// Set the Normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null)
@@ -63,6 +70,7 @@ namespace FbxSdk.Examples
 
                 using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, MakeObjectName ("Normals")))
                 {
+#if UNI_15773
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
@@ -79,12 +87,14 @@ namespace FbxSdk.Examples
                                                              mesh.Normals [n] [1], 
                                                              mesh.Normals [n] [2]));
                     }
+#endif
                     fbxLayer.SetNormals (fbxLayerElement);
                 }
 
                 /// Set the binormals on Layer 0. 
                 using (var fbxLayerElement = FbxLayerElementBinormal.Create (fbxMesh, MakeObjectName ("Binormals"))) 
                 {
+#if UNI_15773
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
@@ -100,12 +110,14 @@ namespace FbxSdk.Examples
                                                              mesh.Binormals [n] [1], 
                                                              mesh.Binormals [n] [2]));
                     }
-                    fbxLayer.SetNormals (fbxLayerElement);
+#endif
+                    fbxLayer.SetBinormals (fbxLayerElement);
                 }
 
                 /// Set the tangents on Layer 0.
                 using (var fbxLayerElement = FbxLayerElementTangent.Create (fbxMesh, MakeObjectName ("Tangents"))) 
                 {
+#if UNI_15773
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
@@ -121,9 +133,9 @@ namespace FbxSdk.Examples
                                                              mesh.Tangents [n] [1],
                                                              mesh.Tangents [n] [2]));
                     }
-                    fbxLayer.SetNormals (fbxLayerElement);
-                }
 #endif
+                    fbxLayer.SetTangents (fbxLayerElement);
+                }
             }
 
             /// <summary>
@@ -132,7 +144,6 @@ namespace FbxSdk.Examples
             /// 
             public void ExportVertexColors (MeshInfo mesh, FbxMesh fbxMesh)
             {
-#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) 
@@ -143,6 +154,7 @@ namespace FbxSdk.Examples
 
                 using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, MakeObjectName ("VertexColor")))
                 {
+#if UNI_15773
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
@@ -159,10 +171,9 @@ namespace FbxSdk.Examples
                                                           mesh.VertexColor[n][1], 
                                                           mesh.VertexColor[n][2]));
                     }
-
-                    fbxLayer.SetVertexColor(fbxLayerElement);
-                }
 #endif
+                    fbxLayer.SetVertexColors(fbxLayerElement);
+                }
             }
 
             /// <summary>
@@ -171,7 +182,6 @@ namespace FbxSdk.Examples
             /// 
             public void ExportUVs (MeshInfo mesh, FbxMesh fbxMesh)
             {
-#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) 
@@ -182,6 +192,7 @@ namespace FbxSdk.Examples
 
                 using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, MakeObjectName ("UVSet")))
                 {
+#if UNI_15773
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygonVertex);
                     fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
 
@@ -201,12 +212,74 @@ namespace FbxSdk.Examples
                     {
                         fbxIndexArray.SetAt (vertIndex, mesh.Indices [vertIndex]);
                     }
-
+#endif
                     fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.eTextureDiffuse);
+                }
+            }
+
+            /// <summary>
+            /// Export the mesh's material mapping using layer 0.
+            /// </summary>
+            /// 
+            public void ExportMaterialMapping (MeshInfo mesh, FbxMesh fbxMesh)
+            {
+                // Set the normals on Layer 0.
+                FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+                if (fbxLayer == null) {
+                    fbxMesh.CreateLayer ();
+                    fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
+                }
+#if UNI_15935
+                using (var fbxLayerElement = FbxLayerElementMaterial.Create (fbxMesh, MakeObjectName ("Materials")))
+                {
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygon);
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
+
+                    fbxLayer.SetMaterials (fbxLayerElement);
                 }
 #endif
             }
 
+            /// <summary>
+            /// Export the mesh's material mapping using layer 0.
+            /// </summary>
+            /// 
+            public object ExportMaterial (MeshInfo mesh, int triangleIndex, FbxScene fbxScene)
+            {
+                object fbxMaterial = null;
+#if UNI_15935
+                // fill in 'classic' material
+
+                // TODO: lookup material from triangle index
+                string materialName = mesh.Material[triangleIndex];
+
+                if (MaterialMap.ContainsKey (materialName))
+                    return MaterialMap [materialName];
+
+                bool shadingModel_Lit = true;
+
+                if (shadingModel_Lit) 
+                {
+                    fbxMaterial = FbxSurfacePhong::Create (fbxScene, materialName);
+                } else 
+                { /* unlit */
+                    fbxMaterial = FbxSurfaceLambert::Create (fbxScene, materialName);
+                }
+
+                // TODO: diffuse
+
+                // TODO: emissive
+
+                // TODO: ambient
+
+                // TODO: normal
+
+                // TODO: transparency
+
+                MaterialMap [materialName] = fbxMaterial;
+#endif
+                return fbxMaterial;
+            }
             /// <summary>
             /// Unconditionally export this mesh object to the file.
             /// We have decided; this mesh is definitely getting exported.
@@ -234,33 +307,36 @@ namespace FbxSdk.Examples
                     fbxMesh.SetControlPointAt(new FbxVector4 (mesh.Vertices [v].x, mesh.Vertices [v].y, mesh.Vertices [v].z), v);
                 }
 
-#if UNI_12952_STRETCH_MATERIALS
-                /* create the materials.
-                 * Each polygon face will be assigned a unique material.
-                 */
-                FbxGeometryElementMaterial lMaterialElement = fbxMesh.CreateElementMaterial ();
-
-                lMaterialElement.SetMappingMode (FbxGeometryElement.eAllSame);
-                lMaterialElement.SetReferenceMode (FbxGeometryElement.eIndexToDirect);
-                lMaterialElement.GetIndexArray ().Add (0);
-#endif
+                ExportNormalsEtc (mesh, fbxMesh);
+				ExportVertexColors (mesh, fbxMesh);
+				ExportUVs (mesh, fbxMesh);
+				ExportMaterialMapping (mesh, fbxMesh);
 
                 /* 
-                 * Create polygons after FbxGeometryElementMaterial are created. 
-                 * TODO: Assign material indices.
+                 * Create polygons after FbxLayerElementMaterial have been created. 
                  */
                 int vId = 0;
-                for (int f = 0; f < mesh.Triangles.Length / 3; f++) {
-                    fbxMesh.BeginPolygon ();
+                int materialIndex = -1;
+
+                object fbxPrevMaterial = null;
+
+                for (int f = 0; f < mesh.Triangles.Length / 3; f++) 
+                {
+                    object fbxMaterial = ExportMaterial (mesh, f, fbxScene);
+#if UNI_15935
+                    if (fbxMaterial != fbxPrevMaterial) 
+                    {
+                        materialIndex = fbxNode.AddMaterial (fbxMaterial as FbxMaterial);
+                    }
+#endif
+                    fbxMesh.BeginPolygon (materialIndex);
                     fbxMesh.AddPolygon (mesh.Triangles [vId++]);
                     fbxMesh.AddPolygon (mesh.Triangles [vId++]);
                     fbxMesh.AddPolygon (mesh.Triangles [vId++]);
                     fbxMesh.EndPolygon ();
-                }
 
-                ExportNormalsEtc (mesh, fbxMesh);
-                ExportVertexColors (mesh, fbxMesh);
-                ExportUVs (mesh, fbxMesh);
+                    fbxPrevMaterial = fbxMaterial;
+                }
 
                 // set the fbxNode containing the mesh
                 fbxNode.SetNodeAttribute (fbxMesh);
