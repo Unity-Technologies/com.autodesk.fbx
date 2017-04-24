@@ -47,7 +47,10 @@
 %ignore RemapIndexArrayTo;
 %ignore FbxGetDirectArray; 
 
-// ignore everything we don't need in classes that we do need
+// This statement ignores everything in FbxLayerElementNormal, except the class itself.
+// Using this so that we can then unignore what we need from the class, instead of
+// having to ignore each function individually.
+// Also makes it easy to see which functions are actually being wrapped.
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementNormal::.*";
 %rename("%s") FbxLayerElementNormal::Create;
 
@@ -64,20 +67,16 @@
 %rename("%s") FbxLayerElementVertexColor::Create;
 
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayer::.*";
-
-// unignore what we do need
 %rename("%s") FbxLayer::SetNormals;
 %rename("%s") FbxLayer::SetBinormals;
 %rename("%s") FbxLayer::SetVertexColors;
 %rename("%s") FbxLayer::SetUVs;
 %rename("%s") FbxLayer::SetTangents;
 
-// ignore what we don't need for FbxLayerElementTemplate and FbxLayerElement
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTemplate::.*";
 
 // don't ignore enum items (will only show up in C# if we unignore the enum itself)
 %rename("$ignore", "not" %$isenumitem, regextarget=1, fullname=1) "FbxLayerElement::.*";
-
 // unignore enum that we need
 %rename("%s") "FbxLayerElement::EType";
 
