@@ -65,8 +65,12 @@
 
 #define IGNORE_ALL_INCLUDE_SOME
 
-#ifdef IGNORE_ALL_INCLUDE_SOME                  // Ignore all but unignore some
-%ignore "";                                 
+#ifdef IGNORE_ALL_INCLUDE_SOME
+/* Ignore everything, and force the devs to allow certain items back in one by one.
+ * Exception: don't force the devs to allow individual enum items in -- if we
+ * allow the enum itself, all the values will come in. */
+%ignore "";
+%rename("%s", %$isenumitem) "";
 
 #else                                       // Include everything but ignore some
 %ignore __declspec(deprecated);             // Ignore deprecated anything
