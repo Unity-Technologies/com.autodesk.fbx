@@ -100,7 +100,6 @@
 %include "fbxgeometrybase.i"
 %include "fbxgeometry.i"
 %include "fbxmesh.i"
-%include "fbxlayer.i"
 %include "fbxglobalsettings.i"
 #endif
 

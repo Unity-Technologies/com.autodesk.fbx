@@ -10,3 +10,4 @@
 
 %include "fbxtypes.i"
 %include "fbxproperty.i"
+%include "fbxlayer.i"
