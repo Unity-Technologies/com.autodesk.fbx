@@ -29,6 +29,7 @@ namespace UnitTests
         [Test]
         public void TestBasics()
         {
+            // Use all the constants.
             using (FbxAxisSystem.MayaZUp) { }
             using (FbxAxisSystem.MayaYUp) { }
             using (FbxAxisSystem.Max) { }
@@ -36,9 +37,41 @@ namespace UnitTests
             using (FbxAxisSystem.OpenGL) { }
             using (FbxAxisSystem.DirectX) { }
             using (FbxAxisSystem.Lightwave) { }
+
+            // Use this one again (make sure we don't crash) */
+            using (FbxAxisSystem.MayaZUp) { }
+
+            // Test the copy constructor.
             var axes = new FbxAxisSystem(FbxAxisSystem.Lightwave);
+
+            // Test equality functions.
             Assert.That(axes.GetHashCode(), Is.LessThan(0));
+            Assert.AreEqual(FbxAxisSystem.Lightwave, axes);
+            Assert.IsFalse(FbxAxisSystem.MayaZUp == axes);
+            Assert.IsTrue(FbxAxisSystem.MayaZUp != axes);
+
+            // Test the predefined-enum constructor.
+            Assert.AreEqual(axes, new FbxAxisSystem(FbxAxisSystem.EPreDefinedAxisSystem.eLightwave));
             axes.Dispose();
+
+            // Test the no-arg constructor.
+            using (new FbxAxisSystem()) { }
+
+            // Construct from the three axes. Test we can get the three axes, including the sign.
+            axes = new FbxAxisSystem(
+                FbxAxisSystem.EUpVector.eYAxis,
+                FbxAxisSystem.EFrontVector.eParityOddNegative, // negative! check the sign goes through
+                FbxAxisSystem.ECoordSystem.eLeftHanded);
+            Assert.AreEqual(FbxAxisSystem.EUpVector.eYAxis, axes.GetUpVector());
+            Assert.AreEqual(FbxAxisSystem.EFrontVector.eParityOddNegative, axes.GetFrontVector());
+            Assert.AreEqual(FbxAxisSystem.ECoordSystem.eLeftHanded, axes.GetCoorSystem());
+
+            // Test we can call ConvertScene and not crash.
+            using (var Manager = FbxManager.Create()) {
+                var scene = FbxScene.Create(Manager, "scene");
+                axes.ConvertScene(scene);
+            }
         }
+
     }
 }
