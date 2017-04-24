@@ -51,6 +51,24 @@ fi
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${BUILD_PATH}/tests/UnityTests/Assets/Plugins/fbxsdk MONO_LOG_MASK=dll ${UNITY3D_PATH}/Unity -projectpath ${BUILD_PATH}/tests/UnityTests
 ```
 
+Copy-paste to begin developing for Windows:
+```
+# get the source
+git clone https://github.com/Unity-Technologies/FbxSharp.git
+pushd FbxSharp
+git submodule update --init --recursive
+popd
+
+# build the project
+mkdir FbxSharpBuild
+cd FbxSharpBuild
+cmake ../FbxSharp -G"Visual Studio 14 2015 Win64"
+cmake --build . --target INSTALL --config Release
+
+# run the sample Unity code
+"C:/Program Files/Unity/Editor/Unity.exe" -projectpath %cd%/tests/UnityTests
+```
+
 To build a release version, give `cmake` the `-DCMAKE_BUILD_TYPE=Release` flag.
 
 ## Overview
