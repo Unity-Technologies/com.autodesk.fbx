@@ -23,17 +23,7 @@
 
 /* Get a couple of enums. But *not* the up/front vector, which we handle specially. */
 %rename("%s") FbxAxisSystem::ECoordSystem;
-%rename("%s") FbxAxisSystem::eRightHanded;
-%rename("%s") FbxAxisSystem::eLeftHanded;
-
 %rename("%s") FbxAxisSystem::EPreDefinedAxisSystem;
-%rename("%s") FbxAxisSystem::eMayaZUp;
-%rename("%s") FbxAxisSystem::eMayaYUp;
-%rename("%s") FbxAxisSystem::eMax;
-%rename("%s") FbxAxisSystem::eMotionBuilder;
-%rename("%s") FbxAxisSystem::eOpenGL;
-%rename("%s") FbxAxisSystem::eDirectX;
-%rename("%s") FbxAxisSystem::eLightwave;
 
 /* Get two extended functions, and the non-extended GetCoorSystem. */
 %rename("%s") FbxAxisSystem::GetUpVector();
