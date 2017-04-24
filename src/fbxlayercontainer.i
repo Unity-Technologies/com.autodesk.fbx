@@ -10,6 +10,8 @@
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
+%rename("%s") FbxLayerContainer::CreateLayer;
+%rename("%s") FbxLayerContainer::GetLayer(int pIndex);
 #endif
 
 %include "fbxsdk/scene/geometry/fbxlayercontainer.h"
