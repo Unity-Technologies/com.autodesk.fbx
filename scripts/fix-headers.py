@@ -44,11 +44,11 @@ for inname in sys.argv[2:]:
         # this appears in fbxlayer.h
         line = re.sub('const static', 'static const', line)
         line = re.sub(
-            'class FBXSDK_DLL FbxLayerElementNormal : public FbxLayerElementTemplate<FbxVector4>',
-            '%template(FbxLayerElementTemplateFbxVector4) FbxLayerElementTemplate<FbxVector4>; \
+            r'(class FBXSDK_DLL FbxLayerElementNormal : public FbxLayerElementTemplate<FbxVector4>)',
+            r'%template(FbxLayerElementTemplateFbxVector4) FbxLayerElementTemplate<FbxVector4>; \
              %template(FbxLayerElementTemplateFbxVector2) FbxLayerElementTemplate<FbxVector2>; \
              %template(FbxLayerElementTemplateFbxColor) FbxLayerElementTemplate<FbxColor>; \
-             class FBXSDK_DLL FbxLayerElementNormal : public FbxLayerElementTemplate<FbxVector4>',
+             \1',
              line
         )
         
