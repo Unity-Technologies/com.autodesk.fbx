@@ -13,7 +13,6 @@
 %ignore FbxLayerElementMaterial;
 %ignore LayerElementArrayProxy;
 %ignore FbxLayerElementPolygonGroup;
-%ignore FbxLayerElementVertexColor;
 %ignore FbxLayerElementUserData;
 %ignore FbxLayerElementSmoothing;
 %ignore FbxLayerElementCrease;
@@ -50,15 +49,26 @@
 
 // ignore everything we don't need in classes that we do need
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementNormal::.*";
+%rename("%s") FbxLayerElementNormal::Create;
+
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementBinormal::.*";
+%rename("%s") FbxLayerElementBinormal::Create;
+
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTangent::.*";
+%rename("%s") FbxLayerElementTangent::Create;
+
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementUV::.*";
+%rename("%s") FbxLayerElementUV::Create;
+
+%rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementVertexColor::.*";
+%rename("%s") FbxLayerElementVertexColor::Create;
+
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayer::.*";
 
 // unignore what we do need
 %rename("%s") FbxLayer::SetNormals;
 %rename("%s") FbxLayer::SetBinormals;
-%rename("%s") FbxLayer::SetVertexColor;
+%rename("%s") FbxLayer::SetVertexColors;
 %rename("%s") FbxLayer::SetUVs;
 %rename("%s") FbxLayer::SetTangents;
 
