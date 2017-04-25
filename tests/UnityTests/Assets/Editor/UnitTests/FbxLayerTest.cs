@@ -125,8 +125,10 @@ namespace UnitTests
         [Test]
         public void TestDispose()
         {
+            // make sure that calling SetNormals on a disposed layer throws
             m_fbxLayer.Dispose ();
-            Assert.That(() => m_fbxLayer.SetNormals (null), Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That(() => m_fbxLayer.SetNormals (FbxLayerElementNormal.Create(m_fbxMesh, "")),
+                Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
         #if ENABLE_COVERAGE_TEST
