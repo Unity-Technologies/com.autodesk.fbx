@@ -14,6 +14,9 @@
 %rename("%s") FbxObject::Create(FbxManager* pManager, const char* pName); // named method
 %rename("%s") FbxObject::Destroy;
 %rename("%s") FbxObject::GetName;
+%rename("%s") FbxObject::SetName;
+%rename("%s") FbxObject::GetInitialName;
+%rename("%s") FbxObject::SetInitialName;
 %rename("%s") FbxObject::GetNameWithoutNameSpacePrefix;
 %rename("%s") FbxObject::SetNameSpace;
 %rename("%s") FbxObject::GetNameSpaceOnly;

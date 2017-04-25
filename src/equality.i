@@ -58,6 +58,7 @@
   }
 
   public bool Equals($csclassname other) {
+    if (object.ReferenceEquals(other, null)) { return false; }
     return this.swigCPtr.Handle.Equals (other.swigCPtr.Handle);
   }
 %} }

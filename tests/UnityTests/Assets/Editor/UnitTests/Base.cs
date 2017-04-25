@@ -13,12 +13,19 @@ namespace UnitTests
 {
     public abstract class Base<T> where T: FbxSdk.FbxObject
     {
+        // T.Create(FbxManager, string)
+        static System.Reflection.MethodInfo s_createFromMgrAndName;
+
+        // T.Create(FbxObject, string)
+        static System.Reflection.MethodInfo s_createFromObjAndName;
+
         static Base() {
             s_createFromMgrAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxManager), typeof(string)});
             s_createFromObjAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxObject), typeof(string)});
 
 #if ENABLE_COVERAGE_TEST
             // Register the calls we make through reflection.
+
             // We use reflection in CreateObject(FbxManager, string) and CreateObject(FbxObject, string).
             if (s_createFromMgrAndName != null) {
                 var createFromMgrAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxManager), typeof(string)});
@@ -28,8 +35,12 @@ namespace UnitTests
                 var createFromObjAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxObject), typeof(string)});
                 CoverageTester.RegisterReflectionCall(createFromObjAndName, s_createFromObjAndName);
             }
+
+            // Make sure to have the equality tester register its methods right now.
+            EqualityTester<T>.RegisterCoverage();
 #endif
         }
+
 
         protected FbxManager Manager {
             get;
@@ -46,26 +57,22 @@ namespace UnitTests
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
 #endif
 
+        /* Test all the equality functions we can find. */
+        [Test]
+        public virtual void TestEquality() {
+            EqualityTester<T>.TestEquality(CreateObject("a"), CreateObject("b"));
+        }
+
         /* Create an object with another manager. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
-        static System.Reflection.MethodInfo s_createFromMgrAndName;
         public virtual T CreateObject (FbxManager mgr, string name = "") {
-            try {
-                return (T)(s_createFromMgrAndName.Invoke(null, new object[] {mgr, name}));
-            } catch(System.Reflection.TargetInvocationException xcp) {
-                throw xcp.GetBaseException();
-            }
+            return Invoker.InvokeStatic<T>(s_createFromMgrAndName, mgr, name);
         }
 
         /* Create an object with an object as container. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
-        static System.Reflection.MethodInfo s_createFromObjAndName;
         public virtual T CreateObject (FbxObject container, string name = "") {
-            try {
-                return (T)(s_createFromObjAndName.Invoke(null, new object[] {container, name}));
-            } catch(System.Reflection.TargetInvocationException xcp) {
-                throw xcp.GetBaseException();
-            }
+            return Invoker.InvokeStatic<T>(s_createFromObjAndName, container, name);
         }
 
         [SetUp]
@@ -229,6 +236,12 @@ namespace UnitTests
             // We don't want to convert the other StripPrefix functions, which
             // modify their argument in-place.
             Assert.AreEqual("MyObject", FbxObject.StripPrefix("NameSpace::MyObject"));
+
+            obj.SetName("new name");
+            Assert.AreEqual("new name", obj.GetName());
+
+            obj.SetInitialName("init");
+            Assert.AreEqual("init", obj.GetInitialName());
 
             obj.Destroy();
         }

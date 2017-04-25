@@ -18,8 +18,11 @@
 %rename("%s") FbxNode::GetChild(int);
 %rename("%s") FbxNode::GetChildCount(bool pRecursive = false) const;
 %rename("%s") FbxNode::FindChild;
+%immutable FbxNode::LclTranslation;
 %rename("%s") FbxNode::LclTranslation;
+%immutable FbxNode::LclRotation;
 %rename("%s") FbxNode::LclRotation;
+%immutable FbxNode::LclScaling;
 %rename("%s") FbxNode::LclScaling;
 %rename("%s") FbxNode::SetNodeAttribute;
 %rename("%s") FbxNode::GetNodeAttribute();

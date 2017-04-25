@@ -18,9 +18,17 @@ namespace UnitTests
     {
 
 #if ENABLE_COVERAGE_TEST
+        static FbxDouble4Test() { EqualityTester<FbxDouble4>.RegisterCoverage(); }
+
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDouble4), this.GetType()); }
 #endif
+
+        [Test]
+        public void TestEquality()
+        {
+            EqualityTester<FbxDouble4>.TestEquality(new FbxDouble4(0, 1, 2, 3), new FbxDouble4(3, 2, 1, 0));
+        }
 
         /// <summary>
         /// Test the basics. Subclasses should override and add some calls
@@ -37,30 +45,6 @@ namespace UnitTests
             // make sure we can dispose
             using (new FbxDouble4()) { }
             new FbxDouble4().Dispose();
-
-            // make sure equality works.
-            Assert.IsTrue(new FbxDouble4().Equals(new FbxDouble4()));
-
-            Assert.IsTrue(new FbxDouble4() == new FbxDouble4());
-            Assert.IsFalse(new FbxDouble4() != new FbxDouble4());
-
-            Assert.IsFalse(new FbxDouble4() == (FbxDouble4)null);
-            Assert.IsTrue(new FbxDouble4() != (FbxDouble4)null);
-
-            Assert.IsFalse((FbxDouble4)null == new FbxDouble4());
-            Assert.IsTrue((FbxDouble4)null != new FbxDouble4());
-
-            Assert.IsTrue((FbxDouble4)null == (FbxDouble4)null);
-            Assert.IsFalse((FbxDouble4)null != (FbxDouble4)null);
-
-            Assert.IsTrue(new FbxDouble4(1,2,3,4) == new FbxDouble4(1,2,3,4));
-            Assert.IsFalse(new FbxDouble4(1,2,3,4) != new FbxDouble4(1,2,3,4));
-
-            Assert.IsFalse(new FbxDouble4(1,2,3,0) == new FbxDouble4(1,2,3,4));
-            Assert.IsTrue(new FbxDouble4(1,2,3,0) != new FbxDouble4(1,2,3,4));
-
-            v = new FbxDouble4(1,2,3,4);
-            Assert.AreEqual(v, v);
 
             // Test other constructors
             v = new FbxDouble4(1, 2, 3, 4);
