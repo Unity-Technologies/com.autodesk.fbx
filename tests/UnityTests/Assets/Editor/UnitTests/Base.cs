@@ -119,77 +119,44 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestDestroySelf ()
+        public void TestDisposeDestroy ()
         {
-            // We can call destroy with no args, or with a 'false' argument.
-            // Test both.
-            var obj = CreateObject ();
+            T a, b;
 
-            Assert.IsNotNull (obj);
-            Assert.IsInstanceOf<FbxObject> (obj);
-            obj.Destroy ();
+            // Test destroying just yourself.
+            a = CreateObject ("a");
+            a.Destroy ();
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
-            var obj2 = CreateObject ();
-            obj2.Destroy (false);
-        }
+            // Test destroying just yourself, explicitly non-recursive.
+            a = CreateObject ("a");
+            a.Destroy (false);
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
-        [Test]
-        public void TestDestroyRecursive ()
-        {
-            var obj = CreateObject ();
+            // Test destroying recursively.
+            a = CreateObject ("a");
+            b = CreateObject(a, "b");
+            a.Destroy(true);
+            Assert.That(() => b.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
-            Assert.IsNotNull (obj);
-            Assert.IsInstanceOf<FbxObject> (obj);
-            obj.Destroy (true);
-        }
+            // Test disposing. TODO: how to test that a was actually destroyed?
+            a = CreateObject("a");
+            a.Dispose();
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
 
-        [Test]
-        public void TestUsing ()
-        {
             // Test that the using statement works.
-            using (var obj = CreateObject ()) {
-                obj.GetName ();
+            using (a = CreateObject ("a")) {
+                a.GetName (); // works here, throws outside using
             }
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
 
-            // Test also that an explicit Dispose works.
-            var obj2 = CreateObject();
-            obj2.Dispose();
-        }
-
-        [Test]
-        public void TestDestroyedZombie ()
-        {
-            // Test that if we try to use an object after Destroy()ing it,
-            // we get an exception (not a crash).
-            var obj = CreateObject();
-            Assert.IsNotNull (obj);
-            obj.Destroy ();
-            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-        }
-
-        [Test]
-        public void TestDestroyedManagerZombie ()
-        {
-            // Test that if we try to use an object after Destroy()ing its
-            // manager, the object was destroyed as well.
-            var obj = CreateObject();
-            Assert.IsNotNull (obj);
+            // Test that if we try to use an aect after Destroy()ing its
+            // manager, the aect was destroyed as well.
+            a = CreateObject("a");
+            Assert.IsNotNull (a);
             Manager.Destroy();
-            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-        }
-
-        [Test]
-        public void TestDisposedZombie ()
-        {
-            // Test that if we try to use an object after Dispose()ing it,
-            // we get an exception (not a crash). This is a regression test
-            // based on some wrong code:
-            T zombie;
-            using(var obj = CreateObject()) {
-                Assert.IsNotNull (obj);
-                zombie = obj;
-            }
-            Assert.That (() => { zombie.GetName (); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { a.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
