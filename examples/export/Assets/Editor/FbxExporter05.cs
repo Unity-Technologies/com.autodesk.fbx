@@ -1,4 +1,4 @@
-//#define UNI_15935
+#define UNI_15935
 //#define UNI_15773
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
@@ -237,29 +237,46 @@ namespace FbxSdk.Examples
             /// </summary>
             /// 
 #if UNI_15935
-            public object ExportTexture (Material unityMaterial, string unityPropertyName, FbxScene fbxScene, FbxMaterial fbxMaterial, string fbxPropertyName)
+            public object ExportTexture (Material unityMaterial, string  unityPropName, FbxScene fbxScene, FbxMaterial fbxMaterial, string  fbxPropName)
             {
                 // does fbx material support property                
-                FbxProperty fbxMatProperty = fbxMaterial.FindProperty (fbxPropertyName);
+                FbxProperty fbxMatProperty = fbxMaterial.FindProperty ( fbxPropName);
 
                 if (fbxMatProperty.IsValid()) 
                 {
                     // is unity texture connected to material?
-                    Texture unityTexture = unityMaterial.GetTexture (unityPropertyName);
+                    Texture unityTexture = unityMaterial.GetTexture ( unityPropName);
 
                     if (unityTexture != null) 
                     {
-                        FbxFileTexture fbxTexture = FbxFileTexture::Create (fbxScene, MakeObjectName (fbxPropertyName + "_Texture"));
+                        FbxFileTexture fbxTexture = FbxFileTexture::Create (fbxScene, MakeObjectName ( fbxPropName + "_Texture"));
 
                         fbxTexture.SetFileName (textureSourceFullPath);
                         fbxTexture.SetTextureUse (FbxTexture.eStandard);
                         fbxTexture.SetMappingType (FbxTexture.eUV);
                         fbxTexture.ConnectDstProperty (FbxColorProperty);
+
+                        return fbxTexture;
+                    }
+                }
+
+                return null;
+            }
+
+            public void ExportMaterialColor(Material unityMaterial, string  unityPropName, FbxMaterial fbxMaterial, string fbxPropName, bool toLinearSpace)
+            {
+                if (unityMaterial.HasProperty(unityPropName))
+                {
+                    Color unityColor = unityMaterial.GetColor (unityPropName);
+                    if (unityColor != null) 
+                    {
+                        Color unityColor2 = toLinearSpace ? unityColor : unityColor.linear;
+
+                        fbxMaterial.Set (new FbxDouble3 (unityColor2.r, unityColor2.g, unityColor2.b));
                     }
                 }
             }
 #endif
-
             /// <summary>
             /// Export (and map) a Unity PBS material to FBX classic material
             /// </summary>
@@ -268,23 +285,23 @@ namespace FbxSdk.Examples
             {
                 object fbxMaterial = null;
 #if UNI_15935
-                // export textures (color, normal map and specular)
-
-                // map standard PBS material to 'classic' material
-
                 // TODO: lookup material from triangle index
                 string materialName = mesh.Material[triangleIndex];
 
                 if (MaterialMap.ContainsKey (materialName))
                     return MaterialMap [materialName];
 
-                // map shader name to mapping method
-                bool mapUnityStandardWithSpecularToClassic = true;
+                // TODO: determine if we need to export in linear color space
+                bool toLinearSpace = false;
 
-                if (mapUnityStandardWithSpecularToClassic)
+                /*
+                 * TODO: should we attempt to map PBS material to classic material
+                 */
+                bool mapToClassicMaterial = true;
+
+                if (mapToClassicMaterial)
                 {
-                    // determine shading model match 
-                    // going from PBS to Classic
+                    // TODO: determine shading model match 
                     bool phongShadingModel = true; 
 
                     if (phongShadingModel) 
@@ -296,28 +313,59 @@ namespace FbxSdk.Examples
                         fbxMaterial = FbxSurfaceLambert::Create (fbxScene, materialName);
                     }
 
-                    // TODO: Albedo Color => diffuse
-                    string unityPropertyName = "_MainTex";
-                    string fbxPropertyName = "diffuse";
-                    ExportTexture(unityMaterial, unityPropertyName, fbxScene, fbxPropertyName);
+                    // Albedo Color => diffuse
+                    if (ExportTexture (unityMaterial,  "_MainTex", fbxScene, fbxMaterial.sDiffuse) == null) 
+                    {
+                        ExportMaterialColor (unityMaterial, "_Color", fbxMaterial, fbxMaterial.sDiffuse);
+                    }
 
-                    // TODO: specular
-                    unityPropertyName = "_Cube";
-                    string fbxPropertyName = "specular";
-                    ExportTexture (unityMaterial, unityPropertyName, fbxScene, fbxPropertyName);
+                    // Specular => specular
+                    if (ExportTexture (unityMaterial,  "_SpecGlosMap", fbxScene,  fbxMaterial.sSpecular)!=null)
+                    {
+                        ExportMaterialColor (unityMaterial, "_SpecColor", fbxMaterial, fbxMaterial.sSpecular, toLinearSpace);
+                    }
 
-                    // TODO: emissive
+                    // => emissive (used in vertexlit shaders)
+                    if (ExportTexture (unityMaterial,  "_EmissionMap", fbxScene,  "emissive")!=null)
+                    {
+                        ExportMaterialColor (unityMaterial, "_EmissionColor", fbxMaterial, fbxMaterial.sEmissive, toLinearSpace);
+                    }
 
-                    // TODO: ambient
+                    // => ambient (avoid default value in target DCC)
+                    if (phongShadingModel) 
+                    {
+                        fbxMaterial.Ambient.Set(new FbxDouble3 (0.0, 0.0, 0.0));
+                    }
 
-                    // TODO: Normal Map => normal
-                    unityPropertyName = "_BumpMap";
-                    string fbxPropertyName = "normal";
-                    ExportTexture (unityMaterial, unityPropertyName, fbxScene, fbxPropertyName);
+                    // Normal Map => normal
+                    if (ExportTexture (unityMaterial, "_BumpMap", fbxScene, fbxMaterial.sNormalMap) != null) 
+                    {
+                        // (Material Value) _BumpScale => BumpFactor
+                        if (unityMaterial.HasProperty ("_BumpScale")) 
+                        {
+                            fbxMaterial.BumpFactor.Set (unityMaterial.GetFloat ("_BumpScale"));
+                        }
+                    }
 
-                    // TODO: Albedo Color Alpha (Transparency) => transparency
+                    /*
+                     * TODO: if Material.Color.A!=1 && RenderingMode==Transparent, Assigning Material.Color.A (alpha)
+                     * => transparencyFactor
+                     */
+
+                    /* TODO: 
+                     * Albedo has Alpha channel, how do I map texture w alpha to transparent color?
+                     * => sTransparentColor
+                     */
+
+                } 
+                else 
+                {
+                    /*
+                     * TODO: export PBS PropertyNames directly to fbx
+                     * or convert to a specific DCC PBS material
+                     */
                 }
-
+    
                 MaterialMap [materialName] = fbxMaterial;
 #endif
                 return fbxMaterial;
