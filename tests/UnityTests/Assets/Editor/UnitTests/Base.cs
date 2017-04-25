@@ -99,27 +99,23 @@ namespace UnitTests
 
             var obj3 = CreateObject(obj, "MySubObject");
             Assert.AreEqual(Manager, obj3.GetFbxManager());
-        }
 
-        [Test]
-        public void TestCreateNullContainer()
-        {
+            // Test with a null manager or container. Should throw.
             Assert.That (() => { CreateObject((FbxManager)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
             Assert.That (() => { CreateObject((FbxObject)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-        }
 
-        [Test]
-        public void TestCreateNullName()
-        {
-            CreateObject((string)null);
-        }
+            // Test with a null string. Should work.
+            Assert.IsNotNull(CreateObject((string)null));
 
-        [Test]
-        public void TestCreateZombieManager()
-        {
+            // Test with a destroyed manager. Should throw.
             var mgr = FbxManager.Create();
             mgr.Destroy();
             Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+            // Test with a disposed manager. Should throw.
+            mgr = FbxManager.Create();
+            mgr.Dispose();
+            Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
         [Test]
