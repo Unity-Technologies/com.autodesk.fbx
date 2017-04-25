@@ -56,26 +56,6 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestSetControlPointAtInvalidFbxVector4 ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (5);
-                FbxVector4 vector = new FbxVector4 ();
-                vector.Dispose ();
-                Assert.That (() => { geometryBase.SetControlPointAt (vector, 0); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-            }
-        }
-
-        [Test]
-        public void TestSetControlPointAtNullFbxVector4 ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (5);
-                Assert.That (() => { geometryBase.SetControlPointAt (null, 0); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-            }
-        }
-
-        [Test]
         public void TestSetControlPointAtInvalidIndex ()
         {
             using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
