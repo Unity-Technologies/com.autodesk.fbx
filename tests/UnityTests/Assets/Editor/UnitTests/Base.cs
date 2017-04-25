@@ -237,6 +237,12 @@ namespace UnitTests
             // modify their argument in-place.
             Assert.AreEqual("MyObject", FbxObject.StripPrefix("NameSpace::MyObject"));
 
+            obj.SetName("new name");
+            Assert.AreEqual("new name", obj.GetName());
+
+            obj.SetInitialName("init");
+            Assert.AreEqual("init", obj.GetInitialName());
+
             obj.Destroy();
         }
     }
