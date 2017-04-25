@@ -199,10 +199,8 @@ namespace FbxSdk
         public double Z;
         public double W;
 
-        public FbxVector4(double X) { this.X = this.Y = this.Z = this.W = X; }
-        public FbxVector4(double X, double Y, double Z) { this.X = X; this.Y = Y; this.Z = Z; this.W = 1; }
-        public FbxVector4(double X, double Y, double Z, double W) { this.X = X; this.Y = Y; this.Z = Z; this.W = W; }
         public FbxVector4(FbxVector4 other) { this.X = other.X; this.Y = other.Y; this.Z = other.Z; this.W = other.W; }
+        public FbxVector4(double X, double Y, double Z, double W = 1) { this.X = X; this.Y = Y; this.Z = Z; this.W = W; }
         public FbxVector4(FbxDouble3 other) : this (other.X, other.Y, other.Z) { }
 
         public double this[int i] {
