@@ -84,10 +84,61 @@
 %rename("%s") FbxLayerElement::SetMappingMode;
 %rename("%s") FbxLayerElement::SetReferenceMode;
 
-%rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementArray::.*";
+// Ignore everything we don't need from FbxLayerElementArray.
+// Have to do this so that we can expose the templates for method Add()
+%ignore FbxLayerElementArray::ELockMode;
+%ignore FbxLayerElementArray::FbxLayerElementArray;
+%ignore FbxLayerElementArray::~FbxLayerElementArray;
+%ignore FbxLayerElementArray::ClearStatus;
+%ignore FbxLayerElementArray::GetStatus;
+%ignore FbxLayerElementArray::IsWriteLocked;
+%ignore FbxLayerElementArray::GetReadLockCount;
+%ignore FbxLayerElementArray::IsInUse;
+%ignore FbxLayerElementArray::ReadLock;
+%ignore FbxLayerElementArray::ReadUnlock;
+%ignore FbxLayerElementArray::WriteLock;
+%ignore FbxLayerElementArray::WriteUnlock;
+%ignore FbxLayerElementArray::ReadWriteLock;
+%ignore FbxLayerElementArray::ReadWriteUnlock;
+%ignore FbxLayerElementArray::GetLocked;
+%ignore FbxLayerElementArray::Release;
+%ignore FbxLayerElementArray::GetStride;
+%ignore FbxLayerElementArray::GetCount;
+%ignore FbxLayerElementArray::SetCount;
+%ignore FbxLayerElementArray::Clear;
+%ignore FbxLayerElementArray::Resize;
+%ignore FbxLayerElementArray::AddMultiple;
+%ignore FbxLayerElementArray::Add(const void* pItem, EFbxType pValueType);
+%ignore FbxLayerElementArray::InsertAt;
+%ignore FbxLayerElementArray::SetAt;
+%ignore FbxLayerElementArray::SetLast;
+%ignore FbxLayerElementArray::RemoveAt;
+%ignore FbxLayerElementArray::RemoveLast;
+%ignore FbxLayerElementArray::RemoveIt;
+%ignore FbxLayerElementArray::GetAt;
+%ignore FbxLayerElementArray::GetFirst;
+%ignore FbxLayerElementArray::GetLast;
+%ignore FbxLayerElementArray::Find;
+%ignore FbxLayerElementArray::FindAfter;
+%ignore FbxLayerElementArray::FindBefore;
+%ignore FbxLayerElementArray::IsEqual;
+%ignore FbxLayerElementArray::CopyTo;
+%ignore FbxLayerElementArray::GetDataPtr;
+%ignore FbxLayerElementArray::GetReference;
+%ignore FbxLayerElementArray::GetReferenceTo;
+%ignore FbxLayerElementArray::SetStatus;
+%ignore FbxLayerElementArray::SetImplementation;
+%ignore FbxLayerElementArray::GetImplementation;
+%ignore FbxLayerElementArray::ConvertDataType;
+%ignore FbxLayerElementArray::mDataType;
+
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
 
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
+
+%template(Add) FbxLayerElementArray::Add<FbxColor>;
+%template(Add) FbxLayerElementArray::Add<FbxVector2>;
+%template(Add) FbxLayerElementArray::Add<FbxVector4>;
 
 // needed for FbxLayerElementTemplate templates (more specifically for the GetArray() functions)
 %template(FbxLayerElementArrayTemplateFbxColor) FbxLayerElementArrayTemplate<FbxColor>;
