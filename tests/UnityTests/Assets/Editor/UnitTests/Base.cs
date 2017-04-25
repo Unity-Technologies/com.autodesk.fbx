@@ -97,101 +97,79 @@ namespace UnitTests
             var obj = CreateObject("MyObject");
             Assert.IsInstanceOf<T> (obj);
             Assert.AreEqual(Manager, obj.GetFbxManager());
-        }
 
-        [Test]
-        public void TestCreateNullContainer()
-        {
+            using(var manager2 = FbxManager.Create()) {
+                var obj2 = CreateObject(manager2, "MyOtherObject");
+                Assert.AreEqual(manager2, obj2.GetFbxManager());
+                Assert.AreNotEqual(Manager, obj2.GetFbxManager());
+            }
+
+            var obj3 = CreateObject(obj, "MySubObject");
+            Assert.AreEqual(Manager, obj3.GetFbxManager());
+
+            // Test with a null manager or container. Should throw.
             Assert.That (() => { CreateObject((FbxManager)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
             Assert.That (() => { CreateObject((FbxObject)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-        }
 
-        [Test]
-        public void TestCreateNullName()
-        {
-            CreateObject((string)null);
-        }
+            // Test with a null string. Should work.
+            Assert.IsNotNull(CreateObject((string)null));
 
-        [Test]
-        public void TestCreateZombieManager()
-        {
+            // Test with a destroyed manager. Should throw.
             var mgr = FbxManager.Create();
             mgr.Destroy();
             Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+            // Test with a disposed manager. Should throw.
+            mgr = FbxManager.Create();
+            mgr.Dispose();
+            Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
         [Test]
-        public void TestDestroySelf ()
+        public void TestDisposeDestroy ()
         {
-            // We can call destroy with no args, or with a 'false' argument.
-            // Test both.
-            var obj = CreateObject ();
+            T a, b;
 
-            Assert.IsNotNull (obj);
-            Assert.IsInstanceOf<FbxObject> (obj);
-            obj.Destroy ();
+            // Test destroying just yourself.
+            a = CreateObject ("a");
+            b = CreateObject(a, "b");
+            a.Destroy ();
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            b.GetName(); // does not throw! tests that the implicit 'pRecursive: false' got through
+            b.Destroy();
 
-            var obj2 = CreateObject ();
-            obj2.Destroy (false);
-        }
+            // Test destroying just yourself, explicitly non-recursive.
+            a = CreateObject ("a");
+            b = CreateObject(a, "b");
+            a.Destroy (false);
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            b.GetName(); // does not throw! tests that the 'false' got through
+            b.Destroy();
 
-        [Test]
-        public void TestDestroyRecursive ()
-        {
-            var obj = CreateObject ();
+            // Test destroying recursively.
+            a = CreateObject ("a");
+            b = CreateObject(a, "b");
+            a.Destroy(true);
+            Assert.That(() => b.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
-            Assert.IsNotNull (obj);
-            Assert.IsInstanceOf<FbxObject> (obj);
-            obj.Destroy (true);
-        }
+            // Test disposing. TODO: how to test that a was actually destroyed?
+            a = CreateObject("a");
+            a.Dispose();
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
 
-        [Test]
-        public void TestUsing ()
-        {
             // Test that the using statement works.
-            using (var obj = CreateObject ()) {
-                obj.GetName ();
+            using (a = CreateObject ("a")) {
+                a.GetName (); // works here, throws outside using
             }
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
 
-            // Test also that an explicit Dispose works.
-            var obj2 = CreateObject();
-            obj2.Dispose();
-        }
-
-        [Test]
-        public void TestDestroyedZombie ()
-        {
-            // Test that if we try to use an object after Destroy()ing it,
-            // we get an exception (not a crash).
-            var obj = CreateObject();
-            Assert.IsNotNull (obj);
-            obj.Destroy ();
-            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-        }
-
-        [Test]
-        public void TestDestroyedManagerZombie ()
-        {
             // Test that if we try to use an object after Destroy()ing its
             // manager, the object was destroyed as well.
-            var obj = CreateObject();
-            Assert.IsNotNull (obj);
+            a = CreateObject("a");
+            Assert.IsNotNull (a);
             Manager.Destroy();
-            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-        }
-
-        [Test]
-        public void TestDisposedZombie ()
-        {
-            // Test that if we try to use an object after Dispose()ing it,
-            // we get an exception (not a crash). This is a regression test
-            // based on some wrong code:
-            T zombie;
-            using(var obj = CreateObject()) {
-                Assert.IsNotNull (obj);
-                zombie = obj;
-            }
-            Assert.That (() => { zombie.GetName (); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { a.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
