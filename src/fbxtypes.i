@@ -8,6 +8,15 @@
 %ignore FbxMin;
 %ignore FbxMax;
 
+/* First we start with the optimized vectors. */
+%{
+#include "FbxDoubleTemplates.h"
+%}
+%declare_hand_optimized_type(FbxVectorTemplate2<double>, FbxSharpDouble2, FbxDouble2);
+%declare_hand_optimized_type(FbxVectorTemplate3<double>, FbxSharpDouble3, FbxDouble3);
+%declare_hand_optimized_type(FbxVectorTemplate4<double>, FbxSharpDouble4, FbxDouble4);
+
+/* Then we provide support for the non-optimized types. */
 %define %rename_vector_operators(THETYPE, N)
 
 /* No operator=, just a copy constructor */
@@ -51,6 +60,8 @@
   }
   %}
 }
+
+/* Store the data */
 %ignore THETYPE::Buffer;
 %ignore THETYPE::mData;
 %ignore operator THETYPE<T>&;
@@ -81,6 +92,7 @@
 }
 %enddef
 
+/* Provide X/Y/Z/W properties to look more C#-like. */
 %define %implement_vector_variables(THETYPE, NAME, INDEX)
 %extend THETYPE {
   %proxycode %{
@@ -145,9 +157,8 @@
 
 %include "fbxsdk/core/arch/fbxtypes.h"
 
-// Templates must *follow* the include, unlike everything else in swig.
+/* Templates must *follow* the include, unlike everything else in swig. */
 %template("FbxDouble2") FbxVectorTemplate2<double>;
 %template("FbxDouble3") FbxVectorTemplate3<double>;
 %template("FbxDouble4") FbxVectorTemplate4<double>;
 %template("FbxDouble4x4") FbxVectorTemplate4<FbxDouble4>;
-
