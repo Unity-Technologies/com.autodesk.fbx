@@ -125,13 +125,19 @@ namespace UnitTests
 
             // Test destroying just yourself.
             a = CreateObject ("a");
+            b = CreateObject(a, "b");
             a.Destroy ();
             Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            b.GetName(); // does not throw! tests that the implicit 'pRecursive: false' got through
+            b.Destroy();
 
             // Test destroying just yourself, explicitly non-recursive.
             a = CreateObject ("a");
+            b = CreateObject(a, "b");
             a.Destroy (false);
             Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            b.GetName(); // does not throw! tests that the 'false' got through
+            b.Destroy();
 
             // Test destroying recursively.
             a = CreateObject ("a");
