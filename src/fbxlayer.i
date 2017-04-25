@@ -77,7 +77,12 @@
 
 // don't ignore enum items (will only show up in C# if we unignore the enum itself)
 %rename("$ignore", "not" %$isenumitem, regextarget=1, fullname=1) "FbxLayerElement::.*";
-// unignore enum that we need
-%rename("%s") "FbxLayerElement::EType";
+// unignore enums that we need
+%rename("%s") FbxLayerElement::EType;
+%rename("%s") FbxLayerElement::EMappingMode;
+%rename("%s") FbxLayerElement::EReferenceMode;
+
+%rename("%s") FbxLayerElement::SetMappingMode;
+%rename("%s") FbxLayerElement::SetReferenceMode;
 
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
