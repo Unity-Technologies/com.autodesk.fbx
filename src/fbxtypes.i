@@ -10,7 +10,7 @@
 
 /* First we start with the optimized vectors. */
 %{
-#include "FbxDoubleTemplates.h"
+#include "optimized/FbxDoubleTemplates.h"
 %}
 %declare_hand_optimized_type(FbxVectorTemplate2<double>, FbxSharpDouble2, FbxDouble2);
 %declare_hand_optimized_type(FbxVectorTemplate3<double>, FbxSharpDouble3, FbxDouble3);
