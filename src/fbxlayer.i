@@ -7,9 +7,7 @@
 
 // ignore everything we don't need
 %ignore LockAccessStatus;
-%ignore FbxLayerElementArray;
 %ignore FbxLayerElementArrayReadLock;
-%ignore FbxLayerElementArrayTemplate;
 %ignore FbxLayerElementMaterial;
 %ignore LayerElementArrayProxy;
 %ignore FbxLayerElementPolygonGroup;
@@ -74,6 +72,7 @@
 %rename("%s") FbxLayer::SetTangents;
 
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTemplate::.*";
+%rename("%s") FbxLayerElementTemplate::GetDirectArray() const;
 
 // don't ignore enum items (will only show up in C# if we unignore the enum itself)
 %rename("$ignore", "not" %$isenumitem, regextarget=1, fullname=1) "FbxLayerElement::.*";
@@ -85,4 +84,12 @@
 %rename("%s") FbxLayerElement::SetMappingMode;
 %rename("%s") FbxLayerElement::SetReferenceMode;
 
+%rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementArray::.*";
+%rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
+
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
+
+// needed for FbxLayerElementTemplate templates (more specifically for the GetArray() functions)
+%template(FbxLayerElementArrayTemplateFbxColor) FbxLayerElementArrayTemplate<FbxColor>;
+%template(FbxLayerElementArrayTemplateFbxVector2) FbxLayerElementArrayTemplate<FbxVector2>;
+%template(FbxLayerElementArrayTemplateFbxVector4) FbxLayerElementArrayTemplate<FbxVector4>;
