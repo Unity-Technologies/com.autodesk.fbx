@@ -19,50 +19,9 @@ namespace UnitTests
         // T.Create(FbxObject, string)
         static System.Reflection.MethodInfo s_createFromObjAndName;
 
-        // T.Equals(T), T.Equals(base(T), ...
-        static List<System.Reflection.MethodInfo> s_Equals = new List<System.Reflection.MethodInfo>();
-
-        // operator== (T, T), operator== (base(T), base(T), ...
-        static List<System.Reflection.MethodInfo> s_op_Equality = new List<System.Reflection.MethodInfo>();
-
-        // operator!= (T, T), operator== (base(T), base(T), ...
-        static List<System.Reflection.MethodInfo> s_op_Inequality = new List<System.Reflection.MethodInfo>();
-
         static Base() {
             s_createFromMgrAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxManager), typeof(string)});
             s_createFromObjAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxObject), typeof(string)});
-
-            // For T and its base classes B1, B2, ...
-            // get the following functions so we can test equality:
-            // bool Equals(U)
-            // static bool operator == (U, U)
-            // static bool operator != (U, U)
-            var U = typeof(T);
-            do {
-                // Get all the methods, look for Equals(U), op_Equality(U,U), and op_Inequality(U,U)
-                var methods = U.GetMethods();
-                foreach(var method in methods) {
-                    if (method.Name == "Equals") {
-                        var parms = method.GetParameters();
-                        if (parms.Length == 1 && parms[0].ParameterType == U) {
-                            s_Equals.Add(method);
-                        }
-                    } else if (method.Name == "op_Equality") {
-                        var parms = method.GetParameters();
-                        if (parms.Length == 2 && parms[0].ParameterType == U && parms[1].ParameterType == U) {
-                            s_op_Equality.Add(method);
-                        }
-                    } else if (method.Name == "op_Inequality") {
-                        var parms = method.GetParameters();
-                        if (parms.Length == 2 && parms[0].ParameterType == U && parms[1].ParameterType == U) {
-                            s_op_Inequality.Add(method);
-                        }
-                    }
-                }
-
-                // Repeat on the base type, if there is one.
-                U = U.BaseType;
-            } while (U != null);
 
 #if ENABLE_COVERAGE_TEST
             // Register the calls we make through reflection.
@@ -77,28 +36,11 @@ namespace UnitTests
                 CoverageTester.RegisterReflectionCall(createFromObjAndName, s_createFromObjAndName);
             }
 
-            // We use reflection in TestEquality
-            var testEquality = typeof(Base<T>).GetMethod("TestEquality");
-            foreach(var equals in s_Equals) { CoverageTester.RegisterReflectionCall(testEquality, equals); }
-            foreach(var equals in s_op_Equality) { CoverageTester.RegisterReflectionCall(testEquality, equals); }
-            foreach(var equals in s_op_Inequality) { CoverageTester.RegisterReflectionCall(testEquality, equals); }
+            // Make sure to have the equality tester register its methods right now.
+            EqualityTester<T>.RegisterCoverage();
 #endif
         }
 
-        static U Invoke<U>(System.Reflection.MethodInfo method, object instance, params object [] args) {
-            try {
-                return (U)(method.Invoke(instance, args));
-            } catch(System.Reflection.TargetInvocationException xcp) {
-                throw xcp.GetBaseException();
-            }
-        }
-        static U InvokeStatic<U>(System.Reflection.MethodInfo method, params object [] args) {
-            try {
-                return (U)(method.Invoke(null, args));
-            } catch(System.Reflection.TargetInvocationException xcp) {
-                throw xcp.GetBaseException();
-            }
-        }
 
         protected FbxManager Manager {
             get;
@@ -118,48 +60,19 @@ namespace UnitTests
         /* Test all the equality functions we can find. */
         [Test]
         public virtual void TestEquality() {
-            var a = CreateObject("a");
-            var b = CreateObject("b");
-
-            // Test all the Equals functions on a.
-            // a.Equals(a) is true
-            // a.Equals(b) is false
-            // a.Equals(null) is false and doesn't throw an exception
-            foreach(var equals in s_Equals) {
-                Assert.IsTrue(Invoke<bool>(equals, a, a));
-                Assert.IsFalse(Invoke<bool>(equals, a, b));
-                Assert.IsFalse(Invoke<bool>(equals, a, (object)null)); // passing null passes a null params
-            }
-
-            // test operator== in various cases including null handling
-            foreach(var equals in s_op_Equality) {
-                Assert.IsTrue(InvokeStatic<bool>(equals, a, a ));
-                Assert.IsFalse(InvokeStatic<bool>(equals, a, b ));
-                Assert.IsFalse(InvokeStatic<bool>(equals, a, null ));
-                Assert.IsFalse(InvokeStatic<bool>(equals, null, b ));
-                Assert.IsTrue(InvokeStatic<bool>(equals, null, null ));
-            }
-
-            // test operator!= in the same cases; should always return ! the answer
-            foreach(var equals in s_op_Inequality) {
-                Assert.IsTrue(!InvokeStatic<bool>(equals, a, a ));
-                Assert.IsFalse(!InvokeStatic<bool>(equals, a, b ));
-                Assert.IsFalse(!InvokeStatic<bool>(equals, a, null ));
-                Assert.IsFalse(!InvokeStatic<bool>(equals, null, b ));
-                Assert.IsTrue(!InvokeStatic<bool>(equals, null, null ));
-            }
+            EqualityTester<T>.TestEquality(CreateObject("a"), CreateObject("b"));
         }
 
         /* Create an object with another manager. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
         public virtual T CreateObject (FbxManager mgr, string name = "") {
-            return InvokeStatic<T>(s_createFromMgrAndName, mgr, name);
+            return Invoker.InvokeStatic<T>(s_createFromMgrAndName, mgr, name);
         }
 
         /* Create an object with an object as container. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
         public virtual T CreateObject (FbxObject container, string name = "") {
-            return InvokeStatic<T>(s_createFromObjAndName, container, name);
+            return Invoker.InvokeStatic<T>(s_createFromObjAndName, container, name);
         }
 
         [SetUp]
