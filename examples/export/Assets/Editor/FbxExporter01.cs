@@ -25,7 +25,7 @@ namespace FbxSdk.Examples
                  @"Example FbxExporter01 illustrates how to:
                                 1) create and initialize an exporter
                                 2) create a scene
-                                3) export a scene to a FBX file (ASCII mode)
+                                3) export a scene to a FBX file (ASCII, V7 compatible)
                                         ";
 
             const string Keywords =
@@ -58,11 +58,35 @@ namespace FbxSdk.Examples
                     // Create the exporter 
                     var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
 
+                    // Find first FBX ASCII file format
+                    int fileFormat = -1;
+
+                    using (var ioPluginRegistry = fbxManager.GetIOPluginRegistry ()) 
+                    {
+                        int fileFormatCount = ioPluginRegistry.GetWriterFormatCount ();
+
+                        for (int formatIndex = 0; formatIndex < fileFormatCount; formatIndex++) 
+                        {
+                            if (ioPluginRegistry.WriterIsFBX (formatIndex)) {
+                                string description = ioPluginRegistry.GetWriterFormatDescription (formatIndex);
+
+                                if (description.IndexOf ("ascii") >= 0)
+                                {
+                                    fileFormat = formatIndex;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     // Initialize the exporter.
-                    bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
+                    bool status = fbxExporter.Initialize (LastFilePath, fileFormat, fbxManager.GetIOSettings ());
                     // Check that initialization of the fbxExporter was successful
                     if (!status)
                         return 0;
+
+                    // Configure export version compatibility
+                    fbxExporter.SetFileExportVersion (Globals.FBX_2016_00_COMPATIBLE);
 
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
