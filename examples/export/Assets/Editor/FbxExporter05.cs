@@ -335,6 +335,10 @@ namespace FbxSdk.Examples
                     if (!status)
                         return 0;
 
+                    // By default, FBX exports in its most recent version. You might want to specify
+                    // an older version for compatibility with other applications.
+                    fbxExporter.SetFileExportVersion("FBX201400");
+
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
 

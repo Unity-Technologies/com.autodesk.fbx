@@ -58,35 +58,15 @@ namespace FbxSdk.Examples
                     // Create the exporter 
                     var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
 
-                    // Find first FBX ASCII file format
-                    int fileFormat = -1;
-
-                    using (var ioPluginRegistry = fbxManager.GetIOPluginRegistry ()) 
-                    {
-                        int fileFormatCount = ioPluginRegistry.GetWriterFormatCount ();
-
-                        for (int formatIndex = 0; formatIndex < fileFormatCount; formatIndex++) 
-                        {
-                            if (ioPluginRegistry.WriterIsFBX (formatIndex)) {
-                                string description = ioPluginRegistry.GetWriterFormatDescription (formatIndex);
-
-                                if (description.IndexOf ("ascii") >= 0)
-                                {
-                                    fileFormat = formatIndex;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
                     // Initialize the exporter.
-                    bool status = fbxExporter.Initialize (LastFilePath, fileFormat, fbxManager.GetIOSettings ());
+                    bool status = fbxExporter.Initialize (LastFilePath);
                     // Check that initialization of the fbxExporter was successful
                     if (!status)
                         return 0;
 
-                    // Configure export version compatibility
-                    fbxExporter.SetFileExportVersion (Globals.FBX_2016_00_COMPATIBLE);
+                    // By default, FBX exports in its most recent version. You might want to specify
+                    // an older version for compatibility with other applications.
+                    fbxExporter.SetFileExportVersion("FBX201400");
 
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));

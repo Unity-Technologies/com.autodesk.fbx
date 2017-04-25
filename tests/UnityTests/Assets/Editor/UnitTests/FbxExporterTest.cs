@@ -10,7 +10,6 @@ using System.IO;
 
 namespace UnitTests
 {
-
     public class FbxExporterTest : Base<FbxExporter>
     {
         FbxExporter m_exporter;
@@ -79,6 +78,19 @@ namespace UnitTests
 
             // delete all files that were created
             Directory.Delete(m_testFolder, true);
+        }
+
+        [Test]
+        public void TestBasics()
+        {
+            // Call each function that doesn't write a file, just to see whether it crashes.
+            using (var exporter = CreateObject()) { exporter.Initialize("foo.fbx"); }
+            using (var exporter = CreateObject()) { exporter.Initialize("foo.fbx", -1); }
+            using (var exporter = CreateObject()) { exporter.Initialize("foo.fbx", -1, null); }
+
+            m_exporter.Initialize("foo.fbx");
+            m_exporter.SetFileExportVersion("FBX201400");
+            m_exporter.GetCurrentWritableVersions();
         }
 
         [Test]
