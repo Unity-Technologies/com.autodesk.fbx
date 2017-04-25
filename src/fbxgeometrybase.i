@@ -14,25 +14,20 @@
 %rename("%s") FbxGeometryBase::GetControlPointsCount;
 %rename("%s") FbxGeometryBase::GetControlPointAt;
 
-// add some bounds checking to SetControlPointAt
-%csmethodmodifiers FbxGeometryBase::SetControlPointAt "private";
-%rename(SetControlPointAt_private) FbxGeometryBase::SetControlPointAt(const FbxVector4& pCtrlPoint, int pIndex);
-%rename("%s") FbxGeometryBase::SetControlPointAt_private;
-
-%extend FbxGeometryBase {
-  %proxycode %{
-  public virtual void SetControlPointAt(FbxVector4 pCtrlPoint, int pIndex)
-  {
-    if(pIndex < 0 || pIndex >= this.GetControlPointsCount()){
-        throw new System.IndexOutOfRangeException();
-    }
-    else{
-        SetControlPointAt_private(pCtrlPoint, pIndex);
-    }
-  }
-  %}
-}
-
 #endif
+
+// add some bounds checking to SetControlPointAt
+%ignore FbxGeometryBase::SetControlPointAt;
+%rename("SetControlPointAt") FbxGeometryBase::SetControlPointChecked;
+%extend FbxGeometryBase {
+  void SetControlPointChecked(const FbxVector4& pCtrlPoint, int pIndex)
+  {
+    if (pIndex < 0 || pIndex >= $self->GetControlPointsCount()) {
+      SWIG_CSharpSetPendingException(SWIG_CSharpIndexOutOfRangeException, "");
+      return;
+    }
+    $self->SetControlPointAt(pCtrlPoint, pIndex);
+  }
+}
 
 %include "fbxsdk/scene/geometry/fbxgeometrybase.h"

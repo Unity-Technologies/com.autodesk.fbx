@@ -16,14 +16,21 @@ namespace UnitTests
 {
     public class FbxGeometryBaseTest : Base<FbxGeometryBase>
     {
-
         [Test]
-        public void TestInitControlPoints ()
+        public void TestBasics()
         {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (24);
-                Assert.AreEqual (geometryBase.GetControlPointsCount (), 24);
-            }
+            var geometryBase = CreateObject ("geometry base");
+
+            geometryBase.InitControlPoints (24);
+            Assert.AreEqual (geometryBase.GetControlPointsCount (), 24);
+            geometryBase.SetControlPointAt(new FbxVector4(1,2,3,4), 0);
+            Assert.AreEqual(new FbxVector4(1,2,3,4), geometryBase.GetControlPointAt(0));
+
+            int layerId0 = geometryBase.CreateLayer();
+            int layerId1 = geometryBase.CreateLayer();
+            var layer0 = geometryBase.GetLayer(layerId0);
+            var layer1 = geometryBase.GetLayer(layerId1);
+            Assert.AreNotEqual(layer0, layer1);
         }
 
         [Test]
@@ -44,20 +51,10 @@ namespace UnitTests
                 geometryBase.SetControlPointAt (vector, 0);
                 Assert.AreEqual (vector, geometryBase.GetControlPointAt (0));
             }
-        }
-
-        [Test]
-        public void TestSetControlPointAtWithoutInit ()
-        {
             using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
                 FbxVector4 vector = new FbxVector4 ();
-                geometryBase.SetControlPointAt (vector, 0);
+                Assert.That (() => geometryBase.SetControlPointAt (vector, 0), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             }
-        }
-
-        [Test]
-        public void TestSetControlPointAtInvalidIndex ()
-        {
             using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
                 geometryBase.InitControlPoints (5);
                 FbxVector4 vector = new FbxVector4 ();
