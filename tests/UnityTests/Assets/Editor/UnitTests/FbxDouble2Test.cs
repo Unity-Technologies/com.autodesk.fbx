@@ -18,7 +18,7 @@ namespace UnitTests
     {
 
 #if ENABLE_COVERAGE_TEST
-        static FbxDouble2Test() { EqualityTester<FbxDouble2>.RegisterCoverage(); }
+        //static FbxDouble2Test() { EqualityTester<FbxDouble2>.RegisterCoverage(); }
 
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDouble2), this.GetType()); }
@@ -27,7 +27,7 @@ namespace UnitTests
         [Test]
         public void TestEquality()
         {
-            EqualityTester<FbxDouble2>.TestEquality(new FbxDouble2(0, 1), new FbxDouble2(1, 0));
+            // EqualityTester<FbxDouble2>.TestEquality(new FbxDouble2(0, 1), new FbxDouble2(1, 0));
         }
 
         /// <summary>
@@ -40,10 +40,6 @@ namespace UnitTests
 
             // make sure the no-arg constructor doesn't crash
             new FbxDouble2();
-
-            // make sure we can dispose
-            using (new FbxDouble2()) { }
-            new FbxDouble2().Dispose();
 
             // Test other constructors
             v = new FbxDouble2(1, 2);

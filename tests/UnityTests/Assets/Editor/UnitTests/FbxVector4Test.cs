@@ -11,6 +11,15 @@ namespace UnitTests
 {
     public class FbxVector4Test
     {
+
+        //static FbxVector4Test() { EqualityTester<FbxDouble3>.RegisterCoverage(); }
+
+        [Test]
+        public void TestEquality()
+        {
+         //   EqualityTester<FbxDouble4>.TestEquality(new FbxDouble4(0, 1, 2, 3), new FbxDouble4(3, 2, 1, 0));
+        }
+
         [Test]
         public void BasicTests ()
         {
@@ -18,25 +27,6 @@ namespace UnitTests
 
             // make sure the no-arg constructor doesn't crash
             new FbxVector4();
-
-            // make sure we can dispose
-            using (new FbxVector4()) { }
-            new FbxVector4().Dispose();
-
-            // make sure equality works.
-            Assert.IsTrue(new FbxVector4().Equals(new FbxVector4()));
-
-            Assert.IsTrue(new FbxVector4() == new FbxVector4());
-            Assert.IsFalse(new FbxVector4() != new FbxVector4());
-
-            Assert.IsFalse(new FbxVector4() == (FbxVector4)null);
-            Assert.IsTrue(new FbxVector4() != (FbxVector4)null);
-
-            Assert.IsFalse((FbxVector4)null == new FbxVector4());
-            Assert.IsTrue((FbxVector4)null != new FbxVector4());
-
-            Assert.IsTrue((FbxVector4)null == (FbxVector4)null);
-            Assert.IsFalse((FbxVector4)null != (FbxVector4)null);
 
             // Test other constructors
             v = new FbxVector4(1, 2, 3, 4);
