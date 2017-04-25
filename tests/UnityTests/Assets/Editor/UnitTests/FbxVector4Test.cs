@@ -11,13 +11,17 @@ namespace UnitTests
 {
     public class FbxVector4Test
     {
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxVector4), this.GetType()); }
 
-        //static FbxVector4Test() { EqualityTester<FbxDouble3>.RegisterCoverage(); }
+        static FbxVector4Test() { EqualityTester<FbxVector4>.RegisterCoverage(); }
+#endif
 
         [Test]
         public void TestEquality()
         {
-         //   EqualityTester<FbxDouble4>.TestEquality(new FbxDouble4(0, 1, 2, 3), new FbxDouble4(3, 2, 1, 0));
+            EqualityTester<FbxVector4>.TestEquality(new FbxVector4(0, 1, 2, 3), new FbxVector4(3, 2, 1, 0));
         }
 
         [Test]
@@ -74,10 +78,5 @@ namespace UnitTests
             Assert.AreEqual(5, v.Z);
             Assert.AreEqual(6, v.W);
         }
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxVector4), this.GetType()); }
-#endif
     }
 }

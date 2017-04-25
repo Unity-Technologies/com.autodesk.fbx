@@ -18,7 +18,7 @@ namespace UnitTests
     {
 
 #if ENABLE_COVERAGE_TEST
-        //static FbxDouble4Test() { EqualityTester<FbxDouble4>.RegisterCoverage(); }
+        static FbxDouble4Test() { EqualityTester<FbxDouble4>.RegisterCoverage(); }
 
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDouble4), this.GetType()); }
@@ -27,7 +27,7 @@ namespace UnitTests
         [Test]
         public void TestEquality()
         {
-            // EqualityTester<FbxDouble4>.TestEquality(new FbxDouble4(0, 1, 2, 3), new FbxDouble4(3, 2, 1, 0));
+            EqualityTester<FbxDouble4>.TestEquality(new FbxDouble4(0, 1, 2, 3), new FbxDouble4(3, 2, 1, 0));
         }
 
         /// <summary>
