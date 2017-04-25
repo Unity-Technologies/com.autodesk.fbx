@@ -151,8 +151,8 @@ namespace UnitTests
             }
             Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
 
-            // Test that if we try to use an aect after Destroy()ing its
-            // manager, the aect was destroyed as well.
+            // Test that if we try to use an object after Destroy()ing its
+            // manager, the object was destroyed as well.
             a = CreateObject("a");
             Assert.IsNotNull (a);
             Manager.Destroy();
