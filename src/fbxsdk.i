@@ -120,6 +120,7 @@
 %include "fbxgeometry.i"
 %include "fbxmesh.i"
 %include "fbxglobalsettings.i"
+%include "fbxpropertytypes.i"
 #endif
 
 /* Everything */
