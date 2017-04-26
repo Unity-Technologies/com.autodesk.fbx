@@ -30,8 +30,14 @@ namespace UnitTests
         // T.Create(FbxLayerContainer, string)
         static System.Reflection.MethodInfo s_createFromLayerContainerAndName;
 
+        static System.Reflection.MethodInfo s_getDirectArray;
+        static System.Reflection.MethodInfo s_getIndexArray;
+
         static FbxLayerElementTestBase() {
             s_createFromLayerContainerAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxLayerContainer), typeof(string)});
+
+            s_getDirectArray = typeof(T).GetMethod ("GetDirectArray");
+            s_getIndexArray = typeof(T).GetMethod ("GetIndexArray");
 
             #if ENABLE_COVERAGE_TEST
             // Register the calls we make through reflection.
@@ -40,6 +46,16 @@ namespace UnitTests
             if (s_createFromLayerContainerAndName != null) {
                 var createFromLayerContainerAndName = typeof(FbxLayerElementTestBase<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxLayerContainer), typeof(string)});
                 CoverageTester.RegisterReflectionCall(createFromLayerContainerAndName, s_createFromLayerContainerAndName);
+            }
+
+            if(s_getDirectArray != null){
+                var getDirectArray = typeof(FbxLayerElementTestBase<T>).GetMethod("GetDirectArray");
+                CoverageTester.RegisterReflectionCall(getDirectArray, s_getDirectArray);
+            }
+
+            if(s_getIndexArray != null){
+                var getIndexArray = typeof(FbxLayerElementTestBase<T>).GetMethod("GetIndexArray");
+                CoverageTester.RegisterReflectionCall(getIndexArray, s_getIndexArray);
             }
 
             // Make sure to have the equality tester register its methods right now.
@@ -74,6 +90,16 @@ namespace UnitTests
          * reflection to call T.Create(...); override if reflection is wrong. */
         public virtual T CreateObject (FbxLayerContainer layerContainer, string name = "") {
             return Invoker.InvokeStatic<T>(s_createFromLayerContainerAndName, layerContainer, name);
+        }
+
+        public virtual FbxLayerElementArray GetDirectArray(T layerElement)
+        {
+            return Invoker.Invoke<FbxLayerElementArray> (s_getDirectArray, layerElement);
+        }
+
+        public virtual FbxLayerElementArrayTemplateInt GetIndexArray(T layerElement)
+        {
+            return Invoker.Invoke<FbxLayerElementArrayTemplateInt> (s_getIndexArray, layerElement);
         }
 
         [SetUp]
@@ -140,87 +166,37 @@ namespace UnitTests
             layerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
             Assert.AreEqual (layerElement.GetReferenceMode (), FbxLayerElement.EReferenceMode.eDirect);
         }
-    }
 
-    /*
-     * Convenience classes for testing functions of FbxLayerElementTemplate and its derived classes.
-     * 
-     * FbxLayerElementTemplate derives from FbxLayerElement, so we also derive from FbxLayerElementTestBase.
-     * FbxLayerElementTemplate has no public constructors or Create function, therefore
-     * this class is abstract and must be inherited from for the tests to run.
-     * 
-     * Had to create a test class for each template (FbxVector2, FbxVector4, and FbxColor)
-     * as the template type is part of the class name.
-     */
-    public abstract class FbxLayerElementTemplateFbxVector4Test<T> : FbxLayerElementTestBase<T>
-        where T: FbxSdk.FbxLayerElementTemplateFbxVector4
-    {
-            [Test]
-            public void TestGetDirectArray() {
-                var layerElement = CreateObject ("element");
-                // make sure this doesn't crash
-                layerElement.GetDirectArray ();
-            }
-
-            [Test]
-            public void TestGetIndexArray() {
-                var layerElement = CreateObject ("element");
-                // make sure this doesn't crash
-                layerElement.GetIndexArray ();
-            }
-    }
-
-    public abstract class FbxLayerElementTemplateFbxColorTest<T> : FbxLayerElementTestBase<T>
-        where T: FbxSdk.FbxLayerElementTemplateFbxColor
-    {
         [Test]
         public void TestGetDirectArray() {
             var layerElement = CreateObject ("element");
             // make sure this doesn't crash
-            layerElement.GetDirectArray ();
+            GetDirectArray (layerElement);
         }
 
         [Test]
         public void TestGetIndexArray() {
             var layerElement = CreateObject ("element");
             // make sure this doesn't crash
-            layerElement.GetIndexArray ();
-        }
-    }
-
-    public abstract class FbxLayerElementTemplateFbxVector2Test<T> : FbxLayerElementTestBase<T>
-        where T: FbxSdk.FbxLayerElementTemplateFbxVector2
-    {
-        [Test]
-        public void TestGetDirectArray() {
-            var layerElement = CreateObject ("element");
-            // make sure this doesn't crash
-            layerElement.GetDirectArray ();
-        }
-
-        [Test]
-        public void TestGetIndexArray() {
-            var layerElement = CreateObject ("element");
-            // make sure this doesn't crash
-            layerElement.GetIndexArray ();
+            GetIndexArray (layerElement);
         }
     }
 
     /*
      * Tests for the classes derived from the FbxLayerElementTemplate classes.
      */
-    public class FbxLayerElementUVTest : FbxLayerElementTemplateFbxVector2Test<FbxLayerElementUV>
+    public class FbxLayerElementUVTest : FbxLayerElementTestBase<FbxLayerElementUV>
     {}
 
-    public class FbxLayerElementVertexColorTest : FbxLayerElementTemplateFbxColorTest<FbxLayerElementVertexColor>
+    public class FbxLayerElementVertexColorTest : FbxLayerElementTestBase<FbxLayerElementVertexColor>
     {}
 
-    public class FbxLayerElementNormalTest : FbxLayerElementTemplateFbxVector4Test<FbxLayerElementNormal>
+    public class FbxLayerElementNormalTest : FbxLayerElementTestBase<FbxLayerElementNormal>
     {}
 
-    public class FbxLayerElementBinormalTest : FbxLayerElementTemplateFbxVector4Test<FbxLayerElementBinormal>
+    public class FbxLayerElementBinormalTest : FbxLayerElementTestBase<FbxLayerElementBinormal>
     {}
 
-    public class FbxLayerElementTangentTest : FbxLayerElementTemplateFbxVector4Test<FbxLayerElementTangent>
+    public class FbxLayerElementTangentTest : FbxLayerElementTestBase<FbxLayerElementTangent>
     {}
 }
