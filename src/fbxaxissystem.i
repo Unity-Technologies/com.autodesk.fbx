@@ -47,8 +47,16 @@
 %typemap(imtype) FbxAxisSystem::EFrontVector "int";
 %typemap(ctype) FbxAxisSystem::EUpVector "int";
 %typemap(ctype) FbxAxisSystem::EFrontVector "int";
-%typemap(csout) FbxAxisSystem::EUpVector { return (EUpVector)$imcall; }
-%typemap(csout) FbxAxisSystem::EFrontVector { return (EFrontVector)$imcall; }
+/* This is the standard behaviour for enums, but the $csclassname
+ * isn't set up correctly. */
+%typemap(csout, excode=SWIGEXCODE) FbxAxisSystem::EUpVector {
+    EUpVector result = (EUpVector)$imcall;$excode;
+    return result;
+  }
+%typemap(csout, excode=SWIGEXCODE) FbxAxisSystem::EFrontVector {
+    EFrontVector result = (EFrontVector)$imcall;$excode;
+    return result;
+  }
 %ignore FbxAxisSystem::EUpVector;
 %ignore FbxAxisSystem::EFrontVector;
 %extend FbxAxisSystem {

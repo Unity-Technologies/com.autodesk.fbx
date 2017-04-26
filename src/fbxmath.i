@@ -9,8 +9,9 @@
  * This is initial work on defining the math types:
  * - matrix (FbxMatrix)
  * - affine matrix (FbxAMatrix)
- * - vector (FbxVector4)
+ * Vector4 is handled specially because it's performance-critical.
  */
+%declare_hand_optimized_type(FbxVector4, FbxSharpDouble4, FbxVector4);
 
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
@@ -22,19 +23,6 @@
 #endif
 
 %include "fbxsdk_csharp-fixed-headers/fbxmatrix.h"
-
-
-#ifdef IGNORE_ALL_INCLUDE_SOME
-// Unignore class
-%rename("%s") FbxVector4;
-%ignore FbxVector4::FbxVector4(const double pValue[4]);
-%rename("%s") FbxVector4::~FbxVector4;
-%extend FbxVector4 {
-  ~FbxVector4() { delete self; }
-}
-#endif
-
-%include "fbxsdk/core/math/fbxvector4.h"
 
 
 #ifdef IGNORE_ALL_INCLUDE_SOME

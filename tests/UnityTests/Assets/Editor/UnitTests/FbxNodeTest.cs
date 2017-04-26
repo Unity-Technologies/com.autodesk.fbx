@@ -13,7 +13,7 @@ namespace UnitTests
     public class FbxNodeTest : Base<FbxNode>
     {
         [Test]
-        public void TestNodeBasics ()
+        public void TestBasics ()
         {
             bool ok;
             FbxNode found;
@@ -23,6 +23,13 @@ namespace UnitTests
 
             Assert.AreEqual(0, root.GetChildCount()); // non-recursive
             Assert.AreEqual(0, root.GetChildCount(true)); // recursive
+
+            var t = root.LclTranslation;
+            Assert.AreEqual(new FbxDouble3(0,0,0), t.Get());
+            var s = root.LclScaling;
+            Assert.AreEqual(new FbxDouble3(1,1,1), s.Get());
+            var r = root.LclRotation;
+            Assert.AreEqual(new FbxDouble3(0,0,0), r.Get());
 
             var child = CreateObject("child");
             ok = root.AddChild(child);
@@ -51,7 +58,7 @@ namespace UnitTests
             Assert.AreEqual(grandchild, found);
 
             // Create a node from the grandchild. That's a child.
-            var grandchildOwned = FbxNode.Create(grandchild, "grandchild-owned");
+            var greatgrandchild = FbxNode.Create(grandchild, "greatgrandchild");
             Assert.AreEqual(1, grandchild.GetChildCount());
 
             found = root.FindChild("child"); // recursive
@@ -60,10 +67,15 @@ namespace UnitTests
             Assert.AreEqual(grandchild, found);
             found = root.FindChild("grandchild", pRecursive: false);
             Assert.IsNull(found);
+            greatgrandchild.SetName("greatest");
+            found = root.FindChild("greatgrandchild", pRecursive: true, pInitial: false);
+            Assert.AreEqual(null, found);
+            found = root.FindChild("greatgrandchild", pRecursive: true, pInitial: true);
+            Assert.AreEqual(greatgrandchild, found);
 
-            // Destroying the grandchild recursively nukes the grandchild-owned and unparents from child.
+            // Destroying the grandchild recursively nukes the great-grandchild and unparents from child.
             grandchild.Destroy(pRecursive: true);
-            Assert.That(() => { grandchildOwned.GetName(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            Assert.That(() => { greatgrandchild.GetName(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
             Assert.AreEqual(0, child.GetChildCount());
 
             // Destroying the child non-recursively (after adding a new

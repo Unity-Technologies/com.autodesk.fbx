@@ -123,11 +123,12 @@ namespace UnitTests
         }
 
         [Test]
-        [Ignore("Calling SetNormals() after Dispose() crashes Unity")]
         public void TestDispose()
         {
+            // make sure that calling SetNormals on a disposed layer throws
             m_fbxLayer.Dispose ();
-            m_fbxLayer.SetNormals (null);
+            Assert.That(() => m_fbxLayer.SetNormals (FbxLayerElementNormal.Create(m_fbxMesh, "")),
+                Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
         #if ENABLE_COVERAGE_TEST

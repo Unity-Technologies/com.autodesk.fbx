@@ -25,7 +25,7 @@ namespace FbxSdk.Examples
                  @"Example FbxExporter01 illustrates how to:
                                 1) create and initialize an exporter
                                 2) create a scene
-                                3) export a scene to a FBX file (ASCII mode)
+                                3) export a scene to a FBX file (ASCII, V7 compatible)
                                         ";
 
             const string Keywords =
@@ -59,10 +59,14 @@ namespace FbxSdk.Examples
                     var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
 
                     // Initialize the exporter.
-                    bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
+                    bool status = fbxExporter.Initialize (LastFilePath);
                     // Check that initialization of the fbxExporter was successful
                     if (!status)
                         return 0;
+
+                    // By default, FBX exports in its most recent version. You might want to specify
+                    // an older version for compatibility with other applications.
+                    fbxExporter.SetFileExportVersion("FBX201400");
 
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));

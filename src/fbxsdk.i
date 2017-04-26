@@ -40,9 +40,24 @@
 %naturalvar;
 
 /*
+ * Do null-pointer checking when passing the 'this' pointer.
+ */
+%typemap(in, canthrow=1) SWIGTYPE *self
+%{ if (!$input) {
+    SWIG_CSharpSetPendingException(SWIG_CSharpNullReferenceException, "'this' is null ($1_basetype)");
+    return $null;
+  }
+  $1 = ($1_ltype)$input; %}
+
+/*
  * How to handle strings. Must be before the includes that actually include code.
  */
 %include "fbxstring.i"
+
+/*
+ * How to handle certain types we've optimized so they can be blitted.
+ */
+%include "optimization.i"
 
 %import "fbxsdk.h"
 %import "fbxsdk/fbxsdk_def.h"

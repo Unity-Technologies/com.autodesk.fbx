@@ -16,28 +16,26 @@ namespace UnitTests
         {
             using (var scene = FbxScene.Create(Manager, "scene")) {
                 // Just call every function. TODO: and test them at least minimally!
-                scene.GetDocumentInfo();
-                scene.GetSceneInfo();
                 scene.GetGlobalSettings();
                 scene.GetRootNode();
+
                 var docInfo = FbxDocumentInfo.Create(Manager, "info");
                 scene.SetDocumentInfo(docInfo);
+                Assert.AreEqual(docInfo, scene.GetDocumentInfo());
+
                 docInfo = FbxDocumentInfo.Create(Manager, "info2");
                 scene.SetSceneInfo(docInfo);
-
-                var sceneB = scene;
-                Assert.AreEqual(scene, sceneB);
-                var scene2 = FbxScene.Create(Manager, "scene2");
-                Assert.AreNotEqual(scene, scene2);
-
-                Assert.That(scene != scene2);
-                Assert.That((FbxDocument)scene != (FbxDocument)scene2);
-                Assert.That((FbxCollection)scene != (FbxCollection)scene2);
-                Assert.That((FbxObject)scene != (FbxObject)scene2);
-                Assert.That((FbxEmitter)scene != (FbxEmitter)scene2);
+                Assert.AreEqual(docInfo, scene.GetSceneInfo());
 
                 scene.Clear();
             }
+        }
+
+        [Test]
+        public override void TestDisposeDestroy ()
+        {
+           // The scene destroys recursively even if you ask it not to
+           DoTestDisposeDestroy(canDestroyNonRecursive: false);
         }
 
         [Test]

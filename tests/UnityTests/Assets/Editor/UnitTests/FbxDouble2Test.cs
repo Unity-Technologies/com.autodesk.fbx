@@ -18,13 +18,20 @@ namespace UnitTests
     {
 
 #if ENABLE_COVERAGE_TEST
+        static FbxDouble2Test() { EqualityTester<FbxDouble2>.RegisterCoverage(); }
+
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDouble2), this.GetType()); }
 #endif
 
+        [Test]
+        public void TestEquality()
+        {
+            EqualityTester<FbxDouble2>.TestEquality(new FbxDouble2(0, 1), new FbxDouble2(1, 0));
+        }
+
         /// <summary>
-        /// Test the basics. Subclasses should override and add some calls
-        /// e.g. to excercise all the constructors.
+        /// Test the basics.
         /// </summary>
         [Test]
         public void TestBasics()
@@ -33,31 +40,6 @@ namespace UnitTests
 
             // make sure the no-arg constructor doesn't crash
             new FbxDouble2();
-
-            // make sure we can dispose
-            using (new FbxDouble2()) { }
-            new FbxDouble2().Dispose();
-
-            // make sure equality works.
-            Assert.IsTrue(new FbxDouble2().Equals(new FbxDouble2()));
-
-            Assert.IsTrue(new FbxDouble2() == new FbxDouble2());
-            Assert.IsFalse(new FbxDouble2() != new FbxDouble2());
-
-            Assert.IsFalse(new FbxDouble2() == (FbxDouble2)null);
-            Assert.IsTrue(new FbxDouble2() != (FbxDouble2)null);
-
-            Assert.IsFalse((FbxDouble2)null == new FbxDouble2());
-            Assert.IsTrue((FbxDouble2)null != new FbxDouble2());
-
-            Assert.IsTrue((FbxDouble2)null == (FbxDouble2)null);
-            Assert.IsFalse((FbxDouble2)null != (FbxDouble2)null);
-
-            Assert.IsTrue(new FbxDouble2(1,2) == new FbxDouble2(1,2));
-            Assert.IsFalse(new FbxDouble2(1,2) != new FbxDouble2(1,2));
-
-            Assert.IsFalse(new FbxDouble2(1,0) == new FbxDouble2(1,2));
-            Assert.IsTrue(new FbxDouble2(1,0) != new FbxDouble2(1,2));
 
             // Test other constructors
             v = new FbxDouble2(1, 2);

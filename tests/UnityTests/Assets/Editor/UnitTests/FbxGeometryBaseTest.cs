@@ -16,98 +16,39 @@ namespace UnitTests
 {
     public class FbxGeometryBaseTest : Base<FbxGeometryBase>
     {
-
         [Test]
-        public void TestInitControlPoints ()
+        public void TestBasics()
         {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (24);
-                Assert.AreEqual (geometryBase.GetControlPointsCount (), 24);
-            }
-        }
+            var geometryBase = CreateObject ("geometry base");
 
-        [Test]
-        public void TestInitNegativeControlPoints ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
+            geometryBase.InitControlPoints (24);
+            Assert.AreEqual (geometryBase.GetControlPointsCount (), 24);
+            geometryBase.SetControlPointAt(new FbxVector4(1,2,3,4), 0);
+            Assert.AreEqual(new FbxVector4(1,2,3,4), geometryBase.GetControlPointAt(0));
+
+            int layerId0 = geometryBase.CreateLayer();
+            int layerId1 = geometryBase.CreateLayer();
+            var layer0 = geometryBase.GetLayer(layerId0);
+            var layer1 = geometryBase.GetLayer(layerId1);
+            Assert.AreNotEqual(layer0, layer1);
+
+            // Fbx crashes setting a negative control point index, so we do some testing:
+            Assert.That (() => geometryBase.SetControlPointAt (new FbxVector4(), -1), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+
+            // It doesn't crash with past-the-end, it resizes; make sure we don't block that.
+            geometryBase.SetControlPointAt (new FbxVector4(1,2,3,4), 50); // does not throw
+            Assert.AreEqual (geometryBase.GetControlPointsCount (), 51);
+
+            // It doesn't crash getting negative nor past-the-end.
+            // The vector returned is documented to be (0,0,0,1) but actually
+            // seems to be (0,0,0,epsilon).
+            geometryBase.GetControlPointAt(-1);
+            geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
+
+            // You can even initialize to a negative number of control points:
+            using (FbxGeometryBase geometryBase2 = CreateObject ("geometry base")) {
                 // make sure this doesn't crash
-                geometryBase.InitControlPoints (-1);
-            }
-        }
-
-        [Test]
-        public void TestSetControlPointAt ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (5);
-                FbxVector4 vector = new FbxVector4 ();
-                geometryBase.SetControlPointAt (vector, 0);
-                Assert.AreEqual (vector, geometryBase.GetControlPointAt (0));
-            }
-        }
-
-        [Test]
-        public void TestSetControlPointAtWithoutInit ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                FbxVector4 vector = new FbxVector4 ();
-                geometryBase.SetControlPointAt (vector, 0);
-            }
-        }
-
-        [Test]
-        public void TestSetControlPointAtInvalidFbxVector4 ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (5);
-                FbxVector4 vector = new FbxVector4 ();
-                vector.Dispose ();
-                Assert.That (() => { geometryBase.SetControlPointAt (vector, 0); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-            }
-        }
-
-        [Test]
-        public void TestSetControlPointAtNullFbxVector4 ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (5);
-                Assert.That (() => { geometryBase.SetControlPointAt (null, 0); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-            }
-        }
-
-        [Test]
-        public void TestSetControlPointAtInvalidIndex ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (5);
-                FbxVector4 vector = new FbxVector4 ();
-                Assert.That (() => { geometryBase.SetControlPointAt (vector, -1); }, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-                Assert.That (() => { geometryBase.SetControlPointAt (vector, 6); }, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            }
-        }
-
-        [Test]
-        public void TestGetControlPointAtInvalidIndex ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (5);
-                // make sure it doesn't crash
-                FbxVector4 vector = geometryBase.GetControlPointAt (-1);
-                vector.X = 0;
-
-                vector = geometryBase.GetControlPointAt(6);
-                vector.X = 0;
-            }
-        }
-
-        [Test]
-        public void TestGetUninitializedControlPoint ()
-        {
-            using (FbxGeometryBase geometryBase = CreateObject ("geometry base")) {
-                geometryBase.InitControlPoints (5);
-                // just make sure it doesn't crash
-                FbxVector4 vector = geometryBase.GetControlPointAt (0);
-                vector.X = 0;
+                geometryBase2.InitControlPoints (-1);
             }
         }
     }

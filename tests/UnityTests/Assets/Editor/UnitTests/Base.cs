@@ -13,12 +13,19 @@ namespace UnitTests
 {
     public abstract class Base<T> where T: FbxSdk.FbxObject
     {
+        // T.Create(FbxManager, string)
+        static System.Reflection.MethodInfo s_createFromMgrAndName;
+
+        // T.Create(FbxObject, string)
+        static System.Reflection.MethodInfo s_createFromObjAndName;
+
         static Base() {
             s_createFromMgrAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxManager), typeof(string)});
             s_createFromObjAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxObject), typeof(string)});
 
 #if ENABLE_COVERAGE_TEST
             // Register the calls we make through reflection.
+
             // We use reflection in CreateObject(FbxManager, string) and CreateObject(FbxObject, string).
             if (s_createFromMgrAndName != null) {
                 var createFromMgrAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxManager), typeof(string)});
@@ -28,8 +35,12 @@ namespace UnitTests
                 var createFromObjAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxObject), typeof(string)});
                 CoverageTester.RegisterReflectionCall(createFromObjAndName, s_createFromObjAndName);
             }
+
+            // Make sure to have the equality tester register its methods right now.
+            EqualityTester<T>.RegisterCoverage();
 #endif
         }
+
 
         protected FbxManager Manager {
             get;
@@ -46,26 +57,22 @@ namespace UnitTests
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
 #endif
 
+        /* Test all the equality functions we can find. */
+        [Test]
+        public virtual void TestEquality() {
+            EqualityTester<T>.TestEquality(CreateObject("a"), CreateObject("b"));
+        }
+
         /* Create an object with another manager. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
-        static System.Reflection.MethodInfo s_createFromMgrAndName;
         public virtual T CreateObject (FbxManager mgr, string name = "") {
-            try {
-                return (T)(s_createFromMgrAndName.Invoke(null, new object[] {mgr, name}));
-            } catch(System.Reflection.TargetInvocationException xcp) {
-                throw xcp.GetBaseException();
-            }
+            return Invoker.InvokeStatic<T>(s_createFromMgrAndName, mgr, name);
         }
 
         /* Create an object with an object as container. Default implementation uses
          * reflection to call T.Create(...); override if reflection is wrong. */
-        static System.Reflection.MethodInfo s_createFromObjAndName;
         public virtual T CreateObject (FbxObject container, string name = "") {
-            try {
-                return (T)(s_createFromObjAndName.Invoke(null, new object[] {container, name}));
-            } catch(System.Reflection.TargetInvocationException xcp) {
-                throw xcp.GetBaseException();
-            }
+            return Invoker.InvokeStatic<T>(s_createFromObjAndName, container, name);
         }
 
         [SetUp]
@@ -90,101 +97,92 @@ namespace UnitTests
             var obj = CreateObject("MyObject");
             Assert.IsInstanceOf<T> (obj);
             Assert.AreEqual(Manager, obj.GetFbxManager());
-        }
 
-        [Test]
-        public void TestCreateNullContainer()
-        {
+            using(var manager2 = FbxManager.Create()) {
+                var obj2 = CreateObject(manager2, "MyOtherObject");
+                Assert.AreEqual(manager2, obj2.GetFbxManager());
+                Assert.AreNotEqual(Manager, obj2.GetFbxManager());
+            }
+
+            var obj3 = CreateObject(obj, "MySubObject");
+            Assert.AreEqual(Manager, obj3.GetFbxManager());
+
+            // Test with a null manager or container. Should throw.
             Assert.That (() => { CreateObject((FbxManager)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
             Assert.That (() => { CreateObject((FbxObject)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-        }
 
-        [Test]
-        public void TestCreateNullName()
-        {
-            CreateObject((string)null);
-        }
+            // Test with a null string. Should work.
+            Assert.IsNotNull(CreateObject((string)null));
 
-        [Test]
-        public void TestCreateZombieManager()
-        {
+            // Test with a destroyed manager. Should throw.
             var mgr = FbxManager.Create();
             mgr.Destroy();
             Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+            // Test with a disposed manager. Should throw.
+            mgr = FbxManager.Create();
+            mgr.Dispose();
+            Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
         [Test]
-        public void TestDestroySelf ()
+        public virtual void TestDisposeDestroy ()
         {
-            // We can call destroy with no args, or with a 'false' argument.
-            // Test both.
-            var obj = CreateObject ();
-
-            Assert.IsNotNull (obj);
-            Assert.IsInstanceOf<FbxObject> (obj);
-            obj.Destroy ();
-
-            var obj2 = CreateObject ();
-            obj2.Destroy (false);
+           DoTestDisposeDestroy(canDestroyNonRecursive: true);
         }
 
-        [Test]
-        public void TestDestroyRecursive ()
+        public virtual void DoTestDisposeDestroy (bool canDestroyNonRecursive)
         {
-            var obj = CreateObject ();
+            T a, b;
 
-            Assert.IsNotNull (obj);
-            Assert.IsInstanceOf<FbxObject> (obj);
-            obj.Destroy (true);
-        }
-
-        [Test]
-        public void TestUsing ()
-        {
-            // Test that the using statement works.
-            using (var obj = CreateObject ()) {
-                obj.GetName ();
+            // Test destroying just yourself.
+            a = CreateObject ("a");
+            b = CreateObject(a, "b");
+            a.Destroy ();
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            if (canDestroyNonRecursive) {
+                b.GetName(); // does not throw! tests that the implicit 'pRecursive: false' got through
+                b.Destroy();
+            } else {
+                Assert.That(() => b.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
             }
 
-            // Test also that an explicit Dispose works.
-            var obj2 = CreateObject();
-            obj2.Dispose();
-        }
+            // Test destroying just yourself, explicitly non-recursive.
+            a = CreateObject ("a");
+            b = CreateObject(a, "b");
+            a.Destroy (false);
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            if (canDestroyNonRecursive) {
+                b.GetName(); // does not throw! tests that the explicit 'false' got through
+                b.Destroy();
+            } else {
+                Assert.That(() => b.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            }
 
-        [Test]
-        public void TestDestroyedZombie ()
-        {
-            // Test that if we try to use an object after Destroy()ing it,
-            // we get an exception (not a crash).
-            var obj = CreateObject();
-            Assert.IsNotNull (obj);
-            obj.Destroy ();
-            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-        }
+            // Test destroying recursively.
+            a = CreateObject ("a");
+            b = CreateObject(a, "b");
+            a.Destroy(true);
+            Assert.That(() => b.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
-        [Test]
-        public void TestDestroyedManagerZombie ()
-        {
+            // Test disposing. TODO: how to test that a was actually destroyed?
+            a = CreateObject("a");
+            a.Dispose();
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
+
+            // Test that the using statement works.
+            using (a = CreateObject ("a")) {
+                a.GetName (); // works here, throws outside using
+            }
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
+
             // Test that if we try to use an object after Destroy()ing its
             // manager, the object was destroyed as well.
-            var obj = CreateObject();
-            Assert.IsNotNull (obj);
+            a = CreateObject("a");
+            Assert.IsNotNull (a);
             Manager.Destroy();
-            Assert.That (() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-        }
-
-        [Test]
-        public void TestDisposedZombie ()
-        {
-            // Test that if we try to use an object after Dispose()ing it,
-            // we get an exception (not a crash). This is a regression test
-            // based on some wrong code:
-            T zombie;
-            using(var obj = CreateObject()) {
-                Assert.IsNotNull (obj);
-                zombie = obj;
-            }
-            Assert.That (() => { zombie.GetName (); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { a.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
@@ -229,6 +227,12 @@ namespace UnitTests
             // We don't want to convert the other StripPrefix functions, which
             // modify their argument in-place.
             Assert.AreEqual("MyObject", FbxObject.StripPrefix("NameSpace::MyObject"));
+
+            obj.SetName("new name");
+            Assert.AreEqual("new name", obj.GetName());
+
+            obj.SetInitialName("init");
+            Assert.AreEqual("init", obj.GetInitialName());
 
             obj.Destroy();
         }
