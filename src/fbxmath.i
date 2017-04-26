@@ -11,7 +11,6 @@
  * - affine matrix (FbxAMatrix)
  * Vector4 is handled specially because it's performance-critical.
  */
-%declare_hand_optimized_type(FbxVector4, FbxSharpDouble4, FbxVector4);
 
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
