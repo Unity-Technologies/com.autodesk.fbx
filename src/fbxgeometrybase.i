@@ -16,13 +16,13 @@
 
 #endif
 
-// add some bounds checking to SetControlPointAt
+/* Prevent a crash when setting a negative index. */
 %ignore FbxGeometryBase::SetControlPointAt;
 %rename("SetControlPointAt") FbxGeometryBase::SetControlPointChecked;
 %extend FbxGeometryBase {
   void SetControlPointChecked(const FbxVector4& pCtrlPoint, int pIndex)
   {
-    if (pIndex < 0 || pIndex >= $self->GetControlPointsCount()) {
+    if (pIndex < 0) {
       SWIG_CSharpSetPendingException(SWIG_CSharpIndexOutOfRangeException, "");
       return;
     }
