@@ -4,6 +4,9 @@
 // Licensed under the ##LICENSENAME##. 
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
+
+// This file contains Tests for FbxLayerElement and all its derived classes.
+
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.TestTools;
@@ -136,4 +139,86 @@ namespace UnitTests
             layerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
         }
     }
+
+    /*
+     * Convenience classes for testing functions of FbxLayerElementTemplate and its derived classes.
+     * 
+     * FbxLayerElementTemplate derives from FbxLayerElement, so we also derive from FbxLayerElementTestBase.
+     * FbxLayerElementTemplate has no public constructors or Create function, therefore
+     * this class is abstract and must be inherited from for the tests to run.
+     * 
+     * Had to create a test class for each template (FbxVector2, FbxVector4, and FbxColor)
+     * as the template type is part of the class name.
+     */
+    public abstract class FbxLayerElementTemplateFbxVector4Test<T> : FbxLayerElementTestBase<T>
+        where T: FbxSdk.FbxLayerElementTemplateFbxVector4
+    {
+            [Test]
+            public void TestGetDirectArray() {
+                var layerElement = CreateObject ("element");
+                // make sure this doesn't crash
+                var directArray = layerElement.GetDirectArray ();
+            }
+
+            [Test]
+            public void TestGetIndexArray() {
+                var layerElement = CreateObject ("element");
+                // make sure this doesn't crash
+                var directArray = layerElement.GetIndexArray ();
+            }
+    }
+
+    public abstract class FbxLayerElementTemplateFbxColorTest<T> : FbxLayerElementTestBase<T>
+        where T: FbxSdk.FbxLayerElementTemplateFbxColor
+    {
+        [Test]
+        public void TestGetDirectArray() {
+            var layerElement = CreateObject ("element");
+            // make sure this doesn't crash
+            var directArray = layerElement.GetDirectArray ();
+        }
+
+        [Test]
+        public void TestGetIndexArray() {
+            var layerElement = CreateObject ("element");
+            // make sure this doesn't crash
+            var directArray = layerElement.GetIndexArray ();
+        }
+    }
+
+    public abstract class FbxLayerElementTemplateFbxVector2Test<T> : FbxLayerElementTestBase<T>
+        where T: FbxSdk.FbxLayerElementTemplateFbxVector2
+    {
+        [Test]
+        public void TestGetDirectArray() {
+            var layerElement = CreateObject ("element");
+            // make sure this doesn't crash
+            var directArray = layerElement.GetDirectArray ();
+        }
+
+        [Test]
+        public void TestGetIndexArray() {
+            var layerElement = CreateObject ("element");
+            // make sure this doesn't crash
+            var directArray = layerElement.GetIndexArray ();
+        }
+    }
+
+    /*
+     * Tests for the classes derived from the FbxLayerElementTemplate classes.
+     */
+    public class FbxLayerElementUVTest : FbxLayerElementTemplateFbxVector2Test<FbxLayerElementUV>
+    {}
+
+    public class FbxLayerElementVertexColorTest : FbxLayerElementTemplateFbxColorTest<FbxLayerElementVertexColor>
+    {}
+
+    public class FbxLayerElementNormalTest : FbxLayerElementTemplateFbxVector4Test<FbxLayerElementNormal>
+    {}
+
+    public class FbxLayerElementBinormalTest : FbxLayerElementTemplateFbxVector4Test<FbxLayerElementBinormal>
+    {}
+
+    public class FbxLayerElementTangentTest : FbxLayerElementTemplateFbxVector4Test<FbxLayerElementTangent>
+    {}
 }
