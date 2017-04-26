@@ -104,7 +104,6 @@
 %ignore FbxLayerElementArray::GetLocked;
 %ignore FbxLayerElementArray::Release;
 %ignore FbxLayerElementArray::GetStride;
-%ignore FbxLayerElementArray::GetCount;
 %ignore FbxLayerElementArray::Clear;
 %ignore FbxLayerElementArray::Resize;
 %ignore FbxLayerElementArray::AddMultiple;

@@ -22,6 +22,7 @@ namespace UnitTests
             var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxDouble);
 
             layerElementArray.SetCount (1);
+            Assert.AreEqual (layerElementArray.GetCount (), 1);
 
             // test invalid
             layerElementArray.SetCount (-1);
@@ -60,6 +61,15 @@ namespace UnitTests
             Assert.That (() => {
                 layerElementArray.Add ((FbxVector2)null);
             }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
+        }
+
+        [Test]
+        public void TestAddFbxVector4 ()
+        {
+            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
+
+            layerElementArray.Add (new FbxVector4 ());
+            layerElementArray.Add (new FbxVector4 (1, 0, 0));
         }
 
         [Test]
@@ -102,10 +112,42 @@ namespace UnitTests
             // test invalid index
             layerElementArray.SetAt (-1, new FbxVector2 ());
 
-            // test negative int
+            // test null
             Assert.That (() => {
                 layerElementArray.SetAt (0, (FbxVector2)null);
             }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
         }
+
+        [Test]
+        public void TestSetAtFbxVector4 ()
+        {
+            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
+
+            layerElementArray.SetAt (0, new FbxVector4 ());
+
+            // test invalid index
+            layerElementArray.SetAt (-1, new FbxVector4 ());
+        }
+
+        [Test]
+        public void TestDispose()
+        {
+            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
+            layerElementArray.Dispose ();
+            Assert.That (() => {
+                layerElementArray.SetCount (1);
+            }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+
+            FbxLayerElementArray elementArray;
+            using (elementArray = new FbxLayerElementArray (EFbxType.eFbxBlob)) {}
+            Assert.That (() => {
+                elementArray.SetCount (1);
+            }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+        }
+
+        #if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxLayerElementArray), this.GetType()); }
+        #endif
     }
 }
