@@ -73,6 +73,7 @@
 
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTemplate::.*";
 %rename("%s") FbxLayerElementTemplate::GetDirectArray() const;
+%rename("%s") FbxLayerElementTemplate::GetIndexArray() const;
 
 // don't ignore enum items (will only show up in C# if we unignore the enum itself)
 %rename("$ignore", "not" %$isenumitem, regextarget=1, fullname=1) "FbxLayerElement::.*";
@@ -104,18 +105,17 @@
 %ignore FbxLayerElementArray::Release;
 %ignore FbxLayerElementArray::GetStride;
 %ignore FbxLayerElementArray::GetCount;
-%ignore FbxLayerElementArray::SetCount;
 %ignore FbxLayerElementArray::Clear;
 %ignore FbxLayerElementArray::Resize;
 %ignore FbxLayerElementArray::AddMultiple;
 %ignore FbxLayerElementArray::Add(const void* pItem, EFbxType pValueType);
 %ignore FbxLayerElementArray::InsertAt;
-%ignore FbxLayerElementArray::SetAt;
 %ignore FbxLayerElementArray::SetLast;
 %ignore FbxLayerElementArray::RemoveAt;
 %ignore FbxLayerElementArray::RemoveLast;
 %ignore FbxLayerElementArray::RemoveIt;
 %ignore FbxLayerElementArray::GetAt;
+%ignore FbxLayerElementArray::SetAt(int pIndex, const void* pItem, EFbxType pValueType);
 %ignore FbxLayerElementArray::GetFirst;
 %ignore FbxLayerElementArray::GetLast;
 %ignore FbxLayerElementArray::Find;
@@ -136,11 +136,18 @@
 
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
 
+%template(Add) FbxLayerElementArray::Add<int>;
 %template(Add) FbxLayerElementArray::Add<FbxColor>;
 %template(Add) FbxLayerElementArray::Add<FbxVector2>;
 %template(Add) FbxLayerElementArray::Add<FbxVector4>;
+
+%template(SetAt) FbxLayerElementArray::SetAt<int>;
+%template(SetAt) FbxLayerElementArray::SetAt<FbxColor>;
+%template(SetAt) FbxLayerElementArray::SetAt<FbxVector2>;
+%template(SetAt) FbxLayerElementArray::SetAt<FbxVector4>;
 
 // needed for FbxLayerElementTemplate templates (more specifically for the GetArray() functions)
 %template(FbxLayerElementArrayTemplateFbxColor) FbxLayerElementArrayTemplate<FbxColor>;
 %template(FbxLayerElementArrayTemplateFbxVector2) FbxLayerElementArrayTemplate<FbxVector2>;
 %template(FbxLayerElementArrayTemplateFbxVector4) FbxLayerElementArrayTemplate<FbxVector4>;
+%template(FbxLayerElementArrayTemplateInt) FbxLayerElementArrayTemplate<int>;
