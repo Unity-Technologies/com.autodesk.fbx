@@ -97,6 +97,10 @@ namespace UnitTests
             grandchild.RemoveChild(fooNode);
             Assert.IsNull(fooNode.GetParent());
             Assert.AreEqual(0, grandchild.GetChildCount());
+
+            // Add a material.
+            var mat = FbxSurfaceMaterial.Create(Manager, "mat");
+            Assert.AreEqual(0, fooNode.AddMaterial(mat));
         }
         
         [Test]

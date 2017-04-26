@@ -18,6 +18,7 @@
 
 /* TODO: take more of this stuff in! */
 %ignore FbxProperty::FbxProperty;
+%ignore FbxProperty::FbxProperty(const FbxProperty&);
 %ignore FbxProperty::Create;
 %ignore FbxProperty::CreateFrom;
 %ignore FbxProperty::Destroy;
@@ -108,7 +109,13 @@
 %ignore FbxProperty::operator>;
 %ignore FbxProperty::sHierarchicalSeparator;
 
+%ignore FbxPropertyT::FbxPropertyT;
+%ignore FbxPropertyT::FbxPropertyT(const FbxPropertyT&);
 %ignore FbxPropertyT::StaticInit;
+
+/* Disallow setting properties by making an error when you try.
+ * You'll also get a warning 844 in swig because there's no excode. */
+%typemap("csvarin") const FbxPropertyT& {#error mark this %immutable in the $csclassname.i file}
 
 %include "fbxsdk/core/fbxproperty.h"
 

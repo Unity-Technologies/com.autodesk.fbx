@@ -7,21 +7,30 @@
 
 #ifdef IGNORE_ALL_INCLUDE_SOME
 %rename("%s") FbxBindingTableBase;
-%rename("%s") FbxBindingTableBase::Create;
 %rename("%s") FbxBindingTableBase::AddNewEntry;
 
 %rename("%s") FbxBindingTable;
 %rename("%s") FbxBindingTable::Create;
 %rename("%s") FbxBindingTable::DescAbsoluteURL;
+%rename("%s") FbxBindingTable::DescRelativeURL;
 %rename("%s") FbxBindingTable::DescTAG;
 %rename("%s") FbxBindingTable::AddNewEntry;
 
 %rename("%s") FbxBindingTableEntry;
 #endif
 
+/* You can't create a tablebase -- it's an abstract class */
+%ignore FbxBindingTableBase::Create;
+
+/* Properties can't be assigned to */
+%immutable FbxBindingTable::DescAbsoluteURL;
+%immutable FbxBindingTable::DescRelativeURL;
+%immutable FbxBindingTable::DescTAG;
+
 /* You're not supposed to create these directly, just with AddNewEntry. */
 %ignore FbxBindingTableEntry::FbxBindingTableEntry();
 %ignore FbxBindingTableEntry::FbxBindingTableEntry(const FbxBindingTableEntry&);
+
 
 %include "fbxsdk/scene/shading/fbxbindingtablebase.h"
 %include "fbxsdk/scene/shading/fbxbindingtable.h"

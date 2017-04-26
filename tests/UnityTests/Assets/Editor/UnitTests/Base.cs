@@ -54,7 +54,7 @@ namespace UnitTests
 
 #if ENABLE_COVERAGE_TEST
         [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
+        public virtual void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
 #endif
 
         /* Test all the equality functions we can find. */
@@ -186,19 +186,22 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestSelected ()
+        public void TestVarious()
         {
-            var obj = CreateObject ();
-            Assert.IsNotNull (obj);
+            FbxObject obj;
 
+            /************************************************************
+             * Test selection
+             ************************************************************/
+            obj = CreateObject ();
             Assert.IsFalse (obj.GetSelected ());
             obj.SetSelected (true);
             Assert.IsTrue (obj.GetSelected ());
-        }
 
-        [Test]
-        public void TestNames ()
-        {
+            /************************************************************
+             * Test name-related functions.
+             ************************************************************/
+
             /*
              * We use this also for testing that string handling works.
              * Make sure we can pass const char*, FbxString, and const
@@ -206,9 +209,8 @@ namespace UnitTests
              * Make sure we can return those too (though I'm not actually
              * seeing a return of a const-ref anywhere).
              */
-
             // Test a function that takes const char*.
-            FbxObject obj = FbxObject.Create(Manager, "MyObject");
+            obj = FbxObject.Create(Manager, "MyObject");
             Assert.IsNotNull (obj);
 
             // Test a function that returns const char*.
@@ -234,7 +236,18 @@ namespace UnitTests
             obj.SetInitialName("init");
             Assert.AreEqual("init", obj.GetInitialName());
 
-            obj.Destroy();
+            /************************************************************
+             * Test shader implementations
+             ************************************************************/
+            using (obj = FbxObject.Create(Manager, "MyObject")) {
+                var impl = FbxImplementation.Create(obj, "impl");
+                Assert.IsTrue(obj.AddImplementation(impl));
+                Assert.IsTrue(obj.RemoveImplementation(impl));
+                Assert.IsTrue(obj.AddImplementation(impl));
+                Assert.IsTrue(obj.SetDefaultImplementation(impl));
+                Assert.AreEqual(impl, obj.GetDefaultImplementation());
+                Assert.IsTrue(obj.HasDefaultImplementation());
+            }
         }
     }
 }

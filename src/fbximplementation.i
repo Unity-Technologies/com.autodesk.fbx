@@ -28,5 +28,12 @@
 %rename("%s") FBXSDK_RENDERING_API_PREVIEW;
 #endif
 
+/* You can't meaningfully assign to a property in C#. */
+%immutable FbxImplementation::Language;
+%immutable FbxImplementation::LanguageVersion;
+%immutable FbxImplementation::RenderAPI;
+%immutable FbxImplementation::RenderAPIVersion;
+%immutable FbxImplementation::RootBindingName;
+
 %include "fbxsdk/scene/shading/fbximplementation.h"
 %include "fbxsdk/scene/shading/fbxshadingconventions.h"
