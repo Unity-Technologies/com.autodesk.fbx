@@ -82,14 +82,14 @@
 %rename("%s") FbxLayerElement::EMappingMode;
 %rename("%s") FbxLayerElement::EReferenceMode;
 
+%rename("%s") FbxLayerElement::GetMappingMode;
+%rename("%s") FbxLayerElement::GetReferenceMode;
 %rename("%s") FbxLayerElement::SetMappingMode;
 %rename("%s") FbxLayerElement::SetReferenceMode;
 
 // Ignore everything we don't need from FbxLayerElementArray.
 // Have to do this so that we can expose the templates for method Add()
 %ignore FbxLayerElementArray::ELockMode;
-%ignore FbxLayerElementArray::FbxLayerElementArray;
-%ignore FbxLayerElementArray::~FbxLayerElementArray;
 %ignore FbxLayerElementArray::ClearStatus;
 %ignore FbxLayerElementArray::GetStatus;
 %ignore FbxLayerElementArray::IsWriteLocked;

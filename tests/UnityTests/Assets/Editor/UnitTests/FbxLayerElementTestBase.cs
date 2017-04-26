@@ -130,6 +130,7 @@ namespace UnitTests
         {
             var layerElement = CreateObject ("element");
             layerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
+            Assert.AreEqual (layerElement.GetMappingMode (), FbxLayerElement.EMappingMode.eByControlPoint);
         }
 
         [Test]
@@ -137,6 +138,7 @@ namespace UnitTests
         {
             var layerElement = CreateObject ("element");
             layerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
+            Assert.AreEqual (layerElement.GetReferenceMode (), FbxLayerElement.EReferenceMode.eDirect);
         }
     }
 
@@ -157,14 +159,14 @@ namespace UnitTests
             public void TestGetDirectArray() {
                 var layerElement = CreateObject ("element");
                 // make sure this doesn't crash
-                var directArray = layerElement.GetDirectArray ();
+                layerElement.GetDirectArray ();
             }
 
             [Test]
             public void TestGetIndexArray() {
                 var layerElement = CreateObject ("element");
                 // make sure this doesn't crash
-                var directArray = layerElement.GetIndexArray ();
+                layerElement.GetIndexArray ();
             }
     }
 
@@ -175,14 +177,14 @@ namespace UnitTests
         public void TestGetDirectArray() {
             var layerElement = CreateObject ("element");
             // make sure this doesn't crash
-            var directArray = layerElement.GetDirectArray ();
+            layerElement.GetDirectArray ();
         }
 
         [Test]
         public void TestGetIndexArray() {
             var layerElement = CreateObject ("element");
             // make sure this doesn't crash
-            var directArray = layerElement.GetIndexArray ();
+            layerElement.GetIndexArray ();
         }
     }
 
@@ -193,14 +195,14 @@ namespace UnitTests
         public void TestGetDirectArray() {
             var layerElement = CreateObject ("element");
             // make sure this doesn't crash
-            var directArray = layerElement.GetDirectArray ();
+            layerElement.GetDirectArray ();
         }
 
         [Test]
         public void TestGetIndexArray() {
             var layerElement = CreateObject ("element");
             // make sure this doesn't crash
-            var directArray = layerElement.GetIndexArray ();
+            layerElement.GetIndexArray ();
         }
     }
 

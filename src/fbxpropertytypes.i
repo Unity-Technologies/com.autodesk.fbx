@@ -8,6 +8,9 @@
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
 %rename("%s") FbxColor;
+
+// Unignore enum
+%rename("%s") EFbxType;
 #endif
 
 %include "fbxsdk_csharp-fixed-headers/fbxpropertytypes.h"
