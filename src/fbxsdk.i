@@ -87,7 +87,7 @@
 %include "fbxaxissystem.i"
 %include "fbxsystemunit.i"
 
-/* The emitter hierarchy. */
+/* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"
 %include "fbxobject.i"
 %include "fbxcollection.i"
@@ -105,6 +105,9 @@
 %include "fbxgeometry.i"
 %include "fbxmesh.i"
 %include "fbxglobalsettings.i"
+%include "fbximplementation.i"
+%include "fbxsurfacematerial.i"
+%include "fbxbindingtable.i"
 #endif
 
 /* Everything */

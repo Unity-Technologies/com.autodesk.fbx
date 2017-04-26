@@ -26,7 +26,9 @@
 %rename("%s") FbxNode::SetShadingMode;
 %rename("%s") FbxNode::GetShadingMode;
 %rename("%s") FbxNode::EShadingMode;
-%rename("%s") FbxNode::eWireFrame;
+
+/* Materials */
+%rename("%s") FbxNode::AddMaterial;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxnode.h"

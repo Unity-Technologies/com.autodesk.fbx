@@ -113,3 +113,4 @@
 %include "fbxsdk/core/fbxproperty.h"
 
 %template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
+%template("FbxPropertyString") FbxPropertyT<FbxString>;
