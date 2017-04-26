@@ -71,6 +71,9 @@ handleclasses = set()
 for rootclass in rootclasses:
   handleclasses.add(rootclass)
   for cls in baseclasses:
+      # squash a warning about %extend, which happens when you
+      # declare a typedef to a root class
+      if cls.endswith('::ParentClass'): continue
       if rootclass in baseclasses[cls]:
           handleclasses.add(cls)
 
