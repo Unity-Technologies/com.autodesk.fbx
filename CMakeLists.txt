@@ -103,7 +103,7 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
 
 
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
-    
+
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
 
 swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
@@ -125,6 +125,7 @@ include(deps/cmake/InstallMonoReflection.cmake)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests DESTINATION ${CMAKE_BINARY_DIR}/tests)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/Editor DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp DESTINATION fbxsdk FILES_MATCHING PATTERN "*.cs")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION fbxsdk/csharp FILES_MATCHING PATTERN "*.cs")
 install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
 install(TARGETS unity_tests DESTINATION fbxsdk)
 

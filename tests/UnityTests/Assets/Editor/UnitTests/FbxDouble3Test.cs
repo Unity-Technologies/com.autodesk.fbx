@@ -42,10 +42,6 @@ namespace UnitTests
             // make sure the no-arg constructor doesn't crash
             new FbxDouble3();
 
-            // make sure we can dispose
-            using (new FbxDouble3()) { }
-            new FbxDouble3().Dispose();
-
             // Test other constructors
             v = new FbxDouble3(1, 2, 3);
             var u = new FbxDouble3(v);

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace UnitTests
 {
-    public static class EqualityTester<T> where T: class
+    public static class EqualityTester<T>
     {
         // T.Equals(T), T.Equals(base(T), ...
         static List<System.Reflection.MethodInfo> s_Equals = new List<System.Reflection.MethodInfo>();

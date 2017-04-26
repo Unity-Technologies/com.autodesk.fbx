@@ -42,10 +42,6 @@ namespace UnitTests
             // make sure the no-arg constructor doesn't crash
             new FbxDouble4();
 
-            // make sure we can dispose
-            using (new FbxDouble4()) { }
-            new FbxDouble4().Dispose();
-
             // Test other constructors
             v = new FbxDouble4(1, 2, 3, 4);
             var u = new FbxDouble4(v);
@@ -88,6 +84,12 @@ namespace UnitTests
             Assert.AreEqual(4, v.Y);
             Assert.AreEqual(5, v.Z);
             Assert.AreEqual(6, v.W);
+
+            v = new FbxDouble4(5);
+            Assert.AreEqual(5, v.X);
+            Assert.AreEqual(5, v.Y);
+            Assert.AreEqual(5, v.Z);
+            Assert.AreEqual(5, v.W);
         }
     }
 }

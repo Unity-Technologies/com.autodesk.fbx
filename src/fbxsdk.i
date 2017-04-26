@@ -54,6 +54,11 @@
  */
 %include "fbxstring.i"
 
+/*
+ * How to handle certain types we've optimized so they can be blitted.
+ */
+%include "optimization.i"
+
 %import "fbxsdk.h"
 %import "fbxsdk/fbxsdk_def.h"
 %import "fbxsdk/fbxsdk_nsbegin.h"
