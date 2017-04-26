@@ -126,7 +126,12 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestDisposeDestroy ()
+        public virtual void TestDisposeDestroy ()
+        {
+           DoTestDisposeDestroy(canDestroyNonRecursive: true);
+        }
+
+        public virtual void DoTestDisposeDestroy (bool canDestroyNonRecursive)
         {
             T a, b;
 
@@ -135,16 +140,24 @@ namespace UnitTests
             b = CreateObject(a, "b");
             a.Destroy ();
             Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
-            b.GetName(); // does not throw! tests that the implicit 'pRecursive: false' got through
-            b.Destroy();
+            if (canDestroyNonRecursive) {
+                b.GetName(); // does not throw! tests that the implicit 'pRecursive: false' got through
+                b.Destroy();
+            } else {
+                Assert.That(() => b.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            }
 
             // Test destroying just yourself, explicitly non-recursive.
             a = CreateObject ("a");
             b = CreateObject(a, "b");
             a.Destroy (false);
             Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
-            b.GetName(); // does not throw! tests that the 'false' got through
-            b.Destroy();
+            if (canDestroyNonRecursive) {
+                b.GetName(); // does not throw! tests that the explicit 'false' got through
+                b.Destroy();
+            } else {
+                Assert.That(() => b.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            }
 
             // Test destroying recursively.
             a = CreateObject ("a");
