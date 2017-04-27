@@ -199,4 +199,7 @@ namespace UnitTests
 
     public class FbxLayerElementTangentTest : FbxLayerElementTestBase<FbxLayerElementTangent>
     {}
+
+    public class FbxLayerElementMaterialTest : FbxLayerElementTestBase<FbxLayerElementMaterial>
+    {}
 }

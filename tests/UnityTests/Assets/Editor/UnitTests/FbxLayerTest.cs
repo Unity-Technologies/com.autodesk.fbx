@@ -104,6 +104,22 @@ namespace UnitTests
         }
 
         [Test]
+        public void TestSetMaterials()
+        {
+            // make sure nothing crashes
+
+            m_fbxLayer.SetMaterials(FbxLayerElementMaterial.Create (m_fbxMesh, ""));
+
+            // test null
+            m_fbxLayer.SetMaterials(null);
+
+            // test destroyed
+            FbxLayerElementMaterial material = FbxLayerElementMaterial.Create (m_fbxMesh, "");
+            material.Dispose ();
+            m_fbxLayer.SetMaterials(material);
+        }
+
+        [Test]
         public void TestSetUVs ()
         {
             // make sure nothing crashes
