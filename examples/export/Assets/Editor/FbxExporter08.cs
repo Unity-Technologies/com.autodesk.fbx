@@ -16,13 +16,13 @@ namespace FbxSdk.Examples
 {
     namespace Editor
     {
-        public class FbxExporter07 : System.IDisposable
+        public class FbxExporter08 : System.IDisposable
         {
             const string Title = 
-                "Example 07: exporting a node hierarchy with transforms and visibility";
+                "Example 08: exporting a node hierarchy with transforms and visibility";
             
             const string Subject = 
-                @"Example FbxExporter07 illustrates how to:
+                @"Example FbxExporter08 illustrates how to:
                     1) create and initialize an exporter        
                     2) create a scene                           
                     3) create a hierarchy of nodes              
@@ -45,7 +45,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Create instance of example
             /// </summary>
-            public static FbxExporter07 Create () { return new FbxExporter07(); }
+            public static FbxExporter08 Create () { return new FbxExporter08(); }
 
             /// <summary>
             /// Export GameObject's Transform component
