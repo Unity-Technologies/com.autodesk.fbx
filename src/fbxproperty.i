@@ -139,7 +139,12 @@
  * You'll also get a warning 844 in swig because there's no excode. */
 %typemap("csvarin") const FbxPropertyT& {#error mark this %immutable in the $csclassname.i file}
 
+
+/***************************************************************************/
 %include "fbxsdk/core/fbxproperty.h"
+/***************************************************************************/
+
+%template(Set) FbxProperty::Set<float>;
 
 %template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
