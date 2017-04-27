@@ -11,6 +11,27 @@ namespace UnitTests
 {
     public class FbxPropertyTest
     {
+
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() {
+            CoverageTester.TestCoverage(typeof(FbxProperty), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
+        }
+#endif
+
+        [Test]
+        public void TestEquality() {
+            using(var manager = FbxManager.Create()) {
+                var node = FbxNode.Create(manager, "node");
+                var translation = node.LclTranslation;
+                var rotation = node.LclRotation;
+
+                EqualityTester<FbxPropertyDouble3>.TestEquality(translation, rotation);
+            }
+        }
+
         [Test]
         public void BasicTests ()
         {
@@ -39,13 +60,5 @@ namespace UnitTests
                 using(var prop2 = node.LclScaling) { }
             }
         }
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() {
-            CoverageTester.TestCoverage(typeof(FbxProperty), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
-        }
-#endif
     }
 }
