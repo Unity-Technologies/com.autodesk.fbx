@@ -29,14 +29,21 @@ namespace UnitTests
         [Test]
         public void BasicTests ()
         {
-            FbxDataType v, v2;
-
-            // try all the constructors; make sure they don't crash
+            // Try all the constructors; make sure they don't crash
             new FbxDataType();
-            v = Globals.FbxBoolDT;
-            v2 = new FbxDataType(v);
+            var v = Globals.FbxBoolDT;
+            var v2 = new FbxDataType(v);
 
-            Assert.AreEqual("Byte", v.GetNameForIO()); // bool is serialized as a byte
+            // Call the basic functions, make sure they're reasonable.
+            Assert.IsTrue(v.Valid());
+            Assert.AreEqual(EFbxType.eFbxBool, v.ToEnum());
+            Assert.AreEqual("Bool", v.GetName());
+            Assert.AreEqual("bool", v.GetNameForIO());
+            Assert.IsTrue(v.Is(v2));
+
+            using(new FbxDataType(EFbxType.eFbxFloat));
+            using(new FbxDataType("name", EFbxType.eFbxFloat));
+            using(new FbxDataType("name", v));
 
             // make sure disposing doesn't crash in either case (disposing a handle to a
             // global, or disposing a handle to a copy)
