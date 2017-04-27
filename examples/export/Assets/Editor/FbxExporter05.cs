@@ -514,7 +514,6 @@ namespace FbxSdk.Examples
                     this.mesh = mesh;
                     this.xform = Matrix4x4.identity;
                     this.unityObject = null;
-                    this.m_Indices = null;
                     this.m_Binormals = null;
                 }
 
@@ -527,7 +526,6 @@ namespace FbxSdk.Examples
                     this.mesh = mesh;
                     this.xform = gameObject.transform.localToWorldMatrix;
                     this.unityObject = gameObject;
-                    this.m_Indices = null;
                     this.m_Binormals = null;
                 }
             }
