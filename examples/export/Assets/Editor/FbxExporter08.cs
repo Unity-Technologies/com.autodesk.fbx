@@ -67,8 +67,8 @@ namespace FbxSdk.Examples
                 // set the node visibility
                 fbxNode.SetVisibility(unityGo.transform.parent ? unityGo.activeSelf : false);
 
-                // if our parent is the root, then don't inherit its visibility
-                if(unityGo.transform.parent == unityGo.transform.root){
+                // don't inherit visibility of invisible root node
+                if(unityGo.transform.parent == null){
                     fbxNode.VisibilityInheritance.Set(false);
                 }
 #endif
