@@ -19,6 +19,9 @@ namespace UnitTests
             base.TestCoverage();
             CoverageTester.TestCoverage(typeof(FbxBindingTableBase), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxBindingTableEntry), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxEntryView), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyEntryView), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxSemanticEntryView), this.GetType());
         }
 #endif
 
@@ -33,6 +36,30 @@ namespace UnitTests
 
             var entry = table.AddNewEntry(); // don't crash (nothing to test yet)
             entry.Dispose();
+
+            entry = table.AddNewEntry(); // don't crash (nothing to test yet)
+
+            var propertyView = new FbxPropertyEntryView(entry, false);
+            Assert.IsFalse(propertyView.IsValid());
+            propertyView.Dispose();
+
+            propertyView = new FbxPropertyEntryView(entry, true, true);
+            Assert.IsTrue(propertyView.IsValid());
+            Assert.AreEqual("FbxPropertyEntry", propertyView.EntryType());
+            propertyView.SetProperty("property");
+            Assert.AreEqual("property", propertyView.GetProperty());
+
+            var semanticView = new FbxSemanticEntryView(entry, false);
+            Assert.IsFalse(semanticView.IsValid());
+            semanticView.Dispose();
+
+            semanticView = new FbxSemanticEntryView(entry, false, true);
+            Assert.IsTrue(semanticView.IsValid());
+            Assert.AreEqual("FbxSemanticEntry", semanticView.EntryType());
+            semanticView.SetSemantic("semantic");
+            Assert.AreEqual("semantic", semanticView.GetSemantic());
+            Assert.AreEqual(0, semanticView.GetIndex());
+            Assert.AreEqual("semantic", semanticView.GetSemantic(false));
         }
 
         void GetSetProperty(FbxPropertyString prop, string value) {
