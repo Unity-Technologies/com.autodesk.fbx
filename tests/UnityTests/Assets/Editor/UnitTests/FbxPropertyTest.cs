@@ -35,10 +35,12 @@ namespace UnitTests
         [Test]
         public void BasicTests ()
         {
-            // Easiest way to get a Double3 property: get a node and access its LclTranslation.
             using(var manager = FbxManager.Create()) {
+                // Easiest way to get a Double3 property: get a node and access its LclTranslation.
                 var node = FbxNode.Create(manager, "node");
                 var property = node.LclTranslation;
+
+                Assert.AreEqual(Globals.FbxLocalTranslationDT, property.GetPropertyDataType());
                 Assert.AreEqual("Lcl Translation", property.GetName());
                 Assert.AreEqual("Lcl Translation", property.ToString());
                 Assert.AreEqual("Lcl Translation", property.GetHierarchicalName());
@@ -46,7 +48,6 @@ namespace UnitTests
                 property.SetLabel("label");
                 Assert.AreEqual("label", property.GetLabel());
                 Assert.AreEqual(node, property.GetFbxObject());
-                Assert.AreEqual(property.GetFbxObject(), node); // test it both ways just in case equals is busted
 
                 var dbl3 = property.Get();
                 Assert.AreEqual(new FbxDouble3(), dbl3);
@@ -54,10 +55,66 @@ namespace UnitTests
                 dbl3 = property.Get();
                 Assert.AreEqual(new FbxDouble3(1, 2, 3), dbl3);
 
+                Assert.IsTrue(property.Set(5.0f));
+                Assert.AreEqual(new FbxDouble3(5.0f), property.Get());
+
                 // TODO: dispose will in the future destroy, which is illegal in this context;
                 // modify the test then.
                 property.Dispose();
                 using(var prop2 = node.LclScaling) { }
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // How to get a String property? Create an FbxImplementation (a shader implementation).
+                var impl = FbxImplementation.Create(manager, "name");
+                var property = impl.RenderAPI;
+
+                Assert.AreEqual(Globals.FbxStringDT, property.GetPropertyDataType());
+                Assert.AreEqual("RenderAPI", property.GetName());
+                Assert.AreEqual("RenderAPI", property.ToString());
+                Assert.AreEqual("RenderAPI", property.GetHierarchicalName());
+                Assert.AreEqual("RenderAPI", property.GetLabel(true));
+                property.SetLabel("label");
+                Assert.AreEqual("label", property.GetLabel());
+                Assert.AreEqual(impl, property.GetFbxObject());
+
+                property.Set("a value");
+                Assert.AreEqual("a value", property.Get());
+
+                Assert.IsTrue(property.Set(5.0f));
+                Assert.AreEqual("5.000000", property.Get());
+
+                property.Dispose();
+                using(var prop2 = impl.RenderAPI) { }
+            }
+
+            using (var manager = FbxManager.Create()) {
+                FbxProperty root, child;
+                var obj = FbxObject.Create(manager, "obj");
+
+                Assert.IsNotNull(FbxProperty.Create(obj, Globals.FbxStringDT, "a"));
+                Assert.IsNotNull(FbxProperty.Create(obj, Globals.FbxStringDT, "b", "label"));
+                Assert.IsNotNull(FbxProperty.Create(obj, Globals.FbxStringDT, "c", "label", false));
+                bool didFind;
+                Assert.IsNotNull(FbxProperty.Create(obj, Globals.FbxStringDT, "c", "label", true, out didFind));
+                Assert.IsTrue(didFind);
+
+                root = FbxProperty.Create(obj, Globals.FbxCompoundDT, "root");
+
+                child = FbxProperty.Create(root, Globals.FbxStringDT, "a");
+                Assert.IsNotNull(child);
+                Assert.IsNotNull(FbxProperty.Create(root, Globals.FbxStringDT, "b", "label"));
+                Assert.IsNotNull(FbxProperty.Create(root, Globals.FbxStringDT, "c", "label", false));
+                Assert.IsNotNull(FbxProperty.Create(root, Globals.FbxStringDT, "c", "label", true, out didFind));
+                Assert.IsTrue(didFind);
+
+                child.Destroy();
+
+                root.DestroyChildren();
+                Assert.IsNotNull(FbxProperty.Create(root, Globals.FbxStringDT, "c", "label", true, out didFind));
+                Assert.IsFalse(didFind);
+
+                root.DestroyRecursively();
             }
         }
     }
