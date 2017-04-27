@@ -17,6 +17,7 @@ namespace UnitTests
         public void TestCoverage() {
             CoverageTester.TestCoverage(typeof(FbxProperty), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyDouble), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
         }
 #endif
@@ -86,6 +87,33 @@ namespace UnitTests
 
                 property.Dispose();
                 using(var prop2 = impl.RenderAPI) { }
+            }
+
+            using(var manager = FbxManager.Create()) {
+                // Easiest way to get a Double property: create a lambert
+                var node = FbxSurfaceLambert.Create(manager, "lambert");
+                var property = node.EmissiveFactor;
+
+                Assert.AreEqual(Globals.FbxDoubleDT, property.GetPropertyDataType());
+                Assert.AreEqual("EmissiveFactor", property.GetName());
+                Assert.AreEqual("EmissiveFactor", property.ToString());
+                Assert.AreEqual("EmissiveFactor", property.GetHierarchicalName());
+                Assert.AreEqual("EmissiveFactor", property.GetLabel(true));
+                property.SetLabel("label");
+                Assert.AreEqual("label", property.GetLabel());
+                Assert.AreEqual(node, property.GetFbxObject());
+
+                property.Set(3.0);
+                Assert.AreEqual(3.0, property.Get());
+
+                // The generic set is not reachable when you have the specific one.
+                //Assert.IsTrue(property.Set((float)5.0f));
+                //Assert.AreEqual(5.0, property.Get());
+
+                // TODO: dispose will in the future destroy, which is illegal in this context;
+                // modify the test then.
+                property.Dispose();
+                using(var prop2 = node.EmissiveFactor) { }
             }
 
             using (var manager = FbxManager.Create()) {
