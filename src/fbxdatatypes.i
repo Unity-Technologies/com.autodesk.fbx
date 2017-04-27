@@ -10,13 +10,13 @@
 %rename("%s") FbxDataType;
 %rename("%s") FbxDataType::~FbxDataType;
 
-%rename("%s") FbxDataType::Valid;
-%rename("%s") FbxDataType::Is;
 %rename("%s") FbxDataType::GetType;
-%rename("%s") FbxDataType::GetName;
 
-/* For equality we need this extended method, the rest is handled below. */
-%rename("%s") FbxDataType::GetHashCode;
+/* We synthesize this function (which is a global static in the original SDK for
+ * some reason) */
+%rename("%s") FbxDataType::GetNameForIO;
+
+/* GetName doesn't return what you expect, so don't output it. */
 
 #endif
 
@@ -38,26 +38,21 @@
   FbxDataType(const char* pName, const EFbxType pType) {
     return new FbxDataType(FbxDataType::Create(pName, pType));
   }
+  /* This one crashes. Leave it out for now.
   FbxDataType(const char* pName, const FbxDataType& pDataType) {
     return new FbxDataType(FbxDataType::Create(pName, pDataType));
-  }
+  }*/
   FbxDataType(EFbxType pType) {
     return new FbxDataType(FbxGetDataTypeFromEnum(pType));
   }
 }
 
-/* Use the copy constructor instead */
+/* No assignment. Use the copy constructor instead */
 %ignore FbxDataType::operator=;
 
-/* Handle equality. */
-%rename("Equals") FbxDataType::operator==;
+/* Disable equality. It doesn't do what you'd think it does. */
+%ignore FbxDataType::operator==;
 %ignore FbxDataType::operator!=;
-%define_generic_equality_functions(FbxDataType);
-
-/* TODO: a better hash code? */
-%extend FbxDataType { %proxycode %{
-  public override int GetHashCode() { return GetNameForIO().GetHashCode(); }
-%} }
 
 /*
  * GetType is a special function in C#, so we need to rename it.
@@ -73,7 +68,7 @@
     return FbxGetDataTypeNameForIO(*$self);
   }
 }
-%define_tostring(FbxDataType, GetName());
+%define_tostring(FbxDataType, GetNameForIO());
 
 /* Take in a whole bunch of constants. Mark them all immutable.
  * Should we put them in the FbxDataTypes namespace?
