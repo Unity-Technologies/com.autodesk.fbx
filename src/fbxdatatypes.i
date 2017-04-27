@@ -10,13 +10,13 @@
 %rename("%s") FbxDataType;
 %rename("%s") FbxDataType::~FbxDataType;
 
+%rename("%s") FbxDataType::Valid;
+%rename("%s") FbxDataType::Is;
 %rename("%s") FbxDataType::GetType;
+%rename("%s") FbxDataType::GetName;
 
-/* We synthesize this function (which is a global static in the original SDK for
- * some reason) */
+/* Provide more convenient access to a global. */
 %rename("%s") FbxDataType::GetNameForIO;
-
-/* GetName doesn't return what you expect, so don't output it. */
 
 #endif
 
@@ -38,10 +38,9 @@
   FbxDataType(const char* pName, const EFbxType pType) {
     return new FbxDataType(FbxDataType::Create(pName, pType));
   }
-  /* This one crashes. Leave it out for now.
   FbxDataType(const char* pName, const FbxDataType& pDataType) {
     return new FbxDataType(FbxDataType::Create(pName, pDataType));
-  }*/
+  }
   FbxDataType(EFbxType pType) {
     return new FbxDataType(FbxGetDataTypeFromEnum(pType));
   }
@@ -50,9 +49,11 @@
 /* No assignment. Use the copy constructor instead */
 %ignore FbxDataType::operator=;
 
-/* Disable equality. It doesn't do what you'd think it does. */
-%ignore FbxDataType::operator==;
-%ignore FbxDataType::operator!=;
+/* Equality. The hash code could be improved. */
+%define_equality_from_operator(FbxDataType);
+%extend FbxDataType { %proxycode %{
+  public override int GetHashCode() { return GetName().GetHashCode(); }
+%} }
 
 /*
  * GetType is a special function in C#, so we need to rename it.
@@ -60,15 +61,16 @@
 %rename("ToEnum") FbxDataType::GetType;
 
 /*
- * Naming and ToString().
- * There's a global function that should be a member function; add it.
+ * This is a global function, but it fits as a member function.
  */
 %extend FbxDataType {
-  const char *GetNameForIO() const {
+  const char *GetNameForIO() {
     return FbxGetDataTypeNameForIO(*$self);
   }
 }
-%define_tostring(FbxDataType, GetNameForIO());
+
+/* Add a ToString function. */
+%define_tostring(FbxDataType, GetName());
 
 /* Take in a whole bunch of constants. Mark them all immutable.
  * Should we put them in the FbxDataTypes namespace?
