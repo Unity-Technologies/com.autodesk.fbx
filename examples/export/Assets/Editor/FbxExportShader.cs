@@ -11,8 +11,8 @@ using UnityEditor;
 
 namespace FbxSdk.Examples.Editor
 {
-    public static class ShaderExporer {
-        [MenuItem ("FbxSharp/Export Shaded Plane")]
+    public static class ShaderExporter {
+        [MenuItem ("FbxSharp Examples/Export Shaded Plane")]
         public static void ExportShader()
         {
             // Find an export filename
@@ -25,7 +25,7 @@ namespace FbxSdk.Examples.Editor
                     scene.GetGlobalSettings().SetSystemUnit(FbxSystemUnit.m);
 
                     // Create the scene.
-                    var node = CreateMesh(scene.GetRootNode(), new Vector3(0, 0, 0));
+                    var node = CreateMesh(scene.GetRootNode(), new Vector3(0, 1, 0));
                     var mat = CreateShader(scene);
                     node.AddMaterial(mat);
                     Debug.Log("created material " + mat);
@@ -33,6 +33,7 @@ namespace FbxSdk.Examples.Editor
                     // Export it.
                     using (var exporter = FbxExporter.Create(mgr, "exporter")) {
                         exporter.Initialize(filePath);
+                        exporter.SetFileExportVersion("FBX201400"); // force compatibility with old apps
                         exporter.Export(scene);
                     }
                 }

@@ -12,10 +12,24 @@
 /* helpers for defining equality correctly */
 %include "equality.i"
 
+/* Helper for defining ToString() correctly:
+ *   %define_tostring(FbxDataType, GetName())
+ * Defines a C# function FbxDataType.ToString() that returns GetName()
+ *
+ * Note the ... is so that you can pass arguments to the function, e.g.:
+ *   %define_tostring(FbxDataType, GetName(a,b))
+ */
+%define %define_tostring(THETYPE, THECALL...)
+%extend THETYPE { %proxycode %{
+  public override string ToString() {
+    return THECALL;
+  } %} }
+%enddef
+
 // define typemaps for INOUT arguments
 %include typemaps.i
 
-/* 
+/*
  * Handle object lifetime in Fbx by adding indirection.
  *
  * Important: we need to declare all the weak-pointer classes here *before*
@@ -101,6 +115,7 @@
 %include "fbxmanager.i"
 %include "fbxaxissystem.i"
 %include "fbxsystemunit.i"
+%include "fbxdatatypes.i"
 
 /* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"

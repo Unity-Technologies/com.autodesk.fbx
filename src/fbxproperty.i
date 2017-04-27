@@ -7,23 +7,26 @@
 
 /* We are included with ignores off, so that we can generate the template code.
  * But that means we need to ignore a lot of stuff. */
-%rename("GetName") FbxProperty::GetNameAsCStr() const;
-%extend FbxProperty {
-  %proxycode %{
-  public override string ToString() { return GetName(); }
-  %}
-}
-%ignore FbxProperty::GetName() const;
-%ignore FbxPropertyT::operator T;
 
-/* TODO: take more of this stuff in! */
-%ignore FbxProperty::FbxProperty;
-%ignore FbxProperty::FbxProperty(const FbxProperty&);
-%ignore FbxProperty::Create;
-%ignore FbxProperty::CreateFrom;
+
+/* Use the more efficient GetName implementation, and map ToString to it. */
+%ignore FbxProperty::GetName() const;
+%rename("GetName") FbxProperty::GetNameAsCStr() const;
+%define_tostring(FbxProperty, GetName());
+
+/* Create has an optional output when looking for duplicates. */
+/* %ignore FbxProperty::Create; */
+%apply bool *OUTPUT { bool* pWasFound };
+
+/*
 %ignore FbxProperty::Destroy;
 %ignore FbxProperty::DestroyChildren;
 %ignore FbxProperty::DestroyRecursively;
+*/
+
+
+/* TODO: take more of this stuff in! */
+%ignore FbxProperty::CreateFrom;
 %ignore FbxProperty::GetPropertyDataType;
 %ignore FbxProperty::SetUserTag;
 %ignore FbxProperty::GetUserTag;
@@ -105,13 +108,18 @@
 %ignore FbxProperty::operator=;
 %ignore FbxProperty::operator==;
 %ignore FbxProperty::operator!=;
-%ignore FbxProperty::operator<;
-%ignore FbxProperty::operator>;
 %ignore FbxProperty::sHierarchicalSeparator;
 
+%ignore FbxPropertyT::StaticInit;
+
+/* We likely don't want these ever. */
+%ignore FbxProperty::operator<;
+%ignore FbxProperty::operator>;
+%ignore FbxProperty::FbxProperty;
+%ignore FbxProperty::FbxProperty(const FbxProperty&);
 %ignore FbxPropertyT::FbxPropertyT;
 %ignore FbxPropertyT::FbxPropertyT(const FbxPropertyT&);
-%ignore FbxPropertyT::StaticInit;
+%ignore FbxPropertyT::operator T;
 
 /* Disallow setting properties by making an error when you try.
  * You'll also get a warning 844 in swig because there's no excode. */
