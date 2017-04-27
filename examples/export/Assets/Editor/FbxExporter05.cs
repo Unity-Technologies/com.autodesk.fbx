@@ -7,6 +7,8 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
+#define UNI_15773
+
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
@@ -347,6 +349,9 @@ namespace FbxSdk.Examples
                     fbxSceneInfo.mComment   = Comments;
 
                     fbxScene.SetSceneInfo (fbxSceneInfo);
+
+                    var fbxSettings = fbxScene.GetGlobalSettings();
+                    fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
