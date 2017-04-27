@@ -63,11 +63,12 @@ namespace FbxSdk.Examples.Editor
         }
 
         static FbxSurfaceMaterial CreateShader(FbxObject parent) {
-            var impl = FbxImplementation.Create(parent, "impl");
+            var mat = FbxSurfaceMaterial.Create(parent, "MyExportShader");
+            var impl = FbxImplementation.Create(mat, "impl");
 
-            impl.RenderAPI.Set(FbxSdk.Globals.FBXSDK_RENDERING_API_OPENGL);
+            impl.RenderAPI.Set(Globals.FBXSDK_RENDERING_API_OPENGL);
             impl.RenderAPIVersion.Set("1.5");
-            impl.Language.Set(FbxSdk.Globals.FBXSDK_SHADING_LANGUAGE_GLSL);
+            impl.Language.Set(Globals.FBXSDK_SHADING_LANGUAGE_GLSL);
             impl.LanguageVersion.Set("1.5");
 
             // Create the bindings.
@@ -75,8 +76,23 @@ namespace FbxSdk.Examples.Editor
             var table = impl.AddNewTable("table", "shader");
             table.DescRelativeURL.Set("fbxexportshader.glsl");
 
-            // TODO: properties so we can set glsl variables
-            var mat = FbxSurfaceMaterial.Create(parent, "MyExportShader");
+            // Create the property tree. We need to have it for blender, though it needn't have any
+            // properties inside.
+            var props = FbxProperty.Create(mat, Globals.FbxCompoundDT, "shaderprops");
+
+            // Create a custom property inside.
+            var customprop = FbxProperty.Create(props, Globals.FbxFloatDT, "customprop");
+            customprop.Set(5.0f);
+
+            // Add it to the bindings table; bind the semantic name (that the shader sees) to
+            // the fbx property.
+            var custompropentry = table.AddNewEntry();
+            var entryAsProp = new FbxPropertyEntryView(custompropentry, true, true);
+            var entryAsSemantic = new FbxSemanticEntryView(custompropentry, false, true);
+            entryAsProp.SetProperty(customprop.GetHierarchicalName());
+            entryAsSemantic.SetSemantic(customprop.GetName());
+
+            // Set the material implementation and return the material.
             mat.AddImplementation(impl);
             mat.SetDefaultImplementation(impl);
             return mat;
