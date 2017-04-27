@@ -1,5 +1,15 @@
 public static class Invoker
 {
+    /**
+     * Invoke a zero-argument instance method.
+     */
+    public static U Invoke<U>(System.Reflection.MethodInfo method, object instance) {
+        try {
+            return (U)(method.Invoke(instance, null));
+        } catch(System.Reflection.TargetInvocationException xcp) {
+            throw xcp.GetBaseException();
+        }
+    }
 
     /**
      * Invoke a single-argument instance method.

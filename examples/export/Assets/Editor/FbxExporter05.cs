@@ -7,6 +7,8 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
+#define UNI_15773
+
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
@@ -65,12 +67,12 @@ namespace FbxSdk.Examples
                 using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, MakeObjectName ("Normals"))) 
                 {
 #if UNI_15773
-                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
                     //fbxNormalLayer.SetMappingMode (FbxLayerElement.eByPolygonVertex);
 
-                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eDirect);
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
 
                     // Add one normal per each vertex face index (3 per triangle)
                     FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
@@ -89,12 +91,12 @@ namespace FbxSdk.Examples
                 /// Set the binormals on Layer 0. 
                 using (var fbxLayerElement = FbxLayerElementBinormal.Create (fbxMesh, MakeObjectName ("Binormals"))) 
                 {
-                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
                     //fbxBinormalLayer.SetMappingMode (FbxLayerElement.eByPolygonVertex);
 
-                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eDirect);
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
 
                     // Add one normal per each vertex face index (3 per triangle)
                     FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
@@ -112,12 +114,12 @@ namespace FbxSdk.Examples
                 /// Set the tangents on Layer 0.
                 using (var fbxLayerElement = FbxLayerElementTangent.Create (fbxMesh, MakeObjectName ("Tangents"))) 
                 {
-                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
                     //fbxBinormalLayer.SetMappingMode (FbxLayerElement.eByPolygonVertex);
 
-                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eDirect);
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
 
                     // Add one normal per each vertex face index (3 per triangle)
                     FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
@@ -149,21 +151,21 @@ namespace FbxSdk.Examples
 
                 using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, MakeObjectName ("VertexColor"))) 
                 {
-                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByControlPoint);
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
                     //fbxNormalLayer.SetMappingMode (FbxLayerElement.eByPolygonVertex);
 
-                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eDirect);
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
 
                     // Add one normal per each vertex face index (3 per triangle)
                     FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
 
                     for (int n = 0; n < mesh.VertexColors.Length; n++) 
                     {
-                        fbxElementArray.Add (new FbxColor(mesh.VertexColor[n][0], 
-                                                          mesh.VertexColor[n][1], 
-                                                          mesh.VertexColor[n][2]));
+                        fbxElementArray.Add (new FbxColor(mesh.VertexColors[n][0], 
+                                                          mesh.VertexColors[n][1], 
+                                                          mesh.VertexColors[n][2]));
                     }
                     fbxLayer.SetVertexColors (fbxLayerElement);
                 }
@@ -185,10 +187,10 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, MakeObjectName ("UVSet"))) 
+                using (var fbxLayerElement = FbxLayerElementUV.Create (fbxMesh, MakeObjectName ("UVSet")))
                 {
-                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygonVertex);
-                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByPolygonVertex);
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eIndexToDirect);
 
                     // set texture coordinates per vertex
                     FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
@@ -206,7 +208,7 @@ namespace FbxSdk.Examples
                     {
                         fbxIndexArray.SetAt (vertIndex, mesh.Indices [vertIndex]);
                     }
-                    fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.eTextureDiffuse);
+                    fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.EType.eTextureDiffuse);
                 }
 #endif
             }
@@ -348,6 +350,9 @@ namespace FbxSdk.Examples
 
                     fbxScene.SetSceneInfo (fbxSceneInfo);
 
+                    var fbxSettings = fbxScene.GetGlobalSettings();
+                    fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
+
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
                     // export set of object
@@ -457,7 +462,7 @@ namespace FbxSdk.Examples
                         /// NOTE: LINQ
                         ///    return mesh.normals.Zip (mesh.tangents, (first, second)
                         ///    => Math.cross (normal, tangent.xyz) * tangent.w
-                        if (m_Binormals.Length == 0) 
+                        if (m_Binormals == null || m_Binormals.Length == 0) 
                         {
                             m_Binormals = new Vector3 [mesh.normals.Length];
 
@@ -475,25 +480,11 @@ namespace FbxSdk.Examples
                 /// TODO: Gets the triangle vertex indices
                 /// </summary>
                 /// <value>The normals.</value>
-                int[] m_Indices;
-
                 public int [] Indices 
                 {
                     get 
                     {
-                        if (m_Indices.Length == 0) 
-                        {
-                            m_Indices = new int [mesh.triangles.Length * 3];
-                            int i = 0;
-                            for (int triIndex = 0; triIndex < mesh.triangles.Length; triIndex++)
-                            {
-                                for (int vtxIndex = 0; vtxIndex < 3; vtxIndex++)
-                                {
-                                    m_Indices[i++] = (triIndex * 3) + vtxIndex;
-                                }
-                           }
-                        }
-                        return m_Indices;
+                        return mesh.triangles;
                     }
                 }
 
@@ -523,7 +514,6 @@ namespace FbxSdk.Examples
                     this.mesh = mesh;
                     this.xform = Matrix4x4.identity;
                     this.unityObject = null;
-                    this.m_Indices = null;
                     this.m_Binormals = null;
                 }
 
@@ -536,7 +526,6 @@ namespace FbxSdk.Examples
                     this.mesh = mesh;
                     this.xform = gameObject.transform.localToWorldMatrix;
                     this.unityObject = gameObject;
-                    this.m_Indices = null;
                     this.m_Binormals = null;
                 }
             }
