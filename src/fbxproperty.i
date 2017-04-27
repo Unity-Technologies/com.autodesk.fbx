@@ -135,9 +135,18 @@
 %ignore FbxPropertyT::FbxPropertyT(const FbxPropertyT&);
 %ignore FbxPropertyT::operator T;
 
-/* Disallow setting properties by making an error when you try.
- * You'll also get a warning 844 in swig because there's no excode. */
-%typemap("csvarin") const FbxPropertyT& {#error mark this %immutable in the $csclassname.i file}
+/*
+ * We don't want to provide setters for properties, because we don't have operator=.
+ * Solution: use %fbxproperty to declare a property.
+ *
+ * We create a warning 844 in swig when you forget. */
+
+%define %fbxproperty(THENAME)
+%immutable THENAME;
+%rename("%s") THENAME;
+%enddef
+
+%typemap("csvarin") const FbxPropertyT& {#error this should be a %fbxproperty}
 
 
 /***************************************************************************/
@@ -147,4 +156,5 @@
 %template(Set) FbxProperty::Set<float>;
 
 %template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
+%template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
