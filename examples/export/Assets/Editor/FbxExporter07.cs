@@ -35,7 +35,8 @@ namespace FbxSdk.Examples
                 "export node transform visibility";
             
             const string Comments = 
-                @"We are exporting rotations using the Euler angles from Unity.";
+                @"We are exporting rotations using the Euler angles from Unity.
+                  In this example we set the root node invisible, but leave its children visible.";
 
             const string MenuItemName = "File/Export/Export (nodes with visibility) to FBX";
 
@@ -80,12 +81,16 @@ namespace FbxSdk.Examples
 
                 ExportTransform ( unityGo.transform, fbxNode);
 #if UNI_16194
-                // set the node visibility
-                fbxNode.SetVisibility(unityGo.activeSelf);
+                // if this GameObject is at the root of the scene,
+                // make it invisible, but leave all its children as is
 
-                // make sure that invisibility is inherited
-                // Note: not sure if this is necessary as true should be the default value
-                fbxNode.VisibilityInheritance.Set(true);
+                // set the node visibility
+                fbxNode.SetVisibility(unityGo.transform.parent ? unityGo.activeSelf : false);
+
+                // don't inherit visibilty for invisible root node
+                if(unityGo.transform.parent == null){
+                    fbxNode.VisibilityInheritance.Set(false);
+                }
 #endif
                 if (Verbose)
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
