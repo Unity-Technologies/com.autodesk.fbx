@@ -8,7 +8,6 @@
 // ignore everything we don't need
 %ignore LockAccessStatus;
 %ignore FbxLayerElementArrayReadLock;
-%ignore FbxLayerElementMaterial;
 %ignore LayerElementArrayProxy;
 %ignore FbxLayerElementPolygonGroup;
 %ignore FbxLayerElementUserData;
@@ -64,12 +63,16 @@
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementVertexColor::.*";
 %rename("%s") FbxLayerElementVertexColor::Create;
 
+%rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementMaterial::.*";
+%rename("%s") FbxLayerElementMaterial::Create;
+
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayer::.*";
 %rename("%s") FbxLayer::SetNormals;
 %rename("%s") FbxLayer::SetBinormals;
 %rename("%s") FbxLayer::SetVertexColors;
 %rename("%s") FbxLayer::SetUVs;
 %rename("%s") FbxLayer::SetTangents;
+%rename("%s") FbxLayer::SetMaterials;
 
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTemplate::.*";
 %rename("%s") FbxLayerElementTemplate::GetDirectArray() const;
