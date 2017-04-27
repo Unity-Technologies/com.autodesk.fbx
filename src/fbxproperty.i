@@ -22,12 +22,28 @@
 %ignore FbxProperty::Destroy;
 %ignore FbxProperty::DestroyChildren;
 %ignore FbxProperty::DestroyRecursively;
+%ignore FbxProperty::GetPropertyDataType;
 */
 
+/*
+ * Define equality and hash code.
+ */
+%define_equality_from_operator(FbxProperty);
+%extend FbxProperty { %proxycode %{
+  public override int GetHashCode() {
+    uint hash = (uint) GetName().GetHashCode();
+    hash = (hash << 11) | (hash >> 21);
+    hash ^= (uint) GetPropertyDataType().GetHashCode();
+    var obj = GetFbxObject();
+    if (obj != null) {
+      hash = (hash << 11) | (hash >> 21);
+      hash ^= (uint) obj.GetHashCode();
+    }
+    return (int) hash;
+  } %} }
 
 /* TODO: take more of this stuff in! */
 %ignore FbxProperty::CreateFrom;
-%ignore FbxProperty::GetPropertyDataType;
 %ignore FbxProperty::SetUserTag;
 %ignore FbxProperty::GetUserTag;
 %ignore FbxProperty::SetUserDataPtr;
@@ -106,8 +122,6 @@
 %ignore FbxProperty::FindDstProperty;
 %ignore FbxProperty::ClearConnectCache;
 %ignore FbxProperty::operator=;
-%ignore FbxProperty::operator==;
-%ignore FbxProperty::operator!=;
 %ignore FbxProperty::sHierarchicalSeparator;
 
 %ignore FbxPropertyT::StaticInit;
