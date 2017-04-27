@@ -100,11 +100,7 @@
 
 
 /* Handle equality. */
-%rename("Equals") FbxAxisSystem::operator==;
-%ignore FbxAxisSystem::operator!=;
-%ignore FbxAxisSystem::operator=;
-%define_generic_equality_functions(FbxAxisSystem);
-
+%define_equality_from_operator(FbxAxisSystem);
 %extend FbxAxisSystem {
   %csmethodmodifiers GetHashCode "public override";
   int GetHashCode() const {
