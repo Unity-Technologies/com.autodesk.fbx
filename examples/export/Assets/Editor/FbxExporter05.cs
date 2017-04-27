@@ -480,25 +480,11 @@ namespace FbxSdk.Examples
                 /// TODO: Gets the triangle vertex indices
                 /// </summary>
                 /// <value>The normals.</value>
-                int[] m_Indices;
-
                 public int [] Indices 
                 {
                     get 
                     {
-                        if (m_Indices == null || m_Indices.Length == 0) 
-                        {
-                            m_Indices = new int [mesh.triangles.Length * 3];
-                            int i = 0;
-                            for (int triIndex = 0; triIndex < mesh.triangles.Length; triIndex++)
-                            {
-                                for (int vtxIndex = 0; vtxIndex < 3; vtxIndex++)
-                                {
-                                    m_Indices[i++] = (triIndex * 3) + vtxIndex;
-                                }
-                           }
-                        }
-                        return m_Indices;
+                        return mesh.triangles;
                     }
                 }
 
