@@ -1,7 +1,7 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
@@ -11,6 +11,21 @@ namespace UnitTests
 {
     public class FbxMatrixTest
     {
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxMatrix), this.GetType()); }
+#endif
+
+        [Test]
+        public void TestEquality()
+        {
+            var zero = new FbxVector4();
+            var one = new FbxVector4(1,1,1);
+            var mx1 = new FbxMatrix(zero, zero, one);
+            var mx2 = new FbxMatrix(one, zero, one);
+            EqualityTester<FbxMatrix>.TestEquality(mx1, mx2);
+        }
+
         [Test]
         public void BasicTests ()
         {
@@ -101,10 +116,5 @@ namespace UnitTests
             Assert.AreEqual(b, v.Z);
             Assert.AreEqual(a, v.W);
         }
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxMatrix), this.GetType()); }
-#endif
     }
 }
