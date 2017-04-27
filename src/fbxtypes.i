@@ -15,6 +15,7 @@
 %declare_hand_optimized_type(FbxVectorTemplate2<double>, FbxSharpDouble2, FbxDouble2);
 %declare_hand_optimized_type(FbxVectorTemplate3<double>, FbxSharpDouble3, FbxDouble3);
 %declare_hand_optimized_type(FbxVectorTemplate4<double>, FbxSharpDouble4, FbxDouble4);
+%declare_hand_optimized_type(FbxVector4, FbxSharpDouble4, FbxVector4);
 
 /* Then we provide support for the non-optimized types. */
 %define %rename_vector_operators(THETYPE, N)

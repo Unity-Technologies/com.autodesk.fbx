@@ -138,6 +138,7 @@
 %include "fbximplementation.i"
 %include "fbxsurfacematerial.i"
 %include "fbxbindingtable.i"
+%include "fbxpropertytypes.i"
 #endif
 
 /* Everything */

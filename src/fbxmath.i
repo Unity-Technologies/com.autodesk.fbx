@@ -11,7 +11,6 @@
  * - affine matrix (FbxAMatrix)
  * Vector4 is handled specially because it's performance-critical.
  */
-%declare_hand_optimized_type(FbxVector4, FbxSharpDouble4, FbxVector4);
 
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
@@ -33,3 +32,10 @@
 #endif
 
 %include "fbxsdk_csharp-fixed-headers/fbxaffinematrix.h"
+
+#ifdef IGNORE_ALL_INCLUDE_SOME
+// Unignore class
+%rename("%s") FbxVector2;
+#endif
+
+%include "fbxsdk/core/math/fbxvector2.h"
