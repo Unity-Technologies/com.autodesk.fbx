@@ -40,7 +40,7 @@ namespace FbxSdk.Examples
             const string Comments =
                 @"";
 
-            const string MenuItemName = "File/Export/Export (static mesh with specular materials and textures) to FBX";
+            const string MenuItemName = "File/Export/Export (static mesh with materials) to FBX";
 
             const string FileBaseName = "example_static_mesh_with_materials_and_textures";
 
