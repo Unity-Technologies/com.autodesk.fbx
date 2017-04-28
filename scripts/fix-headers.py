@@ -48,6 +48,8 @@ for inname in sys.argv[2:]:
             r'%template(FbxLayerElementTemplateFbxVector4) FbxLayerElementTemplate<FbxVector4>; \
              %template(FbxLayerElementTemplateFbxVector2) FbxLayerElementTemplate<FbxVector2>; \
              %template(FbxLayerElementTemplateFbxColor) FbxLayerElementTemplate<FbxColor>; \
+             %template(FbxLayerElementTemplateFbxSurfaceMaterial) FbxLayerElementTemplate<FbxSurfaceMaterial*>; \
+             %template(FbxLayerElementArrayTemplateFbxSurfaceMaterial) FbxLayerElementArrayTemplate<FbxSurfaceMaterial*>; \
              \1',
              line
         )

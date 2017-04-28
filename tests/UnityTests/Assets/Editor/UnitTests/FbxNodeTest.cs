@@ -30,6 +30,8 @@ namespace UnitTests
             Assert.AreEqual(new FbxDouble3(1,1,1), s.Get());
             var r = root.LclRotation;
             Assert.AreEqual(new FbxDouble3(0,0,0), r.Get());
+            var vi = root.VisibilityInheritance;
+            Assert.AreEqual (true, vi.Get ());
 
             var child = CreateObject("child");
             ok = root.AddChild(child);
@@ -141,6 +143,15 @@ namespace UnitTests
                 node.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
 
                 Assert.AreEqual (FbxNode.EShadingMode.eWireFrame, node.GetShadingMode ());
+            }
+        }
+
+        [Test]
+        public void TestSetVisibility()
+        {
+            using(FbxNode node = CreateObject("root")){
+                node.SetVisibility (false);
+                Assert.AreEqual (node.GetVisibility (), false);
             }
         }
     }
