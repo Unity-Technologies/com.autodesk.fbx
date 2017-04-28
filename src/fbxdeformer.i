@@ -6,7 +6,7 @@
 // ***********************************************************************
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
-%rename("%s") FbxDeformer;
+%rename("%s", %$isclass) FbxDeformer;
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
