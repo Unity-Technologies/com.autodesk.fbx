@@ -46,25 +46,151 @@ namespace FbxSdk.Examples
             public static FbxExporter09 Create () { return new FbxExporter09 (); }
 
             /// <summary>
+            /// Export an AnimationCurve
+            /// </summary>
+            protected void ExportAnimCurve (AnimationCurve unityAnimCurve, FbxScene fbxScene, FbxNode fbxNode, string channelName, float framesPerSecond)
+            {
+#if UNI_16421
+                // Create the AnimCurve on the channel
+                FbxAnimCurve fbxAnimCurve = fbxNode.LclRotation.GetCurve (fbxAnimLayer, channelName, true);
+
+                // copy Unity AnimCurve to FBX AnimCurve.
+                fbxAnimCurve.KeyModifyBegin();
+
+                FbxTime fbxTime;
+                int keyIndex = 0;
+                double timeInSeconds = 0.0;
+
+                foreach (Keyframe key in unityAnimCurve.keys)
+                {
+                    FbxAnimCurveDef.EInterpolationType fbxACInterpolation = FbxAnimCurveDef.EInterpolationType.eInterpolationCubic;
+                    FbxAnimCurveDef.ETangentMode fbxACTangent = FbxAnimCurveDef.eTangentAuto;
+
+                    // get time in seconds
+                    // TODO: this will not be exactly keyframe aligned
+                    timeInSeconds = key.time * framesPerSecond;
+                    fbxTime.SetSecondDouble(timeInSeconds);
+
+                    keyIndex = fbxAnimCurve.KeyAdd (fbxTime);
+
+                    var leftTangent = AnimationUtility.GetKeyLeftTangentMode (unityAnimCurve, keyIndex);
+                    var rightTangent = AnimationUtility.GetKeyLeftTangentMode (unityAnimCurve, keyIndex);
+
+                    if (leftTangent == AnimationUtility.TangentMode.Constant && 
+                        rightTangent == AnimationUtility.TangentMode.Constant )
+                    {
+                        fbxACInterpolation = FbxAnimCurveDef.EInterpolationType.eInterpolationConstant;
+                        fbxACTangent = FbxAnimCurveDef.ETangentMode.eConstantStandard;                        
+                    } 
+                    else if (leftTangent == AnimationUtility.TangentMode.Linear && 
+                        rightTangent == AnimationUtility.TangentMode.Linear )
+                    {
+                        fbxACInterpolation = FbxAnimCurveDef.EInterpolationType.eInterpolationLinear;
+                        fbxACTangent = FbxAnimCurveDef.ETangentMode.eTangentUser;                        
+                    } 
+                    else if (leftTangent == AnimationUtility.TangentMode.Linear && 
+                        rightTangent == AnimationUtility.TangentMode.Linear )
+                    {
+                        fbxACInterpolation = FbxAnimCurveDef.EInterpolationType.eInterpolationLinear;
+                        fbxACTangent = FbxAnimCurveDef.ETangentMode.eTangentUser;                        
+                    } 
+                    else if (leftTangent == AnimationUtility.TangentMode.Free && 
+                        rightTangent == AnimationUtility.TangentMode.Free )
+                    {
+                        fbxACInterpolation = FbxAnimCurveDef.EInterpolationType.eInterpolationCubic;
+                        fbxACTangent = FbxAnimCurveDef.ETangentMode.eTangentBreak;                        
+                    } 
+
+                    fbxAnimCurve.KeySet (keyIndex, 
+                                         fbxTime, 
+                                         (double)key.value, 
+                                         FbxAnimCurveDef.eInterpolationCubic, 
+                                         FbxAnimCurveDef.eTangentAuto);
+                }
+
+                fbxCurve.KeyModifyEnd();
+#endif
+            }
+
+            /// <summary>
             /// Export an AnimationClip as a single take
             /// </summary>
-            protected void ExportAnimationClip (AnimationClip unityAnimClip, FbxScene fbxScene)
+            protected void ExportAnimationClip (AnimationClip unityAnimClip, GameObject unityRoot, FbxScene fbxScene)
             {
 #if UNI_16421
                 // setup anim stack
-                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, MakeObjectName (unityAnimClip.name + " Take"));
-                fbxAnimStack.Description.Set ("Animation Take for scene.");
+                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, MakeObjectName (unityAnimClip.name));
+                fbxAnimStack.Description.Set ("Animation Take: " + unityAnimClip.name);
 
                 // add one mandatory animation layer
                 FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (fbxScene, "Animation Base Layer");
                 fbxAnimStack.AddMember (fbxAnimLayer);
 
                 // TODO: set time span of stack
+                float framesPerSecond = unityAnimClip.frameRate;
 
-                // TODO: collect bones
+                // set time correctly
+                FbxTime fbxStartTime = new FbxTime;
+                FbxTime fbxStopTime = new fbxStopTime;
 
-                // TODO: export curves on bone
-#endif                
+                if (Mathf.Approximately (framesPerSecond, FbxTime.GetFrameRate(FbxTime.EMode.eFrames60)))
+                {
+                    fbxStartTime.SetGlobalTimeMode (FbxTime.EMode.eFrames60);
+                    fbxStopTime.SetGlobalTimeMode (FbxTime.EMode.eFrames60);
+                }
+                else
+                {
+                    fbxStartTime.SetGlobalTimeMode(FbxTime.EMode.eCustom, framesPerSecond);
+                    fbxStopTime.SetGlobalTimeMode(FbxTime.EMode.eCustom, framesPerSecond);
+                }
+
+                fbxStartTime.SetSecondDouble(0.f);
+                fbxStopTime.SetSecondDouble(unityAnimClip.length);
+
+                FbxTimeSpan fbxTimeSpan = new FbxTimeSpan;
+                fbxTimeSpan.Set(fbxStartTime, fbxStopTime);
+
+                fbxAnimStack.SetLocalTimeSpan (fbxTimeSpan);
+
+                var mapUnityObjectToFBXNode = new Dictionary<Object, FbxNode> ();
+
+                foreach (EditorCurveBinding unityCurveBinding in AnimationUtility.GetCurveBindings(unityAnimClip))
+                {
+                    Object unityObj = AnimationUtility.GetAnimatedObject(unityRoot, unityCurveBinding);
+                    MonoBehaviour unityMono = unityObj as MonoBehaviour;
+
+                    // TODO: find game object from animated object
+                    GameObject unityGo = unityMono.gameObject;
+
+                    AnimationCurve unityAnimCurve = AnimationUtility.GetEditorCurve (unityAnimClip, unityCurveBinding);
+            
+                    // get FbxNode
+                    FbxNode fbxNode = null;
+
+                    //  create animation curve nodes to connect the transform data
+                    if (!mapUnityObjectToFBXNode.ContainsKey (unityGo)) 
+                    {
+                        // TODO : lookup FbxNode from binding
+                        // TODO : how do we just export the animstack . do we need the FbxNode?
+
+                        FbxAnimCurveNode fbxScalingNode = fbxNode.LclScaling.GetCurveNode (fbxAnimLayer, true);
+                        FbxAnimCurveNode fbxTranslatioNode = fbxNode.LclTranslation.GetCurveNode (fbxAnimLayer, true);
+                        FbxAnimCurveNode fbxRotatioNode = fbxNode.LclRotation.GetCurveNode (fbxAnimLayer, true);
+
+                        mapUnityObjectToFBXNode [unityGo] = fbxNode;
+                    } 
+                    else 
+                    {
+                        fbxNode = mapUnityObjectToFBXNode [unityGo];
+                    }
+
+                    // TODO: lookup channel from path
+                    string channelName = FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z;
+
+                    ExportAnimCurve (unityAnimCurve, fbxScene, fbxNode, channelName);
+
+                }
+#endif
             }
 
             /// <summary>
@@ -72,24 +198,34 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportAnimationClips (Animation unityAnimation, FbxScene fbxScene)
             {
+                if (unityAnimation == null)
+                    return;
+
+                GameObject unityRoot = unityAnimation.gameObject;
+
                 // build a unique list of animation clips for export
                 var animClips = new Dictionary<string, AnimationClip> ();
 
+                string clipName;
+
                 if (unityAnimation.clip != null) 
                 {
-                    animClips [unityAnimation.clip.name] = unityAnimation.clip;
+                    clipName = unityAnimation.clip.name;
+                    animClips [clipName] = unityAnimation.clip;
+
+                    ExportAnimationClip (animClips [clipName], unityRoot, fbxScene);
                 }
 
                 foreach (AnimationState unityAnimState in unityAnimation)
                 {
-                    var unityAnimClip = unityAnimation.clip;
-                    animClips [unityAnimClip.name] = unityAnimClip;
-                }
+                    clipName = unityAnimState.clip.name;
+                        
+                    if (!animClips.ContainsKey (clipName)) 
+                    {
+                        animClips [clipName] = unityAnimState.clip;
 
-                // export that list
-                foreach (string clipName in animClips.Keys)
-                {
-                    ExportAnimationClip (animClips [clipName], fbxScene);
+                        ExportAnimationClip (animClips [clipName], unityRoot, fbxScene);
+                    }
                 }
 
             	return;
@@ -100,12 +236,7 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportComponents (GameObject unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
             {
-                Animation unityAnimation = unityGo.GetComponent<Animation> ();
-
-                if (unityAnimation == null)
-                    return;
-
-                ExportAnimationClips (unityAnimation, fbxScene);
+                ExportAnimationClips (unityGo.GetComponent<Animation> (), fbxScene);
 
                 return;
             }
