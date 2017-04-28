@@ -65,7 +65,7 @@ namespace UnitTests
         public void BasicTests ()
         {
             using (var manager = FbxManager.Create()) {
-                // Run the same tests for FbxPropertyT<FbxBool> used by VisibilityInheritance
+                // FbxPropertyT<FbxBool> example: VisibilityInheritance on a node
                 var node = FbxNode.Create(manager, "node");
                 GenericPropertyTests<FbxPropertyBool> (node.VisibilityInheritance, node, "Visibility Inheritance", Globals.FbxVisibilityInheritanceDT);
 
@@ -78,7 +78,7 @@ namespace UnitTests
             }
 
             using(var manager = FbxManager.Create()) {
-                // Easiest way to get a Double property: create a lambert
+                // FbxPropertyT<FbxDouble> example: several of them on a Lambert shader
                 var obj = FbxSurfaceLambert.Create(manager, "lambert");
                 GenericPropertyTests<FbxPropertyDouble> (obj.EmissiveFactor, obj, "EmissiveFactor", Globals.FbxDoubleDT);
 
@@ -88,7 +88,7 @@ namespace UnitTests
             }
 
             using(var manager = FbxManager.Create()) {
-                // Easiest way to get a Double3 property: get a node and access its LclTranslation.
+                // FbxPropertyT<Double3> example: the LclTranslation on a node
                 var node = FbxNode.Create(manager, "node");
                 GenericPropertyTests<FbxPropertyDouble3> (node.LclTranslation, node, "Lcl Translation", Globals.FbxLocalTranslationDT);
 
@@ -101,7 +101,7 @@ namespace UnitTests
             }
 
             using (var manager = FbxManager.Create()) {
-                // How to get a String property? Create an FbxImplementation (a shader implementation).
+                // FbxPropertyT<FbxString> example: the description of a shader implementation
                 var impl = FbxImplementation.Create(manager, "name");
                 GenericPropertyTests<FbxPropertyString> (impl.RenderAPI, impl, "RenderAPI", Globals.FbxStringDT);
 

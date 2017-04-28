@@ -34,10 +34,12 @@ namespace UnitTests
             GetSetProperty(table.DescRelativeURL, "shader.glsl");
             GetSetProperty(table.DescTAG, "user");
 
-            var entry = table.AddNewEntry(); // don't crash (nothing to test yet)
+            // Test dispose.
+            var entry = table.AddNewEntry();
             entry.Dispose();
 
-            entry = table.AddNewEntry(); // don't crash (nothing to test yet)
+            // Test the views.
+            entry = table.AddNewEntry();
 
             var propertyView = new FbxPropertyEntryView(entry, false);
             Assert.IsFalse(propertyView.IsValid());
