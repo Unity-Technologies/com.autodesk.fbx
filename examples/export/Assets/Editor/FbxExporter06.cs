@@ -41,19 +41,19 @@ namespace FbxSdk.Examples
             const string Comments =
                 @"";
 
-            const string MenuItemName = "File/Export/Export (static mesh with materials and textures) to FBX";
+            const string MenuItemName = "File/Export/Export (static mesh with specular materials and textures) to FBX";
 
             const string FileBaseName = "example_static_mesh_with_materials_and_textures";
 
             /// <summary>
             /// Create instance of example
             /// </summary>
-            public static FbxExporter05 Create () { return new FbxExporter05 (); }
+            public static FbxExporter06 Create () { return new FbxExporter06 (); }
 
             /// <summary>
-            /// Map Unity Material Name to FbxMaterial object
+            /// Map Unity material name to FBX material object
             /// </summary>
-            protected Dictionary<string, object> MaterialMap { private set; get; }
+            Dictionary<string, FbxSurfaceMaterial> MaterialMap = new Dictionary<string, FbxSurfaceMaterial>();
 
             /// <summary>
             /// Export the mesh's UVs using layer 0.
@@ -102,13 +102,13 @@ namespace FbxSdk.Examples
             public void ExportMaterialMapping (MeshInfo mesh, FbxMesh fbxMesh)
             {
 #if UNI_15935
-                // Set the normals on Layer 0.
+                // Set the materials on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) {
                     fbxMesh.CreateLayer ();
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
-                using (var fbxLayerElement = FbxLayerElementMaterial.Create (fbxMesh, MakeObjectName ("Materials")))
+                using (var fbxLayerElement = FbxLayerElementMaterial.Create (fbxMesh, "Materials"))
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygon);
                     fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
@@ -148,116 +148,59 @@ namespace FbxSdk.Examples
 
                 return null;
             }
-
-            public void ExportMaterialColor(Material unityMaterial, string  unityPropName, FbxSurfaceMaterial fbxMaterial, string fbxPropName, bool toLinearSpace)
-            {
-                if (unityMaterial.HasProperty(unityPropName))
-                {
-                    Color unityColor = unityMaterial.GetColor (unityPropName);
-                    if (unityColor != null) 
-                    {
-                        Color unityColor2 = toLinearSpace ? unityColor : unityColor.linear;
-
-                        fbxMaterial.Set (new FbxDouble3 (unityColor2.r, unityColor2.g, unityColor2.b));
-                    }
-                }
-            }
 #endif
+
+            /// <summary>
+            /// Get the color of a material, or grey if we can't find it.
+            /// </summary>
+            public FbxDouble3 GetMaterialColor(Material unityMaterial, string unityPropName)
+            {
+                if (!unityMaterial) { return new FbxDouble3(0.5); }
+                if (!unityMaterial.HasProperty(unityPropName)) { return new FbxDouble3(0.5); }
+                var unityColor = unityMaterial.GetColor (unityPropName);
+                return new FbxDouble3 (unityColor.r, unityColor.g, unityColor.b);
+            }
+
             /// <summary>
             /// Export (and map) a Unity PBS material to FBX classic material
             /// </summary>
-            /// 
-            public object ExportMaterial (Material unityMaterial, FbxScene fbxScene)
+            public FbxSurfaceMaterial ExportMaterial (Material unityMaterial, FbxScene fbxScene)
             {
-                object fbxMaterial = null;
-#if UNI_15935
-                FbxSurfaceMaterial fbxMaterial = null;
-
-                // TODO: lookup material from triangle index
-                string materialName = mesh.Material[triangleIndex];
-
-                if (MaterialMap.ContainsKey (materialName))
+                var materialName = unityMaterial ? unityMaterial.name : "DefaultMaterial";
+                if (MaterialMap.ContainsKey (materialName)) {
                     return MaterialMap [materialName];
-
-                // TODO: determine if we need to export in linear color space
-                bool toLinearSpace = false;
-
-                /*
-                 * TODO: should we attempt to map PBS material to classic material
-                 */
-                bool mapToClassicMaterial = true;
-
-                if (mapToClassicMaterial)
-                {
-                    // TODO: determine shading model match 
-                    bool phongShadingModel = true; 
-
-                    if (phongShadingModel) 
-                    {
-                        fbxMaterial = FbxSurfacePhong::Create (fbxScene, materialName);
-                    } 
-                    else /* matte or diffuse reflection */
-                    { 
-                        fbxMaterial = FbxSurfaceLambert::Create (fbxScene, materialName);
-                    }
-
-                    // Albedo Color => diffuse
-                    if (ExportTexture (unityMaterial,  "_MainTex", fbxScene, fbxMaterial.sDiffuse) == null) 
-                    {
-                        ExportMaterialColor (unityMaterial, "_Color", fbxMaterial, fbxMaterial.sDiffuse);
-                    }
-
-                    // Specular => specular
-                    if (ExportTexture (unityMaterial,  "_SpecGlosMap", fbxScene,  fbxMaterial.sSpecular)!=null)
-                    {
-                        ExportMaterialColor (unityMaterial, "_SpecColor", fbxMaterial, fbxMaterial.sSpecular, toLinearSpace);
-                    }
-
-                    // => emissive (used in vertexlit shaders)
-                    if (ExportTexture (unityMaterial,  "_EmissionMap", fbxScene,  "emissive")!=null)
-                    {
-                        ExportMaterialColor (unityMaterial, "_EmissionColor", fbxMaterial, fbxMaterial.sEmissive, toLinearSpace);
-                    }
-
-                    // => ambient (avoid default value in target DCC)
-                    if (phongShadingModel) 
-                    {
-                        fbxMaterial.Ambient.Set(new FbxDouble3 (0.0, 0.0, 0.0));
-                    }
-
-                    // Normal Map => normal
-                    if (ExportTexture (unityMaterial, "_BumpMap", fbxScene, fbxMaterial.sNormalMap) != null) 
-                    {
-                        // (Material Value) _BumpScale => BumpFactor
-                        if (unityMaterial.HasProperty ("_BumpScale")) 
-                        {
-                            fbxMaterial.BumpFactor.Set (unityMaterial.GetFloat ("_BumpScale"));
-                        }
-                    }
-
-                    /*
-                     * TODO: if Material.Color.A!=1 && RenderingMode==Transparent, Assigning Material.Color.A (alpha)
-                     * => transparencyFactor
-                     */
-
-                    /* TODO: 
-                     * Albedo has Alpha channel, how do I map texture w alpha to transparent color?
-                     * => sTransparentColor
-                     */
-
-                } 
-                else 
-                {
-                    /*
-                     * TODO: export PBS PropertyNames directly to fbx
-                     * or convert to a specific DCC PBS material
-                     */
                 }
-    
-                MaterialMap [materialName] = fbxMaterial;
+
+                // We'll export either Phong or Lambert. Phong if it calls
+                // itself specular, Lambert otherwise.
+                var shader = unityMaterial ? unityMaterial.shader : null;
+                bool specular = shader && shader.name.ToLower().Contains("specular");
+
+                var fbxMaterial = specular
+                    ? FbxSurfacePhong.Create(fbxScene, materialName)
+                    : FbxSurfaceLambert.Create(fbxScene, materialName);
+
+                // Copy the flat colours over from Unity standard materials to FBX.
+                fbxMaterial.Diffuse.Set(GetMaterialColor(unityMaterial, "_Color"));
+                fbxMaterial.Emissive.Set(GetMaterialColor(unityMaterial, "_EmissionColor"));
+                fbxMaterial.Ambient.Set(new FbxDouble3 ());
+                fbxMaterial.BumpFactor.Set (unityMaterial ? unityMaterial.GetFloat ("_BumpScale") : 0);
+                if (specular) {
+                    (fbxMaterial as FbxSurfacePhong).Specular.Set(GetMaterialColor(unityMaterial, "_SpecColor"));
+                }
+
+#if false
+                // TODO: textures.
+                ExportTexture (unityMaterial,  "_MainTex", fbxScene, fbxMaterial.sDiffuse);
+                ExportTexture (unityMaterial,  "_SpecGlosMap", fbxScene,  fbxMaterial.sSpecular);
+                ExportTexture (unityMaterial,  "_EmissionMap", fbxScene,  "emissive");
+                ExportTexture (unityMaterial, "_BumpMap", fbxScene, fbxMaterial.sNormalMap);
 #endif
+    
+                MaterialMap.Add(materialName, fbxMaterial);
                 return fbxMaterial;
             }
+
             /// <summary>
             /// Unconditionally export this mesh object to the file.
             /// We have decided; this mesh is definitely getting exported.
@@ -285,35 +228,22 @@ namespace FbxSdk.Examples
                     fbxMesh.SetControlPointAt(new FbxVector4 (mesh.Vertices [v].x, mesh.Vertices [v].y, mesh.Vertices [v].z), v);
                 }
 
-				ExportUVs (mesh, fbxMesh);
-				ExportMaterialMapping (mesh, fbxMesh);
+                ExportUVs (mesh, fbxMesh);
+                ExportMaterialMapping (mesh, fbxMesh);
 
                 /* 
                  * Create polygons after FbxLayerElementMaterial have been created. 
                  */
-                int vId = 0;
-                int materialIndex = -1;
-
-                object fbxPrevMaterial = null;
+                var fbxMaterial = ExportMaterial (mesh.material, fbxScene);
+                var materialIndex = fbxNode.AddMaterial (fbxMaterial);
 
                 for (int f = 0; f < mesh.Triangles.Length / 3; f++) 
                 {
-                    Material unityMaterial = null; /* mesh.Material[f] */
-
-                    object fbxMaterial = ExportMaterial (unityMaterial, fbxScene);
-#if UNI_15935
-                    if (fbxMaterial != fbxPrevMaterial) 
-                    {
-                        materialIndex = fbxNode.AddMaterial (fbxMaterial as FbxMaterial);
-                    }
-#endif
                     fbxMesh.BeginPolygon (materialIndex);
-                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
-                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
-                    fbxMesh.AddPolygon (mesh.Triangles [vId++]);
+                    fbxMesh.AddPolygon (mesh.Triangles [3 * f]);
+                    fbxMesh.AddPolygon (mesh.Triangles [3 * f + 1]);
+                    fbxMesh.AddPolygon (mesh.Triangles [3 * f + 2]);
                     fbxMesh.EndPolygon ();
-
-                    fbxPrevMaterial = fbxMaterial;
                 }
 
                 // set the fbxNode containing the mesh
@@ -389,25 +319,29 @@ namespace FbxSdk.Examples
                     if (!status)
                         return 0;
 
+                    // Set compatibility to 2014
+                    fbxExporter.SetFileExportVersion("FBX201400");
+
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
 
-                    // create scene info
+                    // set up the scene info
                     FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
-
-                    // set some scene info values
                     fbxSceneInfo.mTitle     = Title;
                     fbxSceneInfo.mSubject   = Subject;
                     fbxSceneInfo.mAuthor    = "Unity Technologies";
                     fbxSceneInfo.mRevision  = "1.0";
                     fbxSceneInfo.mKeywords  = Keywords;
                     fbxSceneInfo.mComment   = Comments;
-
                     fbxScene.SetSceneInfo (fbxSceneInfo);
 
-                    FbxNode fbxRootNode = fbxScene.GetRootNode ();
+                    // Set up the axes (Y up, Z forward, X to the right) and units (meters)
+                    var fbxSettings = fbxScene.GetGlobalSettings();
+                    fbxSettings.SetSystemUnit(FbxSystemUnit.m);
+                    fbxSettings.SetAxisSystem(new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded));
 
                     // export set of object
+                    FbxNode fbxRootNode = fbxScene.GetRootNode ();
                     foreach (var obj in unityExportSet)
                     {
                         var  unityGo  = GetGameObject (obj);
@@ -571,6 +505,19 @@ namespace FbxSdk.Examples
                 /// </summary>
                 /// <value>The uv.</value>
                 public Vector2 [] UV { get { return mesh.uv; } }
+
+                /// <summary>
+                /// The material used, if any; otherwise null.
+                /// We don't support multiple materials on one gameobject.
+                /// </summary>
+                public Material material { 
+                    get {
+                        if (!unityObject) { return null; }
+                        var renderer = unityObject.GetComponent<Renderer>();
+                        if (!renderer) { return null; }
+                        return renderer.material;
+                    }
+                }
 
                 /// <summary>
                 /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
