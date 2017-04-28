@@ -18,12 +18,6 @@
 %rename("%s") FbxNode::GetChild(int);
 %rename("%s") FbxNode::GetChildCount(bool pRecursive = false) const;
 %rename("%s") FbxNode::FindChild;
-%immutable FbxNode::LclTranslation;
-%rename("%s") FbxNode::LclTranslation;
-%immutable FbxNode::LclRotation;
-%rename("%s") FbxNode::LclRotation;
-%immutable FbxNode::LclScaling;
-%rename("%s") FbxNode::LclScaling;
 %rename("%s") FbxNode::SetNodeAttribute;
 %rename("%s") FbxNode::GetNodeAttribute();
 %rename("%s") FbxNode::SetShadingMode;
@@ -36,7 +30,12 @@
 /* Visibility */
 %rename("%s") FbxNode::SetVisibility;
 %rename("%s") FbxNode::GetVisibility;
-%fbximmutable(FbxNode::VisibilityInheritance);
 #endif
+
+/* The properties need to be marked immutable. */
+%fbximmutable(FbxNode::LclTranslation);
+%fbximmutable(FbxNode::LclRotation);
+%fbximmutable(FbxNode::LclScaling);
+%fbximmutable(FbxNode::VisibilityInheritance);
 
 %include "fbxsdk/scene/geometry/fbxnode.h"
