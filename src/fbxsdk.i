@@ -149,6 +149,7 @@
 %include "fbxsurfacematerial.i"
 %include "fbxbindingtable.i"
 %include "fbxpropertytypes.i"
+%include "fbxtexture.i"
 #endif
 
 /* Everything */
