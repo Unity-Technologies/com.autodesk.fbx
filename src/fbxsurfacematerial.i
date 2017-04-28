@@ -8,6 +8,8 @@
 #ifdef IGNORE_ALL_INCLUDE_SOME
 %rename("%s", %$isclass) FbxSurfaceMaterial;
 %rename("%s") FbxSurfaceMaterial::Create;
+%fbximmutable(FbxSurfaceMaterial::ShadingModel);
+//%fbximmutable(FbxSurfaceMaterial::MultiLayer); // wait for FbxPropertyT<bool>
 
 %rename("%s", %$isclass) FbxSurfaceLambert;
 %rename("%s") FbxSurfaceLambert::Create;

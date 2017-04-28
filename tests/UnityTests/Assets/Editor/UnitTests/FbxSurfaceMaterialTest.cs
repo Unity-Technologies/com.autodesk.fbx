@@ -12,12 +12,23 @@ namespace UnitTests
 {
     public class FbxSurfaceMaterialTest : Base<FbxSurfaceMaterial>
     {
+        public static void TestSurface<T>(T material) where T:FbxSurfaceMaterial
+        {
+            material.ShadingModel.Get();
+        }
+
+        [Test]
+        public void TestBasics()
+        {
+            using (var surface = CreateObject()) { TestSurface(surface); }
+        }
     }
 
     public class FbxSurfaceLambertTest : Base<FbxSurfaceLambert>
     {
         public static void TestLambert<T>(T lambert) where T:FbxSurfaceLambert
         {
+            FbxSurfaceMaterialTest.TestSurface(lambert);
             lambert.Emissive.Get();
             lambert.EmissiveFactor.Get();
             lambert.Ambient.Get();
