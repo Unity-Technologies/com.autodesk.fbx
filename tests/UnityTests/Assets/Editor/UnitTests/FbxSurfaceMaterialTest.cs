@@ -15,6 +15,7 @@ namespace UnitTests
         public static void TestSurface<T>(T material) where T:FbxSurfaceMaterial
         {
             material.ShadingModel.Get();
+            material.MultiLayer.Get();
         }
 
         [Test]

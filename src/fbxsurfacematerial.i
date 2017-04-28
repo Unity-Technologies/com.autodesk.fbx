@@ -9,7 +9,7 @@
 %rename("%s", %$isclass) FbxSurfaceMaterial;
 %rename("%s") FbxSurfaceMaterial::Create;
 %fbximmutable(FbxSurfaceMaterial::ShadingModel);
-//%fbximmutable(FbxSurfaceMaterial::MultiLayer); // wait for FbxPropertyT<bool>
+%fbximmutable(FbxSurfaceMaterial::MultiLayer);
 
 %rename("%s", %$isclass) FbxSurfaceLambert;
 %rename("%s") FbxSurfaceLambert::Create;
