@@ -121,6 +121,10 @@
 %include "fbxmesh.i"
 %include "fbxglobalsettings.i"
 %include "fbxpropertytypes.i"
+%include "fbxdeformer.i"
+%include "fbxsubdeformer.i"
+%include "fbxcluster.i"
+%include "fbxskin.i"
 %include "fbxskeleton.i"
 #endif
 
