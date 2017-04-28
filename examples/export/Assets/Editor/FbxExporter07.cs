@@ -111,16 +111,15 @@ namespace FbxSdk.Examples
                     Transform unityBoneTransform = unitySkinnedMeshRenderer.bones [boneIndex];
 
                     FbxNode fbxBoneNode = FbxNode.Create (fbxScene, unityBoneTransform.gameObject.name);
-#if UNI_15280
+
                     // Create the node's attributes
                     FbxSkeleton fbxSkeleton = FbxSkeleton.Create (fbxScene, unityBoneTransform.gameObject.name);
 
-                    var fbxSkeletonType = (boneIndex > 0) ? FbxSkeleton.eLimbNode : FbxSkeleton.eRoot;
+                    var fbxSkeletonType = (boneIndex > 0) ? FbxSkeleton.EType.eLimbNode : FbxSkeleton.EType.eRoot;
                     fbxSkeleton.SetSkeletonType (fbxSkeletonType);
 
                     // Set the node's attribute
                     fbxBoneNode.SetNodeAttribute (fbxSkeleton);
-#endif
 
                     // Set the bone node's local position and orientation
                     UnityEngine.Vector3 unityTranslate = unityBoneTransform.localPosition;
