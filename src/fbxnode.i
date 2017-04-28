@@ -32,6 +32,11 @@
 
 /* Materials */
 %rename("%s") FbxNode::AddMaterial;
+
+/* Visibility */
+%rename("%s") FbxNode::SetVisibility;
+%rename("%s") FbxNode::GetVisibility;
+%fbximmutable(FbxNode::VisibilityInheritance);
 #endif
 
 %include "fbxsdk/scene/geometry/fbxnode.h"

@@ -16,8 +16,9 @@ namespace UnitTests
         [Test]
         public void TestCoverage() {
             CoverageTester.TestCoverage(typeof(FbxProperty), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyBool), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
         }
 #endif
@@ -26,59 +27,85 @@ namespace UnitTests
         public void TestEquality() {
             using(var manager = FbxManager.Create()) {
                 var node = FbxNode.Create(manager, "node");
-                var translation = node.LclTranslation;
-                var rotation = node.LclRotation;
+                var prop1 = FbxProperty.Create(node, Globals.FbxBoolDT, "bool1");
+                var prop2 = FbxProperty.Create(node, Globals.FbxBoolDT, "bool2");
+                EqualityTester<FbxProperty>.TestEquality(prop1, prop2);
 
-                EqualityTester<FbxPropertyDouble3>.TestEquality(translation, rotation);
+                var vis1 = node.VisibilityInheritance;
+                var vis2 = FbxNode.Create(manager, "node2").VisibilityInheritance;
+                EqualityTester<FbxPropertyBool>.TestEquality(vis1, vis2);
+
+                var lambert = FbxSurfaceLambert.Create(manager, "lambert");
+                EqualityTester<FbxPropertyDouble>.TestEquality(lambert.EmissiveFactor, lambert.AmbientFactor);
+
+                EqualityTester<FbxPropertyDouble3>.TestEquality(node.LclTranslation, node.LclRotation);
+
+                var impl = FbxImplementation.Create(manager, "impl");
+                EqualityTester<FbxPropertyString>.TestEquality(impl.RenderAPI, impl.RenderAPIVersion);
             }
+        }
+
+        // tests that should work for any subclass of FbxProperty
+        private void GenericPropertyTests<T>(T property, FbxObject parent, string propertyName, FbxDataType dataType) where T:FbxProperty{
+            Assert.AreEqual(dataType, property.GetPropertyDataType());
+            Assert.AreEqual(propertyName, property.GetName());
+            Assert.AreEqual(propertyName, property.ToString());
+            Assert.AreEqual(propertyName, property.GetHierarchicalName());
+            Assert.AreEqual(propertyName, property.GetLabel(true));
+            property.SetLabel("label");
+            Assert.AreEqual("label", property.GetLabel());
+            Assert.AreEqual(parent, property.GetFbxObject());
+            Assert.AreEqual(property.GetFbxObject(), parent); // test it both ways just in case equals is busted
+
+            // verify this in the future: will dispose destroy?
+            property.Dispose();
         }
 
         [Test]
         public void BasicTests ()
         {
+            using (var manager = FbxManager.Create()) {
+                // Run the same tests for FbxPropertyT<FbxBool> used by VisibilityInheritance
+                var node = FbxNode.Create(manager, "node");
+                GenericPropertyTests<FbxPropertyBool> (node.VisibilityInheritance, node, "Visibility Inheritance", Globals.FbxVisibilityInheritanceDT);
+
+                var property = node.VisibilityInheritance;
+                property.Set(false);
+                Assert.AreEqual(false, property.Get());
+
+                Assert.IsTrue(property.Set(5.0f));
+                Assert.AreEqual(true, property.Get());
+            }
+
+            using(var manager = FbxManager.Create()) {
+                // Easiest way to get a Double property: create a lambert
+                var obj = FbxSurfaceLambert.Create(manager, "lambert");
+                GenericPropertyTests<FbxPropertyDouble> (obj.EmissiveFactor, obj, "EmissiveFactor", Globals.FbxDoubleDT);
+
+                var property = obj.EmissiveFactor;
+                property.Set(5.0); // bool Set<float> is not accessible here!
+                Assert.AreEqual(5.0, property.Get());
+            }
+
             using(var manager = FbxManager.Create()) {
                 // Easiest way to get a Double3 property: get a node and access its LclTranslation.
                 var node = FbxNode.Create(manager, "node");
+                GenericPropertyTests<FbxPropertyDouble3> (node.LclTranslation, node, "Lcl Translation", Globals.FbxLocalTranslationDT);
+
                 var property = node.LclTranslation;
-
-                Assert.AreEqual(Globals.FbxLocalTranslationDT, property.GetPropertyDataType());
-                Assert.AreEqual("Lcl Translation", property.GetName());
-                Assert.AreEqual("Lcl Translation", property.ToString());
-                Assert.AreEqual("Lcl Translation", property.GetHierarchicalName());
-                Assert.AreEqual("Lcl Translation", property.GetLabel(true));
-                property.SetLabel("label");
-                Assert.AreEqual("label", property.GetLabel());
-                Assert.AreEqual(node, property.GetFbxObject());
-
-                var dbl3 = property.Get();
-                Assert.AreEqual(new FbxDouble3(), dbl3);
                 property.Set(new FbxDouble3(1,2,3));
-                dbl3 = property.Get();
-                Assert.AreEqual(new FbxDouble3(1, 2, 3), dbl3);
+                Assert.AreEqual(new FbxDouble3(1, 2, 3), property.Get());
 
                 Assert.IsTrue(property.Set(5.0f));
                 Assert.AreEqual(new FbxDouble3(5.0f), property.Get());
-
-                // TODO: dispose will in the future destroy, which is illegal in this context;
-                // modify the test then.
-                property.Dispose();
-                using(var prop2 = node.LclScaling) { }
             }
 
             using (var manager = FbxManager.Create()) {
                 // How to get a String property? Create an FbxImplementation (a shader implementation).
                 var impl = FbxImplementation.Create(manager, "name");
+                GenericPropertyTests<FbxPropertyString> (impl.RenderAPI, impl, "RenderAPI", Globals.FbxStringDT);
+
                 var property = impl.RenderAPI;
-
-                Assert.AreEqual(Globals.FbxStringDT, property.GetPropertyDataType());
-                Assert.AreEqual("RenderAPI", property.GetName());
-                Assert.AreEqual("RenderAPI", property.ToString());
-                Assert.AreEqual("RenderAPI", property.GetHierarchicalName());
-                Assert.AreEqual("RenderAPI", property.GetLabel(true));
-                property.SetLabel("label");
-                Assert.AreEqual("label", property.GetLabel());
-                Assert.AreEqual(impl, property.GetFbxObject());
-
                 property.Set("a value");
                 Assert.AreEqual("a value", property.Get());
 
@@ -89,34 +116,8 @@ namespace UnitTests
                 using(var prop2 = impl.RenderAPI) { }
             }
 
-            using(var manager = FbxManager.Create()) {
-                // Easiest way to get a Double property: create a lambert
-                var node = FbxSurfaceLambert.Create(manager, "lambert");
-                var property = node.EmissiveFactor;
-
-                Assert.AreEqual(Globals.FbxDoubleDT, property.GetPropertyDataType());
-                Assert.AreEqual("EmissiveFactor", property.GetName());
-                Assert.AreEqual("EmissiveFactor", property.ToString());
-                Assert.AreEqual("EmissiveFactor", property.GetHierarchicalName());
-                Assert.AreEqual("EmissiveFactor", property.GetLabel(true));
-                property.SetLabel("label");
-                Assert.AreEqual("label", property.GetLabel());
-                Assert.AreEqual(node, property.GetFbxObject());
-
-                property.Set(3.0);
-                Assert.AreEqual(3.0, property.Get());
-
-                // The generic set is not reachable when you have the specific one.
-                //Assert.IsTrue(property.Set((float)5.0f));
-                //Assert.AreEqual(5.0, property.Get());
-
-                // TODO: dispose will in the future destroy, which is illegal in this context;
-                // modify the test then.
-                property.Dispose();
-                using(var prop2 = node.EmissiveFactor) { }
-            }
-
             using (var manager = FbxManager.Create()) {
+                // Test all the create and destroy operations
                 FbxProperty root, child;
                 var obj = FbxObject.Create(manager, "obj");
 

@@ -153,3 +153,4 @@
 %template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
 %template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
+%template("FbxPropertyBool") FbxPropertyT<FbxBool>;
