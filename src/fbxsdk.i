@@ -30,6 +30,16 @@
 %include typemaps.i
 
 /*
+ * Often we want to reveal a variable but leave it immutable.
+ * Declare it like
+ *    %fbximmutable(FbxSurfacePhong::Specular)
+ */
+%define %fbximmutable(THENAME)
+%immutable THENAME;
+%rename("%s") THENAME;
+%enddef
+
+/*
  * Handle object lifetime in Fbx by adding indirection.
  *
  * Important: we need to declare all the weak-pointer classes here *before*
