@@ -67,7 +67,7 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementUV.Create (fbxMesh, MakeObjectName ("UVSet"))) 
+                using (var fbxLayerElement = FbxLayerElementUV.Create (fbxMesh, "UVSet"))
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByPolygonVertex);
                     fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eIndexToDirect);
@@ -109,7 +109,7 @@ namespace FbxSdk.Examples
 
                     if (unityTexture != null) 
                     {
-                        FbxFileTexture fbxTexture = FbxFileTexture::Create (fbxScene, MakeObjectName ( fbxPropName + "_Texture"));
+                        FbxFileTexture fbxTexture = FbxFileTexture::Create (fbxScene, fbxPropName + "_Texture");
 
                         fbxTexture.SetFileName (textureSourceFullPath);
                         fbxTexture.SetTextureUse (FbxTexture.eStandard);
@@ -189,7 +189,7 @@ namespace FbxSdk.Examples
                 NumVertices += mesh.VertexCount;
 
                 // create the mesh structure.
-                FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Scene"));
+                FbxMesh fbxMesh = FbxMesh.Create (fbxScene, "Scene");
 
                 // Create control points.
                 int NumControlPoints = mesh.VertexCount;
@@ -281,7 +281,7 @@ namespace FbxSdk.Examples
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
                     // Create the exporter 
-                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
+                    var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
                     bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
@@ -293,10 +293,10 @@ namespace FbxSdk.Examples
                     fbxExporter.SetFileExportVersion("FBX201400");
 
                     // Create a scene
-                    var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
+                    var fbxScene = FbxScene.Create (fbxManager, "Scene");
 
                     // set up the scene info
-                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
+                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, "SceneInfo");
                     fbxSceneInfo.mTitle     = Title;
                     fbxSceneInfo.mSubject   = Subject;
                     fbxSceneInfo.mAuthor    = "Unity Technologies";
@@ -557,7 +557,6 @@ namespace FbxSdk.Examples
             /// </summary>
             public void Dispose () { }
 
-            const string NamePrefix = "";
             public bool Verbose { private set; get; }
 
             /// <summary>
@@ -565,11 +564,6 @@ namespace FbxSdk.Examples
             /// </summary>
             static string LastFilePath { get; set; }
             const string Extension = "fbx";
-
-            private static string MakeObjectName (string name)
-            {
-                return NamePrefix + name;
-            }
 
             private static string MakeFileName(string basename = "test", string extension = "fbx")
             {
