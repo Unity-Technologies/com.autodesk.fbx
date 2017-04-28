@@ -155,6 +155,8 @@
 %ignore FBXSDK_ATOMIC_MIN;
 %ignore FBXSDK_ATOMIC_MAX;
 
+// convert FbxLongLong to signed long long
+%apply signed long long {FbxLongLong}
 
 %include "fbxsdk/core/arch/fbxtypes.h"
 

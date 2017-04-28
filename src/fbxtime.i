@@ -10,7 +10,7 @@
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
-%rename("%s") FbxTime::FbxTime();
+%rename("%s") FbxTime::FbxTime;
 #endif
 
 %include "fbxsdk/core/base/fbxtime.h"
