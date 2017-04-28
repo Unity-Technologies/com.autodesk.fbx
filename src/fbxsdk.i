@@ -121,6 +121,7 @@
 %include "fbxmesh.i"
 %include "fbxglobalsettings.i"
 %include "fbxpropertytypes.i"
+%include "fbxskeleton.i"
 #endif
 
 /* Everything */
