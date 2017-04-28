@@ -1,3 +1,4 @@
+//#define UNI_16421
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -14,56 +15,99 @@ using FbxSdk;
 
 namespace FbxSdk.Examples
 {
-    namespace Editor {
+    namespace Editor
+    {
 
-        public class FbxExporter02 : System.IDisposable
+        public class FbxExporter09 : System.IDisposable
         {
             const string Title =
-                 "Example 02: exporting a basic node hierarchy";
+                "Example 09: exporting animation clips";
 
             const string Subject =
-                 @"Example FbxExporter02 illustrates how to:
-                                            1) create and initialize an exporter
-                                            2) create a scene
-                                            3) traverse hierarchy and add nodes
-                                            4) export a scene to a FBX file (ASCII mode)
-                                                    ";
+                 @"Example FbxExporter09 illustrates how to:
+                                1) create and initialize an exporter
+                                2) create a scene
+                                3) export a scene to a FBX file (ASCII mode)
+                                        ";
 
             const string Keywords =
-                 "export scene node";
+                 "export animation clips";
 
             const string Comments =
-                 @"Export hierarchy of selected GameObjects.";
+                 "";
 
-            const string MenuItemName = "File/Export FBX/2. Node hierarchy";
+            const string MenuItemName = "File/Export FBX/WIP - 9. Animation clips";
 
-            const string FileBaseName = "example_node_hierarchy";
+            const string FileBaseName = "example_animation_clips";
 
             /// <summary>
             /// Create instance of example
             /// </summary>
-            public static FbxExporter02 Create () { return new FbxExporter02 (); }
+            public static FbxExporter09 Create () { return new FbxExporter09 (); }
 
             /// <summary>
-            /// Unconditionally export components on this game object
+            /// Export an AnimationClip as a single take
             /// </summary>
-            protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxNodeParent)
+            protected void ExportAnimationClip (AnimationClip unityAnimClip, FbxScene fbxScene)
             {
-                 // create an node and add it as a child of parent
-                 FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
-                 NumNodes++;
+#if UNI_16421
+                // setup anim stack
+                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, MakeObjectName (unityAnimClip.name + " Take"));
+                fbxAnimStack.Description.Set ("Animation Take for scene.");
 
-                 if (Verbose)
-                      Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
+                // add one mandatory animation layer
+                FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (fbxScene, "Animation Base Layer");
+                fbxAnimStack.AddMember (fbxAnimLayer);
 
-                 fbxNodeParent.AddChild (fbxNode);
+                // TODO: set time span of stack
 
-                 // now  unityGo  through our children and recurse
-                 foreach (Transform childT in  unityGo.transform) {
-                      ExportComponents (childT.gameObject, fbxScene, fbxNode);
-                 }
+                // TODO: collect bones
 
-                 return;
+                // TODO: export curves on bone
+#endif                
+            }
+
+            /// <summary>
+            /// Export the Animation component on this game object
+            /// </summary>
+            protected void ExportAnimationClips (Animation unityAnimation, FbxScene fbxScene)
+            {
+                // build a unique list of animation clips for export
+                var animClips = new Dictionary<string, AnimationClip> ();
+
+                if (unityAnimation.clip != null) 
+                {
+                    animClips [unityAnimation.clip.name] = unityAnimation.clip;
+                }
+
+                foreach (AnimationState unityAnimState in unityAnimation)
+                {
+                    var unityAnimClip = unityAnimation.clip;
+                    animClips [unityAnimClip.name] = unityAnimClip;
+                }
+
+                // export that list
+                foreach (string clipName in animClips.Keys)
+                {
+                    ExportAnimationClip (animClips [clipName], fbxScene);
+                }
+
+            	return;
+            }
+
+            /// <summary>
+            /// Export the Animation component on this game object
+            /// </summary>
+            protected void ExportComponents (GameObject unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
+            {
+                Animation unityAnimation = unityGo.GetComponent<Animation> ();
+
+                if (unityAnimation == null)
+                    return;
+
+                ExportAnimationClips (unityAnimation, fbxScene);
+
+                return;
             }
 
             /// <summary>
@@ -79,17 +123,13 @@ namespace FbxSdk.Examples
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
                     // Create the exporter 
-                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
+                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
 
                     // Initialize the exporter.
                     bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
                     // Check that initialization of the fbxExporter was successful
                     if (!status)
                         return 0;
-
-                    // By default, FBX exports in its most recent version. You might want to specify
-                    // an older version for compatibility with other applications.
-                    fbxExporter.SetFileExportVersion("FBX201400");
 
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
@@ -107,17 +147,25 @@ namespace FbxSdk.Examples
 
                     fbxScene.SetSceneInfo (fbxSceneInfo);
 
+                    var fbxSettings = fbxScene.GetGlobalSettings ();
+                    fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
+
+                    // The Unity axis system has Y up, Z forward, X to the right:
+                    var fbxAxisSystem = new FbxAxisSystem (FbxAxisSystem.EUpVector.eYAxis, 
+                                                           FbxAxisSystem.EFrontVector.eParityOdd, 
+                                                           FbxAxisSystem.ECoordSystem.eLeftHanded);
+                    fbxSettings.SetAxisSystem(fbxAxisSystem);
+
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
-                    // export set of object
+                    // export set of objects
                     foreach (var obj in unityExportSet) 
                     {
                         var unityGo = GetGameObject (obj);
 
-                        if (unityGo) 
+                        if ( unityGo ) 
                         {
-
-                            this.ExportComponents (unityGo, fbxScene, fbxRootNode);
+							this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
                         }
                     }
 
@@ -128,10 +176,8 @@ namespace FbxSdk.Examples
                     fbxScene.Destroy ();
                     fbxExporter.Destroy ();
 
-                    if (!status)
-                        return 0;
+                    return status == true ? NumNodes : 0;
                 }
-                return NumNodes;
             }
 
             // 
@@ -152,26 +198,7 @@ namespace FbxSdk.Examples
             [MenuItem (MenuItemName, true)]
             public static bool OnValidateMenuItem ()
             {
-                // Return true
-                return true;
-            }
-
-            /// <summary>
-            /// Get the GameObject
-            /// </summary>
-            private GameObject GetGameObject (Object obj)
-            {
-                 if (obj is UnityEngine.Transform) {
-                      var xform = obj as UnityEngine.Transform;
-                      return xform.gameObject;
-                 } else if (obj is UnityEngine.GameObject) {
-                      return obj as UnityEngine.GameObject;
-                 } else if (obj is MonoBehaviour) {
-                      var mono = obj as MonoBehaviour;
-                      return mono.gameObject;
-                 }
-
-                 return null;
+                return Selection.activeTransform != null;
             }
 
             /// <summary>
@@ -184,14 +211,33 @@ namespace FbxSdk.Examples
             /// </summary>
             public void Dispose () { }
 
+
             const string NamePrefix = "";
-            bool Verbose { get { return true; } }
+            public bool Verbose { private set; get; }
 
             /// <summary>
             /// manage the selection of a filename
             /// </summary>
             static string LastFilePath { get; set; }
             const string Extension = "fbx";
+
+            /// <summary>
+            /// Get the GameObject
+            /// </summary>
+            private static GameObject GetGameObject (Object obj)
+            {
+            	if (obj is UnityEngine.Transform) {
+            		var xform = obj as UnityEngine.Transform;
+            		return xform.gameObject;
+            	} else if (obj is UnityEngine.GameObject) {
+            		return obj as UnityEngine.GameObject;
+            	} else if (obj is MonoBehaviour) {
+            		var mono = obj as MonoBehaviour;
+            		return mono.gameObject;
+            	}
+
+            	return null;
+            }
 
             private static string MakeObjectName (string name)
             {
@@ -219,7 +265,8 @@ namespace FbxSdk.Examples
 
                 var filePath = EditorUtility.SaveFilePanel (title, directory, filename, "");
 
-                if (string.IsNullOrEmpty (filePath)) {
+                if (string.IsNullOrEmpty (filePath)) 
+                {
                     return;
                 }
 

@@ -39,7 +39,7 @@ namespace FbxSdk.Examples
             const string Comments =
                 "";
 
-            const string MenuItemName = "File/Export/Export (skinned mesh with bones) to FBX";
+            const string MenuItemName = "File/Export FBX/7. Skinned mesh with bones";
 
             const string FileBaseName = "example_skinned_mesh_with_bones";
 
