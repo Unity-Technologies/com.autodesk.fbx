@@ -29,7 +29,10 @@
 %rename("%s") FbxNode::SetShadingMode;
 %rename("%s") FbxNode::GetShadingMode;
 %rename("%s") FbxNode::EShadingMode;
-%rename("%s") FbxNode::eWireFrame;
+%rename("%s") FbxNode::SetVisibility;
+%rename("%s") FbxNode::GetVisibility;
+%immutable FbxNode::VisibilityInheritance;
+%rename("%s") FbxNode::VisibilityInheritance;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxnode.h"
