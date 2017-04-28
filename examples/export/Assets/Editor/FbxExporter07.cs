@@ -209,7 +209,6 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportBindPose (FbxNode fbxRootNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
             {
-#if UNI_15280
                 FbxPose fbxPose = FbxPose.Create (fbxScene, MakeObjectName(fbxRootNode.GetName()));
 
                 // set as bind pose
@@ -218,14 +217,13 @@ namespace FbxSdk.Examples
                 // assume each bone node has one weighted vertex cluster
                 foreach (FbxNode fbxNode in boneNodes.Values)
                 {
-                    FbxMatrix fbxBindMatrix = fbxNode.EvaluateGlobalTransform ();
+                    FbxMatrix fbxBindMatrix = new FbxMatrix(fbxNode.EvaluateGlobalTransform ());
 
                     fbxPose.Add (fbxNode, fbxBindMatrix);
                 }
 
                 // add the pose to the scene
                 fbxScene.AddPose (fbxPose);
-#endif
             }
 
             /// <summary>
