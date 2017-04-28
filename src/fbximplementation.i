@@ -8,11 +8,6 @@
 #ifdef IGNORE_ALL_INCLUDE_SOME
 %rename("%s") FbxImplementation;
 %rename("%s") FbxImplementation::Create;
-%rename("%s") FbxImplementation::Language;
-%rename("%s") FbxImplementation::LanguageVersion;
-%rename("%s") FbxImplementation::RenderAPI;
-%rename("%s") FbxImplementation::RenderAPIVersion;
-%rename("%s") FbxImplementation::RootBindingName;
 %rename("%s") FbxImplementation::AddNewTable;
 %rename("%s") FbxImplementation::GetRootTable() const;
 
@@ -28,12 +23,12 @@
 %rename("%s") FBXSDK_RENDERING_API_PREVIEW;
 #endif
 
-/* You can't meaningfully assign to a property in C#. */
-%immutable FbxImplementation::Language;
-%immutable FbxImplementation::LanguageVersion;
-%immutable FbxImplementation::RenderAPI;
-%immutable FbxImplementation::RenderAPIVersion;
-%immutable FbxImplementation::RootBindingName;
+/* Properties. */
+%fbximmutable(FbxImplementation::Language);
+%fbximmutable(FbxImplementation::LanguageVersion);
+%fbximmutable(FbxImplementation::RenderAPI);
+%fbximmutable(FbxImplementation::RenderAPIVersion);
+%fbximmutable(FbxImplementation::RootBindingName);
 
 %include "fbxsdk/scene/shading/fbximplementation.h"
 %include "fbxsdk/scene/shading/fbxshadingconventions.h"
