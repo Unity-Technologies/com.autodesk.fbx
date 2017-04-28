@@ -137,16 +137,11 @@
 
 /*
  * We don't want to provide setters for properties, because we don't have operator=.
- * Solution: use %fbxproperty to declare a property.
+ * Solution: use %fbximmutable to declare a property.
  *
- * We create a warning 844 in swig when you forget. */
-
-%define %fbxproperty(THENAME)
-%immutable THENAME;
-%rename("%s") THENAME;
-%enddef
-
-%typemap("csvarin") const FbxPropertyT& {#error this should be a %fbxproperty}
+ * But in case you forget, this creates a warning 844 in swig and will fail to
+ * compile in C#. */
+%typemap("csvarin") const FbxPropertyT& {#error this should be a %fbximmutable}
 
 
 /***************************************************************************/
