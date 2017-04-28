@@ -36,7 +36,7 @@ namespace FbxSdk.Examples
             const string Comments = 
                 @"We are exporting rotations using the Euler angles from Unity.";
 
-            const string MenuItemName = "File/Export/Export (nodes with transforms) to FBX";
+            const string MenuItemName = "File/Export FBX/3. Nodes with transforms";
 
             const string FileBaseName = "example_nodes_with_transforms";
 

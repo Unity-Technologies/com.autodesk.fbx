@@ -1,3 +1,4 @@
+//#define UNI_16421
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -14,12 +15,13 @@ using FbxSdk;
 
 namespace FbxSdk.Examples
 {
-    namespace Editor {
+    namespace Editor
+    {
 
         public class FbxExporter09 : System.IDisposable
         {
             const string Title =
-                 "Example 09: exporting animation clips";
+                "Example 09: exporting animation clips";
 
             const string Subject =
                  @"Example FbxExporter09 illustrates how to:
@@ -34,7 +36,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  "";
 
-            const string MenuItemName = "File/Export/Export (animation clips) to FBX";
+            const string MenuItemName = "File/Export FBX/WIP - 9. Animation clips";
 
             const string FileBaseName = "example_animation_clips";
 
@@ -46,11 +48,12 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export an AnimationClip as a single take
             /// </summary>
-            protected void ExportAnimationClip (AnimationClip unityAnimClip, FbxScene fbxScene, FbxAnimStack fbxAnimStack)
+            protected void ExportAnimationClip (AnimationClip unityAnimClip, FbxScene fbxScene)
             {
+#if UNI_16421
                 // setup anim stack
                 FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, MakeObjectName (unityAnimClip.name + " Take"));
-                fbxAnimStack.Description.Set("Animation Take for scene.");
+                fbxAnimStack.Description.Set ("Animation Take for scene.");
 
                 // add one mandatory animation layer
                 FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (fbxScene, "Animation Base Layer");
@@ -61,32 +64,32 @@ namespace FbxSdk.Examples
                 // TODO: collect bones
 
                 // TODO: export curves on bone
-                
+#endif                
             }
 
             /// <summary>
             /// Export the Animation component on this game object
             /// </summary>
-            protected void ExportAnimationClips (Animation unityAnimation, FbxScene fbxScene, FbxAnimStack fbxAnimStack)
+            protected void ExportAnimationClips (Animation unityAnimation, FbxScene fbxScene)
             {
                 // build a unique list of animation clips for export
                 var animClips = new Dictionary<string, AnimationClip> ();
 
                 if (unityAnimation.clip != null) 
                 {
-                    unityAnimClips [unityAnimation.clip.name] = unityAnimation.clip;
+                    animClips [unityAnimation.clip.name] = unityAnimation.clip;
                 }
 
                 foreach (AnimationState unityAnimState in unityAnimation)
                 {
                     var unityAnimClip = unityAnimation.clip;
-                    unityAnimClips [unityAnimClip.name] = unityAnimClip;
+                    animClips [unityAnimClip.name] = unityAnimClip;
                 }
 
                 // export that list
                 foreach (string clipName in animClips.Keys)
                 {
-                    ExportAnimationClip (animClips [clipName], fbxScene, fbxParentNode);
+                    ExportAnimationClip (animClips [clipName], fbxScene);
                 }
 
             	return;
@@ -102,7 +105,7 @@ namespace FbxSdk.Examples
                 if (unityAnimation == null)
                     return;
 
-                ExportAnimationClips (unityAnimation, fbxScene, fbxAnimStack);
+                ExportAnimationClips (unityAnimation, fbxScene);
 
                 return;
             }
@@ -162,9 +165,8 @@ namespace FbxSdk.Examples
 
                         if ( unityGo ) 
                         {
-
 							this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
-}
+                        }
                     }
 
                     // Export the scene to the file.
@@ -196,8 +198,7 @@ namespace FbxSdk.Examples
             [MenuItem (MenuItemName, true)]
             public static bool OnValidateMenuItem ()
             {
-                // Return true
-                return true;
+                return Selection.activeTransform != null;
             }
 
             /// <summary>
