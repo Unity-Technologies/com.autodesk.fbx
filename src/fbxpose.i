@@ -6,18 +6,16 @@
 // ***********************************************************************
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
-%rename("%s") FbxScene;
+%rename("%s") FbxPose;
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
-%rename("%s") FbxScene::GetNodeCount;
-%rename("%s") FbxScene::GetSceneInfo;
-%rename("%s") FbxScene::SetSceneInfo;
-%rename("%s") FbxScene::GetRootNode;
-%rename("%s") FbxScene::GetGlobalSettings();
-%rename("%s") FbxScene::AddPose;
-%rename("%s") FbxScene::GetPose;
+%rename("%s") FbxPose::Create;
+%rename("%s") FbxPose::SetIsBindPose;
+%rename("%s") FbxPose::IsBindPose;
+%rename("%s") FbxPose::Add;
+%rename("%s") FbxPose::GetNode;
+%rename("%s") FbxPose::GetMatrix;
 #endif
 
-%include "fbxsdk/scene/fbxscene.h"
-
+%include "fbxsdk/scene/fbxpose.h"
