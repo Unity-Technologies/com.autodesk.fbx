@@ -23,7 +23,7 @@ namespace UnitTests
         {
             var skeleton = CreateObject ("skeleton");
             skeleton.SetSkeletonType(FbxSkeleton.EType.eLimb);
-            Assert.AreEqual (skeleton.GetSkeletonType (), FbxSkeleton.EType.eLimb);
+            Assert.AreEqual (FbxSkeleton.EType.eLimb, skeleton.GetSkeletonType ());
         }
     }
 }
