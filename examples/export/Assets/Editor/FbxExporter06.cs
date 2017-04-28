@@ -7,6 +7,8 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
+#define UNI_15773
+
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
@@ -69,10 +71,10 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, MakeObjectName ("UVSet"))) 
+                using (var fbxLayerElement = FbxLayerElementUV.Create (fbxMesh, MakeObjectName ("UVSet"))) 
                 {
-                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygonVertex);
-                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
+                    fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByPolygonVertex);
+                    fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eIndexToDirect);
 
                     // set texture coordinates per vertex
                     FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
@@ -90,7 +92,7 @@ namespace FbxSdk.Examples
                     {
                         fbxIndexArray.SetAt (vertIndex, mesh.Indices [vertIndex]);
                     }
-                    fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.eTextureDiffuse);
+                    fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.EType.eTextureDiffuse);
                 }
 #endif
             }
