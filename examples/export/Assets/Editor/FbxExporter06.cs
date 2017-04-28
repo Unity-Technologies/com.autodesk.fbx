@@ -1,13 +1,10 @@
 //#define UNI_15935
-//#define UNI_15773
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
 // Licensed under the ##LICENSENAME##. 
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
-
-#define UNI_15773
 
 using System.IO;
 using System.Collections.Generic;
@@ -63,7 +60,6 @@ namespace FbxSdk.Examples
             /// 
             public void ExportUVs (MeshInfo mesh, FbxMesh fbxMesh)
             {
-#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) {
@@ -85,39 +81,15 @@ namespace FbxSdk.Examples
                     }
 
                     // For each face index, point to a texture uv
+                    var unityTriangles = mesh.Triangles;
                     FbxLayerElementArray fbxIndexArray = fbxLayerElement.GetIndexArray ();
-                    fbxIndexArray.SetCount (mesh.Indices.Length);
+                    fbxIndexArray.SetCount (unityTriangles.Length);
 
-                    for (int vertIndex = 0; vertIndex < mesh.Indices.Length; vertIndex++)
-                    {
-                        fbxIndexArray.SetAt (vertIndex, mesh.Indices [vertIndex]);
+                    for (int i = 0, n = unityTriangles.Length; i < n; ++i) {
+                        fbxIndexArray.SetAt (i, unityTriangles[i]);
                     }
                     fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.EType.eTextureDiffuse);
                 }
-#endif
-            }
-
-            /// <summary>
-            /// Export the mesh's material mapping using layer 0.
-            /// </summary>
-            /// 
-            public void ExportMaterialMapping (MeshInfo mesh, FbxMesh fbxMesh)
-            {
-#if UNI_15935
-                // Set the materials on Layer 0.
-                FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
-                if (fbxLayer == null) {
-                    fbxMesh.CreateLayer ();
-                    fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
-                }
-                using (var fbxLayerElement = FbxLayerElementMaterial.Create (fbxMesh, "Materials"))
-                {
-                    fbxLayerElement.SetMappingMode (FbxLayerElement.eByPolygon);
-                    fbxLayerElement.SetReferenceMode (FbxLayerElement.eIndexToDirect);
-
-                    fbxLayer.SetMaterials (fbxLayerElement);
-                }
-#endif
             }
 
             /// <summary>
@@ -231,17 +203,13 @@ namespace FbxSdk.Examples
                 }
 
                 ExportUVs (mesh, fbxMesh);
-                ExportMaterialMapping (mesh, fbxMesh);
 
-                /* 
-                 * Create polygons after FbxLayerElementMaterial have been created. 
-                 */
                 var fbxMaterial = ExportMaterial (mesh.material, fbxScene);
-                var materialIndex = fbxNode.AddMaterial (fbxMaterial);
+                fbxNode.AddMaterial (fbxMaterial);
 
                 for (int f = 0; f < mesh.Triangles.Length / 3; f++) 
                 {
-                    fbxMesh.BeginPolygon (materialIndex);
+                    fbxMesh.BeginPolygon ();
                     fbxMesh.AddPolygon (mesh.Triangles [3 * f]);
                     fbxMesh.AddPolygon (mesh.Triangles [3 * f + 1]);
                     fbxMesh.AddPolygon (mesh.Triangles [3 * f + 2]);
@@ -465,32 +433,6 @@ namespace FbxSdk.Examples
                 }
 
                 /// <summary>
-                /// TODO: Gets the triangle vertex indices
-                /// </summary>
-                /// <value>The normals.</value>
-                int[] m_Indices;
-
-                public int [] Indices 
-                {
-                    get 
-                    {
-                        if (m_Indices.Length == 0) 
-                        {
-                            m_Indices = new int [mesh.triangles.Length * 3];
-                            int i = 0;
-                            for (int triIndex = 0; triIndex < mesh.triangles.Length; triIndex++)
-                            {
-                                for (int vtxIndex = 0; vtxIndex < 3; vtxIndex++)
-                                {
-                                    m_Indices[i++] = (triIndex * 3) + vtxIndex;
-                                }
-                           }
-                        }
-                        return m_Indices;
-                    }
-                }
-
-                /// <summary>
                 /// TODO: Gets the tangents for the vertices.
                 /// </summary>
                 /// <value>The tangents.</value>
@@ -517,7 +459,9 @@ namespace FbxSdk.Examples
                         if (!unityObject) { return null; }
                         var renderer = unityObject.GetComponent<Renderer>();
                         if (!renderer) { return null; }
-                        return renderer.material;
+                        // .material instantiates a new material, which is bad
+                        // most of the time.
+                        return renderer.sharedMaterial;
                     }
                 }
 
@@ -529,7 +473,6 @@ namespace FbxSdk.Examples
                     this.mesh = mesh;
                     this.xform = Matrix4x4.identity;
                     this.unityObject = null;
-                    this.m_Indices = null;
                     this.m_Binormals = null;
                 }
 
@@ -542,7 +485,6 @@ namespace FbxSdk.Examples
                     this.mesh = mesh;
                     this.xform = gameObject.transform.localToWorldMatrix;
                     this.unityObject = gameObject;
-                    this.m_Indices = null;
                     this.m_Binormals = null;
                 }
             }
