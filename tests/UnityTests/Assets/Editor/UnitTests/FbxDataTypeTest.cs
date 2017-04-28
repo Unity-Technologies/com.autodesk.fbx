@@ -14,8 +14,6 @@ namespace UnitTests
 #if ENABLE_COVERAGE_TEST
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDataType), this.GetType()); }
-
-        static FbxDataTypeTest() { EqualityTester<FbxDataType>.RegisterCoverage(); }
 #endif
 
         [Test]

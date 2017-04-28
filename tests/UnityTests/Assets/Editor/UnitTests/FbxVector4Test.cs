@@ -14,8 +14,6 @@ namespace UnitTests
 #if ENABLE_COVERAGE_TEST
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxVector4), this.GetType()); }
-
-        static FbxVector4Test() { EqualityTester<FbxVector4>.RegisterCoverage(); }
 #endif
 
         [Test]

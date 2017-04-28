@@ -18,8 +18,6 @@ namespace UnitTests
     {
 
 #if ENABLE_COVERAGE_TEST
-        static FbxDouble2Test() { EqualityTester<FbxDouble2>.RegisterCoverage(); }
-
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDouble2), this.GetType()); }
 #endif

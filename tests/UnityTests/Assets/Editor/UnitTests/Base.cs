@@ -35,9 +35,6 @@ namespace UnitTests
                 var createFromObjAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxObject), typeof(string)});
                 CoverageTester.RegisterReflectionCall(createFromObjAndName, s_createFromObjAndName);
             }
-
-            // Make sure to have the equality tester register its methods right now.
-            EqualityTester<T>.RegisterCoverage();
 #endif
         }
 

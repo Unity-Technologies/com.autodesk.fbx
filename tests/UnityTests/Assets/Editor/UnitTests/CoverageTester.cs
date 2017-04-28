@@ -260,6 +260,10 @@ static class CoverageTester
     /// </summary>
     public static void TestCoverage(System.Type TypeToCover, System.Type NUnitTestFramework)
     {
+        // Make sure the EqualityTester for the type we should cover has been initialized.
+        var eqTester = typeof(UnitTests.EqualityTester<>).MakeGenericType(TypeToCover);
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(eqTester.TypeHandle);
+
         // We want to call all the methods of the proxy, including all the constructors.
         var methodsToCover = new List<MethodBase>(TypeToCover.GetMethods());
         methodsToCover.AddRange(TypeToCover.GetConstructors());
