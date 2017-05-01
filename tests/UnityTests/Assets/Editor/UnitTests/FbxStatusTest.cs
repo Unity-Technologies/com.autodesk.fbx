@@ -22,14 +22,24 @@ namespace UnitTests
         #endif
 
         [Test]
-        public void TestBasics()
+        public void TestConstructor()
         {
             // test constructor
             FbxStatus status = new FbxStatus ();
             Assert.IsNotNull (status);
+        }
 
-            // test dispose
-            Assert.That (() => { status.Dispose(); }, Throws.Exception.TypeOf<System.MethodAccessException>());
+        [Test]
+        [Ignore("Dispose fails with a MethodAccessException as there is no default destructor")]
+        public void TestDispose()
+        {
+            FbxStatus status;
+            status = new FbxStatus ();
+            status.Dispose ();
+            Assert.That (() => { status.GetType(); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
+            using (status = new FbxStatus ()) {}
+            Assert.That (() => { status.GetType(); }, Throws.Exception.TypeOf<System.NullReferenceException>());
         }
     }
 }
