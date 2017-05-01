@@ -40,13 +40,13 @@
 /* Include everything in the header files, even if normally we're being selective.
  * Go back to being selective after.
  * Let the coverage tests sort us out to make sure we test it all. */
-%rename("%s") "";
+%reveal_all_start;
+
 %include "fbxsdk/scene/shading/fbxtexture.h"
 %include "fbxsdk/scene/shading/fbxfiletexture.h"
+
 /* Remember to build the templates we previously renamed *before* ignoring things. */
 %template("FbxPropertyEBlendMode") FbxPropertyT<FbxTexture::EBlendMode>;
 %template("FbxPropertyEWrapMode") FbxPropertyT<FbxTexture::EWrapMode>;
-#ifdef IGNORE_ALL_INCLUDE_SOME
-%ignore "";
-#endif
 
+%reveal_all_end;
