@@ -217,6 +217,16 @@ namespace FbxSdk.Examples
                 // assume each bone node has one weighted vertex cluster
                 foreach (FbxNode fbxNode in boneNodes.Values)
                 {
+                    // EvaluateGlobalTransform returns an FbxAMatrix (affine matrix)
+                    // which has to be converted to an FbxMatrix so that it can be passed to fbxPose.Add().
+                    // The hierarchy for FbxMatrix and FbxAMatrix is as follows:
+                    //
+                    //      FbxDouble4x4
+                    //      /           \
+                    // FbxMatrix     FbxAMatrix
+                    //
+                    // Therefore we can't convert directly from FbxAMatrix to FbxMatrix,
+                    // however FbxMatrix has a constructor that takes an FbxAMatrix.
                     FbxMatrix fbxBindMatrix = new FbxMatrix(fbxNode.EvaluateGlobalTransform ());
 
                     fbxPose.Add (fbxNode, fbxBindMatrix);
