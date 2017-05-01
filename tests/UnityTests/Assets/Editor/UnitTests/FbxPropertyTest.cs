@@ -15,10 +15,13 @@ namespace UnitTests
 #if ENABLE_COVERAGE_TEST
         [Test]
         public void TestCoverage() {
+            // Alphabetical list, with FbxProperty at the top.
             CoverageTester.TestCoverage(typeof(FbxProperty), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyBool), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyEBlendMode), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyEWrapMode), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
         }
 #endif
@@ -26,20 +29,31 @@ namespace UnitTests
         [Test]
         public void TestEquality() {
             using(var manager = FbxManager.Create()) {
+                // FbxProperty
                 var node = FbxNode.Create(manager, "node");
                 var prop1 = FbxProperty.Create(node, Globals.FbxBoolDT, "bool1");
                 var prop2 = FbxProperty.Create(node, Globals.FbxBoolDT, "bool2");
                 EqualityTester<FbxProperty>.TestEquality(prop1, prop2);
 
+                // FbxPropertyT<bool>
                 var vis1 = node.VisibilityInheritance;
                 var vis2 = FbxNode.Create(manager, "node2").VisibilityInheritance;
                 EqualityTester<FbxPropertyBool>.TestEquality(vis1, vis2);
 
+                // FbxPropertyT<double>
                 var lambert = FbxSurfaceLambert.Create(manager, "lambert");
                 EqualityTester<FbxPropertyDouble>.TestEquality(lambert.EmissiveFactor, lambert.AmbientFactor);
 
+                // FbxPropertyT<FbxDouble3>
                 EqualityTester<FbxPropertyDouble3>.TestEquality(node.LclTranslation, node.LclRotation);
 
+                // FbxPropertyT<> for FbxTexture enums
+                var tex1 = FbxTexture.Create(manager, "tex1");
+                var tex2 = FbxTexture.Create(manager, "tex2");
+                EqualityTester<FbxPropertyEBlendMode>.TestEquality(tex1.CurrentTextureBlendMode, tex2.CurrentTextureBlendMode);
+                EqualityTester<FbxPropertyEWrapMode>.TestEquality(tex1.WrapModeU, tex2.WrapModeU);
+
+                // FbxPropertyT<string>
                 var impl = FbxImplementation.Create(manager, "impl");
                 EqualityTester<FbxPropertyString>.TestEquality(impl.RenderAPI, impl.RenderAPIVersion);
             }
@@ -98,6 +112,23 @@ namespace UnitTests
 
                 Assert.IsTrue(property.Set(5.0f));
                 Assert.AreEqual(new FbxDouble3(5.0f), property.Get());
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT for FbxTexture enums EBlendMode and EWrapMode
+                var tex = FbxTexture.Create(manager, "tex");
+
+                FbxPropertyTest.GenericPropertyTests(tex.CurrentTextureBlendMode, tex, "CurrentTextureBlendMode", Globals.FbxEnumDT);
+                tex.CurrentTextureBlendMode.Set(FbxTexture.EBlendMode.eAdditive);
+                Assert.AreEqual(FbxTexture.EBlendMode.eAdditive, tex.CurrentTextureBlendMode.Get());
+                tex.CurrentTextureBlendMode.Set(5.0f);
+                Assert.AreEqual(5, (int)tex.CurrentTextureBlendMode.Get());
+
+                FbxPropertyTest.GenericPropertyTests(tex.WrapModeU, tex, "WrapModeU", Globals.FbxEnumDT);
+                tex.WrapModeU.Set(FbxTexture.EWrapMode.eClamp);
+                Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.Get());
+                tex.WrapModeU.Set(5.0f);
+                Assert.AreEqual(5, (int)tex.WrapModeU.Get());
             }
 
             using (var manager = FbxManager.Create()) {

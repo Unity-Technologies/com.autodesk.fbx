@@ -12,15 +12,6 @@ namespace UnitTests
 {
     public class FbxTextureTest : Base<FbxTexture>
     {
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public override void TestCoverage() {
-            base.TestCoverage();
-            CoverageTester.TestCoverage(typeof(FbxPropertyEBlendMode), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEWrapMode), this.GetType());
-        }
-#endif
-
         public static void CommonTextureTests<T>(T tex) where T : FbxTexture
         {
             // get all the properties
@@ -104,20 +95,6 @@ namespace UnitTests
             Assert.AreNotEqual("", FbxTexture.sVectorEncoding);
             Assert.AreNotEqual("", FbxTexture.sVectorEncodingFP);
             Assert.AreNotEqual("", FbxTexture.sVectorEncodingSE);
-
-            /* Also test the properties for our enums */
-            FbxPropertyTest.GenericPropertyTests(tex.CurrentTextureBlendMode, tex, "CurrentTextureBlendMode", Globals.FbxEnumDT);
-            tex.CurrentTextureBlendMode.Set(FbxTexture.EBlendMode.eAdditive);
-            Assert.AreEqual(FbxTexture.EBlendMode.eAdditive, tex.CurrentTextureBlendMode.Get());
-
-            FbxPropertyTest.GenericPropertyTests(tex.WrapModeU, tex, "WrapModeU", Globals.FbxEnumDT);
-            tex.WrapModeU.Set(FbxTexture.EWrapMode.eClamp);
-            Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.Get());
-
-            /* Including equality for them. */
-            var tex2 = FbxTexture.Create(Manager, "tex2");
-            EqualityTester<FbxPropertyEBlendMode>.TestEquality(tex.CurrentTextureBlendMode, tex2.CurrentTextureBlendMode);
-            EqualityTester<FbxPropertyEWrapMode>.TestEquality(tex.WrapModeU, tex2.WrapModeU);
         }
     }
 
