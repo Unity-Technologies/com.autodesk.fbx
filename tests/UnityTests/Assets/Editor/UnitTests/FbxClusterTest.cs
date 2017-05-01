@@ -20,7 +20,6 @@ namespace UnitTests
         [Test]
         public void TestBasics ()
         {
-            var Manager = FbxManager.Create ();
             using (var fbxCluster = FbxCluster.Create (Manager, "")) {
 
                 // test set link mode
