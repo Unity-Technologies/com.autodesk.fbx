@@ -149,6 +149,11 @@
 %include "fbxsurfacematerial.i"
 %include "fbxbindingtable.i"
 %include "fbxpropertytypes.i"
+%include "fbxdeformer.i"
+%include "fbxsubdeformer.i"
+%include "fbxcluster.i"
+%include "fbxskin.i"
+%include "fbxskeleton.i"
 %include "fbxtexture.i"
 #endif
 

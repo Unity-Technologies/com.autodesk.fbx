@@ -9,134 +9,89 @@ namespace UnitTests
 {
     public class FbxMeshTest : Base<FbxMesh>
     {
-
         [Test]
-        public void TestCreateFromObject ()
+        public void TestBasics()
         {
-            using (FbxObject obj = FbxObject.Create (Manager, "object")) {
+            FbxGeometryBaseTest.GenericTests(CreateObject("mesh"));
 
-                FbxMesh mesh = FbxMesh.Create (obj, "mesh");
+            using (FbxMesh mesh = CreateObject ("mesh")) {
+                mesh.InitControlPoints(4);
+                mesh.SetControlPointAt(new FbxVector4(0,0,0), 0);
+                mesh.SetControlPointAt(new FbxVector4(1,0,0), 1);
+                mesh.SetControlPointAt(new FbxVector4(1,0,1), 2);
+                mesh.SetControlPointAt(new FbxVector4(0,0,1), 3);
+                mesh.BeginPolygon();
+                mesh.AddPolygon(0);
+                mesh.AddPolygon(1);
+                mesh.AddPolygon(2);
+                mesh.AddPolygon(3);
+                mesh.EndPolygon();
 
-                Assert.IsInstanceOf<FbxMesh> (mesh);
+                // Link a poly to a material (even though we don't have any).
+                mesh.BeginPolygon(0);
+                mesh.AddPolygon(0);
+                mesh.AddPolygon(1);
+                mesh.AddPolygon(2);
+                mesh.AddPolygon(3);
+                mesh.EndPolygon();
+
+                // Link a poly to a material and texture (even though we don't have any).
+                mesh.BeginPolygon(0, 0);
+                mesh.AddPolygon(0);
+                mesh.AddPolygon(1);
+                mesh.AddPolygon(2);
+                mesh.AddPolygon(3);
+                mesh.EndPolygon();
+
+                // Create a group.
+                mesh.BeginPolygon(-1, -1, 0);
+                mesh.AddPolygon(0);
+                mesh.AddPolygon(1);
+                mesh.AddPolygon(2);
+                mesh.AddPolygon(3);
+                mesh.EndPolygon();
+
+                // Create a non-legacy group polygon.
+                mesh.BeginPolygon(-1, -1, 0, false);
+                mesh.AddPolygon(0);
+                mesh.AddPolygon(1);
+                mesh.AddPolygon(2);
+                mesh.AddPolygon(3);
+                mesh.EndPolygon();
+
+                // Create a polygon with UV indices (even though we don't have any)
+                mesh.BeginPolygon(0);
+                mesh.AddPolygon(0, 0);
+                mesh.AddPolygon(1, 1);
+                mesh.AddPolygon(2, 2);
+                mesh.AddPolygon(3, 3);
+                mesh.EndPolygon();
             }
         }
-        
+
         [Test]
-        public void TestBeginPolygonNoArgs ()
+        public void TestBeginBadPolygonCreation()
         {
+            // Add before begin. This crashes in native FBX SDK.
+            using (FbxMesh mesh = CreateObject ("mesh")) {
+                Assert.That(() => mesh.AddPolygon(0), Throws.Exception.TypeOf<FbxMesh.BadBracketingException>());
+            }
+
+            // End before begin. This is benign in native FBX SDK.
+            using (FbxMesh mesh = CreateObject ("mesh")) {
+                Assert.That(() => mesh.EndPolygon(), Throws.Exception.TypeOf<FbxMesh.BadBracketingException>());
+            }
+
+            // Begin during begin. This is benign in native FBX SDK.
+            using (FbxMesh mesh = CreateObject ("mesh")) {
+                mesh.BeginPolygon();
+                Assert.That(() => mesh.BeginPolygon(), Throws.Exception.TypeOf<FbxMesh.BadBracketingException>());
+            }
+
+            // Negative polygon index. Benign in FBX SDK, but it will crash some importers.
             using (FbxMesh mesh = CreateObject ("mesh")) {
                 mesh.BeginPolygon ();
-
-                // what happens if we call it a second time?
-                mesh.BeginPolygon ();
-            }
-        }
-
-        [Test]
-        public void TestBeginPolygonInvalidMaterial()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon (0);
-            }
-        }
-
-        [Test]
-        public void TestBeginPolygonInvalidTexture()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon (-1, 0);
-            }
-        }
-
-        [Test]
-        public void TestBeginPolygonGroup()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon (-1, -1, 0);
-            }
-        }
-
-        [Test]
-        public void TestBeginPolygonNotLegacy()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon (-1,-1,-1,false);
-            }
-        }
-
-        [Test]
-        [Ignore("Calling BeginPolygon after AddPolygon crashes Unity")]
-        public void TestBeginPolygonAfterAddPolygon()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.AddPolygon (0);
-                mesh.BeginPolygon ();
-            }
-        }
-
-        [Test]
-        public void TestBeginPolygonAfterEndPolygon()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.EndPolygon ();
-                mesh.BeginPolygon ();
-            }
-        }
-
-        [Test]
-        public void TestAddPolygonNegativeIndex ()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon ();
-
-                mesh.AddPolygon (-1);
-            }
-        }
-
-        [Test]
-        public void TestAddPolygonZeroIndex ()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon ();
-
-                mesh.AddPolygon (0);
-            }
-        }
-
-        [Test]
-        public void TestAddPolygonTextureUVIndex ()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon ();
-
-                mesh.AddPolygon (0, 0);
-            }
-        }
-
-        [Test]
-        public void TestEndPolygonNoBegin ()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.EndPolygon ();
-            }
-        }
-
-        [Test]
-        public void TestEndPolygonNoAdd ()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon ();
-                mesh.EndPolygon ();
-            }
-        }
-
-        [Test]
-        public void TestEndPolygonOneAdd ()
-        {
-            using (FbxMesh mesh = CreateObject ("mesh")) {
-                mesh.BeginPolygon ();
-                mesh.AddPolygon (0);
-                mesh.EndPolygon ();
+                Assert.That(() => mesh.AddPolygon (-1), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             }
         }
     }

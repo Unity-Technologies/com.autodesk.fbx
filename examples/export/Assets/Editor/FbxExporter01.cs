@@ -34,7 +34,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"Set some scene settings. Note that the scene thumnail has not been set.";
 
-            const string MenuItemName = "File/Export/Export (empty scene) to FBX";
+            const string MenuItemName = "File/Export FBX/1. Empty Scene";
 
             const string FileBaseName = "example_empty_scene";
 

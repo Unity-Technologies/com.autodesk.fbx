@@ -40,7 +40,7 @@ namespace FbxSdk.Examples
             const string Comments =
                 @"The example uses layers to add normals, binormals and tangents. Adding normals using the geometry element management convenience functions is not supported.";
 
-            const string MenuItemName = "File/Export/Export (mesh with normals, binormals, tangents, uvs and vertex colors) to FBX";
+            const string MenuItemName = "File/Export FBX/5. Static mesh with normals, binormals, tangents, uvs and vertex colors";
 
             const string FileBaseName = "example_static_mesh_with_normals_etc";
 

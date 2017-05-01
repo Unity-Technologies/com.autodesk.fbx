@@ -39,7 +39,7 @@ namespace FbxSdk.Examples
             const string Comments =
                 "";
 
-            const string MenuItemName = "File/Export/Export (skinned mesh with bones) to FBX";
+            const string MenuItemName = "File/Export FBX/7. Skinned mesh with bones";
 
             const string FileBaseName = "example_skinned_mesh_with_bones";
 
@@ -111,16 +111,15 @@ namespace FbxSdk.Examples
                     Transform unityBoneTransform = unitySkinnedMeshRenderer.bones [boneIndex];
 
                     FbxNode fbxBoneNode = FbxNode.Create (fbxScene, unityBoneTransform.gameObject.name);
-#if UNI_15280
+
                     // Create the node's attributes
                     FbxSkeleton fbxSkeleton = FbxSkeleton.Create (fbxScene, unityBoneTransform.gameObject.name);
 
-                    var fbxSkeletonType = (boneIndex > 0) ? FbxSkeleton.eLimbNode : FbxSkeleton.eRoot;
+                    var fbxSkeletonType = (boneIndex > 0) ? FbxSkeleton.EType.eLimbNode : FbxSkeleton.EType.eRoot;
                     fbxSkeleton.SetSkeletonType (fbxSkeletonType);
 
                     // Set the node's attribute
                     fbxBoneNode.SetNodeAttribute (fbxSkeleton);
-#endif
 
                     // Set the bone node's local position and orientation
                     UnityEngine.Vector3 unityTranslate = unityBoneTransform.localPosition;

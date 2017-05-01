@@ -36,7 +36,7 @@ namespace FbxSdk.Examples
             const string Comments =
                 @"We are exporting rotations using the Euler angles from Unity.";
 
-            const string MenuItemName = "File/Export/Export (static meshes) to FBX";
+            const string MenuItemName = "File/Export FBX/4. Static mesh";
 
             const string FileBaseName = "example_static_mesh";
 
