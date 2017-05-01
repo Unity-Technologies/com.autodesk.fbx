@@ -153,10 +153,10 @@ namespace FbxSdk.Examples
             {
                 SkinnedMeshRenderer unitySkinnedMeshRenderer
                     = meshInfo.renderer as SkinnedMeshRenderer;
-#if UNI_15280
-                FbxSkin Skin = FbxSkin.Create (fbxScene, MakeObjectName (meshInfo.unityObject.name + "_Skin"));
 
-                FbxMatrix fbxMeshMatrix = fbxRootNode.EvaluateGlobalTransform ();
+                FbxSkin fbxSkin = FbxSkin.Create (fbxScene, MakeObjectName (meshInfo.unityObject.name + "_Skin"));
+
+                FbxAMatrix fbxMeshMatrix = fbxRootNode.EvaluateGlobalTransform ();
 
                 foreach (var unityBoneTransform in unitySkinnedMeshRenderer.bones) {
                     FbxNode fbxBoneNode = boneNodes [unityBoneTransform];
@@ -165,7 +165,7 @@ namespace FbxSdk.Examples
                     FbxCluster fbxCluster = FbxCluster.Create (fbxScene, MakeObjectName ("Cluster"));
 
                     fbxCluster.SetLink (fbxBoneNode);
-                    fbxCluster.SetLinkMode (FbxCluster.eTotalOne);
+                    fbxCluster.SetLinkMode (FbxCluster.ELinkMode.eTotalOne);
 
                     // TODO: add weighted vertices to cluster
                     SetVertexWeights (meshInfo, fbxCluster, boneNodes);
@@ -182,13 +182,11 @@ namespace FbxSdk.Examples
 
                 // Add the skin to the mesh after the clusters have been added
                 fbxMesh.AddDeformer (fbxSkin);
-#endif
             }
 
             /// <summary>
             /// TODO: set weight vertices to cluster
             /// </summary>
-#if UNI_15280
             protected void SetVertexWeights (MeshInfo meshInfo, FbxCluster fbxCluster, Dictionary<Transform, FbxNode> boneNodes)
             {
                 foreach (Transform unityBoneTransform in boneNodes.Keys) 
@@ -205,7 +203,6 @@ namespace FbxSdk.Examples
                     }
                 }
             }
-#endif
 
             /// <summary>
             /// Export bind pose of mesh to skeleton

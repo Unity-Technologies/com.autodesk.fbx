@@ -101,6 +101,7 @@
 %include "fbxmanager.i"
 %include "fbxaxissystem.i"
 %include "fbxsystemunit.i"
+%include "fbxstatus.i"
 
 /* The emitter hierarchy. */
 %include "fbxemitter.i"
