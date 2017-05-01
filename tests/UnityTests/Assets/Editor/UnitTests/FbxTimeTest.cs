@@ -27,9 +27,19 @@ namespace UnitTests
             // just make sure it doesn't crash
             FbxTime time = new FbxTime();
             time = new FbxTime (1);
+        }
 
-            // TODO: fix so calling Dispose() doesn't throw an exception
-            Assert.That (() => { time.Dispose(); }, Throws.Exception.TypeOf<System.MethodAccessException>());
+        [Test]
+        [Ignore("Dispose throws a MethodAccessException as FbxTime has no public default destructor")]
+        public void TestDispose()
+        {
+            FbxTime time;
+            time = new FbxTime ();
+            time.Dispose ();
+            Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+            using (time = new FbxTime (1)) {}
+            Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
     }
 }
