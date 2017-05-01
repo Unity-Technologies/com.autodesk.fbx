@@ -47,6 +47,7 @@ staticstring = (r'\s*static\s*const\s*char\s*\*\s*([a-zA-Z0-9_]+)\s*;\s*', r'\1'
 
 regex_pairs = {
   'fbxdatatypeconstants.i' : [(r'\s*extern FBXSDK_DLL FbxDataType ([a-zA-Z0-9_]+);\s*', r'\1')],
+  'fbxsurfaceimmutables.i' : [ propertyTmember, staticstring ],
   'fbxtextureimmutables.i' : [ propertyTmember, staticstring ]
 }
 

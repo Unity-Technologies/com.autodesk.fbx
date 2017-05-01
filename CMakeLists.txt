@@ -77,11 +77,32 @@ swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/math/fbxmatrix.
 swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/math/fbxaffinematrix.h")
 swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxlayer.h")
 
+# Find the constants for FbxDataType.
+fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxdatatypeconstants.i
+        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxdatatypes.h
+)
+
+# Find the constants and properties for FbxSurfaceMaterial, Lambert and Phong
+fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxsurfaceimmutables.i
+        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxsurfacematerial.h
+                ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxsurfacelambert.h
+                ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxsurfacephong.h
+)
+
+# Find the constants and properties for FbxTexture and FbxFileTexture.
+fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxtextureimmutables.i
+        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxtexture.h ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxfiletexture.h
+)
+
 # Autogenerate the weakpointerhandles.i file.
 # It's a 2-step process:
 # 1. generate the typedefs map. Unfortunately we need to generate all the code for that!
 # 2. generate the weakpointerhandles.py from the typedefs.
-# Important: only add dependencies *after* generating the typedefs, or it gets circular.
+# Important: only add the weakpointerhandles.i *after* this or it gets circular.
+#       But other dependencies (e.g. for immutables) should go before.
 get_filename_component(FBXSDK_SWIG_I_FILE src/fbxsdk.i ABSOLUTE)
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
@@ -101,17 +122,6 @@ fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
         ARGS ${CMAKE_BINARY_DIR}/weakpointerhandles.i ${CMAKE_BINARY_DIR}/fbxsdk.typedefs "FbxEmitter" "FbxManager")
 
-# Find the constants for FbxDataType.
-fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxdatatypeconstants.i
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
-        HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxdatatypes.h
-)
-
-# Find the constants and properties for FbxTexture and FbxFileTexture.
-fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxtextureimmutables.i
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
-        HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxtexture.h ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxfiletexture.h
-)
 
 # Finalize the swig output.
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)

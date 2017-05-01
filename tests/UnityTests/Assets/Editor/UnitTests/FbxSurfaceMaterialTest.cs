@@ -18,10 +18,38 @@ namespace UnitTests
             material.MultiLayer.Get();
         }
 
+        public static void TestGetter<T>(T item) { /* we tested the getter by passing the argument! */ }
+
         [Test]
         public void TestBasics()
         {
             using (var surface = CreateObject()) { TestSurface(surface); }
+
+            // Use all the getters
+            TestGetter(FbxSurfaceMaterial.sShadingModel);
+            TestGetter(FbxSurfaceMaterial.sMultiLayer);
+            TestGetter(FbxSurfaceMaterial.sMultiLayerDefault);
+            TestGetter(FbxSurfaceMaterial.sEmissive);
+            TestGetter(FbxSurfaceMaterial.sEmissiveFactor);
+            TestGetter(FbxSurfaceMaterial.sAmbient);
+            TestGetter(FbxSurfaceMaterial.sAmbientFactor);
+            TestGetter(FbxSurfaceMaterial.sDiffuse);
+            TestGetter(FbxSurfaceMaterial.sDiffuseFactor);
+            TestGetter(FbxSurfaceMaterial.sSpecular);
+            TestGetter(FbxSurfaceMaterial.sSpecularFactor);
+            TestGetter(FbxSurfaceMaterial.sShininess);
+            TestGetter(FbxSurfaceMaterial.sBump);
+            TestGetter(FbxSurfaceMaterial.sNormalMap);
+            TestGetter(FbxSurfaceMaterial.sBumpFactor);
+            TestGetter(FbxSurfaceMaterial.sTransparentColor);
+            TestGetter(FbxSurfaceMaterial.sTransparencyFactor);
+            TestGetter(FbxSurfaceMaterial.sReflection);
+            TestGetter(FbxSurfaceMaterial.sReflectionFactor);
+            TestGetter(FbxSurfaceMaterial.sDisplacementColor);
+            TestGetter(FbxSurfaceMaterial.sDisplacementFactor);
+            TestGetter(FbxSurfaceMaterial.sVectorDisplacementColor);
+            TestGetter(FbxSurfaceMaterial.sVectorDisplacementFactor);
+            TestGetter(FbxSurfaceMaterial.sShadingModelDefault);
         }
     }
 
