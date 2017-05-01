@@ -127,7 +127,6 @@
 %include "fbxcluster.i"
 %include "fbxskin.i"
 %include "fbxskeleton.i"
-%include "fbxcluster.i"
 #endif
 
 /* Everything */
