@@ -33,6 +33,7 @@
 %rename("%s") FbxNode::GetVisibility;
 %immutable FbxNode::VisibilityInheritance;
 %rename("%s") FbxNode::VisibilityInheritance;
+%rename("%s") FbxNode::EvaluateGlobalTransform;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxnode.h"
