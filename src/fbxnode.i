@@ -34,6 +34,7 @@
 %immutable FbxNode::VisibilityInheritance;
 %rename("%s") FbxNode::VisibilityInheritance;
 %rename("%s") FbxNode::EvaluateGlobalTransform;
+%rename("%s") FbxNode::EPivotSet;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxnode.h"

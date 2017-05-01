@@ -101,6 +101,7 @@
 %include "fbxmanager.i"
 %include "fbxaxissystem.i"
 %include "fbxsystemunit.i"
+%include "fbxtime.i"
 %include "fbxstatus.i"
 
 /* The emitter hierarchy. */
@@ -122,6 +123,7 @@
 %include "fbxmesh.i"
 %include "fbxglobalsettings.i"
 %include "fbxpropertytypes.i"
+%include "fbxpose.i"
 %include "fbxdeformer.i"
 %include "fbxsubdeformer.i"
 %include "fbxcluster.i"

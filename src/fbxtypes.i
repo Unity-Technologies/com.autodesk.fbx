@@ -155,6 +155,11 @@
 %ignore FBXSDK_ATOMIC_MIN;
 %ignore FBXSDK_ATOMIC_MAX;
 
+// Fix so on Windows FbxLongLong doesn't get typedef'd
+// to signed __int64 instead of signed long long.
+#ifdef FBXSDK_COMPILER_MSC
+%apply signed long long {FbxLongLong}
+#endif
 
 %include "fbxsdk/core/arch/fbxtypes.h"
 
