@@ -73,9 +73,16 @@ namespace UnitTests
                 // test add null deformer
                 Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
 
-                // test get invalid deformer doesn't crash
+                // test add invalid deformer
+                deformer.Destroy();
+                Assert.That (() => fbxGeometry.AddDeformer(deformer), Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+                // test get invalid deformer index doesn't crash
                 fbxGeometry.GetDeformer(-1, new FbxStatus());
                 fbxGeometry.GetDeformer(int.MaxValue, new FbxStatus());
+
+                // test get deformer null FbxStatus
+                fbxGeometry.GetDeformer(0, null);
             }
         }
     }
