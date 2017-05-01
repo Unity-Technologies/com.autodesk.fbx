@@ -158,8 +158,11 @@ namespace FbxSdk.Examples
 
                 FbxAMatrix fbxMeshMatrix = fbxRootNode.EvaluateGlobalTransform ();
 
-                foreach (var unityBoneTransform in unitySkinnedMeshRenderer.bones) {
-                    FbxNode fbxBoneNode = boneNodes [unityBoneTransform];
+                // keep track of the bone index -> fbx cluster mapping, so that we can add the bone weights afterwards
+                Dictionary<int, FbxCluster> boneCluster = new Dictionary<int, FbxCluster> ();
+
+                for(int i = 0; i < unitySkinnedMeshRenderer.bones.Length; i++) {
+                    FbxNode fbxBoneNode = boneNodes [unitySkinnedMeshRenderer.bones[i]];
 
                     // Create the deforming cluster
                     FbxCluster fbxCluster = FbxCluster.Create (fbxScene, MakeObjectName ("Cluster"));
@@ -167,8 +170,7 @@ namespace FbxSdk.Examples
                     fbxCluster.SetLink (fbxBoneNode);
                     fbxCluster.SetLinkMode (FbxCluster.ELinkMode.eTotalOne);
 
-                    // TODO: add weighted vertices to cluster
-                    SetVertexWeights (meshInfo, fbxCluster, boneNodes);
+                    boneCluster.Add (i, fbxCluster);
 
                     // set the Transform and TransformLink matrix
                     fbxCluster.SetTransformMatrix (fbxMeshMatrix);
@@ -180,26 +182,42 @@ namespace FbxSdk.Examples
                     fbxSkin.AddCluster (fbxCluster);
                 }
 
+                // set the vertex weights for each bone
+                SetVertexWeights(meshInfo, boneCluster);
+
                 // Add the skin to the mesh after the clusters have been added
                 fbxMesh.AddDeformer (fbxSkin);
             }
 
             /// <summary>
-            /// TODO: set weight vertices to cluster
+            /// set weight vertices to cluster
             /// </summary>
-            protected void SetVertexWeights (MeshInfo meshInfo, FbxCluster fbxCluster, Dictionary<Transform, FbxNode> boneNodes)
+            protected void SetVertexWeights (MeshInfo meshInfo, Dictionary<int, FbxCluster> boneCluster)
             {
-                foreach (Transform unityBoneTransform in boneNodes.Keys) 
-                {
-                    for (int vertexIndex = 0; vertexIndex < meshInfo.VertexCount; vertexIndex++) 
-                    {
-                        // TODO: lookup influence of bone on vertex
-                        float boneInfluenceWeight = 0;
+                // set the vertex weights for each bone
+                for (int i = 0; i < meshInfo.BoneWeights.Length; i++) {
+                    var boneWeights = meshInfo.BoneWeights;
+                    int[] indices = {
+                        boneWeights [i].boneIndex0,
+                        boneWeights [i].boneIndex1,
+                        boneWeights [i].boneIndex2,
+                        boneWeights [i].boneIndex3
+                    };
+                    float[] weights = {
+                        boneWeights [i].weight0,
+                        boneWeights [i].weight1,
+                        boneWeights [i].weight2,
+                        boneWeights [i].weight3
+                    };
 
-                        if (boneInfluenceWeight > 0)
-                        {
-                            fbxCluster.AddControlPointIndex(vertexIndex, boneInfluenceWeight);
+                    for (int j = 0; j < indices.Length; j++) {
+                        if (weights [j] <= 0) {
+                            continue;
                         }
+                        if (!boneCluster.ContainsKey (indices [j])) {
+                            continue;
+                        }
+                        boneCluster [indices [j]].AddControlPointIndex (i, weights [j]);
                     }
                 }
             }
@@ -447,6 +465,8 @@ namespace FbxSdk.Examples
             	/// </summary>
             	/// <value>The uv.</value>
             	public Vector2 [] UV { get { return mesh.uv; } }
+
+                public BoneWeight[] BoneWeights { get { return mesh.boneWeights; } }
 
             	/// <summary>
             	/// Initializes a new instance of the <see cref="MeshInfo"/> struct.
