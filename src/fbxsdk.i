@@ -126,6 +126,8 @@
 %include "fbxaxissystem.i"
 %include "fbxsystemunit.i"
 %include "fbxdatatypes.i"
+%include "fbxtime.i"
+%include "fbxstatus.i"
 
 /* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"
@@ -149,6 +151,12 @@
 %include "fbxsurfacematerial.i"
 %include "fbxbindingtable.i"
 %include "fbxpropertytypes.i"
+%include "fbxpose.i"
+%include "fbxdeformer.i"
+%include "fbxsubdeformer.i"
+%include "fbxcluster.i"
+%include "fbxskin.i"
+%include "fbxskeleton.i"
 #endif
 
 /* Everything */

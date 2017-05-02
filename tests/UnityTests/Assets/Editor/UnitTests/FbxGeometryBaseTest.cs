@@ -16,11 +16,8 @@ namespace UnitTests
 {
     public class FbxGeometryBaseTest : Base<FbxGeometryBase>
     {
-        [Test]
-        public void TestBasics()
+        public static void GenericTests<T>(T geometryBase) where T : FbxGeometryBase
         {
-            var geometryBase = CreateObject ("geometry base");
-
             geometryBase.InitControlPoints (24);
             Assert.AreEqual (geometryBase.GetControlPointsCount (), 24);
             geometryBase.SetControlPointAt(new FbxVector4(1,2,3,4), 0);
@@ -44,11 +41,48 @@ namespace UnitTests
             // seems to be (0,0,0,epsilon).
             geometryBase.GetControlPointAt(-1);
             geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
+        }
+
+        [Test]
+        public void TestBasics()
+        {
+            GenericTests(CreateObject("geometry base"));
 
             // You can even initialize to a negative number of control points:
             using (FbxGeometryBase geometryBase2 = CreateObject ("geometry base")) {
                 // make sure this doesn't crash
                 geometryBase2.InitControlPoints (-1);
+            }
+        }
+    }
+
+    public class FbxGeometryTest : Base<FbxGeometry>
+    {
+        [Test]
+        public void TestBasics()
+        {
+            using (var fbxGeometry = CreateObject ("geometry")) {
+                FbxGeometryBaseTest.GenericTests (fbxGeometry);
+
+                // test add deformer
+                FbxDeformer deformer = FbxDeformer.Create (Manager, "deformer");
+                int index = fbxGeometry.AddDeformer (deformer);
+                Assert.GreaterOrEqual (index, 0);
+                Assert.AreEqual(deformer, fbxGeometry.GetDeformer(index, new FbxStatus()));
+
+                // test add null deformer
+                Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+
+                // test add invalid deformer
+                deformer.Destroy();
+                Assert.That (() => fbxGeometry.AddDeformer(deformer), Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+                // test get invalid deformer index doesn't crash
+                fbxGeometry.GetDeformer(-1, new FbxStatus());
+                fbxGeometry.GetDeformer(int.MaxValue, new FbxStatus());
+
+                // test get deformer null FbxStatus
+                fbxGeometry.GetDeformer(0, null);
             }
         }
     }

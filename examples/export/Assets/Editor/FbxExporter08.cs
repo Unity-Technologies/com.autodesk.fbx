@@ -1,11 +1,10 @@
+#define UNI_16194
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
 // Licensed under the ##LICENSENAME##. 
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
-
-#define UNI_16194
 
 using System.IO;
 using System.Collections.Generic;
@@ -40,7 +39,7 @@ namespace FbxSdk.Examples
             const string Comments = 
                 @"In this example we set the root node invisible, but leave its children visible.";
 
-            const string MenuItemName = "File/Export/Export (nodes with visibility) to FBX";
+            const string MenuItemName = "File/Export FBX/8. Nodes with visibility";
 
             const string FileBaseName = "example_nodes_with_visibility";
 

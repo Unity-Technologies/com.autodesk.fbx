@@ -35,7 +35,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"Export hierarchy of selected GameObjects.";
 
-            const string MenuItemName = "File/Export/Export (node hierarchy) to FBX";
+            const string MenuItemName = "File/Export FBX/2. Node hierarchy";
 
             const string FileBaseName = "example_node_hierarchy";
 

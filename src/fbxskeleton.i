@@ -6,12 +6,14 @@
 // ***********************************************************************
 
 #ifdef IGNORE_ALL_INCLUDE_SOME
-%rename("%s") FbxGeometry;
+%rename("%s") FbxSkeleton;
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
-%rename("%s") FbxGeometry::AddDeformer;
-%rename("%s") FbxGeometry::GetDeformer(int pIndex, FbxStatus *pStatus) const;
+%rename("%s") FbxSkeleton::Create;
+%rename("%s") FbxSkeleton::SetSkeletonType;
+%rename("%s") FbxSkeleton::GetSkeletonType;
+%rename("%s") FbxSkeleton::EType;
 #endif
 
-%include "fbxsdk/scene/geometry/fbxgeometry.h"
+%include "fbxsdk/scene/geometry/fbxskeleton.h"
