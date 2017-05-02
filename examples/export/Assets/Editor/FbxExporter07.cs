@@ -58,13 +58,17 @@ namespace FbxSdk.Examples
                 SkinnedMeshRenderer unitySkin
                     = unityGo.GetComponentInChildren<SkinnedMeshRenderer> ();
 
-                if (unitySkin == null)
+                if (unitySkin == null) {
+                    Debug.LogError ("could not find skinned mesh");
                     return;
+                }
 
                 var meshInfo = GetSkinnedMeshInfo (unityGo);
 
-                if (meshInfo.renderer == null)
+                if (meshInfo.renderer == null) {
+                    Debug.LogError ("mesh has no renderer");
                     return;
+                }
 
                 // create an FbxNode and add it as a child of fbxParentNode
                 using (FbxNode fbxNode = FbxNode.Create (fbxScene, unityAnimator.name)) {
@@ -76,7 +80,12 @@ namespace FbxSdk.Examples
                         // export skin
                         FbxNode fbxMeshNode = ExportMesh (meshInfo, fbxScene, fbxNode);
 
-                        FbxMesh fbxMesh = fbxMeshNode.GetNodeAttribute () as FbxMesh;
+                        FbxMesh fbxMesh = fbxMeshNode.GetMesh ();
+
+                        if (fbxMesh == null) {
+                            Debug.LogError ("Could not find mesh");
+                            return;
+                        }
 
                         // bind mesh to skeleton
                         ExportSkin (meshInfo, fbxScene, fbxMesh, fbxMeshNode, boneNodes);
@@ -90,6 +99,9 @@ namespace FbxSdk.Examples
                         if (Verbose)
                             Debug.Log (string.Format ("exporting {0} {1}", "Skin", fbxNode.GetName ()));
                     }
+                    else{
+                        Debug.LogError("failed to export skeleton");
+                    }
                 }
             }
 
@@ -102,18 +114,19 @@ namespace FbxSdk.Examples
                 SkinnedMeshRenderer unitySkinnedMeshRenderer
                     = meshInfo.renderer as SkinnedMeshRenderer;
 
-                if (unitySkinnedMeshRenderer.bones.Length > 0)
+                if (unitySkinnedMeshRenderer.bones.Length <= 0) {
                     return false;
+                }
 
                 Dictionary<Transform, FbxNode> boneParentNodes = new Dictionary<Transform, FbxNode> ();
 
                 for (int boneIndex = 0; boneIndex < unitySkinnedMeshRenderer.bones.Length; boneIndex++) {
                     Transform unityBoneTransform = unitySkinnedMeshRenderer.bones [boneIndex];
 
-                    FbxNode fbxBoneNode = FbxNode.Create (fbxScene, unityBoneTransform.gameObject.name);
+                    FbxNode fbxBoneNode = FbxNode.Create (fbxScene, unityBoneTransform.name);
 
                     // Create the node's attributes
-                    FbxSkeleton fbxSkeleton = FbxSkeleton.Create (fbxScene, unityBoneTransform.gameObject.name);
+                    FbxSkeleton fbxSkeleton = FbxSkeleton.Create (fbxScene, unityBoneTransform.name);
 
                     var fbxSkeletonType = (boneIndex > 0) ? FbxSkeleton.EType.eLimbNode : FbxSkeleton.EType.eRoot;
                     fbxSkeleton.SetSkeletonType (fbxSkeletonType);
@@ -130,15 +143,32 @@ namespace FbxSdk.Examples
 
                     fbxBoneNode.LclTranslation.Set (fbxTranslate);
                     fbxBoneNode.LclRotation.Set (fbxRotate);
-
+                    //------------------------------
+                    // first bone is not necessarily the root
+                    //
                     // add bone to its parent
-                    if (boneIndex > 0) {
+                    /*if (boneIndex > 0) {
                         boneParentNodes [unityBoneTransform.parent].AddChild (fbxBoneNode);
                     } else {
                         boneParentNodes [unityBoneTransform] = fbxBoneNode;
-                    }
+                    }*/
+                    //------------------------------
                     // save relatation between unity transform and fbx bone node for skinning
                     boneNodes [unityBoneTransform] = fbxBoneNode;
+                }
+
+                // set the hierarchy for the FbxNodes
+                foreach (KeyValuePair<Transform, FbxNode> t in boneNodes) {
+                    // if this is a root node then don't need to do anything
+                    if (t.Key == t.Key.root) {
+                        continue;
+                    }
+
+                    if (!boneNodes.ContainsKey (t.Key.parent)) {
+                        continue;
+                    }
+
+                    boneNodes [t.Key.parent].AddChild (t.Value);
                 }
 
                 return true;
@@ -327,6 +357,7 @@ namespace FbxSdk.Examples
                     // Check that initialization of the fbxExporter was successful
                     if (!status) 
                     {
+                        Debug.LogError ("failed to initialize exporter");
                         return 0;
                     }
 
@@ -496,7 +527,7 @@ namespace FbxSdk.Examples
             private MeshInfo GetSkinnedMeshInfo (GameObject gameObject)
             {
         		// Verify that we are rendering. Otherwise, don't export.
-        		var renderer = gameObject.gameObject.GetComponent<SkinnedMeshRenderer> ();
+        		var renderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer> ();
         		if (!renderer || !renderer.enabled) {
         			return new MeshInfo ();
         		}
