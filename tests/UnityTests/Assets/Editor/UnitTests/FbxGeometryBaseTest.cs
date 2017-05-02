@@ -61,7 +61,29 @@ namespace UnitTests
         [Test]
         public void TestBasics()
         {
-            FbxGeometryBaseTest.GenericTests(CreateObject("geometry"));
+            using (var fbxGeometry = CreateObject ("geometry")) {
+                FbxGeometryBaseTest.GenericTests (fbxGeometry);
+
+                // test add deformer
+                FbxDeformer deformer = FbxDeformer.Create (Manager, "deformer");
+                int index = fbxGeometry.AddDeformer (deformer);
+                Assert.GreaterOrEqual (index, 0);
+                Assert.AreEqual(deformer, fbxGeometry.GetDeformer(index, new FbxStatus()));
+
+                // test add null deformer
+                Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+
+                // test add invalid deformer
+                deformer.Destroy();
+                Assert.That (() => fbxGeometry.AddDeformer(deformer), Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+                // test get invalid deformer index doesn't crash
+                fbxGeometry.GetDeformer(-1, new FbxStatus());
+                fbxGeometry.GetDeformer(int.MaxValue, new FbxStatus());
+
+                // test get deformer null FbxStatus
+                fbxGeometry.GetDeformer(0, null);
+            }
         }
     }
 }

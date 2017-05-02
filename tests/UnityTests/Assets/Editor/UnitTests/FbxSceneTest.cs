@@ -46,5 +46,23 @@ namespace UnitTests
                 Assert.GreaterOrEqual (newScene.GetNodeCount (), 0);
             }
         }
+
+        [Test]
+        public void TestAddPose()
+        {
+            using (FbxScene newScene = FbxScene.Create (Manager, "")) {
+                FbxPose fbxPose = FbxPose.Create (Manager, "pose");
+                bool result = newScene.AddPose (fbxPose);
+                Assert.IsTrue (result);
+                Assert.AreEqual (fbxPose, newScene.GetPose (0));
+
+                // test null
+                Assert.That (() => { newScene.AddPose(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
+                // test invalid
+                fbxPose.Destroy();
+                Assert.That (() => { newScene.AddPose(fbxPose); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            }
+        }
     }
 }
