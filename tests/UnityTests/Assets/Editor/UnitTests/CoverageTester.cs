@@ -252,6 +252,57 @@ static class CoverageTester
     }
 
     /// <summary>
+    /// Collect all the methods of the type that we want to cover.
+    /// Includes all public instance methods, all public static methods,
+    /// all public constructors, all public property getters and setters.
+    /// </summary>
+    public static void CollectMethodsToCover(System.Type TypeToCover, List<MethodBase> MethodsToCover) {
+        // Don't cover anything for enums, they're basically compiler-generated
+        // types.
+        if (TypeToCover.IsEnum) { return; }
+
+        // We want to call all the methods of the proxy, including all the constructors.
+        int firstIndex = MethodsToCover.Count;
+        MethodsToCover.AddRange(TypeToCover.GetMethods());
+        MethodsToCover.AddRange(TypeToCover.GetConstructors());
+
+        // Testers will often use EqualityTester on the type. Register its
+        // reflection calls.
+        var eqTester = typeof(UnitTests.EqualityTester<>).MakeGenericType(TypeToCover);
+        System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(eqTester.TypeHandle);
+
+        // In calling any method on the type, the static initializer will be invoked.
+        if (TypeToCover.TypeInitializer != null) {
+            for(int i = firstIndex, n = MethodsToCover.Count; i < n; ++i) {
+                RegisterReflectionCall(MethodsToCover[i], TypeToCover.TypeInitializer);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Filter a list of methods to get the methods that the unit test
+    /// framework will interpret as tests.
+    /// </summary>
+    public static void CollectTestMethods(IEnumerable<MethodBase> PotentialTestMethods, List<MethodBase> TestMethods) {
+        foreach(var method in PotentialTestMethods) {
+            // Check that the method is tagged [Test]
+            if (method.GetCustomAttributes(typeof(NUnit.Framework.TestAttribute), true).Length == 0) {
+                continue;
+            }
+
+            TestMethods.Add(method);
+
+            /* Invoke the declaring type's static init so it registers its
+             * reflection calls. */
+            System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(method.DeclaringType.TypeHandle);
+        }
+    }
+
+    public static void CollectTestMethods(System.Type TestClass, List<MethodBase> TestMethods) {
+        CollectTestMethods(TestClass.GetMethods(), TestMethods);
+    }
+
+    /// <summary>
     /// Simple interface for running an NUnit test.
     /// <code>
     ///    [Test]
@@ -260,18 +311,12 @@ static class CoverageTester
     /// </summary>
     public static void TestCoverage(System.Type TypeToCover, System.Type NUnitTestFramework)
     {
-        // We want to call all the methods of the proxy, including all the constructors.
-        var methodsToCover = new List<MethodBase>(TypeToCover.GetMethods());
-        methodsToCover.AddRange(TypeToCover.GetConstructors());
+        var methodsToCover = new List<MethodBase>();
+        CollectMethodsToCover(TypeToCover, methodsToCover);
 
         // Our public test functions are what we can use to call that with.
         var testMethods = new List<MethodBase>();
-        foreach(var method in NUnitTestFramework.GetMethods()) {
-            // Check that the method is tagged [Test]
-            if (method.GetCustomAttributes(typeof(NUnit.Framework.TestAttribute), true).Length > 0) {
-                testMethods.Add(method);
-            }
-        }
+        CollectTestMethods(NUnitTestFramework.GetMethods(), testMethods);
 
         List<MethodBase> hitMethods;
         List<MethodBase> missedMethods;
