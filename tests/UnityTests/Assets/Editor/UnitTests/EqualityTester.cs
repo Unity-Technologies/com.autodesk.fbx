@@ -57,15 +57,6 @@ namespace UnitTests
 #endif
         }
 
-        /*
-         * Register the reflection calls with the coverage tester immediately.
-         *
-         * If you test coverage before you test equality, the coverage test
-         * might not notice the equality test. Calling this function before any
-         * testing will fix that problem.
-         */
-        public static void RegisterCoverage() { /* This call forced the static init to get invoked. */ }
-
         public static void TestEquality(T a, T b) {
             // Test all the Equals functions on a.
             // a.Equals(a) is true

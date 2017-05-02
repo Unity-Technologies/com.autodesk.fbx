@@ -24,6 +24,13 @@
 %rename("%s") FbxObject::GetSelected;
 %rename("%s") FbxObject::SetSelected;
 %rename("%s") FbxObject::GetFbxManager;
+
+/* Shader implementation. */
+%rename("%s") FbxObject::AddImplementation;
+%rename("%s") FbxObject::RemoveImplementation;
+%rename("%s") FbxObject::HasDefaultImplementation;
+%rename("%s") FbxObject::GetDefaultImplementation;
+%rename("%s") FbxObject::SetDefaultImplementation;
 #endif
 
 %extend FbxObject {

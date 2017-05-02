@@ -41,13 +41,20 @@ extern "C" SWIGEXPORT void SWIGSTDCALL CSharp_$module_Release_WeakPointerHandle(
     static_cast<WeakPointerHandle*>(handle)->ReleaseReference();
 }
 
-/* Set up the FBX allocators. */
+/* Set up the FBX allocators and support the static structures by creating a manager. */
 #include <fbxsdk.h>
 extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   fbxsdk::FbxSetMallocHandler(WeakPointerHandle::Allocators::AllocateMemory);
   fbxsdk::FbxSetFreeHandler(WeakPointerHandle::Allocators::FreeMemory);
   fbxsdk::FbxSetCallocHandler(WeakPointerHandle::Allocators::AllocateZero);
   fbxsdk::FbxSetReallocHandler(WeakPointerHandle::Allocators::Reallocate);
+
+  /* Create a manager, and never release it. It will own some static
+   * structures, including the FbxDataTypes.
+   *
+   * Otherwise, if the user accesses the FbxDataTypes without having an
+   * FbxManager around, there's a risk of memory corruption. */
+  fbxsdk::FbxManager::Create();
   return 1;
 }
 

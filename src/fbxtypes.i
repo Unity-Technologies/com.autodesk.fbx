@@ -31,16 +31,9 @@
 }
 
 /* Handle equality in C#. Also define a ToString operation. */
-%csmethodmodifiers THETYPE::operator== "private";
-%rename("_equals") THETYPE::operator==;
-%ignore THETYPE::operator!=;
-%define_generic_equality_functions(THETYPE);
+%define_equality_from_operator(THETYPE);
 %extend THETYPE {
   %proxycode %{
-  public bool Equals($csclassname other) {
-    if (object.ReferenceEquals(other, null)) { return false; }
-    return _equals(other);
-  }
   public override int GetHashCode() {
     uint hash = 0;
     for(int i = 0; i < N; ++i) {

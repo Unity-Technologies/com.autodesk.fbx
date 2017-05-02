@@ -52,9 +52,10 @@ include(deps/cmake/UseFixHeaders.cmake)
 find_package(FBXSDK REQUIRED)
 set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(PythonInterp REQUIRED)
+include(deps/cmake/RunPythonScript.cmake)
 
 # Unity is not required, but we can't run the tests without it.
-# Note: In Linux the package name and Find{package}.cmake file are case sensitive 
+# Note: In Linux the package name and Find{package}.cmake file are case sensitive
 # (e.g. has to be FindUNITY.cmake and UNITY or FindUnity.cmake and Unity)
 find_package(Unity)
 
@@ -80,6 +81,7 @@ swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxla
 # It's a 2-step process:
 # 1. generate the typedefs map. Unfortunately we need to generate all the code for that!
 # 2. generate the weakpointerhandles.py from the typedefs.
+# Important: only add dependencies *after* generating the typedefs, or it gets circular.
 get_filename_component(FBXSDK_SWIG_I_FILE src/fbxsdk.i ABSOLUTE)
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
@@ -91,17 +93,22 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         MAIN_DEPENDENCY ${FBXSDK_SWIG_I_FILE}
         DEPENDS ${SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS}
 )
-# important: only add this dependency *after* adding the custom command, or else we get a circular loop
-list(APPEND SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_BINARY_DIR}/weakpointerhandles.i")
-add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
-        COMMAND ${PYTHON_EXECUTABLE}
-        ARGS "${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py" "${CMAKE_BINARY_DIR}/weakpointerhandles.i" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
-                "FbxEmitter" "FbxManager"
-        MAIN_DEPENDENCY ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
-        DEPENDS "${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py"
-)
 
+# Find all the types that need weak-pointer handling. Add the top of each hierarchy as arguments.
+fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
+        SCRIPT ${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py
+        DEPENDS ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
+        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        ARGS ${CMAKE_BINARY_DIR}/weakpointerhandles.i ${CMAKE_BINARY_DIR}/fbxsdk.typedefs "FbxEmitter" "FbxManager")
 
+# Find the constants for FbxDataType.
+fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/fbxdatatypeconstants.i
+        SCRIPT ${CMAKE_SOURCE_DIR}/scripts/discover-datatypes.py
+        DEPENDS ${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxdatatypes.h
+        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        ARGS ${CMAKE_BINARY_DIR}/fbxdatatypeconstants.i ${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxdatatypes.h)
+
+# Finalize the swig output.
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 
 swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
@@ -123,7 +130,7 @@ set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 ###########################################################################
 include(deps/cmake/InstallMonoReflection.cmake)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests DESTINATION ${CMAKE_BINARY_DIR}/tests)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/Editor DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples FILES_MATCHING PATTERN "*.cs")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp DESTINATION fbxsdk FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION fbxsdk/csharp FILES_MATCHING PATTERN "*.cs")
 install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
