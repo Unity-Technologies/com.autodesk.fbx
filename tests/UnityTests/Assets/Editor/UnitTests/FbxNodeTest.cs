@@ -158,5 +158,18 @@ namespace UnitTests
                 Assert.AreEqual (node.GetVisibility (), false);
             }
         }
+
+        [Test]
+        public void TestEvaluateGlobalTransform()
+        {
+            // make sure it doesn't crash
+            using (FbxNode node = CreateObject ("root")) {
+                node.EvaluateGlobalTransform ();
+                node.EvaluateGlobalTransform (new FbxTime());
+                node.EvaluateGlobalTransform (new FbxTime(), FbxNode.EPivotSet.eDestinationPivot); // eSourcePivot is default
+                node.EvaluateGlobalTransform (new FbxTime(), FbxNode.EPivotSet.eSourcePivot, true); // false is default
+                node.EvaluateGlobalTransform (new FbxTime(), FbxNode.EPivotSet.eSourcePivot, false, true); // false is default
+            }
+        }
     }
 }

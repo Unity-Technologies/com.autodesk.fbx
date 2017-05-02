@@ -49,8 +49,11 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   fbxsdk::FbxSetCallocHandler(WeakPointerHandle::Allocators::AllocateZero);
   fbxsdk::FbxSetReallocHandler(WeakPointerHandle::Allocators::Reallocate);
 
-  // Create a manager, and never release it. It will own some static structures,
-  // including the FbxDataTypes.
+  /* Create a manager, and never release it. It will own some static
+   * structures, including the FbxDataTypes.
+   *
+   * Otherwise, if the user accesses the FbxDataTypes without having an
+   * FbxManager around, there's a risk of memory corruption. */
   fbxsdk::FbxManager::Create();
   return 1;
 }

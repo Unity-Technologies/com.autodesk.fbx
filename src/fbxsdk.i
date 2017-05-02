@@ -168,6 +168,8 @@
 %include "fbxsystemunit.i"
 %include "fbxdatatypes.i"
 %include "fbxpropertytypes.i"
+%include "fbxtime.i"
+%include "fbxstatus.i"
 
 /* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"
@@ -191,6 +193,7 @@
 %include "fbxsurfacematerial.i"
 %include "fbxtexture.i"
 %include "fbxbindingtable.i"
+%include "fbxpose.i"
 %include "fbxdeformer.i"
 %include "fbxsubdeformer.i"
 %include "fbxcluster.i"
