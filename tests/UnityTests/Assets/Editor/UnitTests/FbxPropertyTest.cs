@@ -61,6 +61,7 @@ namespace UnitTests
 
         // tests that should work for any subclass of FbxProperty
         public static void GenericPropertyTests<T>(T property, FbxObject parent, string propertyName, FbxDataType dataType) where T:FbxProperty{
+            Assert.IsTrue(property.IsValid());
             Assert.AreEqual(dataType, property.GetPropertyDataType());
             Assert.AreEqual(propertyName, property.GetName());
             Assert.AreEqual(propertyName, property.ToString());

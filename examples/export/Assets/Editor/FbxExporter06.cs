@@ -1,8 +1,8 @@
 //#define UNI_15935
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
@@ -40,7 +40,7 @@ namespace FbxSdk.Examples
             const string Comments =
                 @"";
 
-            const string MenuItemName = "File/Export FBX/WIP - 6. Static mesh with materials and textures";
+            const string MenuItemName = "File/Export FBX/6. Static mesh with materials and textures";
 
             const string FileBaseName = "example_static_mesh_with_materials_and_textures";
 
@@ -57,7 +57,6 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export the mesh's UVs using layer 0.
             /// </summary>
-            /// 
             public void ExportUVs (MeshInfo mesh, FbxMesh fbxMesh)
             {
                 // Set the normals on Layer 0.
@@ -95,34 +94,30 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export an Unity Texture
             /// </summary>
-            /// 
-#if UNI_15935
-            public object ExportTexture (Material unityMaterial, string  unityPropName, FbxScene fbxScene, FbxSurfaceMaterial fbxMaterial, string  fbxPropName)
+            public void ExportTexture (Material unityMaterial, string unityPropName,
+                FbxSurfaceMaterial fbxMaterial, string fbxPropName)
             {
-                // does fbx material support property                
-                FbxProperty fbxMatProperty = fbxMaterial.FindProperty ( fbxPropName);
+                if (!unityMaterial) { return; }
 
-                if (fbxMatProperty.IsValid()) 
-                {
-                    // is unity texture connected to material?
-                    Texture unityTexture = unityMaterial.GetTexture ( unityPropName);
+                // Get the texture on this property, if any.
+                var unityTexture = unityMaterial.GetTexture (unityPropName);
+                if (!unityTexture) { return; }
 
-                    if (unityTexture != null) 
-                    {
-                        FbxFileTexture fbxTexture = FbxFileTexture::Create (fbxScene, fbxPropName + "_Texture");
+                // Find its filename
+                var textureSourceFullPath = AssetDatabase.GetAssetPath(unityTexture);
+                if (textureSourceFullPath == "") { return; }
 
-                        fbxTexture.SetFileName (textureSourceFullPath);
-                        fbxTexture.SetTextureUse (FbxTexture.eStandard);
-                        fbxTexture.SetMappingType (FbxTexture.eUV);
-                        fbxTexture.ConnectDstProperty (FbxColorProperty);
+                // Find the corresponding property on the fbx material.
+                var fbxMaterialProperty = fbxMaterial.FindProperty (fbxPropName);
+                if (fbxMaterialProperty == null || !fbxMaterialProperty.IsValid()) { return; }
 
-                        return fbxTexture;
-                    }
-                }
-
-                return null;
+                // Create an fbx texture and link it up to the fbx material.
+                var fbxTexture = FbxFileTexture.Create (fbxMaterial, fbxPropName + "_Texture");
+                fbxTexture.SetFileName (textureSourceFullPath);
+                fbxTexture.SetTextureUse (FbxTexture.ETextureUse.eStandard);
+                fbxTexture.SetMappingType (FbxTexture.EMappingType.eUV);
+                fbxTexture.ConnectDstProperty (fbxMaterialProperty);
             }
-#endif
 
             /// <summary>
             /// Get the color of a material, or grey if we can't find it.
@@ -163,14 +158,12 @@ namespace FbxSdk.Examples
                     (fbxMaterial as FbxSurfacePhong).Specular.Set(GetMaterialColor(unityMaterial, "_SpecColor"));
                 }
 
-#if false
-                // TODO: textures.
-                ExportTexture (unityMaterial,  "_MainTex", fbxScene, fbxMaterial.sDiffuse);
-                ExportTexture (unityMaterial,  "_SpecGlosMap", fbxScene,  fbxMaterial.sSpecular);
-                ExportTexture (unityMaterial,  "_EmissionMap", fbxScene,  "emissive");
-                ExportTexture (unityMaterial, "_BumpMap", fbxScene, fbxMaterial.sNormalMap);
-#endif
-    
+                // Export the textures from Unity standard materials to FBX.
+                ExportTexture (unityMaterial,  "_MainTex", fbxMaterial, FbxSurfaceMaterial.sDiffuse);
+                ExportTexture (unityMaterial,  "_SpecGlosMap", fbxMaterial,  FbxSurfaceMaterial.sSpecular);
+                ExportTexture (unityMaterial,  "_EmissionMap", fbxMaterial,  "emissive");
+                ExportTexture (unityMaterial, "_BumpMap", fbxMaterial, FbxSurfaceMaterial.sNormalMap);
+
                 MaterialMap.Add(materialName, fbxMaterial);
                 return fbxMaterial;
             }
@@ -207,7 +200,7 @@ namespace FbxSdk.Examples
                 var fbxMaterial = ExportMaterial (mesh.material, fbxScene);
                 fbxNode.AddMaterial (fbxMaterial);
 
-                for (int f = 0; f < mesh.Triangles.Length / 3; f++) 
+                for (int f = 0; f < mesh.Triangles.Length / 3; f++)
                 {
                     fbxMesh.BeginPolygon ();
                     fbxMesh.AddPolygon (mesh.Triangles [3 * f]);
@@ -260,7 +253,7 @@ namespace FbxSdk.Examples
                 fbxNodeParent.AddChild (fbxNode);
 
                 // now  unityGo  through our children and recurse
-                foreach (Transform childT in  unityGo.transform) 
+                foreach (Transform childT in  unityGo.transform)
                 {
                     ExportComponents (childT.gameObject, fbxScene, fbxNode);
                 }
@@ -275,12 +268,12 @@ namespace FbxSdk.Examples
             public int ExportAll (IEnumerable<UnityEngine.Object> unityExportSet)
             {
                 // Create the FBX manager
-                using (var fbxManager = FbxManager.Create ()) 
+                using (var fbxManager = FbxManager.Create ())
                 {
                     // Configure fbx IO settings.
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
-                    // Create the exporter 
+                    // Create the exporter
                     var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
@@ -316,7 +309,7 @@ namespace FbxSdk.Examples
                     {
                         var  unityGo  = GetGameObject (obj);
 
-                        if ( unityGo ) 
+                        if ( unityGo )
                         {
                             this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
                         }
@@ -333,7 +326,7 @@ namespace FbxSdk.Examples
                 }
             }
 
-            // 
+            //
             // Create a simple user interface (menu items)
             //
             /// <summary>
@@ -359,7 +352,7 @@ namespace FbxSdk.Examples
             // export mesh info from Unity
             //
             ///<summary>
-            ///Information about the mesh that is important for exporting. 
+            ///Information about the mesh that is important for exporting.
             ///</summary>
             public struct MeshInfo
             {
@@ -411,14 +404,14 @@ namespace FbxSdk.Examples
                 /// </summary>
                 /// <value>The normals.</value>
                 private Vector3 [] m_Binormals;
-                public Vector3 [] Binormals 
-                { 
-                    get 
+                public Vector3 [] Binormals
+                {
+                    get
                     {
                         /// NOTE: LINQ
                         ///    return mesh.normals.Zip (mesh.tangents, (first, second)
                         ///    => Math.cross (normal, tangent.xyz) * tangent.w
-                        if (m_Binormals.Length == 0) 
+                        if (m_Binormals.Length == 0)
                         {
                             m_Binormals = new Vector3 [mesh.normals.Length];
 
@@ -454,7 +447,7 @@ namespace FbxSdk.Examples
                 /// The material used, if any; otherwise null.
                 /// We don't support multiple materials on one gameobject.
                 /// </summary>
-                public Material material { 
+                public Material material {
                     get {
                         if (!unityObject) { return null; }
                         var renderer = unityObject.GetComponent<Renderer>();
@@ -524,7 +517,7 @@ namespace FbxSdk.Examples
                 if (!meshFilter) {
                     return new MeshInfo();
                 }
-                var mesh = meshFilter.sharedMesh; 
+                var mesh = meshFilter.sharedMesh;
                 if (!mesh) {
                     return new MeshInfo();
                 }
@@ -574,14 +567,14 @@ namespace FbxSdk.Examples
             private static void OnExport()
             {
                 // Now that we know we have stuff to export, get the user-desired path.
-                var directory = string.IsNullOrEmpty (LastFilePath) 
-                                      ? Application.dataPath 
+                var directory = string.IsNullOrEmpty (LastFilePath)
+                                      ? Application.dataPath
                                       : System.IO.Path.GetDirectoryName (LastFilePath);
-                
-                var filename = string.IsNullOrEmpty (LastFilePath) 
-                                     ? MakeFileName(basename: FileBaseName, extension: Extension) 
+
+                var filename = string.IsNullOrEmpty (LastFilePath)
+                                     ? MakeFileName(basename: FileBaseName, extension: Extension)
                                      : System.IO.Path.GetFileName (LastFilePath);
-                
+
                 var title = string.Format ("Export FBX ({0})", FileBaseName);
 
                 var filePath = EditorUtility.SaveFilePanel (title, directory, filename, "");
@@ -592,7 +585,7 @@ namespace FbxSdk.Examples
 
                 LastFilePath = filePath;
 
-                using (var fbxExporter = Create()) 
+                using (var fbxExporter = Create())
                 {
                     // ensure output directory exists
                     EnsureDirectory (filePath);
