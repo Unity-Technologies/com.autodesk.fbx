@@ -353,7 +353,8 @@ namespace FbxSdk.Examples
                     var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
 
                     // Initialize the exporter.
-                    bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
+                    int fileFormat = fbxManager.GetIOPluginRegistry().FindWriterIDByDescription("FBX ascii (*.fbx)");
+                    bool status = fbxExporter.Initialize (LastFilePath, fileFormat, fbxManager.GetIOSettings ());
 
                     // Check that initialization of the fbxExporter was successful
                     if (!status) 
@@ -386,8 +387,8 @@ namespace FbxSdk.Examples
                     fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
 
                     // The Unity axis system has Y up, Z forward, X to the right:
-                    var axisSystem = new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded);
-                    fbxSettings.SetAxisSystem(axisSystem);
+                    //var axisSystem = new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded);
+                    //fbxSettings.SetAxisSystem(axisSystem);
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
