@@ -21,8 +21,11 @@
 
 /*
  * Define equality and hash code.
+ *
+ * Ignore equality to an int. Make users call IsValid instead.
  */
 %define_equality_from_operator(FbxProperty);
+%ignore FbxProperty::operator==(int) const;
 %extend FbxProperty { %proxycode %{
   public override int GetHashCode() {
     uint hash = (uint) GetName().GetHashCode();
