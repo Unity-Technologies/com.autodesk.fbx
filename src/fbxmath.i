@@ -35,10 +35,3 @@
 #endif
 
 %include "fbxsdk_csharp-fixed-headers/fbxaffinematrix.h"
-
-#ifdef IGNORE_ALL_INCLUDE_SOME
-// Unignore class
-%rename("%s") FbxVector2;
-#endif
-
-%include "fbxsdk/core/math/fbxvector2.h"

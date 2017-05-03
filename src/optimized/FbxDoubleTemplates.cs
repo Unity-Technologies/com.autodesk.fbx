@@ -1,3 +1,10 @@
+// ***********************************************************************
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
+//
+// Licensed under the ##LICENSENAME##.
+// See LICENSE.md file in the project root for full license information.
+// ***********************************************************************
+
 namespace FbxSdk
 {
     /**
@@ -190,6 +197,64 @@ namespace FbxSdk
 
         public override string ToString() {
             return string.Format("FbxDouble4({0},{1},{2},{3})", X, Y, Z, W);
+        }
+    }
+
+    public struct FbxVector2 {
+        public double X;
+        public double Y;
+
+        public FbxVector2(double X) { this.X = this.Y = X; }
+        public FbxVector2(double X, double Y) { this.X = X; this.Y = Y; }
+        public FbxVector2(FbxDouble2 other) { this.X = other.X; this.Y = other.Y; }
+        public FbxVector2(FbxVector2 other) { this.X = other.X; this.Y = other.Y; }
+
+        public double this[int i] {
+            get {
+                switch(i) {
+                    case 0: return X;
+                    case 1: return Y;
+                    default: throw new System.IndexOutOfRangeException();
+                }
+            }
+            set {
+                switch(i) {
+                    case 0: X = value; break;
+                    case 1: Y = value; break;
+                    default: throw new System.IndexOutOfRangeException();
+                }
+            }
+        }
+
+        public bool Equals(FbxVector2 other) {
+            return X == other.X && Y == other.Y;
+        }
+
+        public override bool Equals(object obj){
+            if (obj is FbxVector2) {
+                return this.Equals((FbxVector2)obj);
+            }
+            /* types are unrelated; can't be a match */
+            return false;
+        }
+
+        public static bool operator == (FbxVector2 a, FbxVector2 b) {
+            return a.Equals(b);
+        }
+
+        public static bool operator != (FbxVector2 a, FbxVector2 b) {
+            return !(a == b);
+        }
+
+        public override int GetHashCode() {
+            uint hash = (uint)X.GetHashCode();
+            hash = (hash << 16) | (hash >> 16);
+            hash ^= (uint)Y.GetHashCode();
+            return (int)hash;
+        }
+
+        public override string ToString() {
+            return string.Format("FbxVector2({0},{1})", X, Y);
         }
     }
 
