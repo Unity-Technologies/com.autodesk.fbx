@@ -115,6 +115,16 @@ namespace UnitTests
             Assert.AreEqual(c, v.Y);
             Assert.AreEqual(b, v.Z);
             Assert.AreEqual(a, v.W);
+
+            // Test getting the elements from a matrix built by TRS
+            mx = new FbxMatrix(new FbxVector4(1,2,3), new FbxVector4(0,90,0), new FbxVector4(1,1,1));
+            FbxVector4 t,r,s, shear;
+            double sign;
+            mx.GetElements(out t, out r, out shear, out s, out sign);
+            Assert.AreEqual(1, sign);
+            Assert.AreEqual(new FbxVector4(1,2,3, 1), t);
+            Assert.AreEqual(new FbxVector4(0,90,0, 0), r); /* for some reason w is zero for rotation */
+            Assert.AreEqual(new FbxVector4(1,1,1, 0), s); /* and similarly for scaling */
         }
     }
 }
