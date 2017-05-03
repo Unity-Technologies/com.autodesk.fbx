@@ -21,7 +21,7 @@ namespace FbxSdk.Examples
         public class FbxExporter11 : System.IDisposable
         {
             const string Title =
-                 "Example 02: exporting a basic node hierarchy";
+                "Example 11: exporting selected cameras with their settings and animation.";
 
             const string Subject =
                  @"Example FbxExporter11 illustrates how to:
@@ -37,7 +37,7 @@ namespace FbxSdk.Examples
                  "export camera node animation";
 
             const string Comments =
-                 @"";
+                 @"We set the filmback to 35mm TV Projection.";
 
             const string MenuItemName = "File/Export FBX/11. camera with animation";
 

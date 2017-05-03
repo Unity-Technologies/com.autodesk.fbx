@@ -27,7 +27,9 @@ namespace FbxSdk.Examples
                  @"Example FbxExporter09 illustrates how to:
                                 1) create and initialize an exporter
                                 2) create a scene
-                                3) export a scene to a FBX file (FBX201400 compatible)
+                                3) create a node hierarchy 
+                                4) create animation takes for each animation clip
+                                5) export a scene to a FBX file (FBX201400 compatible)
                                         ";
 
             const string Keywords =
