@@ -19,7 +19,10 @@ namespace UnitTests
         [Test]
         public void TestEquality()
         {
-            EqualityTester<FbxVector4>.TestEquality(new FbxVector4(0, 1, 2, 3), new FbxVector4(3, 2, 1, 0));
+            EqualityTester<FbxVector4>.TestEquality(
+                    new FbxVector4(0, 1, 2, 3),
+                    new FbxVector4(3, 2, 1, 0),
+                    new FbxVector4(0, 1, 2, 3));
         }
 
         [Test]

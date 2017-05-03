@@ -23,9 +23,11 @@ namespace UnitTests
 #endif
 
         [Test]
-        public void TestEquality()
-        {
-            EqualityTester<FbxAxisSystem>.TestEquality(FbxAxisSystem.OpenGL, FbxAxisSystem.DirectX);
+        public void TestEquality() {
+            var a = FbxAxisSystem.MayaZUp;
+            var b = FbxAxisSystem.MayaYUp;
+            var acopy = new FbxAxisSystem(FbxAxisSystem.EPreDefinedAxisSystem.eMayaZUp);
+            EqualityTester<FbxAxisSystem>.TestEquality(a, b, acopy);
         }
 
         /// <summary>

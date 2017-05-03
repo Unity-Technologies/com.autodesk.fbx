@@ -57,34 +57,51 @@ namespace UnitTests
 #endif
         }
 
-        public static void TestEquality(T a, T b) {
+        /*
+         * Test all the equality and hashing functions on type T.
+         *
+         * 'a' is an arbitrary non-null instance of class T.
+         *
+         * 'b' should be a different non-null instance.
+         *
+         * 'acopy' should be equal, but not reference-equal, to 'a' (unless the
+         * notion of equality for this type is reference equality)
+         */
+        public static void TestEquality(T a, T b, T acopy) {
             // Test all the Equals functions on a.
             // a.Equals(a) is true
             // a.Equals(b) is false
             // a.Equals(null) is false and doesn't throw an exception
             foreach(var equals in s_Equals) {
                 Assert.IsTrue(Invoker.Invoke<bool>(equals, a, a));
+                Assert.IsTrue(Invoker.Invoke<bool>(equals, a, acopy));
                 Assert.IsFalse(Invoker.Invoke<bool>(equals, a, b));
                 Assert.IsFalse(Invoker.Invoke<bool>(equals, a, null));
             }
 
             // test operator== in various cases including null handling
             foreach(var equals in s_op_Equality) {
-                Assert.IsTrue(Invoker.InvokeStatic<bool>(equals, a, a ));
-                Assert.IsFalse(Invoker.InvokeStatic<bool>(equals, a, b ));
-                Assert.IsFalse(Invoker.InvokeStatic<bool>(equals, a, null ));
-                Assert.IsFalse(Invoker.InvokeStatic<bool>(equals, null, b ));
-                Assert.IsTrue(Invoker.InvokeStatic<bool>(equals, null, null ));
+                Assert.IsTrue(Invoker.InvokeStatic<bool>(equals, a, a));
+                Assert.IsTrue(Invoker.InvokeStatic<bool>(equals, a, acopy));
+                Assert.IsFalse(Invoker.InvokeStatic<bool>(equals, a, b));
+                Assert.IsFalse(Invoker.InvokeStatic<bool>(equals, a, null));
+                Assert.IsFalse(Invoker.InvokeStatic<bool>(equals, null, b));
+                Assert.IsTrue(Invoker.InvokeStatic<bool>(equals, null, null));
             }
 
             // test operator!= in the same cases; should always return ! the answer
             foreach(var equals in s_op_Inequality) {
-                Assert.IsTrue(!Invoker.InvokeStatic<bool>(equals, a, a ));
-                Assert.IsFalse(!Invoker.InvokeStatic<bool>(equals, a, b ));
-                Assert.IsFalse(!Invoker.InvokeStatic<bool>(equals, a, null ));
-                Assert.IsFalse(!Invoker.InvokeStatic<bool>(equals, null, b ));
-                Assert.IsTrue(!Invoker.InvokeStatic<bool>(equals, null, null ));
+                Assert.IsTrue(!Invoker.InvokeStatic<bool>(equals, a, a));
+                Assert.IsTrue(!Invoker.InvokeStatic<bool>(equals, a, acopy));
+                Assert.IsFalse(!Invoker.InvokeStatic<bool>(equals, a, b));
+                Assert.IsFalse(!Invoker.InvokeStatic<bool>(equals, a, null));
+                Assert.IsFalse(!Invoker.InvokeStatic<bool>(equals, null, b));
+                Assert.IsTrue(!Invoker.InvokeStatic<bool>(equals, null, null));
             }
+
+            // test hashing. This is very minimal: just testing that two
+            // instances that test equal have equal hash code.
+            Assert.AreEqual(a.GetHashCode(), acopy.GetHashCode());
         }
     }
 }

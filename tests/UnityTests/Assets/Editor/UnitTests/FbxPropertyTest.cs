@@ -33,29 +33,36 @@ namespace UnitTests
                 var node = FbxNode.Create(manager, "node");
                 var prop1 = FbxProperty.Create(node, Globals.FbxBoolDT, "bool1");
                 var prop2 = FbxProperty.Create(node, Globals.FbxBoolDT, "bool2");
-                EqualityTester<FbxProperty>.TestEquality(prop1, prop2);
+                var prop1copy = node.FindProperty("bool1");
+                EqualityTester<FbxProperty>.TestEquality(prop1, prop2, prop1copy);
 
                 // FbxPropertyT<bool>
                 var vis1 = node.VisibilityInheritance;
                 var vis2 = FbxNode.Create(manager, "node2").VisibilityInheritance;
-                EqualityTester<FbxPropertyBool>.TestEquality(vis1, vis2);
+                var vis1copy = vis1; // TODO: node.FindProperty("Visibility Inheritance"); -- but that has a different proxy type
+                EqualityTester<FbxPropertyBool>.TestEquality(vis1, vis2, vis1copy);
 
                 // FbxPropertyT<double>
                 var lambert = FbxSurfaceLambert.Create(manager, "lambert");
-                EqualityTester<FbxPropertyDouble>.TestEquality(lambert.EmissiveFactor, lambert.AmbientFactor);
+                var emissiveCopy = lambert.EmissiveFactor; // TODO: lambert.FindProperty("EmissiveFactor");
+                EqualityTester<FbxPropertyDouble>.TestEquality(lambert.EmissiveFactor, lambert.AmbientFactor, emissiveCopy);
 
                 // FbxPropertyT<FbxDouble3>
-                EqualityTester<FbxPropertyDouble3>.TestEquality(node.LclTranslation, node.LclRotation);
+                var lclTranslationCopy = node.LclTranslation; // TODO: node.FindProperty("Lcl Translation");
+                EqualityTester<FbxPropertyDouble3>.TestEquality(node.LclTranslation, node.LclRotation, lclTranslationCopy);
 
                 // FbxPropertyT<> for FbxTexture enums
                 var tex1 = FbxTexture.Create(manager, "tex1");
                 var tex2 = FbxTexture.Create(manager, "tex2");
-                EqualityTester<FbxPropertyEBlendMode>.TestEquality(tex1.CurrentTextureBlendMode, tex2.CurrentTextureBlendMode);
-                EqualityTester<FbxPropertyEWrapMode>.TestEquality(tex1.WrapModeU, tex2.WrapModeU);
+                var blendCopy = tex1.CurrentTextureBlendMode; // TODO: tex1.FindProperty(...)
+                EqualityTester<FbxPropertyEBlendMode>.TestEquality(tex1.CurrentTextureBlendMode, tex2.CurrentTextureBlendMode, blendCopy);
+                var wrapCopy = tex1.WrapModeU; // TODO: tex1.FindProperty(...)
+                EqualityTester<FbxPropertyEWrapMode>.TestEquality(tex1.WrapModeU, tex2.WrapModeU, wrapCopy);
 
                 // FbxPropertyT<string>
                 var impl = FbxImplementation.Create(manager, "impl");
-                EqualityTester<FbxPropertyString>.TestEquality(impl.RenderAPI, impl.RenderAPIVersion);
+                var renderAPIcopy = impl.RenderAPI; // TODO: impl.FindProperty("RenderAPI");
+                EqualityTester<FbxPropertyString>.TestEquality(impl.RenderAPI, impl.RenderAPIVersion, renderAPIcopy);
             }
         }
 

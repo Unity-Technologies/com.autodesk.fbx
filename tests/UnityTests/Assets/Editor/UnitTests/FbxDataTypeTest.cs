@@ -21,7 +21,7 @@ namespace UnitTests
         {
             // Left here in case we add equality operations back in.
             // For now, equality is just reference equality.
-            EqualityTester<FbxDataType>.TestEquality(Globals.FbxBoolDT, Globals.FbxFloatDT);
+            EqualityTester<FbxDataType>.TestEquality(Globals.FbxBoolDT, Globals.FbxFloatDT, Globals.FbxBoolDT);
         }
 
         [Test]

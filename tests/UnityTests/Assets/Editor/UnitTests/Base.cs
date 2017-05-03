@@ -70,7 +70,10 @@ namespace UnitTests
         /* Test all the equality functions we can find. */
         [Test]
         public virtual void TestEquality() {
-            EqualityTester<T>.TestEquality(CreateObject("a"), CreateObject("b"));
+            var a = CreateObject("a");
+            var b = CreateObject("b");
+            var acopy = a; // TODO: get a different proxy to the same underlying object
+            EqualityTester<T>.TestEquality(a, b, acopy);
         }
 
         /* Create an object with another manager. Default implementation uses

@@ -25,7 +25,10 @@ namespace UnitTests
         [Test]
         public void TestEquality()
         {
-            EqualityTester<FbxDouble2>.TestEquality(new FbxDouble2(0, 1), new FbxDouble2(1, 0));
+            EqualityTester<FbxDouble2>.TestEquality(
+                    new FbxDouble2(0, 1),
+                    new FbxDouble2(1, 0),
+                    new FbxDouble2(0, 1));
         }
 
         /// <summary>
