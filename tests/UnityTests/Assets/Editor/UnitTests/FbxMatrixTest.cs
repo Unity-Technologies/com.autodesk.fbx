@@ -125,6 +125,18 @@ namespace UnitTests
             Assert.AreEqual(new FbxVector4(1,2,3, 1), t);
             Assert.AreEqual(new FbxVector4(0,90,0, 0), r); /* for some reason w is zero for rotation */
             Assert.AreEqual(new FbxVector4(1,1,1, 0), s); /* and similarly for scaling */
+
+            // Test set column + set row
+            mx = new FbxMatrix();
+            mx.SetColumn (1, new FbxVector4 (1, 2, 3, 4));
+            mx.SetRow (2, new FbxVector4 (5, 6, 7, 8));
+            //check that the column is what we expect
+            Assert.AreEqual (1, mx.Get (0, 1));
+            Assert.AreEqual (2, mx.Get (1, 1));
+            Assert.AreEqual (6, mx.Get (2, 1)); // this value got changed by SetRow
+            Assert.AreEqual (4, mx.Get (3, 1));
+            // check that the row is what we expect
+            Assert.AreEqual (new FbxDouble4 (5, 6, 7, 8), mx [2]);
         }
     }
 }

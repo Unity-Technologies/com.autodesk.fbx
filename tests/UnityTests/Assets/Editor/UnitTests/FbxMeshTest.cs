@@ -12,7 +12,7 @@ namespace UnitTests
         [Test]
         public void TestBasics()
         {
-            FbxGeometryBaseTest.GenericTests(CreateObject("mesh"));
+            FbxGeometryTest.GenericTests(CreateObject("mesh"), Manager);
 
             using (FbxMesh mesh = CreateObject ("mesh")) {
                 mesh.InitControlPoints(4);
