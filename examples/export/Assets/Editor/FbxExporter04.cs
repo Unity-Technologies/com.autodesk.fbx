@@ -27,7 +27,7 @@ namespace FbxSdk.Examples
                     2) create a scene
                     3) create a node with transform data
                     4) add static mesh data to a node
-                    5) export a scene to a FBX file (ASCII mode)
+                    5) export a scene to a FBX file (FBX201400 compatible)
                             ";
 
             const string Keywords =
