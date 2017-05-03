@@ -103,3 +103,19 @@ struct InOutReferenceManager {
   CPPTYPE * GetCppPointer() { return &cpp_copy; }
 };
 %}
+
+/**
+ * Now declare all the hand-optimized types.
+ *
+ * We need to do this before using them, or else we get SWIGTYPEs.
+ */
+
+%{
+#include "optimized/FbxDoubleTemplates.h"
+%}
+%declare_hand_optimized_type(FbxColor, FbxSharpDouble4, FbxColor);
+%declare_hand_optimized_type(FbxVectorTemplate2<double>, FbxSharpDouble2, FbxDouble2);
+%declare_hand_optimized_type(FbxVectorTemplate3<double>, FbxSharpDouble3, FbxDouble3);
+%declare_hand_optimized_type(FbxVectorTemplate4<double>, FbxSharpDouble4, FbxDouble4);
+%declare_hand_optimized_type(FbxVector2, FbxSharpDouble2, FbxVector2);
+%declare_hand_optimized_type(FbxVector4, FbxSharpDouble4, FbxVector4);

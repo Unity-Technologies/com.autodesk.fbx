@@ -200,6 +200,81 @@ namespace FbxSdk
         }
     }
 
+    public struct FbxColor {
+        public double mRed;
+        public double mGreen;
+        public double mBlue;
+        public double mAlpha;
+
+        public FbxColor(double red, double green, double blue, double alpha = 1) { this.mRed = red; this.mGreen = green; this.mBlue = blue; this.mAlpha = alpha; }
+        public FbxColor(FbxDouble3 rgb, double alpha = 1) : this (rgb.X, rgb.Y, rgb.Z, alpha) { }
+        public FbxColor(FbxDouble4 rgba) : this (rgba.X, rgba.Y, rgba.Z, rgba.W) { }
+
+        public bool IsValid() {
+            return Globals.IsValidColor(this);
+        }
+
+        public void Set(double red, double green, double blue, double alpha = 1) {
+            this.mRed = red; this.mGreen = green; this.mBlue = blue; this.mAlpha = alpha;
+        }
+
+        public double this[int i] {
+            get {
+                switch(i) {
+                    case 0: return mRed;
+                    case 1: return mGreen;
+                    case 2: return mBlue;
+                    case 3: return mAlpha;
+                    default: throw new System.IndexOutOfRangeException();
+                }
+            }
+            set {
+                switch(i) {
+                    case 0: mRed = value; break;
+                    case 1: mGreen = value; break;
+                    case 2: mBlue = value; break;
+                    case 3: mAlpha = value; break;
+                    default: throw new System.IndexOutOfRangeException();
+                }
+            }
+        }
+
+        public bool Equals(FbxColor other) {
+            return mRed == other.mRed && mGreen == other.mGreen && mBlue == other.mBlue && mAlpha == other.mAlpha;
+        }
+
+        public override bool Equals(object obj){
+            if (obj is FbxColor) {
+                return this.Equals((FbxColor)obj);
+            }
+            /* types are unrelated; can't be a match */
+            return false;
+        }
+
+        public static bool operator == (FbxColor a, FbxColor b) {
+            return a.Equals(b);
+        }
+
+        public static bool operator != (FbxColor a, FbxColor b) {
+            return !(a == b);
+        }
+
+        public override int GetHashCode() {
+            uint hash = (uint)mRed.GetHashCode();
+            hash = (hash << 8) | (hash >> 24);
+            hash ^= (uint)mGreen.GetHashCode();
+            hash = (hash << 8) | (hash >> 24);
+            hash ^= (uint)mBlue.GetHashCode();
+            hash = (hash << 8) | (hash >> 24);
+            hash ^= (uint)mAlpha.GetHashCode();
+            return (int)hash;
+        }
+
+        public override string ToString() {
+            return string.Format("FbxColor({0},{1},{2},{3})", mRed, mGreen, mBlue, mAlpha);
+        }
+    }
+
     public struct FbxVector2 {
         public double X;
         public double Y;

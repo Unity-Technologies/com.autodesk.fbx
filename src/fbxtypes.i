@@ -8,17 +8,8 @@
 %ignore FbxMin;
 %ignore FbxMax;
 
-/* First we start with the optimized vectors. */
-%{
-#include "optimized/FbxDoubleTemplates.h"
-%}
-%declare_hand_optimized_type(FbxVectorTemplate2<double>, FbxSharpDouble2, FbxDouble2);
-%declare_hand_optimized_type(FbxVectorTemplate3<double>, FbxSharpDouble3, FbxDouble3);
-%declare_hand_optimized_type(FbxVectorTemplate4<double>, FbxSharpDouble4, FbxDouble4);
-%declare_hand_optimized_type(FbxVector2, FbxSharpDouble2, FbxVector2);
-%declare_hand_optimized_type(FbxVector4, FbxSharpDouble4, FbxVector4);
-
-/* Then we provide support for the non-optimized types. */
+/* Most of the vector types are optimized now, see optimization.i.
+ * But we still want to provide support for non-optimized types. */
 %define %rename_vector_operators(THETYPE, N)
 
 /* No operator=, just a copy constructor */
