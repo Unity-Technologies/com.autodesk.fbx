@@ -119,7 +119,9 @@ namespace FbxSdk.Examples
                     return false;
                 }
 
-                Dictionary<Transform, FbxNode> boneParentNodes = new Dictionary<Transform, FbxNode> ();
+                FbxNode rootNode = null;
+
+                Dictionary<Transform, Matrix4x4> boneBindPose = new Dictionary<Transform, Matrix4x4>();
 
                 for (int boneIndex = 0; boneIndex < unitySkinnedMeshRenderer.bones.Length; boneIndex++) {
                     Transform unityBoneTransform = unitySkinnedMeshRenderer.bones [boneIndex];
@@ -127,7 +129,11 @@ namespace FbxSdk.Examples
                     FbxNode fbxBoneNode = FbxNode.Create (fbxScene, unityBoneTransform.name);
 
                     // Create the node's attributes
-                    FbxSkeleton fbxSkeleton = FbxSkeleton.Create (fbxScene, unityBoneTransform.name);
+                    FbxSkeleton fbxSkeleton = FbxSkeleton.Create (fbxScene, unityBoneTransform.name + "_Skel");
+
+                    var fbxSkeletonType = FbxSkeleton.EType.eLimbNode;
+                    if(unityBoneTransform == unityBoneTransform.root || fbxParentNode.GetName().Equals(unityBoneTransform.parent.name)){
+                        fbxSkeletonType = FbxSkeleton.EType.eRoot;
 
                     var fbxSkeletonType = (boneIndex > 0) ? FbxSkeleton.EType.eLimbNode : FbxSkeleton.EType.eRoot;
                     fbxSkeleton.SetSkeletonType (fbxSkeletonType);
@@ -136,27 +142,43 @@ namespace FbxSdk.Examples
                     fbxBoneNode.SetNodeAttribute (fbxSkeleton);
 
                     // Set the bone node's local position and orientation
-                    UnityEngine.Vector3 unityTranslate = unityBoneTransform.localPosition;
-                    UnityEngine.Vector3 unityRotate = unityBoneTransform.localRotation.eulerAngles;
+                    /*UnityEngine.Vector3 unityTranslate = unityBoneTransform.position;
+                    UnityEngine.Vector3 unityRotate = unityBoneTransform.rotation.eulerAngles;
 
                     var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
                     var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
 
                     fbxBoneNode.LclTranslation.Set (fbxTranslate);
-                    fbxBoneNode.LclRotation.Set (fbxRotate);
-                    //------------------------------
-                    // first bone is not necessarily the root
-                    //
-                    // add bone to its parent
-                    /*if (boneIndex > 0) {
-                        boneParentNodes [unityBoneTransform.parent].AddChild (fbxBoneNode);
-                    } else {
-                        boneParentNodes [unityBoneTransform] = fbxBoneNode;
-                    }*/
-                    //------------------------------
+                    fbxBoneNode.LclRotation.Set (fbxRotate);*/
+
+
+                    // inverse of my bind pose times parent bind pose
+                    // then use FbxAMatrix to get translation and rotation
+                    //var boneLocalPosition = meshInfo.BindPoses [boneIndex].MultiplyPoint3x4 (unityBoneTransform.position);
+
+                    boneBindPose.Add (unityBoneTransform, meshInfo.BindPoses [boneIndex]);
+
+                    /*Debug.Log ("Bone: " + unityBoneTransform.name + 
+                        "local pos: " + unityBoneTransform.localPosition + 
+                        ", global pos: " + unityBoneTransform.position + 
+                        ", calculated: " + boneLocalPosition);*/
+
+                    //ExportTransform (unityBoneTransform, fbxBoneNode);
+
                     // save relatation between unity transform and fbx bone node for skinning
                     boneNodes [unityBoneTransform] = fbxBoneNode;
                 }
+
+                /*if (rootNode != null) {
+                    Debug.Log ("found root node");
+                    foreach (KeyValuePair<Transform, FbxNode> t in boneNodes) {
+                        if (t.Value.Equals (rootNode)) {
+                            continue;
+                        }
+                        rootNode.AddChild (t.Value);
+                    }
+                    fbxParentNode.AddChild (rootNode);
+                }*/
 
                 // set the hierarchy for the FbxNodes
                 foreach (KeyValuePair<Transform, FbxNode> t in boneNodes) {
@@ -166,10 +188,22 @@ namespace FbxSdk.Examples
                     }
 
                     if (!boneNodes.ContainsKey (t.Key.parent)) {
+                        Debug.LogWarning ("could not find transform in hierarchy: " + t.Key.parent.name);
+                        fbxParentNode.AddChild (t.Value);
                         continue;
                     }
 
                     boneNodes [t.Key.parent].AddChild (t.Value);
+
+                    // inverse of my bind pose times parent bind pose
+                    // then use FbxAMatrix to get translation and rotation
+                    Matrix4x4 pose = boneBindPose[t.Key].inverse * boneBindPose[t.Key.parent];
+                    FbxMatrix matrix = new FbxMatrix (
+                                           pose.GetRow (0).w, pose.GetRow (0).x, pose.GetRow (0).y, pose.GetRow (0).z,
+                                           pose.GetRow (1).w, pose.GetRow (1).x, pose.GetRow (1).y, pose.GetRow (1).z,
+                                           pose.GetRow (2).w, pose.GetRow (2).x, pose.GetRow (2).y, pose.GetRow (2).z,
+                                           pose.GetRow (3).w, pose.GetRow (3).x, pose.GetRow (3).y, pose.GetRow (3).z
+                                       );
                 }
 
                 return true;
@@ -333,6 +367,27 @@ namespace FbxSdk.Examples
                     return;
 
                 ExportSkinnedMesh (unityAnimator, fbxScene, fbxParentNode);
+
+                return;
+            }
+
+            // get a fbxNode's global default position.
+            protected void ExportTransform (UnityEngine.Transform unityTransform, FbxNode fbxNode)
+            {
+                // get local position of fbxNode (from Unity)
+                UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
+                UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
+                UnityEngine.Vector3 unityScale = unityTransform.localScale;
+
+                // transfer transform data from Unity to Fbx
+                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
+
+                // set the local position of fbxNode
+                fbxNode.LclTranslation.Set(fbxTranslate);
+                fbxNode.LclRotation.Set(fbxRotate);
+                fbxNode.LclScaling.Set(fbxScale);
 
                 return;
             }
@@ -508,6 +563,8 @@ namespace FbxSdk.Examples
             	public Vector2 [] UV { get { return mesh.uv; } }
 
                 public BoneWeight[] BoneWeights { get { return mesh.boneWeights; } }
+
+                public Matrix4x4[] BindPoses { get { return mesh.bindposes; } }
 
             	/// <summary>
             	/// Initializes a new instance of the <see cref="MeshInfo"/> struct.
