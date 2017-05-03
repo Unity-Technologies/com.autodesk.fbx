@@ -51,7 +51,6 @@
 #ifndef SWIG_GENERATING_TYPEDEFS
 // TODO: should we be more specific, test each function in turn for whether it can
 // actually take null?
-%apply FbxIOSettings * MAYBENULL { FbxIOSettings * };
 %apply FbxDocument * MAYBENULL { FbxDocument *pDocument };
 #endif
 
