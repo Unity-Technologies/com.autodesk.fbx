@@ -88,17 +88,50 @@ static class CoverageTester
                 // ignore the method having no body
                 continue;
             }
+
+            // We devirtualize calls using the 'constrained'
+            // instruction hint, which is the instruction before the call
+            // instruction.
+            var builder = new System.Text.StringBuilder();
+            System.Type constraintType = null;
             foreach (var instruction in instructions) {
-                // look at the instructions of this method; see if they are a function call.
-                // if so, recursively look into that function
-                var calledMethod = instruction.Operand as MethodBase;
+                builder.Append(instruction);
+                builder.Append(" ==> opcode value " + instruction.OpCode.Value);
+                builder.Append('\n');
+
+                // Is this a constraint instruction? If so, store it.
+                if (instruction.OpCode.Value == -490 /* constraint */) {
+                    constraintType = instruction.Operand as System.Type;
+                    builder.Append("constrained: " + constraintType + "\n");
+                    continue;
+                }
+
+                // Otherwise it's maybe a call?
+                MethodBase calledMethod = instruction.Operand as MethodBase;
                 if (calledMethod == null) { continue; }
 
-                // It's a function call, so recursively look into it.
-                // TODO: we should recursively call GetCalls on each method
-                // we call here, but in a way that doesn't hit infinite loops.
-                // Then we'd hit in cache more often.
+                // Devirtualize the function if we can.
+                builder.Append("\tcall to " + GetMethodSignature(calledMethod) + (constraintType == null ? "" : (" constrainted to " + constraintType)) + "\n");
+                if (constraintType != null && calledMethod.DeclaringType != constraintType) {
+                    var parameters = calledMethod.GetParameters();
+                    var types = new System.Type[parameters.Length];
+                    for(int i = 0, n = parameters.Length; i < n; ++i) {
+                        types[i] = parameters[i].ParameterType;
+                    }
+                    var specificMethod = constraintType.GetMethod(calledMethod.Name, types);
+                    if (specificMethod != null) {
+                        builder.Append("\t  devirtualized to " + GetMethodSignature(specificMethod) + "\n");
+                        calledMethod = specificMethod;
+                    }
+                }
+
+                // We called something. Push it on the search stack, and
+                // clear the constraint since we've used it up.
                 stack.Add(calledMethod);
+                constraintType = null;
+            }
+            if(top.Name == "TestBasics" && builder.ToString().Length > 0) {
+                UnityEngine.Debug.Log(GetMethodSignature(top) + "\n" + builder);
             }
 
             // Also add in the calls that have been registered to be made.
