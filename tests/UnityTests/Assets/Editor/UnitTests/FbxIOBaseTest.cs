@@ -10,8 +10,16 @@ using FbxSdk;
 
 namespace UnitTests
 {
+
     public class FbxIOBaseTest : Base<FbxIOBase>
     {
-
+        [Test]
+        public void TestBasics()
+        {
+            using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx"); }
+            using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1); }
+            using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1, FbxIOSettings.Create(Manager, "")); }
+            using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1, null); }
+        }
     }
 }
