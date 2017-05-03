@@ -14,7 +14,6 @@
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxManager::Create; 
 %rename("%s") FbxManager::Destroy; 
-%rename("%s") FbxManager::FindClass;
 %rename("%s") FbxManager::SetIOSettings;
 %rename("%s") FbxManager::GetIOSettings;
 %rename("%s") FbxManager::GetVersion;

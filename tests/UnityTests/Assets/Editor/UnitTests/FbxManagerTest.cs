@@ -54,14 +54,6 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestFindClass ()
-        {
-            FbxClassId classId = m_fbxManager.FindClass ("FbxObject");
-
-            Assert.AreEqual (classId.GetName (), "FbxObject");
-        }
-
-        [Test]
         public void TestIOSettings ()
         {
             FbxIOSettings ioSettings = m_fbxManager.GetIOSettings ();

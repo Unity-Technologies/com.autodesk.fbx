@@ -22,19 +22,11 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestFindClass ()
-        {
-            FbxClassId classId = Manager.FindClass ("FbxObject");
-
-            Assert.AreEqual (classId.GetName (), "FbxObject");
-        }
-
-        [Test]
-        public void TestFbxManager ()
+        public void TestGetManager ()
         {
             using (FbxObject obj = FbxObject.Create (Manager, "")) {
                 FbxManager fbxManager2 = obj.GetFbxManager();
-                Assert.IsNotNull(fbxManager2);
+                Assert.AreEqual(Manager, fbxManager2);
             }
         }
     }
