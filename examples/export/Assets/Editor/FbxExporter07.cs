@@ -183,28 +183,35 @@ namespace FbxSdk.Examples
 
                 // set the hierarchy for the FbxNodes
                 foreach (KeyValuePair<Transform, FbxNode> t in boneNodes) {
+
+                    Matrix4x4 pose;
+
                     // if this is a root node then don't need to do anything
-                    if (t.Key == t.Key.root) {
-                        continue;
-                    }
-
-                    if (!boneNodes.ContainsKey (t.Key.parent)) {
-                        Debug.LogWarning ("could not find transform in hierarchy: " + t.Key.parent.name);
+                    if (t.Key == t.Key.root || !boneNodes.ContainsKey (t.Key.parent)) {
                         fbxParentNode.AddChild (t.Value);
-                        continue;
+
+                        pose = boneBindPose[t.Key].inverse; // assuming parent is identity matrix
+                    } else {
+                        boneNodes [t.Key.parent].AddChild (t.Value);
+
+                        // inverse of my bind pose times parent bind pose
+                        pose = boneBindPose[t.Key.parent] * boneBindPose[t.Key].inverse;
                     }
 
-                    boneNodes [t.Key.parent].AddChild (t.Value);
+                    // use FbxMatrix to get translation and rotation relative to parent
+                    FbxMatrix matrix = new FbxMatrix ();
+                    matrix.SetColumn (0, new FbxVector4 (pose.GetRow (0).x, pose.GetRow (0).y, pose.GetRow (0).z, pose.GetRow (0).w));
+                    matrix.SetColumn (1, new FbxVector4 (pose.GetRow (1).x, pose.GetRow (1).y, pose.GetRow (1).z, pose.GetRow (1).w));
+                    matrix.SetColumn (2, new FbxVector4 (pose.GetRow (2).x, pose.GetRow (2).y, pose.GetRow (2).z, pose.GetRow (2).w));
+                    matrix.SetColumn (3, new FbxVector4 (pose.GetRow (3).x, pose.GetRow (3).y, pose.GetRow (3).z, pose.GetRow (3).w));
 
-                    // inverse of my bind pose times parent bind pose
-                    // then use FbxAMatrix to get translation and rotation
-                    Matrix4x4 pose = boneBindPose[t.Key].inverse * boneBindPose[t.Key.parent];
-                    FbxMatrix matrix = new FbxMatrix (
-                                           pose.GetRow (0).w, pose.GetRow (0).x, pose.GetRow (0).y, pose.GetRow (0).z,
-                                           pose.GetRow (1).w, pose.GetRow (1).x, pose.GetRow (1).y, pose.GetRow (1).z,
-                                           pose.GetRow (2).w, pose.GetRow (2).x, pose.GetRow (2).y, pose.GetRow (2).z,
-                                           pose.GetRow (3).w, pose.GetRow (3).x, pose.GetRow (3).y, pose.GetRow (3).z
-                                       );
+                    FbxVector4 translation, rotation, shear, scale;
+                    double sign;
+                    matrix.GetElements (out translation, out rotation, out shear, out scale, out sign);
+
+                    t.Value.LclTranslation.Set (new FbxDouble3(translation.X, translation.Y, translation.Z));
+                    t.Value.LclRotation.Set (new FbxDouble3(rotation.X, rotation.Y, rotation.Z));
+                    t.Value.LclScaling.Set (new FbxDouble3 (scale.X, scale.Y, scale.Z));
                 }
 
                 return true;
