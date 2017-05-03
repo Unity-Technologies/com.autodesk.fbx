@@ -22,6 +22,8 @@
 %apply FbxVector4& OUTPUT { FbxVector4& pTranslation, FbxVector4& pRotation, FbxVector4& pShearing, FbxVector4& pScaling }
 %apply double& OUTPUT { double& pSign }
 %rename("%s") FbxMatrix::GetElements(FbxVector4& pTranslation, FbxVector4& pRotation, FbxVector4& pShearing, FbxVector4& pScaling, double& pSign) const;
+%rename("%s") FbxMatrix::SetRow;
+%rename("%s") FbxMatrix::SetColumn;
 #endif
 
 %include "fbxsdk_csharp-fixed-headers/fbxmatrix.h"

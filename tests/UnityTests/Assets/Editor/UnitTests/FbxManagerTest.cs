@@ -94,6 +94,14 @@ namespace UnitTests
             Assert.That(() => { obj.GetName (); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
+        [Test]
+        public void TestGetIOPluginRegistry()
+        {
+            // pretty much just want to check that it doesn't crash
+            var ioPluginRegistry = m_fbxManager.GetIOPluginRegistry();
+            Assert.IsInstanceOf<FbxIOPluginRegistry> (ioPluginRegistry);
+        }
+
 #if ENABLE_COVERAGE_TEST
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxManager), this.GetType()); }
