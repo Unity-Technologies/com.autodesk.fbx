@@ -25,7 +25,7 @@ namespace UnitTests
         [Test]
         public void TestEquality()
         {
-            EqualityTester<FbxSystemUnit>.TestEquality(FbxSystemUnit.m, FbxSystemUnit.Yard);
+            EqualityTester<FbxSystemUnit>.TestEquality(FbxSystemUnit.mm, FbxSystemUnit.Yard, new FbxSystemUnit(0.1));
         }
 
         /// <summary>

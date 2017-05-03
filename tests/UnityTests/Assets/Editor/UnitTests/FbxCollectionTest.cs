@@ -10,8 +10,13 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxSubDeformerTest : Base<FbxSubDeformer>
+    public class FbxCollectionTest : Base<FbxCollection>
     {
-
+        [Test]
+        public void TestBasics() {
+            // Call all the functions.
+            var collection = CreateObject();
+            collection.Clear();
+        }
     }
 }

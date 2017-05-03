@@ -44,10 +44,6 @@ namespace UnitTests
 
             layerElementArray.Add (new FbxColor ());
             layerElementArray.Add (new FbxColor (1, 0, 0));
-
-            Assert.That (() => {
-                layerElementArray.Add ((FbxColor)null);
-            }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
         }
 
         [Test]
@@ -57,10 +53,6 @@ namespace UnitTests
 
             layerElementArray.Add (new FbxVector2 ());
             layerElementArray.Add (new FbxVector2 (1, 0));
-
-            Assert.That (() => {
-                layerElementArray.Add ((FbxVector2)null);
-            }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
         }
 
         [Test]
@@ -95,11 +87,6 @@ namespace UnitTests
 
             // test invalid index
             layerElementArray.SetAt (-1, new FbxColor ());
-
-            // test null
-            Assert.That (() => {
-                layerElementArray.SetAt (0, (FbxColor)null);
-            }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
         }
 
         [Test]
@@ -111,11 +98,6 @@ namespace UnitTests
 
             // test invalid index
             layerElementArray.SetAt (-1, new FbxVector2 ());
-
-            // test null
-            Assert.That (() => {
-                layerElementArray.SetAt (0, (FbxVector2)null);
-            }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
         }
 
         [Test]

@@ -25,6 +25,27 @@
 %rename("%s") FbxObject::SetSelected;
 %rename("%s") FbxObject::GetFbxManager;
 
+/* Properties */
+%rename("%s") FbxObject::GetFirstProperty() const;
+%rename("%s") FbxObject::GetNextProperty(const FbxProperty& pProperty) const;
+%rename("%s") FbxObject::FindProperty;
+%rename("%s") FbxObject::FindPropertyHierarchical;
+%rename("%s") FbxObject::GetClassRootProperty();
+
+%rename("%s") FbxObject::ConnectSrcProperty(const FbxProperty& pProperty);
+%rename("%s") FbxObject::IsConnectedSrcProperty(const FbxProperty& pProperty);
+%rename("%s") FbxObject::DisconnectSrcProperty(const FbxProperty& pProperty);
+%rename("%s") FbxObject::GetSrcPropertyCount() const;
+%rename("%s") FbxObject::GetSrcProperty(int pIndex=0) const;
+%rename("%s") FbxObject::FindSrcProperty(const char* pName,int pStartIndex=0) const;
+
+%rename("%s") FbxObject::ConnectDstProperty(const FbxProperty& pProperty);
+%rename("%s") FbxObject::IsConnectedDstProperty(const FbxProperty& pProperty);
+%rename("%s") FbxObject::DisconnectDstProperty(const FbxProperty& pProperty);
+%rename("%s") FbxObject::GetDstPropertyCount() const;
+%rename("%s") FbxObject::GetDstProperty(int pIndex=0) const;
+%rename("%s") FbxObject::FindDstProperty(const char* pName, int pStartIndex=0) const;
+
 /* Shader implementation. */
 %rename("%s") FbxObject::AddImplementation;
 %rename("%s") FbxObject::RemoveImplementation;
