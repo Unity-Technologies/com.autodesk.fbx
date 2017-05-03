@@ -92,17 +92,22 @@ static class CoverageTester
             // We devirtualize calls using the 'constrained'
             // instruction hint, which is the instruction before the call
             // instruction.
-            var builder = new System.Text.StringBuilder();
+            //
+            // That trick only works in the context of 'top' being a generic
+            // function (or a member function in a generic type), and
+            // 'calledMethod' is being called on the generic type. In that
+            // specific case, the CIL requires a 'constraint' instruction to be
+            // emitted as a prefix to the 'callvirt' instruction. In other cases,
+            // we don't get the prefix.
+            //
+            // We could get better devirtualization by interpreting the
+            // instruction stream, but that would be much harder!
+            //
             System.Type constraintType = null;
             foreach (var instruction in instructions) {
-                builder.Append(instruction);
-                builder.Append(" ==> opcode value " + instruction.OpCode.Value);
-                builder.Append('\n');
-
                 // Is this a constraint instruction? If so, store it.
                 if (instruction.OpCode.Value == -490 /* constraint */) {
                     constraintType = instruction.Operand as System.Type;
-                    builder.Append("constrained: " + constraintType + "\n");
                     continue;
                 }
 
@@ -111,7 +116,6 @@ static class CoverageTester
                 if (calledMethod == null) { continue; }
 
                 // Devirtualize the function if we can.
-                builder.Append("\tcall to " + GetMethodSignature(calledMethod) + (constraintType == null ? "" : (" constrainted to " + constraintType)) + "\n");
                 if (constraintType != null && calledMethod.DeclaringType != constraintType) {
                     var parameters = calledMethod.GetParameters();
                     var types = new System.Type[parameters.Length];
@@ -120,7 +124,6 @@ static class CoverageTester
                     }
                     var specificMethod = constraintType.GetMethod(calledMethod.Name, types);
                     if (specificMethod != null) {
-                        builder.Append("\t  devirtualized to " + GetMethodSignature(specificMethod) + "\n");
                         calledMethod = specificMethod;
                     }
                 }
@@ -129,9 +132,6 @@ static class CoverageTester
                 // clear the constraint since we've used it up.
                 stack.Add(calledMethod);
                 constraintType = null;
-            }
-            if(top.Name == "TestBasics" && builder.ToString().Length > 0) {
-                UnityEngine.Debug.Log(GetMethodSignature(top) + "\n" + builder);
             }
 
             // Also add in the calls that have been registered to be made.
