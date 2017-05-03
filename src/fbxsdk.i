@@ -142,12 +142,6 @@
 #define DOXYGEN_SHOULD_SKIP_THIS
 
 /*
- * Don't create default destructors.
- * TODO: why?
- */
-%nodefaultdtor;
-
-/*
  * Include all the code that uses templates here. It's important to include
  * them *before* the %ignore "" directive -- even after we reveal all,
  * templates don't seem to work in swig-3.7.12.

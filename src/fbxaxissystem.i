@@ -8,7 +8,6 @@
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
 %rename("%s") FbxAxisSystem;
-%clearnodefaultdtor FbxAxisSystem;
 %rename("%s") FbxAxisSystem::~FbxAxisSystem();
 %rename("%s") FbxAxisSystem::ConvertScene(FbxScene* pScene) const;
 
