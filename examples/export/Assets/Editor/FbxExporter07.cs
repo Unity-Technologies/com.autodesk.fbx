@@ -135,7 +135,8 @@ namespace FbxSdk.Examples
                     if(unityBoneTransform == unityBoneTransform.root || fbxParentNode.GetName().Equals(unityBoneTransform.parent.name)){
                         fbxSkeletonType = FbxSkeleton.EType.eRoot;
 
-                    var fbxSkeletonType = (boneIndex > 0) ? FbxSkeleton.EType.eLimbNode : FbxSkeleton.EType.eRoot;
+                        rootNode = fbxBoneNode;
+                    }
                     fbxSkeleton.SetSkeletonType (fbxSkeletonType);
 
                     // Set the node's attribute
@@ -325,8 +326,14 @@ namespace FbxSdk.Examples
             /// </summary>
             public FbxNode ExportMesh (MeshInfo meshInfo, FbxScene fbxScene, FbxNode fbxNode)
             {
-            	if (!meshInfo.IsValid)
-            		return null;
+                if (!meshInfo.IsValid) {
+                    Debug.LogError ("Invalid mesh info");
+                    return null;
+                }
+
+                // create a node for the mesh
+                FbxNode meshNode = FbxNode.Create(fbxScene, "geo");
+                ExportTransform (meshInfo.renderer.transform, meshNode);
 
             	// create the mesh structure.
             	FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Scene"));
@@ -353,10 +360,12 @@ namespace FbxSdk.Examples
             	}
 
             	// set the fbxNode containing the mesh
-            	fbxNode.SetNodeAttribute (fbxMesh);
-            	fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+            	meshNode.SetNodeAttribute (fbxMesh);
+            	meshNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
 
-                return fbxNode;
+                fbxNode.AddChild (meshNode);
+
+                return meshNode;
             }
 
             protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
