@@ -18,8 +18,6 @@ namespace UnitTests
             material.MultiLayer.Get();
         }
 
-        public static void TestGetter<T>(T item) { /* we tested the getter by passing the argument! */ }
-
         [Test]
         public void TestBasics()
         {
@@ -58,21 +56,21 @@ namespace UnitTests
         public static void TestLambert<T>(T lambert) where T:FbxSurfaceLambert
         {
             FbxSurfaceMaterialTest.TestSurface(lambert);
-            lambert.Emissive.Get();
-            lambert.EmissiveFactor.Get();
-            lambert.Ambient.Get();
-            lambert.AmbientFactor.Get();
-            lambert.Diffuse.Get();
-            lambert.DiffuseFactor.Get();
-            lambert.NormalMap.Get();
-            lambert.Bump.Get();
-            lambert.BumpFactor.Get();
-            lambert.TransparentColor.Get();
-            lambert.TransparencyFactor.Get();
-            lambert.DisplacementColor.Get();
-            lambert.DisplacementFactor.Get();
-            lambert.VectorDisplacementColor.Get();
-            lambert.VectorDisplacementFactor.Get();
+            TestGetter(lambert.Emissive);
+            TestGetter(lambert.EmissiveFactor);
+            TestGetter(lambert.Ambient);
+            TestGetter(lambert.AmbientFactor);
+            TestGetter(lambert.Diffuse);
+            TestGetter(lambert.DiffuseFactor);
+            TestGetter(lambert.NormalMap);
+            TestGetter(lambert.Bump);
+            TestGetter(lambert.BumpFactor);
+            TestGetter(lambert.TransparentColor);
+            TestGetter(lambert.TransparencyFactor);
+            TestGetter(lambert.DisplacementColor);
+            TestGetter(lambert.DisplacementFactor);
+            TestGetter(lambert.VectorDisplacementColor);
+            TestGetter(lambert.VectorDisplacementFactor);
         }
 
         [Test]
@@ -89,11 +87,11 @@ namespace UnitTests
         {
             using (var phong = CreateObject()) {
                 FbxSurfaceLambertTest.TestLambert(phong);
-                phong.Specular.Get();
-                phong.SpecularFactor.Get();
-                phong.Shininess.Get();
-                phong.Reflection.Get();
-                phong.ReflectionFactor.Get();
+                TestGetter(phong.Specular);
+                TestGetter(phong.SpecularFactor);
+                TestGetter(phong.Shininess);
+                TestGetter(phong.Reflection);
+                TestGetter(phong.ReflectionFactor);
             }
         }
     }

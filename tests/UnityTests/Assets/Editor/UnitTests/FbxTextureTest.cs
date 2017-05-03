@@ -15,18 +15,18 @@ namespace UnitTests
         public static void CommonTextureTests<T>(T tex) where T : FbxTexture
         {
             // get all the properties
-            tex.Alpha.Get();
-            tex.WrapModeU.Get();
-            tex.WrapModeV.Get();
-            tex.UVSwap.Get();
-            tex.PremultiplyAlpha.Get();
-            tex.Translation.Get();
-            tex.Rotation.Get();
-            tex.Scaling.Get();
-            tex.RotationPivot.Get();
-            tex.ScalingPivot.Get();
-            tex.CurrentTextureBlendMode.Get();
-            tex.UVSet.Get();
+            TestGetter(tex.Alpha);
+            TestGetter(tex.WrapModeU);
+            TestGetter(tex.WrapModeV);
+            TestGetter(tex.UVSwap);
+            TestGetter(tex.PremultiplyAlpha);
+            TestGetter(tex.Translation);
+            TestGetter(tex.Rotation);
+            TestGetter(tex.Scaling);
+            TestGetter(tex.RotationPivot);
+            TestGetter(tex.ScalingPivot);
+            TestGetter(tex.CurrentTextureBlendMode);
+            TestGetter(tex.UVSet);
 
             // call all the functions
             tex.SetSwapUV(true);
@@ -88,13 +88,13 @@ namespace UnitTests
         public void TestBasics() {
             var tex = FbxTexture.Create(Manager, "tex");
             CommonTextureTests(tex);
-            Assert.AreNotEqual("", FbxTexture.sVectorSpace);
-            Assert.AreNotEqual("", FbxTexture.sVectorSpaceWorld);
-            Assert.AreNotEqual("", FbxTexture.sVectorSpaceObject);
-            Assert.AreNotEqual("", FbxTexture.sVectorSpaceTangent);
-            Assert.AreNotEqual("", FbxTexture.sVectorEncoding);
-            Assert.AreNotEqual("", FbxTexture.sVectorEncodingFP);
-            Assert.AreNotEqual("", FbxTexture.sVectorEncodingSE);
+            TestGetter(FbxTexture.sVectorSpace);
+            TestGetter(FbxTexture.sVectorSpaceWorld);
+            TestGetter(FbxTexture.sVectorSpaceObject);
+            TestGetter(FbxTexture.sVectorSpaceTangent);
+            TestGetter(FbxTexture.sVectorEncoding);
+            TestGetter(FbxTexture.sVectorEncodingFP);
+            TestGetter(FbxTexture.sVectorEncodingSE);
         }
     }
 
@@ -105,8 +105,8 @@ namespace UnitTests
             var tex = FbxFileTexture.Create(Manager, "tex");
             FbxTextureTest.CommonTextureTests(tex);
 
-            tex.UseMaterial.Get();
-            tex.UseMipMap.Get();
+            TestGetter(tex.UseMaterial);
+            TestGetter(tex.UseMipMap);
 
             tex.SetFileName("/a/b/c/d.png");
             Assert.AreEqual("/a/b/c/d.png", tex.GetFileName());
