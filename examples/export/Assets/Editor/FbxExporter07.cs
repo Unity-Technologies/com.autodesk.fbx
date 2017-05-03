@@ -30,7 +30,7 @@ namespace FbxSdk.Examples
                     4) exported mesh
                     5) bind mesh to skeleton
                     6) create a bind pose
-                    7) export the skinned mesh to a FBX file (ASCII mode)
+                    7) export the skinned mesh to a FBX file (FBX201400 compatible)
                 ";
 
             const string Keywords =
@@ -153,24 +153,22 @@ namespace FbxSdk.Examples
             {
                 SkinnedMeshRenderer unitySkinnedMeshRenderer
                     = meshInfo.renderer as SkinnedMeshRenderer;
+#if UNI_15280
+                FbxSkin Skin = FbxSkin.Create (fbxScene, MakeObjectName (meshInfo.unityObject.name + "_Skin"));
 
-                FbxSkin fbxSkin = FbxSkin.Create (fbxScene, MakeObjectName (meshInfo.unityObject.name + "_Skin"));
+                FbxMatrix fbxMeshMatrix = fbxRootNode.EvaluateGlobalTransform ();
 
-                FbxAMatrix fbxMeshMatrix = fbxRootNode.EvaluateGlobalTransform ();
-
-                // keep track of the bone index -> fbx cluster mapping, so that we can add the bone weights afterwards
-                Dictionary<int, FbxCluster> boneCluster = new Dictionary<int, FbxCluster> ();
-
-                for(int i = 0; i < unitySkinnedMeshRenderer.bones.Length; i++) {
-                    FbxNode fbxBoneNode = boneNodes [unitySkinnedMeshRenderer.bones[i]];
+                foreach (var unityBoneTransform in unitySkinnedMeshRenderer.bones) {
+                    FbxNode fbxBoneNode = boneNodes [unityBoneTransform];
 
                     // Create the deforming cluster
                     FbxCluster fbxCluster = FbxCluster.Create (fbxScene, MakeObjectName ("Cluster"));
 
                     fbxCluster.SetLink (fbxBoneNode);
-                    fbxCluster.SetLinkMode (FbxCluster.ELinkMode.eTotalOne);
+                    fbxCluster.SetLinkMode (FbxCluster.eTotalOne);
 
-                    boneCluster.Add (i, fbxCluster);
+                    // TODO: add weighted vertices to cluster
+                    SetVertexWeights (meshInfo, fbxCluster, boneNodes);
 
                     // set the Transform and TransformLink matrix
                     fbxCluster.SetTransformMatrix (fbxMeshMatrix);
@@ -182,51 +180,39 @@ namespace FbxSdk.Examples
                     fbxSkin.AddCluster (fbxCluster);
                 }
 
-                // set the vertex weights for each bone
-                SetVertexWeights(meshInfo, boneCluster);
-
                 // Add the skin to the mesh after the clusters have been added
                 fbxMesh.AddDeformer (fbxSkin);
+#endif
             }
 
             /// <summary>
-            /// set weight vertices to cluster
+            /// TODO: set weight vertices to cluster
             /// </summary>
-            protected void SetVertexWeights (MeshInfo meshInfo, Dictionary<int, FbxCluster> boneCluster)
+#if UNI_15280
+            protected void SetVertexWeights (MeshInfo meshInfo, FbxCluster fbxCluster, Dictionary<Transform, FbxNode> boneNodes)
             {
-                // set the vertex weights for each bone
-                for (int i = 0; i < meshInfo.BoneWeights.Length; i++) {
-                    var boneWeights = meshInfo.BoneWeights;
-                    int[] indices = {
-                        boneWeights [i].boneIndex0,
-                        boneWeights [i].boneIndex1,
-                        boneWeights [i].boneIndex2,
-                        boneWeights [i].boneIndex3
-                    };
-                    float[] weights = {
-                        boneWeights [i].weight0,
-                        boneWeights [i].weight1,
-                        boneWeights [i].weight2,
-                        boneWeights [i].weight3
-                    };
+                foreach (Transform unityBoneTransform in boneNodes.Keys) 
+                {
+                    for (int vertexIndex = 0; vertexIndex < meshInfo.VertexCount; vertexIndex++) 
+                    {
+                        // TODO: lookup influence of bone on vertex
+                        float boneInfluenceWeight = 0;
 
-                    for (int j = 0; j < indices.Length; j++) {
-                        if (weights [j] <= 0) {
-                            continue;
+                        if (boneInfluenceWeight > 0)
+                        {
+                            fbxCluster.AddControlPointIndex(vertexIndex, boneInfluenceWeight);
                         }
-                        if (!boneCluster.ContainsKey (indices [j])) {
-                            continue;
-                        }
-                        boneCluster [indices [j]].AddControlPointIndex (i, weights [j]);
                     }
                 }
             }
+#endif
 
             /// <summary>
             /// Export bind pose of mesh to skeleton
             /// </summary>
             protected void ExportBindPose (FbxNode fbxRootNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
             {
+#if UNI_15280
                 FbxPose fbxPose = FbxPose.Create (fbxScene, MakeObjectName(fbxRootNode.GetName()));
 
                 // set as bind pose
@@ -235,23 +221,14 @@ namespace FbxSdk.Examples
                 // assume each bone node has one weighted vertex cluster
                 foreach (FbxNode fbxNode in boneNodes.Values)
                 {
-                    // EvaluateGlobalTransform returns an FbxAMatrix (affine matrix)
-                    // which has to be converted to an FbxMatrix so that it can be passed to fbxPose.Add().
-                    // The hierarchy for FbxMatrix and FbxAMatrix is as follows:
-                    //
-                    //      FbxDouble4x4
-                    //      /           \
-                    // FbxMatrix     FbxAMatrix
-                    //
-                    // Therefore we can't convert directly from FbxAMatrix to FbxMatrix,
-                    // however FbxMatrix has a constructor that takes an FbxAMatrix.
-                    FbxMatrix fbxBindMatrix = new FbxMatrix(fbxNode.EvaluateGlobalTransform ());
+                    FbxMatrix fbxBindMatrix = fbxNode.EvaluateGlobalTransform ();
 
                     fbxPose.Add (fbxNode, fbxBindMatrix);
                 }
 
                 // add the pose to the scene
                 fbxScene.AddPose (fbxPose);
+#endif
             }
 
             /// <summary>
@@ -473,8 +450,6 @@ namespace FbxSdk.Examples
             	/// </summary>
             	/// <value>The uv.</value>
             	public Vector2 [] UV { get { return mesh.uv; } }
-
-                public BoneWeight[] BoneWeights { get { return mesh.boneWeights; } }
 
             	/// <summary>
             	/// Initializes a new instance of the <see cref="MeshInfo"/> struct.
