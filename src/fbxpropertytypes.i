@@ -5,12 +5,23 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-#ifdef IGNORE_ALL_INCLUDE_SOME
-// Unignore class
-%rename("%s") FbxColor;
-
 // Unignore enum
 %rename("%s") EFbxType;
-#endif
+
+/*
+ * The color is an optimized type since it's almost exactly like FbxVector4.
+ * See optimized/FbxDoubleTemplates.cs and optimization.i
+ *
+ * We want IsValid() to exactly match the FBX definition; the rest is all
+ * trivial.
+ **/
+%{
+bool IsValidColor(const FbxColor& c) {
+  return c.IsValid();
+}
+%}
+%rename("%s") IsValidColor(const FbxColor&);
+%csmethodmodifiers IsValidColor "internal";
+bool IsValidColor(const FbxColor& c);
 
 %include "fbxsdk_csharp-fixed-headers/fbxpropertytypes.h"

@@ -29,7 +29,10 @@ namespace UnitTests
             var b = new FbxDouble4(5,6,7,8);
             var c = new FbxDouble4(9,8,7,6);
             var d = new FbxDouble4(5,4,3,2);
-            EqualityTester<FbxDouble4x4>.TestEquality(new FbxDouble4x4(a, b, c, d), new FbxDouble4x4(d, c, b, a));
+            EqualityTester<FbxDouble4x4>.TestEquality(
+                    new FbxDouble4x4(a, b, c, d),
+                    new FbxDouble4x4(d, c, b, a),
+                    new FbxDouble4x4(a, b, c, d));
         }
 
         /// <summary>

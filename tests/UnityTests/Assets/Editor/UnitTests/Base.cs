@@ -49,6 +49,19 @@ namespace UnitTests
             return CreateObject(Manager, name);
         }
 
+        /*
+         * Helper to test a property getter without a compiler warning.
+         * Use this like:
+         *      TestGetter(tex.Alpha);
+         *
+         * That will call get_Alpha under the hood, verifying that the getter
+         * actually works. You can't just write
+         *      tex.Alpha;
+         * because then you get a warning or error that your statement is
+         * invalid.
+         */
+        public static void TestGetter<U>(U item) { /* we tested the getter by passing the argument! */ }
+
 #if ENABLE_COVERAGE_TEST
         [Test]
         public virtual void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
@@ -57,7 +70,10 @@ namespace UnitTests
         /* Test all the equality functions we can find. */
         [Test]
         public virtual void TestEquality() {
-            EqualityTester<T>.TestEquality(CreateObject("a"), CreateObject("b"));
+            var a = CreateObject("a");
+            var b = CreateObject("b");
+            var acopy = a; // TODO: get a different proxy to the same underlying object
+            EqualityTester<T>.TestEquality(a, b, acopy);
         }
 
         /* Create an object with another manager. Default implementation uses
@@ -244,6 +260,67 @@ namespace UnitTests
                 Assert.IsTrue(obj.SetDefaultImplementation(impl));
                 Assert.AreEqual(impl, obj.GetDefaultImplementation());
                 Assert.IsTrue(obj.HasDefaultImplementation());
+            }
+
+            /************************************************************
+             * Test property functions
+             ************************************************************/
+            using (obj = CreateObject("theobj")) {
+                using(var obj2 = CreateObject("otherobj")) {
+                    // Make a property and connect it from obj to obj2.
+                    var prop = FbxProperty.Create(obj, Globals.FbxBoolDT, "maybe");
+                    var prop2 = FbxProperty.Create(obj, Globals.FbxFloatDT, "probability");
+
+                    Assert.IsTrue(obj.ConnectSrcProperty(prop));
+                    Assert.IsTrue(obj.ConnectSrcProperty(prop2));
+                    Assert.IsTrue(obj2.ConnectDstProperty(prop));
+
+                    Assert.IsTrue(obj.IsConnectedSrcProperty(prop));
+                    Assert.IsTrue(obj2.IsConnectedDstProperty(prop));
+
+                    Assert.AreEqual(2, obj.GetSrcPropertyCount());
+                    Assert.AreEqual(1, obj2.GetDstPropertyCount());
+
+                    Assert.AreEqual(prop, obj.GetSrcProperty());
+                    Assert.AreEqual(prop, obj.GetSrcProperty(0));
+                    Assert.AreEqual(prop2, obj.GetSrcProperty(1));
+                    Assert.AreEqual(prop, obj2.GetDstProperty());
+                    Assert.AreEqual(prop, obj2.GetDstProperty(0));
+
+                    Assert.AreEqual(prop, obj.FindSrcProperty("maybe"));
+                    Assert.AreEqual(prop, obj2.FindDstProperty("maybe"));
+                    Assert.IsFalse(obj.FindSrcProperty("maybe", 1).IsValid());
+                    Assert.IsFalse(obj2.FindDstProperty("maybe", 1).IsValid());
+
+                    // Iterating over properties
+                    Assert.IsTrue(obj.GetFirstProperty().IsValid());
+                    Assert.IsTrue(obj.GetNextProperty(obj.GetFirstProperty()).IsValid());
+                    Assert.IsTrue(obj.GetClassRootProperty().IsValid());
+
+                    // FindProperty
+                    Assert.AreEqual(prop, obj.FindProperty("maybe"));
+                    Assert.AreEqual(prop, obj.FindProperty("mayBE", false));
+                    Assert.IsFalse(obj.FindProperty("mayBE", true).IsValid());
+                    Assert.AreEqual(prop, obj.FindProperty("maybe", Globals.FbxBoolDT));
+                    Assert.AreEqual(prop, obj.FindProperty("mayBE", Globals.FbxBoolDT, false));
+
+                    // FindPropertyHierarchical
+                    Assert.AreEqual(prop, obj.FindPropertyHierarchical("maybe"));
+                    Assert.AreEqual(prop, obj.FindPropertyHierarchical("mayBE", false));
+                    Assert.IsFalse(obj.FindPropertyHierarchical("mayBE", true).IsValid());
+                    Assert.AreEqual(prop, obj.FindPropertyHierarchical("maybe", Globals.FbxBoolDT));
+                    Assert.AreEqual(prop, obj.FindPropertyHierarchical("mayBE", Globals.FbxBoolDT, false));
+
+                    // Disconnecting
+                    int nSrc = obj.GetSrcPropertyCount();
+                    int nDst = obj2.GetDstPropertyCount();
+
+                    Assert.IsTrue(obj.DisconnectSrcProperty(prop));
+                    Assert.IsTrue(obj2.DisconnectDstProperty(prop));
+
+                    Assert.AreEqual(nSrc - 1, obj.GetSrcPropertyCount());
+                    Assert.AreEqual(nDst - 1, obj2.GetDstPropertyCount());
+                }
             }
         }
     }

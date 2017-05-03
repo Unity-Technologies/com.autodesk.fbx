@@ -23,7 +23,8 @@ namespace UnitTests
             var one = new FbxVector4(1,1,1);
             var mx1 = new FbxAMatrix(zero, zero, one);
             var mx2 = new FbxAMatrix(one, zero, one);
-            EqualityTester<FbxAMatrix>.TestEquality(mx1, mx2);
+            var mx1copy = new FbxAMatrix(zero, zero, one);
+            EqualityTester<FbxAMatrix>.TestEquality(mx1, mx2, mx1copy);
         }
 
         [Test]

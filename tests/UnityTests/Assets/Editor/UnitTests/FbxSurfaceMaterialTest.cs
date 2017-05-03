@@ -22,6 +22,32 @@ namespace UnitTests
         public void TestBasics()
         {
             using (var surface = CreateObject()) { TestSurface(surface); }
+
+            // Use all the getters
+            TestGetter(FbxSurfaceMaterial.sShadingModel);
+            TestGetter(FbxSurfaceMaterial.sMultiLayer);
+            TestGetter(FbxSurfaceMaterial.sMultiLayerDefault);
+            TestGetter(FbxSurfaceMaterial.sEmissive);
+            TestGetter(FbxSurfaceMaterial.sEmissiveFactor);
+            TestGetter(FbxSurfaceMaterial.sAmbient);
+            TestGetter(FbxSurfaceMaterial.sAmbientFactor);
+            TestGetter(FbxSurfaceMaterial.sDiffuse);
+            TestGetter(FbxSurfaceMaterial.sDiffuseFactor);
+            TestGetter(FbxSurfaceMaterial.sSpecular);
+            TestGetter(FbxSurfaceMaterial.sSpecularFactor);
+            TestGetter(FbxSurfaceMaterial.sShininess);
+            TestGetter(FbxSurfaceMaterial.sBump);
+            TestGetter(FbxSurfaceMaterial.sNormalMap);
+            TestGetter(FbxSurfaceMaterial.sBumpFactor);
+            TestGetter(FbxSurfaceMaterial.sTransparentColor);
+            TestGetter(FbxSurfaceMaterial.sTransparencyFactor);
+            TestGetter(FbxSurfaceMaterial.sReflection);
+            TestGetter(FbxSurfaceMaterial.sReflectionFactor);
+            TestGetter(FbxSurfaceMaterial.sDisplacementColor);
+            TestGetter(FbxSurfaceMaterial.sDisplacementFactor);
+            TestGetter(FbxSurfaceMaterial.sVectorDisplacementColor);
+            TestGetter(FbxSurfaceMaterial.sVectorDisplacementFactor);
+            TestGetter(FbxSurfaceMaterial.sShadingModelDefault);
         }
     }
 
@@ -30,21 +56,21 @@ namespace UnitTests
         public static void TestLambert<T>(T lambert) where T:FbxSurfaceLambert
         {
             FbxSurfaceMaterialTest.TestSurface(lambert);
-            lambert.Emissive.Get();
-            lambert.EmissiveFactor.Get();
-            lambert.Ambient.Get();
-            lambert.AmbientFactor.Get();
-            lambert.Diffuse.Get();
-            lambert.DiffuseFactor.Get();
-            lambert.NormalMap.Get();
-            lambert.Bump.Get();
-            lambert.BumpFactor.Get();
-            lambert.TransparentColor.Get();
-            lambert.TransparencyFactor.Get();
-            lambert.DisplacementColor.Get();
-            lambert.DisplacementFactor.Get();
-            lambert.VectorDisplacementColor.Get();
-            lambert.VectorDisplacementFactor.Get();
+            TestGetter(lambert.Emissive);
+            TestGetter(lambert.EmissiveFactor);
+            TestGetter(lambert.Ambient);
+            TestGetter(lambert.AmbientFactor);
+            TestGetter(lambert.Diffuse);
+            TestGetter(lambert.DiffuseFactor);
+            TestGetter(lambert.NormalMap);
+            TestGetter(lambert.Bump);
+            TestGetter(lambert.BumpFactor);
+            TestGetter(lambert.TransparentColor);
+            TestGetter(lambert.TransparencyFactor);
+            TestGetter(lambert.DisplacementColor);
+            TestGetter(lambert.DisplacementFactor);
+            TestGetter(lambert.VectorDisplacementColor);
+            TestGetter(lambert.VectorDisplacementFactor);
         }
 
         [Test]
@@ -61,11 +87,11 @@ namespace UnitTests
         {
             using (var phong = CreateObject()) {
                 FbxSurfaceLambertTest.TestLambert(phong);
-                phong.Specular.Get();
-                phong.SpecularFactor.Get();
-                phong.Shininess.Get();
-                phong.Reflection.Get();
-                phong.ReflectionFactor.Get();
+                TestGetter(phong.Specular);
+                TestGetter(phong.SpecularFactor);
+                TestGetter(phong.Shininess);
+                TestGetter(phong.Reflection);
+                TestGetter(phong.ReflectionFactor);
             }
         }
     }

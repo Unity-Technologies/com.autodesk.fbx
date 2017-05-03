@@ -1,15 +1,12 @@
 ﻿// ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
 // This file contains Tests for FbxLayerElement and all its derived classes.
 
-using UnityEngine;
-using UnityEditor;
-using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 using FbxSdk;
@@ -80,7 +77,10 @@ namespace UnitTests
         /* Test all the equality functions we can find. */
         [Test]
         public virtual void TestEquality() {
-            EqualityTester<T>.TestEquality(CreateObject("a"), CreateObject("b"));
+            var a = CreateObject("a");
+            var b = CreateObject("b");
+            var acopy = a; // TODO: copy the proxy
+            EqualityTester<T>.TestEquality(a, b, acopy);
         }
 
         /* Create an object with another layer container. Default implementation uses

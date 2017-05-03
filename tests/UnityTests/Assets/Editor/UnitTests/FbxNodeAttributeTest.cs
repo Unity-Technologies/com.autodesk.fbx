@@ -10,8 +10,7 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxSubDeformerTest : Base<FbxSubDeformer>
+    public class FbxNodeAttributeTest : Base<FbxNodeAttribute>
     {
-
     }
 }

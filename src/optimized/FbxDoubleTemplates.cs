@@ -1,3 +1,10 @@
+// ***********************************************************************
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
+//
+// Licensed under the ##LICENSENAME##.
+// See LICENSE.md file in the project root for full license information.
+// ***********************************************************************
+
 namespace FbxSdk
 {
     /**
@@ -190,6 +197,139 @@ namespace FbxSdk
 
         public override string ToString() {
             return string.Format("FbxDouble4({0},{1},{2},{3})", X, Y, Z, W);
+        }
+    }
+
+    public struct FbxColor {
+        public double mRed;
+        public double mGreen;
+        public double mBlue;
+        public double mAlpha;
+
+        public FbxColor(double red, double green, double blue, double alpha = 1) { this.mRed = red; this.mGreen = green; this.mBlue = blue; this.mAlpha = alpha; }
+        public FbxColor(FbxDouble3 rgb, double alpha = 1) : this (rgb.X, rgb.Y, rgb.Z, alpha) { }
+        public FbxColor(FbxDouble4 rgba) : this (rgba.X, rgba.Y, rgba.Z, rgba.W) { }
+
+        public bool IsValid() {
+            return Globals.IsValidColor(this);
+        }
+
+        public void Set(double red, double green, double blue, double alpha = 1) {
+            this.mRed = red; this.mGreen = green; this.mBlue = blue; this.mAlpha = alpha;
+        }
+
+        public double this[int i] {
+            get {
+                switch(i) {
+                    case 0: return mRed;
+                    case 1: return mGreen;
+                    case 2: return mBlue;
+                    case 3: return mAlpha;
+                    default: throw new System.IndexOutOfRangeException();
+                }
+            }
+            set {
+                switch(i) {
+                    case 0: mRed = value; break;
+                    case 1: mGreen = value; break;
+                    case 2: mBlue = value; break;
+                    case 3: mAlpha = value; break;
+                    default: throw new System.IndexOutOfRangeException();
+                }
+            }
+        }
+
+        public bool Equals(FbxColor other) {
+            return mRed == other.mRed && mGreen == other.mGreen && mBlue == other.mBlue && mAlpha == other.mAlpha;
+        }
+
+        public override bool Equals(object obj){
+            if (obj is FbxColor) {
+                return this.Equals((FbxColor)obj);
+            }
+            /* types are unrelated; can't be a match */
+            return false;
+        }
+
+        public static bool operator == (FbxColor a, FbxColor b) {
+            return a.Equals(b);
+        }
+
+        public static bool operator != (FbxColor a, FbxColor b) {
+            return !(a == b);
+        }
+
+        public override int GetHashCode() {
+            uint hash = (uint)mRed.GetHashCode();
+            hash = (hash << 8) | (hash >> 24);
+            hash ^= (uint)mGreen.GetHashCode();
+            hash = (hash << 8) | (hash >> 24);
+            hash ^= (uint)mBlue.GetHashCode();
+            hash = (hash << 8) | (hash >> 24);
+            hash ^= (uint)mAlpha.GetHashCode();
+            return (int)hash;
+        }
+
+        public override string ToString() {
+            return string.Format("FbxColor({0},{1},{2},{3})", mRed, mGreen, mBlue, mAlpha);
+        }
+    }
+
+    public struct FbxVector2 {
+        public double X;
+        public double Y;
+
+        public FbxVector2(double X) { this.X = this.Y = X; }
+        public FbxVector2(double X, double Y) { this.X = X; this.Y = Y; }
+        public FbxVector2(FbxDouble2 other) { this.X = other.X; this.Y = other.Y; }
+        public FbxVector2(FbxVector2 other) { this.X = other.X; this.Y = other.Y; }
+
+        public double this[int i] {
+            get {
+                switch(i) {
+                    case 0: return X;
+                    case 1: return Y;
+                    default: throw new System.IndexOutOfRangeException();
+                }
+            }
+            set {
+                switch(i) {
+                    case 0: X = value; break;
+                    case 1: Y = value; break;
+                    default: throw new System.IndexOutOfRangeException();
+                }
+            }
+        }
+
+        public bool Equals(FbxVector2 other) {
+            return X == other.X && Y == other.Y;
+        }
+
+        public override bool Equals(object obj){
+            if (obj is FbxVector2) {
+                return this.Equals((FbxVector2)obj);
+            }
+            /* types are unrelated; can't be a match */
+            return false;
+        }
+
+        public static bool operator == (FbxVector2 a, FbxVector2 b) {
+            return a.Equals(b);
+        }
+
+        public static bool operator != (FbxVector2 a, FbxVector2 b) {
+            return !(a == b);
+        }
+
+        public override int GetHashCode() {
+            uint hash = (uint)X.GetHashCode();
+            hash = (hash << 16) | (hash >> 16);
+            hash ^= (uint)Y.GetHashCode();
+            return (int)hash;
+        }
+
+        public override string ToString() {
+            return string.Format("FbxVector2({0},{1})", X, Y);
         }
     }
 

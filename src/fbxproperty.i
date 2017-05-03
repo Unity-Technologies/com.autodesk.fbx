@@ -18,17 +18,14 @@
 /* %ignore FbxProperty::Create; */
 %apply bool *OUTPUT { bool* pWasFound };
 
-/*
-%ignore FbxProperty::Destroy;
-%ignore FbxProperty::DestroyChildren;
-%ignore FbxProperty::DestroyRecursively;
-%ignore FbxProperty::GetPropertyDataType;
-*/
 
 /*
  * Define equality and hash code.
+ *
+ * Ignore equality to an int. Make users call IsValid instead.
  */
 %define_equality_from_operator(FbxProperty);
+%ignore FbxProperty::operator==(int) const;
 %extend FbxProperty { %proxycode %{
   public override int GetHashCode() {
     uint hash = (uint) GetName().GetHashCode();
@@ -41,6 +38,18 @@
     }
     return (int) hash;
   } %} }
+
+/*
+ * These are the functions we've taken in, carefully, one by one.
+ */
+
+/*
+%ignore FbxProperty::Destroy;
+%ignore FbxProperty::DestroyChildren;
+%ignore FbxProperty::DestroyRecursively;
+%ignore FbxProperty::GetPropertyDataType;
+%ignore FbxProperty::IsValid;
+*/
 
 /* TODO: take more of this stuff in! */
 %ignore FbxProperty::CreateFrom;
@@ -56,7 +65,6 @@
 %ignore FbxProperty::ModifiedFlag;
 %ignore FbxProperty::CompareValue;
 %ignore FbxProperty::CopyValue;
-%ignore FbxProperty::IsValid;
 %ignore FbxProperty::HasDefaultValue;
 %ignore FbxProperty::GetValueInheritType;
 %ignore FbxProperty::SetValueInheritType;

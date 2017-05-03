@@ -95,4 +95,37 @@ namespace UnitTests
             }
         }
     }
+
+    public class FbxMeshBadBracketingExceptionTest {
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxMesh.BadBracketingException), this.GetType()); }
+
+        static FbxMeshBadBracketingExceptionTest()
+        {
+            // We don't test Exception.GetObjectData ; we assume that the C#
+            // compiler and runtime can make it work.
+            CoverageTester.RegisterReflectionCall(
+                    typeof(FbxMeshBadBracketingExceptionTest).GetMethod("BasicTests"),
+                    typeof(FbxMesh.BadBracketingException).GetMethod("GetObjectData"));
+        }
+#endif
+
+        [Test]
+        public void BasicTests()
+        {
+            var xcp = new FbxMesh.BadBracketingException("oops");
+            xcp.HelpLink = "http://127.0.0.1";
+            Assert.AreEqual("http://127.0.0.1", xcp.HelpLink);
+            Assert.AreNotEqual("", xcp.Message);
+            xcp.Source = "source";
+            Assert.AreEqual("source", xcp.Source);
+            Assert.AreNotEqual("", xcp.StackTrace);
+            Assert.IsNull(xcp.InnerException);
+            Assert.AreEqual(xcp, xcp.GetBaseException());
+            Assert.IsNull(xcp.TargetSite);
+            Assert.IsNotNull(xcp.Data);
+            Assert.AreEqual(typeof(FbxMesh.BadBracketingException), xcp.GetType());
+        }
+    }
 }

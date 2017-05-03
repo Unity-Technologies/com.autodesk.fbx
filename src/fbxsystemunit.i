@@ -9,7 +9,6 @@
 // Unignore class
 %rename("%s") FbxSystemUnit;
 %ignore FbxSystemUnit::FbxSystemUnit();
-%clearnodefaultdtor FbxSystemUnit;
 %rename("%s") FbxSystemUnit::~FbxSystemUnit();
 %rename("%s") FbxSystemUnit::mm;
 %rename("%s") FbxSystemUnit::cm;

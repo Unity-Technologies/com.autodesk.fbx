@@ -1,7 +1,7 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
@@ -17,21 +17,22 @@
 struct FbxSharpDouble2 {
     double x;
     double y;
-    inline void operator = (const FbxDouble2& fbx) { 
-        x = fbx.mData[0]; 
-        y = fbx.mData[1]; 
+    inline void operator = (const FbxDouble2& fbx) {
+        x = fbx.mData[0];
+        y = fbx.mData[1];
     }
     inline operator FbxDouble2 () const { return FbxDouble2(x, y); }
+    inline operator FbxVector2 () const { return FbxVector2(x, y); }
 };
 
 struct FbxSharpDouble3 {
     double x;
     double y;
     double z;
-    inline void operator = (const FbxDouble3& fbx) { 
-        x = fbx.mData[0]; 
-        y = fbx.mData[1]; 
-        z = fbx.mData[2]; 
+    inline void operator = (const FbxDouble3& fbx) {
+        x = fbx.mData[0];
+        y = fbx.mData[1];
+        z = fbx.mData[2];
     }
     inline operator FbxDouble3 () const { return FbxDouble3(x, y, z); }
 };
@@ -41,12 +42,23 @@ struct FbxSharpDouble4 {
     double y;
     double z;
     double w;
-    inline void operator = (const FbxDouble4& fbx) { 
-        x = fbx.mData[0]; 
-        y = fbx.mData[1]; 
-        z = fbx.mData[2]; 
+    inline void operator = (const FbxDouble4& fbx) {
+        x = fbx.mData[0];
+        y = fbx.mData[1];
+        z = fbx.mData[2];
         w = fbx.mData[3];
     }
     inline operator FbxDouble4 () const { return FbxDouble4(x, y, z, w); }
+    inline operator FbxColor () const {
+        /* The constructor with four doubles does some checks on the values.
+         * We don't want those, since it prevents us from checking IsValid!
+         * Setting the fields by hand thwarts the checks. */
+        FbxColor c;
+        c.mRed = x;
+        c.mGreen = y;
+        c.mBlue = z;
+        c.mAlpha = w;
+        return c;
+    }
     inline operator FbxVector4 () const { return FbxVector4(x, y, z, w); }
 };
