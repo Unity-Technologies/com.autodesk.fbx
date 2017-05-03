@@ -69,12 +69,12 @@ namespace FbxSdk.Examples
                 { "near clip plane",        "NearPlane" },
                 { "far clip plane",         "FarPlane" },
 #if UNI_16421
-				{ "m_LocalPosition.x",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
-				{ "m_LocalPosition.y",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
-				{ "m_LocalPosition.z",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
-				{ "localEulerAnglesRaw.x",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
-				{ "localEulerAnglesRaw.y",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
-				{ "localEulerAnglesRaw.z",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+                { "m_LocalPosition.x",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "m_LocalPosition.y",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "m_LocalPosition.z",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+                { "localEulerAnglesRaw.x",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "localEulerAnglesRaw.y",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "localEulerAnglesRaw.z",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
 #endif
             };
 
@@ -149,10 +149,10 @@ namespace FbxSdk.Examples
             protected void SetDefaultCamera (FbxScene fbxScene)
             {
 #if UNI_16810
-            	if (DefaultCamera == "")
-            		DefaultCamera = FbxSdk.Globals.FBXSDK_CAMERA_PERSPECTIVE;
+                if (DefaultCamera == "")
+                    DefaultCamera = FbxSdk.Globals.FBXSDK_CAMERA_PERSPECTIVE;
 
-            	fbxScene.GetGlobalSettings ().SetDefaultCamera (this.DefaultCamera);
+                fbxScene.GetGlobalSettings ().SetDefaultCamera (this.DefaultCamera);
 #endif
             }
 

@@ -31,7 +31,7 @@ namespace FbxSdk.Examples
                     4) add static mesh to a node
                     5) add texture UVs
                     6) add materials and textures
-                    7) export the static mesh to a FBX file
+                    7) export the static mesh to a FBX file (FBX201400 compatible)
                             ";
 
             const string Keywords =

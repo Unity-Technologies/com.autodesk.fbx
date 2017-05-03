@@ -62,14 +62,14 @@ namespace FbxSdk.Examples
                 { "near clip plane",        "NearPlane" },
                 { "far clip plane",         "FarPlane" },
 #if UNI_16421
-				{ "m_LocalPosition.x",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
-				{ "m_LocalPosition.y",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
-				{ "m_LocalPosition.z",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
-				{ "localEulerAnglesRaw.x",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
-				{ "localEulerAnglesRaw.y",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
-				{ "localEulerAnglesRaw.z",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+                { "m_LocalPosition.x",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "m_LocalPosition.y",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "m_LocalPosition.z",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+                { "localEulerAnglesRaw.x",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "localEulerAnglesRaw.y",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "localEulerAnglesRaw.z",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
 #endif
-			};
+            };
 
             /// <summary>
             /// Create instance of example
@@ -290,7 +290,7 @@ namespace FbxSdk.Examples
                     }
                 }
 
-            	return;
+                return;
             }
 
             /// <summary>
@@ -298,9 +298,9 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportAllAnimation (FbxScene fbxScene)
             {
-            	foreach (GameObject unityGo in this.MapUnityObjectToFbxNode.Keys) {
+                foreach (GameObject unityGo in this.MapUnityObjectToFbxNode.Keys) {
                     ExportAnimationClips (unityGo.GetComponent<Animation> (), fbxScene);
-            	}
+                }
             }
 
             /// <summary>
@@ -321,7 +321,7 @@ namespace FbxSdk.Examples
                 // now  unityGo  through our children and recurse
                 foreach (Transform uniChildT in  unityGo.transform) 
                 {
-					ExportComponents (uniChildT.gameObject, fbxScene, fbxNode);
+                    ExportComponents (uniChildT.gameObject, fbxScene, fbxNode);
                 }
 
                 return;
@@ -384,7 +384,7 @@ namespace FbxSdk.Examples
 
                         if ( unityGo ) 
                         {
-							this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
+                            this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
                         }
                     }
 
@@ -453,17 +453,17 @@ namespace FbxSdk.Examples
             /// </summary>
             private static GameObject GetGameObject (Object obj)
             {
-            	if (obj is UnityEngine.Transform) {
-            		var xform = obj as UnityEngine.Transform;
-            		return xform.gameObject;
-            	} else if (obj is UnityEngine.GameObject) {
-            		return obj as UnityEngine.GameObject;
-            	} else if (obj is MonoBehaviour) {
-            		var mono = obj as MonoBehaviour;
-            		return mono.gameObject;
-            	}
+                if (obj is UnityEngine.Transform) {
+                    var xform = obj as UnityEngine.Transform;
+                    return xform.gameObject;
+                } else if (obj is UnityEngine.GameObject) {
+                    return obj as UnityEngine.GameObject;
+                } else if (obj is MonoBehaviour) {
+                    var mono = obj as MonoBehaviour;
+                    return mono.gameObject;
+                }
 
-            	return null;
+                return null;
             }
 
             private static string MakeObjectName (string name)
