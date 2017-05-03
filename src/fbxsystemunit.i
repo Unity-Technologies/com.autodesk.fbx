@@ -26,8 +26,7 @@
 #endif
 
 /* Define equality and hash code. */
-%rename("Equals") FbxSystemUnit::operator==;
-%define_generic_equality_functions(FbxSystemUnit);
+%define_equality_from_operator(FbxSystemUnit);
 %extend FbxSystemUnit {
   %csmethodmodifiers GetHashCode "public override";
   int GetHashCode() const {

@@ -10,7 +10,13 @@
  * Add various functions that fulfill most of the IEquatable<THETYPE> contract.
  *
  * THETYPE must also define Equals(THETYPE) and GetHashCode().
- * That's on you. See %define_pointer_equality_functions for a reasonable implementation.
+ * That's on you.
+ *
+ * If you have a C++ operator== or equivalent, look at %define_equality_from_function.
+ *
+ * If you want reference equality, look at %define_pointer_equality_functions
+ * (the standard C# reference equality won't match when you get two proxies to the
+ * same C++ object; %define_pointer_equality_functions fixes that).
  *
  * You might also want to add IEquatable<THETYPE> to the interface list:
  *   %typemap(csinterfaces) THETYPE "IDisposable, IEquatable<THETYPE>";
@@ -43,6 +49,36 @@
     return !(a == b);
   }
 %} }
+%enddef
+
+/*
+ * Given a function:
+ *    bool THETYPE::EQUALFN(const THETYPE&)
+ * use that to define equality, and create all the C# Equals functions and
+ * operators you'd expect.
+ *
+ * You need to define GetHashCode.
+ */
+%define %define_equality_from_function(THETYPE, EQUALFN)
+%rename ("_equals") THETYPE::EQUALFN;
+%csmethodmodifiers THETYPE::EQUALFN "private";
+%extend THETYPE { %proxycode %{
+  public bool Equals($csclassname other) {
+    if (object.ReferenceEquals(other, null)) { return false; }
+    return _equals(other);
+  }
+%} }
+%define_generic_equality_functions(THETYPE)
+%enddef
+
+/*
+ * Use operator== to define equality. Hide operator!=.
+ *
+ * You need to define GetHashCode.
+ */
+%define %define_equality_from_operator(THETYPE)
+%ignore THETYPE::operator!=;
+%define_equality_from_function(THETYPE, operator==)
 %enddef
 
 /*

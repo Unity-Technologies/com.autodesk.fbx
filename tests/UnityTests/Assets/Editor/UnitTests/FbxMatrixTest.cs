@@ -1,7 +1,7 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
@@ -11,6 +11,21 @@ namespace UnitTests
 {
     public class FbxMatrixTest
     {
+#if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxMatrix), this.GetType()); }
+#endif
+
+        [Test]
+        public void TestEquality()
+        {
+            var zero = new FbxVector4();
+            var one = new FbxVector4(1,1,1);
+            var mx1 = new FbxMatrix(zero, zero, one);
+            var mx2 = new FbxMatrix(one, zero, one);
+            EqualityTester<FbxMatrix>.TestEquality(mx1, mx2);
+        }
+
         [Test]
         public void BasicTests ()
         {
@@ -100,11 +115,16 @@ namespace UnitTests
             Assert.AreEqual(c, v.Y);
             Assert.AreEqual(b, v.Z);
             Assert.AreEqual(a, v.W);
-        }
 
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxMatrix), this.GetType()); }
-#endif
+            // Test getting the elements from a matrix built by TRS
+            mx = new FbxMatrix(new FbxVector4(1,2,3), new FbxVector4(0,90,0), new FbxVector4(1,1,1));
+            FbxVector4 t,r,s, shear;
+            double sign;
+            mx.GetElements(out t, out r, out shear, out s, out sign);
+            Assert.AreEqual(1, sign);
+            Assert.AreEqual(new FbxVector4(1,2,3, 1), t);
+            Assert.AreEqual(new FbxVector4(0,90,0, 0), r); /* for some reason w is zero for rotation */
+            Assert.AreEqual(new FbxVector4(1,1,1, 0), s); /* and similarly for scaling */
+        }
     }
 }

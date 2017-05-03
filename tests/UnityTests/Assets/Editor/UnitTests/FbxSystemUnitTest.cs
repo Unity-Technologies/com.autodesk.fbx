@@ -22,6 +22,12 @@ namespace UnitTests
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxSystemUnit), this.GetType()); }
 #endif
 
+        [Test]
+        public void TestEquality()
+        {
+            EqualityTester<FbxSystemUnit>.TestEquality(FbxSystemUnit.m, FbxSystemUnit.Yard);
+        }
+
         /// <summary>
         /// Test the basics. Subclasses should override and add some calls
         /// e.g. to excercise all the constructors.

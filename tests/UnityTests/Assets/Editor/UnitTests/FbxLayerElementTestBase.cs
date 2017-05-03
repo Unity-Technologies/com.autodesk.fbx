@@ -57,9 +57,6 @@ namespace UnitTests
                 var getIndexArray = typeof(FbxLayerElementTestBase<T>).GetMethod("GetIndexArray");
                 CoverageTester.RegisterReflectionCall(getIndexArray, s_getIndexArray);
             }
-
-            // Make sure to have the equality tester register its methods right now.
-            EqualityTester<T>.RegisterCoverage();
             #endif
         }
 
