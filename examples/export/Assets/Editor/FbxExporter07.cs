@@ -71,37 +71,38 @@ namespace FbxSdk.Examples
                 }
 
                 // create an FbxNode and add it as a child of fbxParentNode
-                using (FbxNode fbxNode = FbxNode.Create (fbxScene, unityAnimator.name)) {
-                    Dictionary<Transform, FbxNode> boneNodes
-                        = new Dictionary<Transform, FbxNode> ();
+                FbxNode fbxNode = FbxNode.Create (fbxScene, unityAnimator.name);
 
-                    // export skeleton
-                    if (ExportSkeleton (meshInfo, fbxScene, fbxNode, ref boneNodes)) {
-                        // export skin
-                        FbxNode fbxMeshNode = ExportMesh (meshInfo, fbxScene, fbxNode);
 
-                        FbxMesh fbxMesh = fbxMeshNode.GetMesh ();
+                Dictionary<Transform, FbxNode> boneNodes
+                    = new Dictionary<Transform, FbxNode> ();
 
-                        if (fbxMesh == null) {
-                            Debug.LogError ("Could not find mesh");
-                            return;
-                        }
+                // export skeleton
+                if (ExportSkeleton (meshInfo, fbxScene, fbxNode, ref boneNodes)) {
+                    // export skin
+                    //FbxNode fbxMeshNode = ExportMesh (meshInfo, fbxScene, fbxNode);
 
-                        // bind mesh to skeleton
-                        ExportSkin (meshInfo, fbxScene, fbxMesh, fbxMeshNode, boneNodes);
+                    //FbxMesh fbxMesh = fbxMeshNode.GetMesh ();
 
-                        // add bind pose
-                        ExportBindPose (fbxParentNode, fbxScene, boneNodes);
+                    /*if (fbxMesh == null) {
+                        Debug.LogError ("Could not find mesh");
+                        return;
+                    }*/
 
-                        fbxParentNode.AddChild (fbxNode);
-                        NumNodes++;
+                    // bind mesh to skeleton
+                    //ExportSkin (meshInfo, fbxScene, fbxMesh, fbxMeshNode, boneNodes);
 
-                        if (Verbose)
-                            Debug.Log (string.Format ("exporting {0} {1}", "Skin", fbxNode.GetName ()));
-                    }
-                    else{
-                        Debug.LogError("failed to export skeleton");
-                    }
+                    // add bind pose
+                    //ExportBindPose (fbxNode, fbxScene, boneNodes);
+
+                    fbxParentNode.AddChild (fbxNode);
+                    NumNodes++;
+
+                    if (Verbose)
+                        Debug.Log (string.Format ("exporting {0} {1}", "Skin", fbxNode.GetName ()));
+                }
+                else{
+                    Debug.LogError("failed to export skeleton");
                 }
             }
 
@@ -529,11 +530,13 @@ namespace FbxSdk.Examples
         		// Verify that we are rendering. Otherwise, don't export.
         		var renderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer> ();
         		if (!renderer || !renderer.enabled) {
+                    Debug.LogError ("could not find renderer");
         			return new MeshInfo ();
         		}
 
             	var mesh = renderer.sharedMesh;
             	if (!mesh) {
+                    Debug.LogError ("Could not find mesh");
             		return new MeshInfo ();
             	}
 
