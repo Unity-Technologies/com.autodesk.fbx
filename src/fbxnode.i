@@ -32,6 +32,7 @@
 %rename("%s") FbxNode::GetVisibility;
 %rename("%s") FbxNode::EvaluateGlobalTransform;
 %rename("%s") FbxNode::EPivotSet;
+%rename("%s") FbxNode::GetMesh;
 #endif
 
 /* The properties need to be marked immutable. */

@@ -171,5 +171,15 @@ namespace UnitTests
                 node.EvaluateGlobalTransform (new FbxTime(), FbxNode.EPivotSet.eSourcePivot, false, true); // false is default
             }
         }
+
+        [Test]
+        public void TestGetMesh(){
+            // make sure it doesn't crash
+            using (FbxNode node = CreateObject ("root")) {
+                FbxMesh mesh = FbxMesh.Create (Manager, "mesh");
+                node.SetNodeAttribute (mesh);
+                Assert.AreEqual (mesh, node.GetMesh ());
+            }
+        }
     }
 }

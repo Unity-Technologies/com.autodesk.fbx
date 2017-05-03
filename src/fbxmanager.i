@@ -19,6 +19,7 @@
 %rename("%s") FbxManager::GetIOSettings;
 %rename("%s") FbxManager::GetVersion;
 %rename("%s") FbxManager::GetFileFormatVersion;
+%rename("%s") FbxManager::GetIOPluginRegistry;
 
 #endif
 

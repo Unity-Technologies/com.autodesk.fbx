@@ -193,3 +193,5 @@
 %include "fbxcluster.i"
 %include "fbxskin.i"
 %include "fbxskeleton.i"
+%include "fbxiopluginregistry.i"
+#endif
