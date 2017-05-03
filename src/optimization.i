@@ -13,10 +13,10 @@
  * You need three classes:
  * - CPPTYPE is the C++ type that functions you're wrapping are declaring that
  *   they take or return.
- * - CPPTRANSITTYPE is a type that 
+ * - CPPTRANSITTYPE is a type that
  *      (a) exactly matches the C# layout
  *      (b) implicitly converts to and from CPPTYPE
- *      (c) is a standard-layout class according to c++11 (implicit no-arg ctor, 
+ *      (c) is a standard-layout class according to c++11 (implicit no-arg ctor,
  *              and essentially no inheritance allowed)
  * - CSTYPE is the name of the type in C#. It must exactly match CPPTRANSITTYPE.
  *
@@ -39,4 +39,67 @@
     return ret;
   }
 
+/**
+ * Define OUTPUT and INOUT typemaps for a hand-optimized type.
+ *
+ * This uses the InOutReferenceManager defined below.
+ */
+%typemap(ctype) CPPTYPE & OUTPUT, CPPTYPE & INOUT, CPPTYPE * OUTPUT, CPPTYPE * INOUT "CPPTRANSITTYPE *";
+
+%typemap(imtype) CPPTYPE & OUTPUT, CPPTYPE * OUTPUT "out CSTYPE";
+%typemap(imtype) CPPTYPE & INOUT, CPPTYPE *INTOUT "ref CSTYPE";
+
+%typemap(cstype) CPPTYPE & OUTPUT, CPPTYPE * OUTPUT "out CSTYPE";
+%typemap(cstype) CPPTYPE & INOUT, CPPTYPE *INTOUT "ref CSTYPE";
+
+%typemap(csin) CPPTYPE & OUTPUT, CPPTYPE * OUTPUT "out $csinput";
+%typemap(csin) CPPTYPE & INOUT, CPPTYPE * INOUT "ref $csinput";
+
+%typemap(in) CPPTYPE & OUTPUT, CPPTYPE * OUTPUT %{
+    InOutReferenceManager<CPPTYPE, CPPTRANSITTYPE> $1_refmgr($input, /* isInOut */ false);
+    $1 = $1_refmgr.GetCppPointer(); %}
+%typemap(in) CPPTYPE & INOUT, CPPTYPE * INOUT %{
+    InOutReferenceManager<CPPTYPE, CPPTRANSITTYPE> $1_refmgr($input, /* isInOut */ true);
+    $1 = $1_refmgr.GetCppPointer(); %}
 %enddef
+
+
+%{
+/**
+ * See optimization.i
+ *
+ * This type is used to handle INOUT and OUTPUT arguments for hand-optimized
+ * types. In a hand-optimized type, there's a transit type that perfectly matches
+ * the C# layout, and there's a native C++ type that doesn't necessarily match it.
+ *
+ * To handle INOUT or OUTPUT arguments, we need:
+ * - from C#, a pointer of type CPPTRANSITTYPE that corresponds to the memory
+ *      location of the C# out argument.
+ * - for the C++ library we're wrapping, a reference or pointer of type CPPTYPE
+ *      for the library to put its result into
+ * - if it's a INOUT argument, a way to initialize the CPPTYPE from the CPPTRANSITTYPE
+ * - when we return from the C++ wrapper, a way to copy from the CPPTYPE to the CPPTRANSITTYPE
+ */
+template <class CPPTYPE, class CPPTRANSITTYPE>
+struct InOutReferenceManager {
+  CPPTYPE cpp_copy;
+  CPPTRANSITTYPE *csharp_copy;
+
+  InOutReferenceManager(CPPTRANSITTYPE *csharp_copy, bool isInOut) : csharp_copy(csharp_copy)
+  {
+    if (isInOut) {
+        /* Initialize the native type from the transit type, but only if it's
+         * a 'ref' argument (not an 'out' argument). */
+        cpp_copy = *csharp_copy;
+    }
+  }
+
+  ~InOutReferenceManager() {
+    /* Update the C# data from the C++ data on the end of the scope. */
+    *csharp_copy = cpp_copy;
+  }
+
+  /* Convert to the pointer type so that SWIG can get the pointer it wants */
+  CPPTYPE * GetCppPointer() { return &cpp_copy; }
+};
+%}
