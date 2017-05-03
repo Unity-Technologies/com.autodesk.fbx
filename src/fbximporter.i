@@ -5,16 +5,14 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-#ifdef IGNORE_ALL_INCLUDE_SOME
-// Unignore class
 %rename("%s") FbxImporter;
 
 // explicitly unignored the following:
 %rename("%s") FbxImporter::Import;
 
-#else
+/* Explicitly ignore it or else it pops up despite -fvirtual and default ignore. */
+%ignore FbxImporter::Initialize(const char* pFileName, int pFileFormat=-1, FbxIOSettings * pIOSettings=NULL);
+
 %ignore SetPassword;
-#endif
 
 %include "fbxsdk/fileio/fbximporter.h"
-
