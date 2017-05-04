@@ -17,6 +17,7 @@
 %rename("%s", %$isclass) FbxTimeSpan;
 
 %rename("%s") FbxTimeSpan::FbxTimeSpan;
+%rename("%s") FbxTimeSpan::Set;
 #endif
 
 %include "fbxsdk/core/base/fbxtime.h"
