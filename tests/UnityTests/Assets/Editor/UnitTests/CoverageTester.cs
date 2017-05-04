@@ -106,7 +106,7 @@ static class CoverageTester
             System.Type constraintType = null;
             foreach (var instruction in instructions) {
                 // Is this a constraint instruction? If so, store it.
-                if (instruction.OpCode.Value == -490 /* constraint */) {
+                if (instruction.OpCode == System.Reflection.Emit.OpCodes.Constrained) {
                     constraintType = instruction.Operand as System.Type;
                     continue;
                 }
