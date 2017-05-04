@@ -25,19 +25,10 @@ namespace UnitTests
             // just make sure it doesn't crash
             new FbxTime();
             new FbxTime (1);
-        }
 
-        [Test]
-        [Ignore("Dispose throws a MethodAccessException as FbxTime has no public default destructor")]
-        public void TestDispose()
-        {
-            FbxTime time;
-            time = new FbxTime ();
-            time.Dispose ();
-            Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-
-            using (time = new FbxTime (1)) {}
-            Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            // test dispose
+            DisposeTester.TestDispose(new FbxTime());
+            using (new FbxTime (1)) {}
         }
     }
 
@@ -55,6 +46,10 @@ namespace UnitTests
             new FbxTimeSpan();
             new FbxTimeSpan (new FbxTime(1), new FbxTime(2));
 
+            // test dispose
+            DisposeTester.TestDispose(new FbxTimeSpan());
+            using (new FbxTimeSpan (new FbxTime(1), new FbxTime(2))) { }
+
             Assert.That (() => { new FbxTimeSpan(null, null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // test Set
@@ -62,19 +57,6 @@ namespace UnitTests
             timeSpan.Set (new FbxTime (2), new FbxTime (3));
             Assert.That (() => { timeSpan.Set(null, null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
-        }
-
-        [Test]
-        [Ignore("Dispose throws a MethodAccessException as FbxTime has no public default destructor")]
-        public void TestDispose()
-        {
-            FbxTimeSpan time;
-            time = new FbxTimeSpan ();
-            time.Dispose ();
-            Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
-
-            using (time = new FbxTimeSpan (new FbxTime(1), new FbxTime(2))) {}
-            Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
     }
 }
