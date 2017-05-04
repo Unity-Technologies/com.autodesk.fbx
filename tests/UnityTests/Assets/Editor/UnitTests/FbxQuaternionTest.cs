@@ -36,7 +36,7 @@ namespace UnitTests
 
             // test dispose
             using (new FbxQuaternion()) { }
-            new FbxQuaternion().Dispose();
+            DisposeTester.TestDispose(new FbxQuaternion());
 
             // Test other constructors
             v = new FbxQuaternion(0.1, 0.2, 0.3, 0.4);
