@@ -56,6 +56,12 @@ namespace UnitTests
             new FbxTimeSpan (new FbxTime(1), new FbxTime(2));
 
             Assert.That (() => { new FbxTimeSpan(null, null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+            // test Set
+            FbxTimeSpan timeSpan = new FbxTimeSpan();
+            timeSpan.Set (new FbxTime (2), new FbxTime (3));
+            Assert.That (() => { timeSpan.Set(null, null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
         }
 
         [Test]
