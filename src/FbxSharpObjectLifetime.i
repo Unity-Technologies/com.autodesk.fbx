@@ -66,7 +66,7 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   // Set up the FBX allocators at static init time.
   [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="CSharp_$module_InitFbxAllocators")]
   private static extern int InitFbxAllocators();
-  private static int initFbx = InitFbxAllocators();
+  protected static int initFbx = InitFbxAllocators(); /* protected to quiet a warning */
 
   [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="CSharp_$module_Release_WeakPointerHandle")]
   public static extern void ReleaseWeakPointerHandle(global::System.Runtime.InteropServices.HandleRef handle);
