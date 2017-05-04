@@ -52,6 +52,8 @@ namespace UnitTests
                 doc.Clear ();
 
                 Assert.IsNull (doc.GetDocumentInfo ());
+
+                FbxCollectionTest.GenericTests (doc, Manager);
             }
         }
     }

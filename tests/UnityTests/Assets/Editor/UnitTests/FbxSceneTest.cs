@@ -28,6 +28,8 @@ namespace UnitTests
                 Assert.AreEqual(docInfo, scene.GetSceneInfo());
 
                 scene.Clear();
+
+                FbxCollectionTest.GenericTests (scene, Manager);
             }
         }
 
