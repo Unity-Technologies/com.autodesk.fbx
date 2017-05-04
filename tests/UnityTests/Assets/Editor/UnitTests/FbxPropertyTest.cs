@@ -79,6 +79,23 @@ namespace UnitTests
             Assert.AreEqual(parent, property.GetFbxObject());
             Assert.AreEqual(property.GetFbxObject(), parent); // test it both ways just in case equals is busted
 
+            // test GetCurve() (make sure it doesn't crash)
+            FbxAnimLayer layer = FbxAnimLayer.Create(parent, "layer");
+
+            FbxAnimCurve curve = property.GetCurve (layer, null);
+            Assert.IsNull (curve);
+
+            // should create curve if none found
+            // TODO: returns a null curve, maybe because there is no channel defined?
+            curve = property.GetCurve(layer, null, true);
+
+            FbxAnimCurve curve2 = property.GetCurve (layer, null);
+            Assert.AreEqual (curve, curve2);
+
+            // test GetCurve() null args
+            Assert.That (() => { property.GetCurve(null, ""); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            property.GetCurve(layer, null); // doesn't throw an exception, gets handled in C++
+
             // verify this in the future: will dispose destroy?
             property.Dispose();
         }
