@@ -195,3 +195,5 @@
 %include "fbxiopluginregistry.i"
 %include "fbxanimlayer.i"
 %include "fbxanimstack.i"
+%include "fbxanimcurvebase.i"
+%include "fbxanimcurve.i"
