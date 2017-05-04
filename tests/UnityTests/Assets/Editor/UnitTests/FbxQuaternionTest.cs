@@ -90,10 +90,16 @@ namespace UnitTests
             Assert.AreEqual(0.3, v[2]);
             v[3] = 0.4;
             Assert.AreEqual(0.4, v[3]);
+            v.SetAt(3, 0.5);
+            Assert.AreEqual(0.5, v.GetAt(3));
             Assert.That(() => v[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             Assert.That(() => v[ 4], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => v.GetAt(-1), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => v.GetAt( 4), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             Assert.That(() => v[-1] = 0.5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             Assert.That(() => v[ 4] = 0.5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => v.SetAt(-1, 0.5), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => v.SetAt( 4, 0.5), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
 
             // call the multiply/divide/add/sub operators, make sure they're vaguely sane
             u = new FbxQuaternion(v);
