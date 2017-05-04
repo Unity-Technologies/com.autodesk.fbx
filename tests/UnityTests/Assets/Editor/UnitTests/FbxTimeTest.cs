@@ -23,8 +23,8 @@ namespace UnitTests
         public void TestBasics ()
         {
             // just make sure it doesn't crash
-            FbxTime time = new FbxTime();
-            time = new FbxTime (1);
+            new FbxTime();
+            new FbxTime (1);
         }
 
         [Test]
@@ -37,6 +37,37 @@ namespace UnitTests
             Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             using (time = new FbxTime (1)) {}
+            Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+        }
+    }
+
+    public class FbxTimeSpanTest
+    {
+        #if ENABLE_COVERAGE_TEST
+        [Test]
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxTimeSpan), this.GetType()); }
+        #endif
+
+        [Test]
+        public void TestBasics ()
+        {
+            // just make sure it doesn't crash
+            new FbxTimeSpan();
+            new FbxTimeSpan (new FbxTime(1), new FbxTime(2));
+
+            Assert.That (() => { new FbxTimeSpan(null, null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+        }
+
+        [Test]
+        [Ignore("Dispose throws a MethodAccessException as FbxTime has no public default destructor")]
+        public void TestDispose()
+        {
+            FbxTimeSpan time;
+            time = new FbxTimeSpan ();
+            time.Dispose ();
+            Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+
+            using (time = new FbxTimeSpan (new FbxTime(1), new FbxTime(2))) {}
             Assert.That (() => { time.ToString(); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
     }

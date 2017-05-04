@@ -9,6 +9,8 @@
 %rename("%s") FbxCollection;
 
 %rename("%s") FbxCollection::Clear;
+%rename("%s") FbxCollection::AddMember;
+%rename("%s") FbxCollection::GetMemberCount() const;
 
 #endif
 

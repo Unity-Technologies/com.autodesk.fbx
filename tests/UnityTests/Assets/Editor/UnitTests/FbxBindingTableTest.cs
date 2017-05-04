@@ -36,14 +36,14 @@ namespace UnitTests
 
             // Test dispose.
             var entry = table.AddNewEntry();
-            entry.Dispose();
+            DisposeTester.TestDispose(entry);
 
             // Test the views.
             entry = table.AddNewEntry();
 
             var propertyView = new FbxPropertyEntryView(entry, false);
             Assert.IsFalse(propertyView.IsValid());
-            propertyView.Dispose();
+            DisposeTester.TestDispose(propertyView);
 
             propertyView = new FbxPropertyEntryView(entry, true, true);
             Assert.IsTrue(propertyView.IsValid());
@@ -53,7 +53,7 @@ namespace UnitTests
 
             var semanticView = new FbxSemanticEntryView(entry, false);
             Assert.IsFalse(semanticView.IsValid());
-            semanticView.Dispose();
+            DisposeTester.TestDispose(semanticView);
 
             semanticView = new FbxSemanticEntryView(entry, false, true);
             Assert.IsTrue(semanticView.IsValid());

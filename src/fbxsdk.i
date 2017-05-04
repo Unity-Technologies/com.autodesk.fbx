@@ -156,7 +156,6 @@
 
 /* Core classes */
 %include "fbxmath.i"
-%include "fbxclassid.i"
 %include "fbxmanager.i"
 %include "fbxaxissystem.i"
 %include "fbxsystemunit.i"
@@ -194,3 +193,5 @@
 %include "fbxskin.i"
 %include "fbxskeleton.i"
 %include "fbxiopluginregistry.i"
+%include "fbxanimlayer.i"
+%include "fbxanimstack.i"
