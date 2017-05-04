@@ -4,7 +4,6 @@
 // Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
-#ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
 %rename("%s", %$isclass) FbxAnimStack;
 
@@ -14,6 +13,5 @@
 %fbximmutable(FbxAnimStack::Description);
 %rename("%s") FbxAnimStack::SetLocalTimeSpan;
 %rename("%s") FbxAnimStack::GetLocalTimeSpan;
-#endif
 
 %include "fbxsdk/scene/animation/fbxanimstack.h"
