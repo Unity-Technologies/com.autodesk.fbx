@@ -194,3 +194,5 @@
 %include "fbxskin.i"
 %include "fbxskeleton.i"
 %include "fbxiopluginregistry.i"
+%include "fbxanimlayer.i"
+%include "fbxanimstack.i"

@@ -6,12 +6,11 @@
 // ***********************************************************************
 #ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
-%rename("%s") FbxCollection;
+%rename("%s", %$isclass) FbxAnimLayer;
 
-%rename("%s") FbxCollection::Clear;
-%rename("%s") FbxCollection::AddMember;
-%rename("%s") FbxCollection::GetMemberCount() const;
-
+// As the ignore everything will include the constructor, destructor, methods etc
+// in the class, these have to be explicitly unignored too:
+%rename("%s") FbxAnimLayer::Create;
 #endif
 
-%include "fbxsdk/scene/fbxcollection.h"
+%include "fbxsdk/scene/animation/fbxanimlayer.h"
