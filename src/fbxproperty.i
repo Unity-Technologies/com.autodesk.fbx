@@ -100,7 +100,6 @@
 %ignore FbxProperty::IsAnimated;
 %ignore FbxProperty::EvaluateValue;
 %ignore FbxProperty::CreateCurveNode;
-%ignore FbxProperty::GetCurveNode;
 %ignore FbxProperty::GetCurve;
 %ignore FbxProperty::ConnectSrcObject;
 %ignore FbxProperty::IsConnectedSrcObject;
