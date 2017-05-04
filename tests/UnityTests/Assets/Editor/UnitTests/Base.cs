@@ -105,7 +105,7 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestCreate()
+        public virtual void TestCreate()
         {
             var obj = CreateObject("MyObject");
             Assert.IsInstanceOf<T> (obj);

@@ -50,7 +50,7 @@ namespace UnitTests
 
             // make sure we can dispose
             using (new FbxAMatrix()) { }
-            new FbxAMatrix().Dispose();
+            DisposeTester.TestDispose(new FbxAMatrix());
 
             // make sure equality works.
             Assert.IsTrue(new FbxAMatrix().Equals(new FbxAMatrix()));
