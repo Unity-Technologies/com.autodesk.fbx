@@ -100,7 +100,8 @@
 %ignore FbxProperty::IsAnimated;
 %ignore FbxProperty::EvaluateValue;
 %ignore FbxProperty::CreateCurveNode;
-%ignore FbxProperty::GetCurve;
+%ignore FbxProperty::GetCurve(FbxAnimLayer* pAnimLayer, bool pCreate=false);
+%ignore FbxProperty::GetCurve(FbxAnimLayer* pAnimLayer, const char* pName, const char* pChannel, bool pCreate);
 %ignore FbxProperty::ConnectSrcObject;
 %ignore FbxProperty::IsConnectedSrcObject;
 %ignore FbxProperty::DisconnectSrcObject;

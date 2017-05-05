@@ -163,6 +163,7 @@
 %include "fbxpropertytypes.i"
 %include "fbxtime.i"
 %include "fbxstatus.i"
+%include "fbxquaternion.i"
 
 /* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"
@@ -195,4 +196,6 @@
 %include "fbxiopluginregistry.i"
 %include "fbxanimlayer.i"
 %include "fbxanimstack.i"
+%include "fbxanimcurvebase.i"
+%include "fbxanimcurve.i"
 %include "fbxanimcurvenode.i"
