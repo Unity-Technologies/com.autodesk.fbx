@@ -11,12 +11,13 @@
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxTime::FbxTime;
-
+%rename("%s") FbxTime::~FbxTime;
 
 // Unignore class
 %rename("%s", %$isclass) FbxTimeSpan;
 
 %rename("%s") FbxTimeSpan::FbxTimeSpan;
+%rename("%s") FbxTimeSpan::~FbxTimeSpan;
 %rename("%s") FbxTimeSpan::Set;
 #endif
 
