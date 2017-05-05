@@ -198,3 +198,4 @@
 %include "fbxanimstack.i"
 %include "fbxanimcurvebase.i"
 %include "fbxanimcurve.i"
+%include "fbxanimcurvenode.i"

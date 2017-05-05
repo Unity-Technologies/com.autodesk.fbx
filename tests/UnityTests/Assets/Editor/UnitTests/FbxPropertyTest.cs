@@ -96,6 +96,22 @@ namespace UnitTests
             Assert.That (() => { property.GetCurve(null, ""); }, Throws.Exception.TypeOf<System.NullReferenceException>());
             property.GetCurve(layer, null); // doesn't throw an exception, gets handled in C++
 
+            // test GetCurveNode() (make sure it doesn't crash)
+            FbxAnimCurveNode curveNode = property.GetCurveNode();
+            Assert.IsNull (curveNode); // didn't create one so should be null
+
+            curveNode = property.GetCurveNode (true);
+            // TODO: figure out why the curve node doesn't get created
+            //Assert.IsNotNull (curveNode);
+
+            property.GetCurveNode (FbxAnimStack.Create (parent, "anim stack"));
+            property.GetCurveNode (FbxAnimStack.Create (parent, "anim stack"), true);
+            property.GetCurveNode (FbxAnimLayer.Create (parent, "anim layer"));
+            property.GetCurveNode (FbxAnimLayer.Create (parent, "anim layer"), true);
+
+            Assert.That (() => { property.GetCurveNode((FbxAnimStack)null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { property.GetCurveNode((FbxAnimLayer)null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
             // verify this in the future: will dispose destroy?
             property.Dispose();
         }
