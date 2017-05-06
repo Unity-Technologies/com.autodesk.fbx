@@ -4,7 +4,7 @@
 // Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
-%module Globals
+%module(directors="1") Globals
 %{
 #include "fbxsdk.h"
 %}
@@ -164,6 +164,7 @@
 %include "fbxtime.i"
 %include "fbxstatus.i"
 %include "fbxquaternion.i"
+%include "fbxprogress.i"
 
 /* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"

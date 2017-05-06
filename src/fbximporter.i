@@ -7,8 +7,17 @@
 
 %rename("%s") FbxImporter;
 
-// explicitly unignored the following:
-%rename("%s") FbxImporter::Import;
+/*
+ * Allow importing in blocking mode.
+ * TODO: support non-blocking if there's demand for it.
+ *
+ * Non-blocking mode opens up the possibility of crashes from multi-threaded
+ * use of the same FbxManager, or from funny garbage collection business.
+ */
+%rename("%s") FbxImporter::Import(FbxDocument*);
+
+/* SetProgressCallback is implemented in fbxprogress.i */
+%define_fbxprogress(FbxImporter);
 
 /* Explicitly ignore it or else it pops up despite -fvirtual and default ignore. */
 %ignore FbxImporter::Initialize(const char* pFileName, int pFileFormat=-1, FbxIOSettings * pIOSettings=NULL);

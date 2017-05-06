@@ -1,7 +1,7 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
@@ -9,24 +9,23 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxImporterTest : Base<FbxImporter>
+    public class FbxImporterTest : FbxIOBaseTest<FbxImporter>
     {
         [Test]
-        public void TestBasics ()
+        public override void TestBasics ()
         {
+            base.TestBasics();
+
             using (FbxImporter newImporter = CreateObject("MyImporter"))
             {
-                // export a null document.
+                // import a null document.
                 Assert.IsFalse (newImporter.Import (null));
-                Assert.IsFalse (newImporter.Import (null, false));
-                Assert.IsTrue (newImporter.Import (null, true)); // non-blocking always works
 
+                // set a callback function
+                newImporter.SetProgressCallback(null);
+                newImporter.SetProgressCallback((float a, string b) => true);
+                newImporter.SetProgressCallback(null);
             }
-
-            using (var importer = CreateObject()) { Assert.IsFalse (importer.Initialize("/no/such/file.fbx")); }
-            using (var importer = CreateObject()) { Assert.IsFalse (importer.Initialize("/no/such/file.fbx", -1)); }
-            using (var importer = CreateObject()) { Assert.IsFalse (importer.Initialize("/no/such/file.fbx", -1, FbxIOSettings.Create(Manager, ""))); }
-            using (var importer = CreateObject()) { Assert.IsFalse (importer.Initialize("/no/such/file.fbx", -1, null)); }
 
             // Export an empty scene to a temp file, then import.
             var filename = GetRandomFile();
