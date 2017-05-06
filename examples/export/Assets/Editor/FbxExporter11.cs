@@ -39,7 +39,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"We set the filmback to 35mm TV Projection.";
 
-            const string MenuItemName = "File/Export FBX/11. camera with animation";
+            const string MenuItemName = "File/Export FBX/WIP 11. camera with animation";
 
             const string FileBaseName = "example_camera_animation";
 

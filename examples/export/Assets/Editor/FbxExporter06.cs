@@ -40,12 +40,12 @@ namespace FbxSdk.Examples
             const string Comments =
                 @"";
 
-            const string MenuItemName = "File/Export FBX/6. Static mesh with materials and textures";
+            const string MenuItemName = "File/Export FBX/WIP 6. Static mesh with materials and textures";
 
             const string FileBaseName = "example_static_mesh_with_materials_and_textures";
 
             /// <summary>
-            /// Create instance of example
+            /// Create instance of example  
             /// </summary>
             public static FbxExporter06 Create () { return new FbxExporter06 (); }
 
@@ -267,6 +267,8 @@ namespace FbxSdk.Examples
             /// </summary>
             public int ExportAll (IEnumerable<UnityEngine.Object> unityExportSet)
             {
+                Verbose = true;
+
                 // Create the FBX manager
                 using (var fbxManager = FbxManager.Create ())
                 {
