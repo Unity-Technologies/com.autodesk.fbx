@@ -134,6 +134,7 @@ namespace FbxSdk.Examples
                         fbxSkeletonType = FbxSkeleton.EType.eRoot;
                     }
                     fbxSkeleton.SetSkeletonType (fbxSkeletonType);
+                    fbxSkeleton.Size.Set (1.0f);
 
                     // Set the node's attribute
                     fbxBoneNode.SetNodeAttribute (fbxSkeleton);
