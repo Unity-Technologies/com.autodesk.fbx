@@ -13,6 +13,8 @@
 #endif
 
 %rename("%s") FbxIOBase::Initialize(const char *pFileName, int pFileFormat=-1, FbxIOSettings* pIOSettings=NULL);
+%rename("%s") FbxIOBase::GetStatus;
+%rename("%s") FbxIOBase::GetFileName;
 
 /* Also include global constants that should seemingly be a part of FbxIOBase */
 %rename("%s") IOSROOT;

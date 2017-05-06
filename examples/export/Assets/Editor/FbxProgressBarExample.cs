@@ -63,8 +63,11 @@ namespace FbxSdk.Examples
 
                         // Export the scene to the file.
                         if (!fbxExporter.Export (fbxScene)) {
-                            // TODO: determine whether we canceled or failed
-                            Debug.LogWarning("FBX Export failed. We don't know why yet.");
+                            if (fbxExporter.GetStatus().Error()) {
+                                Debug.LogWarning("FBX Export failed: " + fbxExporter.GetStatus());
+                            } else {
+                                Debug.Log("FBX Export canceled by user.");
+                            }
                         }
                     }
                 } finally {

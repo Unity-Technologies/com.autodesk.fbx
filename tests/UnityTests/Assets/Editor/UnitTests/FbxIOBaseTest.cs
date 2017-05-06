@@ -20,6 +20,12 @@ namespace UnitTests
             using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1); }
             using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1, FbxIOSettings.Create(Manager, "")); }
             using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1, null); }
+
+            using (var iobase = CreateObject()) {
+                Assert.IsFalse(iobase.GetStatus().Error());
+                iobase.Initialize("/no/such/file.fbx");
+                Assert.AreEqual("/no/such/file.fbx", iobase.GetFileName());
+            }
         }
     }
 
