@@ -27,7 +27,7 @@ namespace FbxSdk.Examples
                     2) create a scene                           
                     3) create a hierarchy of nodes              
                     4) add transform data to each node          
-                    5) export the nodes to a FBX file (ASCII mode)
+                    5) export the nodes to a FBX file (FBX201400 compatible)
                 ";
             
             const string Keywords = 
