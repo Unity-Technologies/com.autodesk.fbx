@@ -14,6 +14,7 @@
 %rename("%s") FbxSkeleton::SetSkeletonType;
 %rename("%s") FbxSkeleton::GetSkeletonType;
 %rename("%s") FbxSkeleton::EType;
+%fbximmutable(FbxSkeleton::Size);
 #endif
 
 %include "fbxsdk/scene/geometry/fbxskeleton.h"

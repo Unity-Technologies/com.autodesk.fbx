@@ -25,7 +25,7 @@ namespace FbxSdk.Examples
                  @"Example FbxExporter01 illustrates how to:
                                 1) create and initialize an exporter
                                 2) create a scene
-                                3) export a scene to a FBX file (ASCII, V7 compatible)
+                                3) export a scene to a FBX file (FBX201400 compatible)
                                         ";
 
             const string Keywords =

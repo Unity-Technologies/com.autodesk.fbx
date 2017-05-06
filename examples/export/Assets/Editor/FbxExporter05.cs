@@ -31,7 +31,7 @@ namespace FbxSdk.Examples
                     3) create a node with transform data
                     4) add static mesh
                     5) add normals, binormals, tangents, uvs and vertex colors to mesh
-                    6) export the static mesh to a FBX file
+                    6) export the static mesh to a FBX file (FBX201400 compatible)
                             ";
 
             const string Keywords =

@@ -30,7 +30,7 @@ namespace FbxSdk.Examples
                     4) exported mesh
                     5) bind mesh to skeleton
                     6) create a bind pose
-                    7) export the skinned mesh to a FBX file (ASCII mode)
+                    7) export the skinned mesh to a FBX file (FBX201400 compatible)
                 ";
 
             const string Keywords =
@@ -134,6 +134,7 @@ namespace FbxSdk.Examples
                         fbxSkeletonType = FbxSkeleton.EType.eRoot;
                     }
                     fbxSkeleton.SetSkeletonType (fbxSkeletonType);
+                    fbxSkeleton.Size.Set (1.0f);
 
                     // Set the node's attribute
                     fbxBoneNode.SetNodeAttribute (fbxSkeleton);

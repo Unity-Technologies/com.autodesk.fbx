@@ -1,3 +1,4 @@
+//#define UNI_16810
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -14,54 +15,183 @@ using FbxSdk;
 
 namespace FbxSdk.Examples
 {
-    namespace Editor {
+    namespace Editor
+    {
 
-        public class FbxExporter02 : System.IDisposable
+        public class FbxExporter11 : System.IDisposable
         {
             const string Title =
-                 "Example 02: exporting a basic node hierarchy";
+                "Example 11: exporting selected cameras with their settings and animation.";
 
             const string Subject =
-                 @"Example FbxExporter02 illustrates how to:
+                 @"Example FbxExporter11 illustrates how to:
                                             1) create and initialize an exporter
                                             2) create a scene
-                                            3) traverse hierarchy and add nodes
-                                            4) export a scene to a FBX file (ASCII mode)
+                                            3) create a camera node and export some settings
+                                            4) create animation take for the animated camera settings and SRT
+                                            5) set the default camera for the scene
+                                            6) export a scene to a FBX file (FBX201400 compatible)
                                                     ";
 
             const string Keywords =
-                 "export scene node";
+                 "export camera node animation";
 
             const string Comments =
-                 @"Export hierarchy of selected GameObjects.";
+                 @"We set the filmback to 35mm TV Projection.";
 
-            const string MenuItemName = "File/Export FBX/2. Node hierarchy";
+            const string MenuItemName = "File/Export FBX/11. camera with animation";
 
-            const string FileBaseName = "example_node_hierarchy";
+            const string FileBaseName = "example_camera_animation";
+
+            /// <summary>
+            /// map Unity animatable property to FbxProperty
+            /// TODO: intrinsic properties, check can we find by them name?
+            /// </summary>
+            static Dictionary<string, string> MapUnityToFbxPropertyName = new Dictionary<string, string> ()
+            {
+                { "field of view",          "FocalLength" },
+                { "near clip plane",        "NearPlane" },
+                { "far clip plane",         "FarPlane" },
+                { "m_LocalPosition.x",      "LclTranslation" },
+                { "m_LocalPosition.y",      "LclTranslation" },
+                { "m_LocalPosition.z",      "LclTranslation" },
+                { "localEulerAnglesRaw.x",  "LclRotation" },
+                { "localEulerAnglesRaw.y",  "LclRotation" },
+                { "localEulerAnglesRaw.z",  "LclRotation" },
+            };
+
+            /// <summary>
+            /// map Unity animatable property to FbxProperty
+            /// </summary>
+            static Dictionary<string, string> MapUnityToFbxChannelName = new Dictionary<string, string> ()
+            {
+                { "field of view",          "FocalLength" },
+                { "near clip plane",        "NearPlane" },
+                { "far clip plane",         "FarPlane" },
+#if UNI_16421
+                { "m_LocalPosition.x",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "m_LocalPosition.y",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "m_LocalPosition.z",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+                { "localEulerAnglesRaw.x",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "localEulerAnglesRaw.y",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "localEulerAnglesRaw.z",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+#endif
+            };
+
+            /// <summary>
+            /// name of the scene's default camera
+            /// </summary>
+            static string DefaultCamera = "";
+
+            /// <summary>
+            /// collected list of cameras to export
+            /// </summary>
+            List<Camera> Cameras;
 
             /// <summary>
             /// Create instance of example
             /// </summary>
-            public static FbxExporter02 Create () { return new FbxExporter02 (); }
+            public static FbxExporter11 Create () { return new FbxExporter11 (); }
 
             /// <summary>
-            /// Unconditionally export components on this game object
+            /// Exports camera component
+            /// </summary>
+            protected void ExportCamera (Camera unityCamera, FbxScene fbxScene, FbxNode fbxNode)
+            {
+#if UNI_16810
+                FbxCamera fbxCamera = FbxCamera.Create (fbxScene.GetFbxManager(), MakeObjectName(unityCamera.name));
+
+                bool perspective = unityCamera.orthographic!=true;
+                float aspectRatio = unityCamera.aspect;
+
+                // Configure FilmBack settings: 35mm TV Projection (0.816 x 0.612)
+                float apertureHeightInInches = 0.612f;
+                float apertureWidthInInches = aspectRatio * apertureHeightInInches;
+
+                FbxCamera.EProjectionType projectionType =
+                    perspective ? FbxCamera.EProjectionType.ePerspective : FbxCamera.EProjectionType.eOrthogonal;
+                
+                fbxCamera.ProjectionType.Set(projectionType);
+                fbxCamera.SetAspect (FbxCamera.EAspectRatioMode.eFixedRatio, aspectRatio, 1.0f);
+                fbxCamera.FilmAspectRatio.Set(aspectRatio);
+                fbxCamera.SetApertureWidth (apertureWidthInInches);
+                fbxCamera.SetApertureHeight (apertureHeightInInches);
+                fbxCamera.SetApertureMode (FbxCamera.EApertureMode.eFocalLength);
+
+                // FOV / Focal Length
+                fbxCamera.FocalLength.Set(fbxCamera.ComputeFocalLength (unityCamera.fieldOfView));
+
+                // NearPlane
+                fbxCamera.SetNearPlane (unityCamera.nearClipPlane);
+
+                // FarPlane
+                fbxCamera.SetFarPlane (unityCamera.farClipPlane);
+
+                fbxNode.SetNodeAttribute (fbxCamera);
+#endif
+                // make the last camera exported the default camera
+                DefaultCamera = fbxNode.GetName ();
+            }
+
+            /// <summary>
+            /// Export camera animation as a single take
+            /// </summary>
+            protected void ExportCameraAnimation (Camera unityCamera, FbxScene fbxScene)
+            {
+#if UNI_16810
+                ExportAnimationClips (unityCamera.gameObject.GetComponent<Animation> (), fbxScene);
+#endif
+            }
+
+            /// <summary>
+            /// configures default camera for the scene
+            /// </summary>
+            protected void SetDefaultCamera (FbxScene fbxScene)
+            {
+#if UNI_16810
+                if (DefaultCamera == "")
+                    DefaultCamera = FbxSdk.Globals.FBXSDK_CAMERA_PERSPECTIVE;
+
+                fbxScene.GetGlobalSettings ().SetDefaultCamera (this.DefaultCamera);
+#endif
+            }
+
+            /// <summary>
+            /// Exports all animation
+            /// </summary>
+            protected void ExportAllAnimation(FbxScene fbxScene)
+            {
+                foreach (Camera unityCamera in this.Cameras) 
+                {
+                    ExportCameraAnimation (unityCamera, fbxScene);
+                }
+            }
+
+            /// <summary>
+            /// Exports the game object has a camera component
             /// </summary>
             protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxNodeParent)
             {
-                 // create an node and add it as a child of parent
-                 FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
-                 NumNodes++;
+                Camera unityCamera = unityGo.GetComponent<Camera> ();
 
-                 if (Verbose)
-                      Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
+                if (unityCamera == null)
+                    return;
+                
+                // create an node and add it as a child of parent
+                FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
+                NumNodes++;
 
-                 fbxNodeParent.AddChild (fbxNode);
+                ExportCamera (unityCamera, fbxScene, fbxNode);
 
-                 // now  unityGo  through our children and recurse
-                 foreach (Transform childT in  unityGo.transform) {
-                      ExportComponents (childT.gameObject, fbxScene, fbxNode);
-                 }
+                if (Verbose)
+                    Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
+
+                fbxNodeParent.AddChild (fbxNode);
+
+                // now  unityGo  through our children and recurse
+                foreach (Transform childT in  unityGo.transform) {
+                    ExportComponents (childT.gameObject, fbxScene, fbxNode);
+                }
 
                  return;
             }
@@ -120,6 +250,11 @@ namespace FbxSdk.Examples
                         }
                     }
 
+                    ExportAllAnimation (fbxScene);
+
+                    // Set the scene's default camera.
+                    SetDefaultCamera (fbxScene);
+
                     // Export the scene to the file.
                     status = fbxExporter.Export (fbxScene);
 
@@ -152,7 +287,10 @@ namespace FbxSdk.Examples
             public static bool OnValidateMenuItem ()
             {
                 // Return true
-                return true;
+                if (Selection.activeTransform == null)
+                    return false;
+
+                return Selection.activeTransform.gameObject.GetComponent<Camera> () != null;
             }
 
             /// <summary>

@@ -30,7 +30,7 @@ namespace FbxSdk.Examples
                     4) add transform data to each node
                     5) add static mesh data to each node
                     6) set the visibility of nodes and hierarchies          
-                    7) export the nodes to a FBX file (ASCII mode)
+                    7) export the nodes to a FBX file (FBX201400 compatible)
                 ";
             
             const string Keywords = 
