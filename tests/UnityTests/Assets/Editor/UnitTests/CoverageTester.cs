@@ -16,8 +16,18 @@ static class CoverageTester
 {
     // Important fact: MethodBase doesn't implement equality like you'd expect.
     // So we need to use RuntimeMethodHandle for keys.
-    static Dictionary<System.RuntimeMethodHandle, List<MethodBase>> s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
+
+    // Maps a method to the calls somebody told us we'll do through reflection
+    // when we call that method. See RegisterReflectionCall.
     static Dictionary<System.RuntimeMethodHandle, List<MethodBase>> s_reflectionCalls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
+
+    // Cache. Maps a method to the calls it may directly make, determined by
+    // looking at the instructions of the method (and s_reflectionCalls).
+    static Dictionary<System.RuntimeMethodHandle, List<MethodBase>> s_directCalls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
+
+    // Cache. Maps a method to the calls it may recursively make. This is the
+    // transitive closure of s_directCalls.
+    static Dictionary<System.RuntimeMethodHandle, List<MethodBase>> s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
 
     static void PreloadCache()
     {
@@ -42,37 +52,113 @@ static class CoverageTester
 
     /// <summary>
     /// Dig through the instructions for 'method' and see which methods it
+    /// calls directly. Includes calls invoked through reflection (if they were registered).
+    ///
+    /// This is cached, so the first call for any given function will be
+    /// expensive but subsequent ones will be cheap.
+    /// </summary>
+    private static List<MethodBase> GetDirectCalls(MethodBase method)
+    {
+        // See if we've cached this already.
+        List<MethodBase> calls;
+        if (s_directCalls.TryGetValue(method.MethodHandle, out calls)) {
+            return calls;
+        }
+        calls = new List<MethodBase>();
+
+        // Analyze the function and add those calls.
+        IEnumerable<Mono.Reflection.Instruction> instructions;
+        try {
+            instructions = Mono.Reflection.Disassembler.GetInstructions(method);
+        } catch (System.ArgumentException) {
+            instructions = new Mono.Reflection.Instruction[0];
+        }
+
+        // We devirtualize calls using the 'constrained'
+        // instruction hint, which is the instruction before the call
+        // instruction.
+        //
+        // That trick only works in the context of 'top' being a generic
+        // function (or a member function in a generic type), and
+        // 'calledMethod' is being called on the generic type. In that
+        // specific case, the CIL requires a 'constraint' instruction to be
+        // emitted as a prefix to the 'callvirt' instruction. In other cases,
+        // we don't get the prefix.
+        //
+        // We could get better devirtualization by interpreting the
+        // instruction stream, but that would be much harder!
+        //
+        System.Type constraintType = null;
+        foreach (var instruction in instructions) {
+            // Is this a constraint instruction? If so, store it.
+            if (instruction.OpCode == System.Reflection.Emit.OpCodes.Constrained) {
+                constraintType = instruction.Operand as System.Type;
+                continue;
+            }
+
+            // Otherwise it's maybe a call?
+            MethodBase calledMethod = instruction.Operand as MethodBase;
+            if (calledMethod == null) { continue; }
+
+            // Devirtualize the function if we can.
+            if (constraintType != null && calledMethod.DeclaringType != constraintType) {
+                var parameters = calledMethod.GetParameters();
+                var types = new System.Type[parameters.Length];
+                for(int i = 0, n = parameters.Length; i < n; ++i) {
+                    types[i] = parameters[i].ParameterType;
+                }
+                var specificMethod = constraintType.GetMethod(calledMethod.Name, types);
+                if (specificMethod != null) {
+                    calledMethod = specificMethod;
+                }
+            }
+
+            // We called something. Push it on the search stack, and
+            // clear the constraint since we've used it up.
+            calls.Add(calledMethod);
+            constraintType = null;
+        }
+
+        // Also get the calls invoked through reflection, if any.
+        List<MethodBase> reflectionCalls;
+        s_reflectionCalls.TryGetValue(method.MethodHandle, out reflectionCalls);
+        if (reflectionCalls != null) { calls.AddRange(reflectionCalls); }
+
+        s_directCalls.Add(method.MethodHandle, calls);
+        return calls;
+    }
+
+    /// <summary>
+    /// Dig through the instructions for 'method' and see which methods it
     /// calls, and what methods those methods call in turn recursively.
     ///
     /// This is cached, so the first call for any given function will be
     /// expensive but subsequent ones will be cheap.
-    ///
-    /// This is very weak analysis: we do zero devirtualization, dead code
-    /// elimination, or constant propagation, or anything.
     /// </summary>
     public static List<MethodBase> GetCalls(MethodBase method)
     {
-        if (s_calls.ContainsKey(method.MethodHandle)) {
-            return s_calls[method.MethodHandle];
+        // See if we've cached this already.
+        List<MethodBase> calls;
+        if (s_calls.TryGetValue(method.MethodHandle, out calls)) {
+            return calls;
         }
+        calls = new List<MethodBase>();
 
         // Look at the current method and in DFS, find all the methods it calls.
         var stack = new List<MethodBase>();
-        var calls = new List<MethodBase>();
         var visited = new HashSet<System.RuntimeMethodHandle>();
         stack.Add(method);
         while(stack.Count > 0) {
             var top = stack[stack.Count - 1];
             stack.RemoveAt(stack.Count - 1);
 
-            if (visited.Contains(top.MethodHandle)) {
+            if (!visited.Add(top.MethodHandle)) {
                 continue;
             }
-            visited.Add(top.MethodHandle);
             calls.Add(top);
 
-            // If we have already seen this method, we can copy all its calls in and stop
-            // our search here.
+            // If we have already seen this method, we can copy all its calls
+            // in and stop this branch of our search here.
             if (s_calls.ContainsKey(top.MethodHandle)) {
                 foreach(var calledMethod in s_calls[top.MethodHandle]) {
                     visited.Add(calledMethod.MethodHandle);
@@ -81,68 +167,13 @@ static class CoverageTester
                 continue;
             }
 
-            IEnumerable<Mono.Reflection.Instruction> instructions;
-            try {
-                instructions = Mono.Reflection.Disassembler.GetInstructions(top);
-            } catch (System.ArgumentException) {
-                // ignore the method having no body
-                continue;
-            }
-
-            // We devirtualize calls using the 'constrained'
-            // instruction hint, which is the instruction before the call
-            // instruction.
-            //
-            // That trick only works in the context of 'top' being a generic
-            // function (or a member function in a generic type), and
-            // 'calledMethod' is being called on the generic type. In that
-            // specific case, the CIL requires a 'constraint' instruction to be
-            // emitted as a prefix to the 'callvirt' instruction. In other cases,
-            // we don't get the prefix.
-            //
-            // We could get better devirtualization by interpreting the
-            // instruction stream, but that would be much harder!
-            //
-            System.Type constraintType = null;
-            foreach (var instruction in instructions) {
-                // Is this a constraint instruction? If so, store it.
-                if (instruction.OpCode == System.Reflection.Emit.OpCodes.Constrained) {
-                    constraintType = instruction.Operand as System.Type;
-                    continue;
-                }
-
-                // Otherwise it's maybe a call?
-                MethodBase calledMethod = instruction.Operand as MethodBase;
-                if (calledMethod == null) { continue; }
-
-                // Devirtualize the function if we can.
-                if (constraintType != null && calledMethod.DeclaringType != constraintType) {
-                    var parameters = calledMethod.GetParameters();
-                    var types = new System.Type[parameters.Length];
-                    for(int i = 0, n = parameters.Length; i < n; ++i) {
-                        types[i] = parameters[i].ParameterType;
-                    }
-                    var specificMethod = constraintType.GetMethod(calledMethod.Name, types);
-                    if (specificMethod != null) {
-                        calledMethod = specificMethod;
-                    }
-                }
-
-                // We called something. Push it on the search stack, and
-                // clear the constraint since we've used it up.
-                stack.Add(calledMethod);
-                constraintType = null;
-            }
-
-            // Also add in the calls that have been registered to be made.
-            List<MethodBase> reflectionCalls;
-            if (s_reflectionCalls.TryGetValue(top.MethodHandle, out reflectionCalls)) {
-                stack.AddRange(reflectionCalls);
-            }
+            // Otherwise we get all the direct calls it makes, and add them to
+            // the stack for recursive processing.
+            stack.AddRange(GetDirectCalls(top));
         }
 
         // Store the result and return it.
-        s_calls[method.MethodHandle] = calls;
+        s_calls.Add(method.MethodHandle, calls);
         return calls;
     }
 
@@ -152,6 +183,7 @@ static class CoverageTester
     public static void ClearCache()
     {
         s_calls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
+        s_directCalls = new Dictionary<System.RuntimeMethodHandle, List<MethodBase>>();
     }
 
     /// <summary>
@@ -248,9 +280,15 @@ static class CoverageTester
     {
         PreloadCache();
 
+        // MethodsToCover and RootMethods may have duplicates;
+        // use 'unique' to avoid doing the work twice.
+        var unique = new HashSet<System.RuntimeMethodHandle>();
+
         // Collect up the handles we called.
         var calledMethods = new HashSet<System.RuntimeMethodHandle>();
+        unique.Clear();
         foreach(var rootMethod in RootMethods) {
+            if (!unique.Add(rootMethod.MethodHandle)) { continue; }
             foreach(var called in GetCalls(rootMethod)) {
                 calledMethods.Add(called.MethodHandle);
             }
@@ -258,7 +296,10 @@ static class CoverageTester
 
         out_MissedMethods = new List<MethodBase>();
         out_HitMethods = new List<MethodBase>();
+        unique.Clear();
         foreach(var methodToCover in MethodsToCover) {
+            if (!unique.Add(methodToCover.MethodHandle)) { continue; }
+
             // Did we call the method?
             if (calledMethods.Contains(methodToCover.MethodHandle)) {
                 out_HitMethods.Add(methodToCover);
@@ -391,19 +432,53 @@ static class CoverageTester
         return builder.ToString();
     }
 
+    static string[] GetUniqueSortedSignatures(IEnumerable<MethodBase> Methods)
+    {
+        var unique = new HashSet<System.RuntimeMethodHandle>();
+
+        // Eliminate duplicates
+        var methods = new List<MethodBase>();
+        foreach(var method in Methods) {
+            if (!unique.Add(method.MethodHandle)) { continue; }
+            methods.Add(method);
+        }
+        unique.Clear();
+
+        // Sort first by declaring type name, then by method name, then by signature
+        methods.Sort( (MethodBase a, MethodBase b) => {
+            var aname = a.DeclaringType == null ? "" : a.DeclaringType.Name;
+            var bname = b.DeclaringType == null ? "" : b.DeclaringType.Name;
+            var namecompare = aname.CompareTo(bname);
+            if (namecompare != 0) { return namecompare; }
+
+            aname = a.Name;
+            bname = b.Name;
+            namecompare = aname.CompareTo(bname);
+            if (namecompare != 0) { return namecompare; }
+
+            aname = GetMethodSignature(a);
+            bname = GetMethodSignature(b);
+            namecompare = aname.CompareTo(bname);
+            if (namecompare != 0) { return namecompare; }
+
+            return 0;
+        });
+
+        // Convert to an array of string
+        var signatures = new string[methods.Count];
+        for(int i = 0, n = methods.Count; i < n; ++i) {
+            signatures[i] = GetMethodSignature(methods[i]);
+        }
+        return signatures;
+    }
+
     public static string MakeCoverageMessage(
             IEnumerable<MethodBase> HitMethods,
             IEnumerable<MethodBase> MissedMethods)
     {
-        var missed = new List<string>();
-        var hit = new List<string>();
-        foreach(var h in HitMethods) { hit.Add(GetMethodSignature(h)); }
-        foreach(var m in MissedMethods) { missed.Add(GetMethodSignature(m)); }
-        missed.Sort();
-        hit.Sort();
         return string.Format("Failed to call:\n\t{0}\nSucceeded to call:\n\t{1}",
-                string.Join("\n\t", missed.ToArray()),
-                string.Join("\n\t", hit.ToArray()));
+                string.Join("\n\t", GetUniqueSortedSignatures(MissedMethods)),
+                string.Join("\n\t", GetUniqueSortedSignatures(HitMethods)));
     }
 }
 #endif
