@@ -50,8 +50,23 @@ namespace UnitTests
         public void TestDocumentInfo ()
         {
             using (FbxDocumentInfo docInfo = CreateObject()) {
-
                 CheckDocumentInfo (InitDocumentInfo (docInfo, this.dataValues), this.dataValues);
+
+                TestGetter(docInfo.LastSavedUrl);
+                TestGetter(docInfo.Url);
+                TestGetter(docInfo.Original);
+                TestGetter(docInfo.Original_ApplicationVendor);
+                TestGetter(docInfo.Original_ApplicationName);
+                TestGetter(docInfo.Original_ApplicationVersion);
+                TestGetter(docInfo.Original_FileName);
+                TestGetter(docInfo.LastSaved);
+                TestGetter(docInfo.LastSaved_ApplicationVendor);
+                TestGetter(docInfo.LastSaved_ApplicationName);
+                TestGetter(docInfo.LastSaved_ApplicationVersion);
+                TestGetter(docInfo.EmbeddedUrl);
+
+                docInfo.Clear();
+                Assert.AreEqual(docInfo.mTitle, "");
             }
         }
     }
