@@ -45,7 +45,7 @@ namespace FbxSdk.Examples
             const string FileBaseName = "example_static_mesh_with_materials_and_textures";
 
             /// <summary>
-            /// Create instance of example  
+            /// Create instance of example
             /// </summary>
             public static FbxExporter06 Create () { return new FbxExporter06 (); }
 
@@ -53,6 +53,11 @@ namespace FbxSdk.Examples
             /// Map Unity material name to FBX material object
             /// </summary>
             Dictionary<string, FbxSurfaceMaterial> MaterialMap = new Dictionary<string, FbxSurfaceMaterial>();
+
+            /// <summary>
+            /// Map texture filename name to FBX texture object
+            /// </summary>
+            Dictionary<string, FbxTexture> TextureMap = new Dictionary<string, FbxTexture>();
 
             /// <summary>
             /// Export the mesh's UVs using layer 0.
@@ -100,6 +105,7 @@ namespace FbxSdk.Examples
                 if (!unityMaterial) { return; }
 
                 // Get the texture on this property, if any.
+                if (!unityMaterial.HasProperty(unityPropName)) { return; }
                 var unityTexture = unityMaterial.GetTexture (unityPropName);
                 if (!unityTexture) { return; }
 
@@ -111,12 +117,15 @@ namespace FbxSdk.Examples
                 var fbxMaterialProperty = fbxMaterial.FindProperty (fbxPropName);
                 if (fbxMaterialProperty == null || !fbxMaterialProperty.IsValid()) { return; }
 
-                // Create an fbx texture and link it up to the fbx material.
-                var fbxTexture = FbxFileTexture.Create (fbxMaterial, fbxPropName + "_Texture");
-                fbxTexture.SetFileName (textureSourceFullPath);
-                fbxTexture.SetTextureUse (FbxTexture.ETextureUse.eStandard);
-                fbxTexture.SetMappingType (FbxTexture.EMappingType.eUV);
-                fbxTexture.ConnectDstProperty (fbxMaterialProperty);
+                // Find or create an fbx texture and link it up to the fbx material.
+                if (!TextureMap.ContainsKey(textureSourceFullPath)) {
+                    var fbxTexture = FbxFileTexture.Create (fbxMaterial, fbxPropName + "_Texture");
+                    fbxTexture.SetFileName (textureSourceFullPath);
+                    fbxTexture.SetTextureUse (FbxTexture.ETextureUse.eStandard);
+                    fbxTexture.SetMappingType (FbxTexture.EMappingType.eUV);
+                    TextureMap.Add(textureSourceFullPath, fbxTexture);
+                }
+                TextureMap[textureSourceFullPath].ConnectDstProperty (fbxMaterialProperty);
             }
 
             /// <summary>
@@ -159,10 +168,12 @@ namespace FbxSdk.Examples
                 }
 
                 // Export the textures from Unity standard materials to FBX.
-                ExportTexture (unityMaterial,  "_MainTex", fbxMaterial, FbxSurfaceMaterial.sDiffuse);
-                ExportTexture (unityMaterial,  "_SpecGlosMap", fbxMaterial,  FbxSurfaceMaterial.sSpecular);
-                ExportTexture (unityMaterial,  "_EmissionMap", fbxMaterial,  "emissive");
+                ExportTexture (unityMaterial, "_MainTex", fbxMaterial, FbxSurfaceMaterial.sDiffuse);
+                ExportTexture (unityMaterial, "_EmissionMap", fbxMaterial, "emissive");
                 ExportTexture (unityMaterial, "_BumpMap", fbxMaterial, FbxSurfaceMaterial.sNormalMap);
+                if (specular) {
+                    ExportTexture (unityMaterial, "_SpecGlosMap", fbxMaterial, FbxSurfaceMaterial.sSpecular);
+                }
 
                 MaterialMap.Add(materialName, fbxMaterial);
                 return fbxMaterial;
@@ -507,21 +518,19 @@ namespace FbxSdk.Examples
             /// </summary>
             private MeshInfo GetMeshInfo (GameObject gameObject, bool requireRenderer = true)
             {
-                if (requireRenderer) {
-                    // Verify that we are rendering. Otherwise, don't export.
-                    var renderer = gameObject.gameObject.GetComponent<MeshRenderer> ();
-                    if (!renderer || !renderer.enabled) {
-                        return new MeshInfo();
-                    }
-                }
-
+                // Two possibilities: it's a skinned mesh, or we have a mesh filter.
+                Mesh mesh;
                 var meshFilter = gameObject.GetComponent<MeshFilter> ();
-                if (!meshFilter) {
-                    return new MeshInfo();
-                }
-                var mesh = meshFilter.sharedMesh;
-                if (!mesh) {
-                    return new MeshInfo();
+                if (meshFilter) {
+                    mesh = meshFilter.sharedMesh;
+                } else {
+                    var renderer = gameObject.GetComponent<SkinnedMeshRenderer>();
+                    if (!renderer) {
+                        mesh = null;
+                    } else {
+                        mesh = new Mesh();
+                        renderer.BakeMesh(mesh);
+                    }
                 }
 
                 return new MeshInfo (gameObject, mesh);
