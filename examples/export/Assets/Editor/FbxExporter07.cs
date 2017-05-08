@@ -93,7 +93,7 @@ namespace FbxSdk.Examples
                     ExportSkin (meshInfo, fbxScene, fbxMesh, fbxMeshNode, boneNodes);
 
                     // add bind pose
-                    ExportBindPose (fbxNode, fbxScene, boneNodes);
+                    ExportBindPose (fbxNode, fbxMeshNode, fbxScene, boneNodes);
 
                     fbxParentNode.AddChild (fbxNode);
                     NumNodes++;
@@ -266,7 +266,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export bind pose of mesh to skeleton
             /// </summary>
-            protected void ExportBindPose (FbxNode fbxRootNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
+            protected void ExportBindPose (FbxNode fbxRootNode, FbxNode meshNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
             {
                 FbxPose fbxPose = FbxPose.Create (fbxScene, MakeObjectName(fbxRootNode.GetName()));
 
@@ -290,6 +290,10 @@ namespace FbxSdk.Examples
 
                     fbxPose.Add (fbxNode, fbxBindMatrix);
                 }
+
+                FbxMatrix bindMatrix = new FbxMatrix(meshNode.EvaluateGlobalTransform ());
+
+                fbxPose.Add (meshNode, bindMatrix);
 
                 // add the pose to the scene
                 fbxScene.AddPose (fbxPose);
