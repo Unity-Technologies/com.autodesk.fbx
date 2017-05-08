@@ -11,15 +11,23 @@ using FbxSdk;
 namespace UnitTests
 {
 
-    public class FbxIOBaseTest : Base<FbxIOBase>
+    public class FbxIOBaseTest<T> : Base<T> where T: FbxIOBase
     {
         [Test]
-        public void TestBasics()
+        public virtual void TestBasics()
         {
             using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx"); }
             using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1); }
             using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1, FbxIOSettings.Create(Manager, "")); }
             using (var iobase = CreateObject()) { iobase.Initialize("/no/such/file.fbx", -1, null); }
+
+            using (var iobase = CreateObject()) {
+                Assert.IsFalse(iobase.GetStatus().Error());
+                iobase.Initialize("/no/such/file.fbx");
+                Assert.AreEqual("/no/such/file.fbx", iobase.GetFileName());
+            }
         }
     }
+
+    public class FbxIOBaseTestClass : FbxIOBaseTest<FbxIOBase> { }
 }

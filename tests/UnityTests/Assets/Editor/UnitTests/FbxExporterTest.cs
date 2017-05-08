@@ -1,7 +1,7 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
@@ -10,7 +10,7 @@ using System.IO;
 
 namespace UnitTests
 {
-    public class FbxExporterTest : Base<FbxExporter>
+    public class FbxExporterTest : FbxIOBaseTest<FbxExporter>
     {
         FbxExporter m_exporter;
 
@@ -81,16 +81,17 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestBasics()
+        public override void TestBasics()
         {
-            // Call each function that doesn't write a file, just to see whether it crashes.
-            using (var exporter = CreateObject()) { exporter.Initialize("foo.fbx"); }
-            using (var exporter = CreateObject()) { exporter.Initialize("foo.fbx", -1); }
-            using (var exporter = CreateObject()) { exporter.Initialize("foo.fbx", -1, null); }
+            base.TestBasics();
 
+            // Call each function that doesn't write a file, just to see whether it crashes.
             m_exporter.Initialize("foo.fbx");
             m_exporter.SetFileExportVersion("FBX201400");
             m_exporter.GetCurrentWritableVersions();
+            m_exporter.SetProgressCallback(null);
+            m_exporter.SetProgressCallback((float a, string b) => true);
+            m_exporter.SetProgressCallback(null);
         }
 
         [Test]
@@ -104,6 +105,8 @@ namespace UnitTests
             bool exportStatus = m_exporter.Initialize (filename, -1, Manager.GetIOSettings());
 
             Assert.IsTrue (exportStatus);
+
+            m_exporter.SetProgressCallback((float a, string b) => true);
 
             bool status = m_exporter.Export (emptyDoc);
 

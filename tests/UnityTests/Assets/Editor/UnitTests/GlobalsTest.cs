@@ -36,6 +36,13 @@ namespace UnitTests
                 if (t.Namespace != "FbxSdk") {
                     continue;
                 }
+
+                /* don't take in delegates; we can't properly track coverage,
+                   so just avoid the false negative */
+                if (t.IsSubclassOf(typeof(System.Delegate))) {
+                    continue;
+                }
+
                 /* take in the PINVOKE class but skip its helper classes */
                 bool skip = false;
                 for(var u = t.DeclaringType ; u != null; u = u.DeclaringType) {
@@ -90,6 +97,8 @@ namespace UnitTests
             }
 #endif
         }
+
+        bool ProgressCallback(float a, string b) { return true; }
 
         [Test]
         public void BasicTests ()

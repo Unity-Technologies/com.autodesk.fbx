@@ -6,20 +6,25 @@
 // ***********************************************************************
 
 %rename("%s") FbxExporter;
-%rename("%s") FbxExporter::Export(FbxDocument *pDocument);
 %rename("%s") FbxExporter::SetFileExportVersion(FbxString pVersion);
+/*
+ * Allow exporting in blocking mode.
+ * TODO: support non-blocking if there's demand for it.
+ *
+ * Non-blocking mode opens up the possibility of crashes from multi-threaded
+ * use of the same FbxManager, or from funny garbage collection business.
+ */
+%rename("%s") FbxExporter::Export(FbxDocument*);
 
 /* Explicitly ignore it or else it pops up despite -fvirtual and default ignore. */
 %ignore FbxExporter::Initialize(const char* pFileName, int pFileFormat=-1, FbxIOSettings * pIOSettings=NULL);
 
-/* TODO: implement this! */
-%ignore FbxExporter::SetProgressCallback;
-
-%apply bool & OUTPUT { bool & pExportResult };
-
 /* Described as obsolete but not deprecated. */
 %ignore FbxExporter::SetResamplingRate;
 %ignore FbxExporter::SetDefaultRenderResolution;
+
+/* SetProgressCallback is implemented in fbxprogress.i */
+%define_fbxprogress(FbxExporter);
 
 /* GetCurrentWritableVersions returns a null-terminated list of strings. That
  * takes some handling. */
@@ -48,6 +53,7 @@
   }
   %}
 }
+
 
 #ifndef SWIG_GENERATING_TYPEDEFS
 // TODO: should we be more specific, test each function in turn for whether it can
