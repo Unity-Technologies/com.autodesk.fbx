@@ -412,7 +412,7 @@ namespace FbxSdk.Examples
 
                     // The Unity axis system has Y up, Z forward, X to the right:
                     //var axisSystem = new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded);
-                    //fbxSettings.SetAxisSystem(axisSystem);
+                    fbxSettings.SetAxisSystem (FbxAxisSystem.MayaYUp);
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
