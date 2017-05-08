@@ -33,6 +33,10 @@
 %rename("%s") FbxNode::EvaluateGlobalTransform;
 %rename("%s") FbxNode::EPivotSet;
 %rename("%s") FbxNode::GetMesh;
+%rename("%s") FbxNode::SetPreRotation;
+%rename("%s") FbxNode::EPivotState;
+%rename("%s") FbxNode::SetPivotState;
+%rename("%s") FbxNode::SetRotationActive;
 #endif
 
 /* The properties need to be marked immutable. */
