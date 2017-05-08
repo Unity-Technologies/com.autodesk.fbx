@@ -532,7 +532,9 @@ namespace FbxSdk.Examples
                         renderer.BakeMesh(mesh);
                     }
                 }
-
+                if (!mesh) {
+                    return new MeshInfo();
+                }
                 return new MeshInfo (gameObject, mesh);
             }
 
