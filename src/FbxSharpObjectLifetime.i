@@ -80,6 +80,9 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
  */
 %define weakpointerhandle(THETYPE)
 
+/* Ignore the class Id. */
+%ignore THETYPE::ClassId;
+
 /* When returning an object, wrap it up in a handle */
 %typemap(out) THETYPE *, THETYPE & %{
   $result = WeakPointerHandle::GetHandle($1);
