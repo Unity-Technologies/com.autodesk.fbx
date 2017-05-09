@@ -20,6 +20,8 @@ namespace UnitTests
             var skeleton = CreateObject ("skeleton");
             skeleton.SetSkeletonType(FbxSkeleton.EType.eLimb);
             Assert.AreEqual (FbxSkeleton.EType.eLimb, skeleton.GetSkeletonType ());
+
+            TestGetter (skeleton.Size);
         }
     }
 }
