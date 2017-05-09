@@ -84,7 +84,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// collected list of cameras to export
             /// </summary>
-            List<Camera> Cameras;
+            List<Camera> Cameras = new List<Camera>();
 
             /// <summary>
             /// Create instance of example
@@ -171,7 +171,10 @@ namespace FbxSdk.Examples
 
                 if (unityCamera == null)
                     return;
-                
+
+                // add to the list of cameras
+                Cameras.Add(unityCamera);
+
                 // create an node and add it as a child of parent
                 FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
                 NumNodes++;
