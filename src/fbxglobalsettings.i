@@ -5,15 +5,15 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-#ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
-%rename("%s") FbxGlobalSettings;
+%rename("%s", %$isclass) FbxGlobalSettings;
 %rename("%s") FbxGlobalSettings::Create;
 %rename("%s") FbxGlobalSettings::Destroy;
 %rename("%s") FbxGlobalSettings::SetAxisSystem;
 %rename("%s") FbxGlobalSettings::GetAxisSystem;
 %rename("%s") FbxGlobalSettings::SetSystemUnit;
 %rename("%s") FbxGlobalSettings::GetSystemUnit;
-#endif
+%rename("%s") FbxGlobalSettings::SetDefaultCamera;
+%rename("%s") FbxGlobalSettings::GetDefaultCamera;
 
 %include "fbxsdk/fileio/fbxglobalsettings.h"

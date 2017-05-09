@@ -68,14 +68,12 @@ namespace FbxSdk.Examples
                 { "field of view",          "FocalLength" },
                 { "near clip plane",        "NearPlane" },
                 { "far clip plane",         "FarPlane" },
-#if UNI_16421
-                { "m_LocalPosition.x",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
-                { "m_LocalPosition.y",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
-                { "m_LocalPosition.z",      fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
-                { "localEulerAnglesRaw.x",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
-                { "localEulerAnglesRaw.y",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
-                { "localEulerAnglesRaw.z",  fbxsdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
-#endif
+                { "m_LocalPosition.x",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "m_LocalPosition.y",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "m_LocalPosition.z",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+                { "localEulerAnglesRaw.x",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "localEulerAnglesRaw.y",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "localEulerAnglesRaw.z",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
             };
 
             /// <summary>
@@ -98,7 +96,6 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportCamera (Camera unityCamera, FbxScene fbxScene, FbxNode fbxNode)
             {
-#if UNI_16810
                 FbxCamera fbxCamera = FbxCamera.Create (fbxScene.GetFbxManager(), MakeObjectName(unityCamera.name));
 
                 bool perspective = unityCamera.orthographic!=true;
@@ -128,7 +125,7 @@ namespace FbxSdk.Examples
                 fbxCamera.SetFarPlane (unityCamera.farClipPlane);
 
                 fbxNode.SetNodeAttribute (fbxCamera);
-#endif
+
                 // make the last camera exported the default camera
                 DefaultCamera = fbxNode.GetName ();
             }
@@ -148,12 +145,10 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void SetDefaultCamera (FbxScene fbxScene)
             {
-#if UNI_16810
                 if (DefaultCamera == "")
                     DefaultCamera = FbxSdk.Globals.FBXSDK_CAMERA_PERSPECTIVE;
 
-                fbxScene.GetGlobalSettings ().SetDefaultCamera (this.DefaultCamera);
-#endif
+                fbxScene.GetGlobalSettings ().SetDefaultCamera (DefaultCamera);
             }
 
             /// <summary>
