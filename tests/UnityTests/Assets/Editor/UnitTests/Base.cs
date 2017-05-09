@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace UnitTests
 {
-    public abstract class Base<T> where T: FbxSdk.FbxObject
+    public abstract class Base<T> : TestBase<T> where T: FbxSdk.FbxObject
     {
         // T.Create(FbxManager, string)
         static System.Reflection.MethodInfo s_createFromMgrAndName;
@@ -48,24 +48,6 @@ namespace UnitTests
         public T CreateObject (string name = "") {
             return CreateObject(Manager, name);
         }
-
-        /*
-         * Helper to test a property getter without a compiler warning.
-         * Use this like:
-         *      TestGetter(tex.Alpha);
-         *
-         * That will call get_Alpha under the hood, verifying that the getter
-         * actually works. You can't just write
-         *      tex.Alpha;
-         * because then you get a warning or error that your statement is
-         * invalid.
-         */
-        public static void TestGetter<U>(U item) { /* we tested the getter by passing the argument! */ }
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public virtual void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
-#endif
 
         /* Test all the equality functions we can find. */
         [Test]
