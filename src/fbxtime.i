@@ -12,6 +12,12 @@
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxTime::FbxTime;
 %rename("%s") FbxTime::~FbxTime;
+%rename("%s") FbxTime::EMode;
+%rename("%s") FbxTime::SetGlobalTimeMode;
+%rename("%s") FbxTime::GetGlobalTimeMode;
+%rename("%s") FbxTime::SetSecondDouble;
+%rename("%s") FbxTime::GetSecondDouble;
+%rename("%s") FbxTime::GetFrameRate;
 
 // Unignore class
 %rename("%s", %$isclass) FbxTimeSpan;

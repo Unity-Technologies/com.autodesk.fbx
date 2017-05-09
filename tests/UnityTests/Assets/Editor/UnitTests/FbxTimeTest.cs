@@ -29,6 +29,25 @@ namespace UnitTests
             // test dispose
             DisposeTester.TestDispose(new FbxTime());
             using (new FbxTime (1)) {}
+
+            // test SetSecondDouble()
+            FbxTime time = new FbxTime();
+            time.SetSecondDouble (1);
+            Assert.AreEqual (1, time.GetSecondDouble ());
+            // test that negative value doesn't crash
+            time.SetSecondDouble (-1);
+
+            // test GetFrameRate()
+            double frameRate = FbxTime.GetFrameRate(FbxTime.EMode.eFrames30);
+            Assert.AreEqual (30, frameRate);
+            // what does custom do?
+            frameRate = FbxTime.GetFrameRate (FbxTime.EMode.eCustom);
+
+            // test SetGlobalTimeMode()
+            FbxTime.SetGlobalTimeMode(FbxTime.EMode.eFilmFullFrame);
+            Assert.AreEqual (FbxTime.EMode.eFilmFullFrame, FbxTime.GetGlobalTimeMode ());
+            // test with custom framerate
+            FbxTime.SetGlobalTimeMode(FbxTime.EMode.eCustom, 45);
         }
     }
 

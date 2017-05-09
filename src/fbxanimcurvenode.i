@@ -10,5 +10,6 @@
 
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
+%rename("%s") FBXSDK_CURVENODE_COMPONENT_Z;
 
 %include "fbxsdk/scene/animation/fbxanimcurvenode.h"
