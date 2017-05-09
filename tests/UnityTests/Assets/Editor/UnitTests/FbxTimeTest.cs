@@ -11,71 +11,131 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxTimeTest
+    public class FbxTimeTest : TestBase<FbxTime>
     {
-
-        #if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxTime), this.GetType()); }
-        #endif
-
         [Test]
         public void TestBasics ()
         {
+            // try the static functions
+            var mode = FbxTime.GetGlobalTimeMode();
+            FbxTime.SetGlobalTimeMode(FbxTime.EMode.ePAL);
+            Assert.AreEqual(FbxTime.EMode.ePAL, FbxTime.GetGlobalTimeMode());
+            FbxTime.SetGlobalTimeMode(mode);
+
+            var protocol = FbxTime.GetGlobalTimeProtocol();
+            FbxTime.SetGlobalTimeProtocol(FbxTime.EProtocol.eSMPTE);
+            Assert.AreEqual(FbxTime.EProtocol.eSMPTE, FbxTime.GetGlobalTimeProtocol());
+            FbxTime.SetGlobalTimeProtocol(protocol);
+
+            Assert.AreEqual(24, FbxTime.GetFrameRate(FbxTime.EMode.eFrames24));
+            Assert.AreEqual(FbxTime.EMode.eFrames24, FbxTime.ConvertFrameRateToTimeMode(24));
+            Assert.AreEqual(FbxTime.EMode.eFrames24, FbxTime.ConvertFrameRateToTimeMode(24.01, 0.1));
+            Assert.AreEqual(FbxTime.EMode.eDefaultMode, FbxTime.ConvertFrameRateToTimeMode(24.1, 0.01));
+
+            TestGetter(FbxTime.GetOneFrameValue());
+            TestGetter(FbxTime.GetOneFrameValue(FbxTime.EMode.ePAL));
+
+            Assert.IsFalse(FbxTime.IsDropFrame());
+            Assert.IsTrue(FbxTime.IsDropFrame(FbxTime.EMode.eNTSCDropFrame));
+
             // just make sure it doesn't crash
             new FbxTime();
-            new FbxTime (1);
 
             // test dispose
             DisposeTester.TestDispose(new FbxTime());
-            using (new FbxTime (1)) {}
+            using (new FbxTime ()) {}
 
-            // test SetSecondDouble()
-            FbxTime time = new FbxTime();
-            time.SetSecondDouble (1);
-            Assert.AreEqual (1, time.GetSecondDouble ());
-            // test that negative value doesn't crash
-            time.SetSecondDouble (-1);
+            // try the extension constructors
+            Assert.AreEqual(5, FbxTime.FromRaw(5).GetRaw());
+            Assert.AreEqual(5, FbxTime.FromMilliSeconds(5000).GetSecondDouble());
+            Assert.AreEqual(5, FbxTime.FromSecondDouble(5).GetSecondDouble());
+            Assert.AreEqual(126210.02, FbxTime.FromTime(pSecond:7, pHour:1, pMinute:10, pResidual:2).GetFrameCountPrecise());
+            Assert.AreEqual(5, FbxTime.FromFrame(5).GetFrameCountPrecise());
+            Assert.AreEqual(5.125, FbxTime.FromFramePrecise(5.125).GetFrameCountPrecise());
+            Assert.AreEqual(5, FbxTime.FromRaw(5).GetRaw());
+            Assert.AreEqual(126211.2, FbxTime.FromFrame(105176, FbxTime.EMode.ePAL).GetFrameCountPrecise());
+            Assert.AreEqual(126211.8, FbxTime.FromFramePrecise(105176.5, FbxTime.EMode.ePAL).GetFrameCountPrecise());
+            Assert.AreEqual(126211.8, FbxTime.FromTimeString("105176.5", FbxTime.EMode.ePAL).GetFrameCountPrecise());
 
-            // test GetFrameRate()
-            double frameRate = FbxTime.GetFrameRate(FbxTime.EMode.eFrames30);
-            Assert.AreEqual (30, frameRate);
-            // what does custom do?
-            frameRate = FbxTime.GetFrameRate (FbxTime.EMode.eCustom);
+            // try breaking a time down
+            var t = FbxTime.FromTime(pSecond:7, pHour:1, pMinute:10, pField:4, pResidual:2);
+            Assert.AreEqual(1, t.GetHourCount());
+            Assert.AreEqual(70, t.GetMinuteCount());
+            Assert.AreEqual(4207, t.GetSecondCount());
+            Assert.AreEqual(4207067, t.GetMilliSeconds());
+            Assert.AreEqual(126212, t.GetFrameCount());
+            Assert.AreEqual(105176, t.GetFrameCount(FbxTime.EMode.ePAL));
+            Assert.AreEqual(252424.04, t.GetFrameCountPrecise(FbxTime.EMode.eFrames60));
+            Assert.AreEqual(252424, t.GetFieldCount());
+            Assert.AreEqual(210353, t.GetFieldCount(FbxTime.EMode.ePAL));
+            Assert.AreEqual(2, t.GetResidual());
+            Assert.AreEqual(68, t.GetResidual(FbxTime.EMode.ePAL));
+            Assert.AreEqual(':', t.GetFrameSeparator());
+            Assert.AreEqual(':', t.GetFrameSeparator(FbxTime.EMode.ePAL));
 
-            // test SetGlobalTimeMode()
-            FbxTime.SetGlobalTimeMode(FbxTime.EMode.eFilmFullFrame);
-            Assert.AreEqual (FbxTime.EMode.eFilmFullFrame, FbxTime.GetGlobalTimeMode ());
-            // test with custom framerate
-            FbxTime.SetGlobalTimeMode(FbxTime.EMode.eCustom, 45);
+            int h, m, s, frame, field, residual;
+            t.GetTime(out h, out m, out s, out frame, out field, out residual);
+            Assert.AreEqual(1, h);
+            Assert.AreEqual(10, m);
+            Assert.AreEqual(2, frame);
+            Assert.AreEqual(0, field);
+            Assert.AreEqual(2, residual);
+
+            t.GetTime(out h, out m, out s, out frame, out field, out residual, FbxTime.EMode.ePAL);
+            Assert.AreEqual(1, h);
+            Assert.AreEqual(10, m);
+            Assert.AreEqual(1, frame);
+            Assert.AreEqual(1, field);
+            Assert.AreEqual(68, residual);
+
+            Assert.AreEqual("126212*", t.GetTimeString());
+            Assert.AreEqual("126212*", t.GetTimeString(FbxTime.EElement.eSeconds));
+            Assert.AreEqual("001:10:07", t.GetTimeString(pEnd: FbxTime.EElement.eSeconds, pTimeFormat: FbxTime.EProtocol.eSMPTE));
+
+            Assert.AreEqual("126212", t.GetFramedTime().GetTimeString());
+            Assert.AreEqual("126212", t.GetFramedTime(false).GetTimeString());
         }
     }
 
-    public class FbxTimeSpanTest
+    public class FbxTimeSpanTest : TestBase<FbxTimeSpan>
     {
-        #if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxTimeSpan), this.GetType()); }
-        #endif
-
         [Test]
         public void TestBasics ()
         {
             // just make sure it doesn't crash
             new FbxTimeSpan();
-            new FbxTimeSpan (new FbxTime(1), new FbxTime(2));
+            new FbxTimeSpan (FbxTime.FromFrame(1), FbxTime.FromFrame(2));
 
             // test dispose
             DisposeTester.TestDispose(new FbxTimeSpan());
-            using (new FbxTimeSpan (new FbxTime(1), new FbxTime(2))) { }
+            using (new FbxTimeSpan (FbxTime.FromFrame(1), FbxTime.FromFrame(2))) { }
 
             Assert.That (() => { new FbxTimeSpan(null, null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
-            // test Set
+            // test Set/Get
             FbxTimeSpan timeSpan = new FbxTimeSpan();
-            timeSpan.Set (new FbxTime (2), new FbxTime (3));
+            timeSpan.Set (FbxTime.FromFrame(2), FbxTime.FromFrame(3));
+            Assert.AreEqual(FbxTime.FromFrame(2), timeSpan.GetStart());
+            Assert.AreEqual(FbxTime.FromFrame(3), timeSpan.GetStop());
             Assert.That (() => { timeSpan.Set(null, null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            timeSpan.SetStart(FbxTime.FromFrame(1));
+            Assert.AreEqual(FbxTime.FromFrame(1), timeSpan.GetStart());
+            timeSpan.SetStop(FbxTime.FromFrame(4));
+            Assert.AreEqual(FbxTime.FromFrame(4), timeSpan.GetStop());
 
+            // test other functions
+            Assert.AreEqual(FbxTime.FromFrame(3), timeSpan.GetDuration());
+            Assert.AreEqual(FbxTime.FromFrame(3), timeSpan.GetSignedDuration());
+            Assert.AreEqual(1, timeSpan.GetDirection());
+            Assert.IsTrue(timeSpan.IsInside(FbxTime.FromFrame(2)));
+
+            var timeSpan2 = new FbxTimeSpan(FbxTime.FromFrame(2), FbxTime.FromFrame(10));
+            Assert.AreEqual(new FbxTimeSpan(FbxTime.FromFrame(2), FbxTime.FromFrame(4)), timeSpan.Intersect(timeSpan2));
+
+            timeSpan.UnionAssignment(timeSpan2);
+            Assert.AreEqual(new FbxTimeSpan(FbxTime.FromFrame(1), FbxTime.FromFrame(10)), timeSpan);
+
+            new FbxTimeSpan(FbxTime.FromFrame(0), FbxTime.FromFrame(1)).UnionAssignment(timeSpan2, 1);
         }
     }
 }
