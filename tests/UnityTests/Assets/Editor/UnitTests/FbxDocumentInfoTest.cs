@@ -1,7 +1,7 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
@@ -45,13 +45,62 @@ namespace UnitTests
         	Assert.AreEqual (docInfo.mKeywords, values ["keywords"]);
         	Assert.AreEqual (docInfo.mComment, values ["comment"]);
         }
-        
+
         [Test]
         public void TestDocumentInfo ()
         {
             using (FbxDocumentInfo docInfo = CreateObject()) {
-
                 CheckDocumentInfo (InitDocumentInfo (docInfo, this.dataValues), this.dataValues);
+
+                TestGetter(docInfo.LastSavedUrl);
+                TestGetter(docInfo.Url);
+                TestGetter(docInfo.Original);
+                TestGetter(docInfo.Original_ApplicationVendor);
+                TestGetter(docInfo.Original_ApplicationName);
+                TestGetter(docInfo.Original_ApplicationVersion);
+                TestGetter(docInfo.Original_FileName);
+                TestGetter(docInfo.LastSaved);
+                TestGetter(docInfo.LastSaved_ApplicationVendor);
+                TestGetter(docInfo.LastSaved_ApplicationName);
+                TestGetter(docInfo.LastSaved_ApplicationVersion);
+                TestGetter(docInfo.EmbeddedUrl);
+
+                docInfo.Clear();
+                Assert.AreEqual(docInfo.mTitle, "");
+            }
+        }
+
+        [Test]
+        [Ignore("FbxScene.GetDocumentInfo can return an invalid object and crash.")]
+        public void TestCrashOnGetDocumentInfo()
+        {
+            using (var doc = FbxDocument.Create(Manager, "")) {
+                using (var docInfo = CreateObject()) {
+                    doc.SetDocumentInfo(docInfo);
+                    docInfo.Destroy();
+
+                    // Crash! Normally FBX disconnects when you destroy an
+                    // object, but not so for the link between a document and
+                    // its document info.
+                    doc.GetDocumentInfo().Url.Get();
+                }
+            }
+        }
+
+        [Test]
+        [Ignore("FbxScene.GetSceneInfo can return an invalid object and crash.")]
+        public void TestCrashOnGetSceneInfo()
+        {
+            using (var scene = FbxScene.Create(Manager, "")) {
+                using (var docInfo = CreateObject()) {
+                    scene.SetSceneInfo(docInfo);
+                    docInfo.Destroy();
+
+                    // Crash! Normally FBX disconnects when you destroy an
+                    // object, but not so for the link between the scene and
+                    // its scene info.
+                    scene.GetSceneInfo().Url.Get();
+                }
             }
         }
     }
