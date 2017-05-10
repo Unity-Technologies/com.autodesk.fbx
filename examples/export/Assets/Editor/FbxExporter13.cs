@@ -94,22 +94,22 @@ namespace FbxSdk.Examples
                 if (Verbose)
                     Debug.Log (string.Format ("exporting components {0}", unityGo.name));
                 
-            	// create an node and add it as a child of parent
-            	FbxNode fbxNode = FbxNode.Create (fbxScene, unityGo.name);
-            	NumNodes++;
+                // create an node and add it as a child of parent
+                FbxNode fbxNode = FbxNode.Create (fbxScene, unityGo.name);
+                NumNodes++;
 
                 ExportTransform (unityGo.transform, fbxNode);
                 ExportInstance (unityGo, fbxNode, fbxScene);
                     
-            	fbxNodeParent.AddChild (fbxNode);
+                fbxNodeParent.AddChild (fbxNode);
 
-            	// now  unityGo  through our children and recurse
-            	foreach (Transform childT in unityGo.transform) 
+                // now  unityGo  through our children and recurse
+                foreach (Transform childT in unityGo.transform) 
                 {
-            		ExportComponents (childT.gameObject, fbxScene, fbxNode);
-            	}
+                    ExportComponents (childT.gameObject, fbxScene, fbxNode);
+                }
 
-            	return;
+                return;
             }
 
             /// <summary>
@@ -117,22 +117,22 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportTransform (Transform unityTransform, FbxNode fbxNode)
             {
-            	// get local position of fbxNode (from Unity)
-            	UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
-            	UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
-            	UnityEngine.Vector3 unityScale = unityTransform.localScale;
+                // get local position of fbxNode (from Unity)
+                UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
+                UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
+                UnityEngine.Vector3 unityScale = unityTransform.localScale;
 
-            	// transfer transform data from Unity to Fbx
-            	var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
-            	var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
-            	var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
+                // transfer transform data from Unity to Fbx
+                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
 
-            	// set the local position of fbxNode
-            	fbxNode.LclTranslation.Set (fbxTranslate);
-            	fbxNode.LclRotation.Set (fbxRotate);
-            	fbxNode.LclScaling.Set (fbxScale);
+                // set the local position of fbxNode
+                fbxNode.LclTranslation.Set (fbxTranslate);
+                fbxNode.LclRotation.Set (fbxRotate);
+                fbxNode.LclScaling.Set (fbxScale);
 
-            	return;
+                return;
             }
 
             /// <summary>
@@ -156,8 +156,8 @@ namespace FbxSdk.Examples
             /// 
             public void ExportNormalsEtc (MeshInfo mesh, FbxMesh fbxMesh)
             {
-            	/// Set the Normals on Base Layer
-            	using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, MakeObjectName ("Normals"))) 
+                /// Set the Normals on Base Layer
+                using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, MakeObjectName ("Normals"))) 
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
@@ -175,8 +175,8 @@ namespace FbxSdk.Examples
                                                              mesh.Normals [n] [1], 
                                                              mesh.Normals [n] [2]));
                     }
-              		GetBaseLayer(fbxMesh).SetNormals (fbxLayerElement);
-            	}
+                      GetBaseLayer(fbxMesh).SetNormals (fbxLayerElement);
+                }
 
                 /// Set the binormals on Layer 0. 
                 using (var fbxLayerElement = FbxLayerElementBinormal.Create (fbxMesh, MakeObjectName ("Binormals"))) 
@@ -267,35 +267,35 @@ namespace FbxSdk.Examples
             /// Export an Unity Texture
             /// </summary>
             public void ExportTexture (Material unityMaterial, string unityPropName,
-            	FbxSurfaceMaterial fbxMaterial, string fbxPropName)
+                FbxSurfaceMaterial fbxMaterial, string fbxPropName)
             {
-            	if (!unityMaterial) { return; }
+                if (!unityMaterial) { return; }
 
-            	// Get the texture on this property, if any.
-            	if (!unityMaterial.HasProperty (unityPropName)) { return; }
-            	var unityTexture = unityMaterial.GetTexture (unityPropName);
-            	if (!unityTexture) { return; }
+                // Get the texture on this property, if any.
+                if (!unityMaterial.HasProperty (unityPropName)) { return; }
+                var unityTexture = unityMaterial.GetTexture (unityPropName);
+                if (!unityTexture) { return; }
 
-            	// Find its filename
-            	var textureSourceFullPath = AssetDatabase.GetAssetPath (unityTexture);
-            	if (textureSourceFullPath == "") { return; }
+                // Find its filename
+                var textureSourceFullPath = AssetDatabase.GetAssetPath (unityTexture);
+                if (textureSourceFullPath == "") { return; }
 
                 // get absolute path
                 textureSourceFullPath = Path.GetFullPath (textureSourceFullPath);
 
-            	// Find the corresponding property on the fbx material.
-            	var fbxMaterialProperty = fbxMaterial.FindProperty (fbxPropName);
-            	if (fbxMaterialProperty == null || !fbxMaterialProperty.IsValid ()) { return; }
+                // Find the corresponding property on the fbx material.
+                var fbxMaterialProperty = fbxMaterial.FindProperty (fbxPropName);
+                if (fbxMaterialProperty == null || !fbxMaterialProperty.IsValid ()) { return; }
 
-            	// Find or create an fbx texture and link it up to the fbx material.
-            	if (!TextureMap.ContainsKey (textureSourceFullPath)) {
-            		var fbxTexture = FbxFileTexture.Create (fbxMaterial, fbxPropName + "_Texture");
-            		fbxTexture.SetFileName (textureSourceFullPath);
-            		fbxTexture.SetTextureUse (FbxTexture.ETextureUse.eStandard);
-            		fbxTexture.SetMappingType (FbxTexture.EMappingType.eUV);
-            		TextureMap.Add (textureSourceFullPath, fbxTexture);
-            	}
-            	TextureMap [textureSourceFullPath].ConnectDstProperty (fbxMaterialProperty);
+                // Find or create an fbx texture and link it up to the fbx material.
+                if (!TextureMap.ContainsKey (textureSourceFullPath)) {
+                    var fbxTexture = FbxFileTexture.Create (fbxMaterial, fbxPropName + "_Texture");
+                    fbxTexture.SetFileName (textureSourceFullPath);
+                    fbxTexture.SetTextureUse (FbxTexture.ETextureUse.eStandard);
+                    fbxTexture.SetMappingType (FbxTexture.EMappingType.eUV);
+                    TextureMap.Add (textureSourceFullPath, fbxTexture);
+                }
+                TextureMap [textureSourceFullPath].ConnectDstProperty (fbxMaterialProperty);
             }
 
             /// <summary>
@@ -303,10 +303,10 @@ namespace FbxSdk.Examples
             /// </summary>
             public FbxDouble3 GetMaterialColor (Material unityMaterial, string unityPropName)
             {
-            	if (!unityMaterial) { return new FbxDouble3 (0.5); }
-            	if (!unityMaterial.HasProperty (unityPropName)) { return new FbxDouble3 (0.5); }
-            	var unityColor = unityMaterial.GetColor (unityPropName);
-            	return new FbxDouble3 (unityColor.r, unityColor.g, unityColor.b);
+                if (!unityMaterial) { return new FbxDouble3 (0.5); }
+                if (!unityMaterial.HasProperty (unityPropName)) { return new FbxDouble3 (0.5); }
+                var unityColor = unityMaterial.GetColor (unityPropName);
+                return new FbxDouble3 (unityColor.r, unityColor.g, unityColor.b);
             }
 
             /// <summary>
@@ -314,39 +314,39 @@ namespace FbxSdk.Examples
             /// </summary>
             public FbxSurfaceMaterial ExportMaterial (Material unityMaterial, FbxScene fbxScene)
             {
-            	var materialName = unityMaterial ? unityMaterial.name : "DefaultMaterial";
-            	if (MaterialMap.ContainsKey (materialName)) {
-            		return MaterialMap [materialName];
-            	}
+                var materialName = unityMaterial ? unityMaterial.name : "DefaultMaterial";
+                if (MaterialMap.ContainsKey (materialName)) {
+                    return MaterialMap [materialName];
+                }
 
-            	// We'll export either Phong or Lambert. Phong if it calls
-            	// itself specular, Lambert otherwise.
-            	var shader = unityMaterial ? unityMaterial.shader : null;
-            	bool specular = shader && shader.name.ToLower ().Contains ("specular");
+                // We'll export either Phong or Lambert. Phong if it calls
+                // itself specular, Lambert otherwise.
+                var shader = unityMaterial ? unityMaterial.shader : null;
+                bool specular = shader && shader.name.ToLower ().Contains ("specular");
 
-            	var fbxMaterial = specular
-            		? FbxSurfacePhong.Create (fbxScene, materialName)
-            		: FbxSurfaceLambert.Create (fbxScene, materialName);
+                var fbxMaterial = specular
+                    ? FbxSurfacePhong.Create (fbxScene, materialName)
+                    : FbxSurfaceLambert.Create (fbxScene, materialName);
 
-            	// Copy the flat colours over from Unity standard materials to FBX.
-            	fbxMaterial.Diffuse.Set (GetMaterialColor (unityMaterial, "_Color"));
-            	fbxMaterial.Emissive.Set (GetMaterialColor (unityMaterial, "_EmissionColor"));
-            	fbxMaterial.Ambient.Set (new FbxDouble3 ());
-            	fbxMaterial.BumpFactor.Set (unityMaterial ? unityMaterial.GetFloat ("_BumpScale") : 0);
-            	if (specular) {
-            		(fbxMaterial as FbxSurfacePhong).Specular.Set (GetMaterialColor (unityMaterial, "_SpecColor"));
-            	}
+                // Copy the flat colours over from Unity standard materials to FBX.
+                fbxMaterial.Diffuse.Set (GetMaterialColor (unityMaterial, "_Color"));
+                fbxMaterial.Emissive.Set (GetMaterialColor (unityMaterial, "_EmissionColor"));
+                fbxMaterial.Ambient.Set (new FbxDouble3 ());
+                fbxMaterial.BumpFactor.Set (unityMaterial ? unityMaterial.GetFloat ("_BumpScale") : 0);
+                if (specular) {
+                    (fbxMaterial as FbxSurfacePhong).Specular.Set (GetMaterialColor (unityMaterial, "_SpecColor"));
+                }
 
-            	// Export the textures from Unity standard materials to FBX.
-            	ExportTexture (unityMaterial, "_MainTex", fbxMaterial, FbxSurfaceMaterial.sDiffuse);
-            	ExportTexture (unityMaterial, "_EmissionMap", fbxMaterial, "emissive");
-            	ExportTexture (unityMaterial, "_BumpMap", fbxMaterial, FbxSurfaceMaterial.sNormalMap);
-            	if (specular) {
-            		ExportTexture (unityMaterial, "_SpecGlosMap", fbxMaterial, FbxSurfaceMaterial.sSpecular);
-            	}
+                // Export the textures from Unity standard materials to FBX.
+                ExportTexture (unityMaterial, "_MainTex", fbxMaterial, FbxSurfaceMaterial.sDiffuse);
+                ExportTexture (unityMaterial, "_EmissionMap", fbxMaterial, "emissive");
+                ExportTexture (unityMaterial, "_BumpMap", fbxMaterial, FbxSurfaceMaterial.sNormalMap);
+                if (specular) {
+                    ExportTexture (unityMaterial, "_SpecGlosMap", fbxMaterial, FbxSurfaceMaterial.sSpecular);
+                }
 
-            	MaterialMap.Add (materialName, fbxMaterial);
-            	return fbxMaterial;
+                MaterialMap.Add (materialName, fbxMaterial);
+                return fbxMaterial;
             }
 
             /// <summary>
@@ -355,40 +355,40 @@ namespace FbxSdk.Examples
             /// </summary>
             public FbxMesh ExportMesh (MeshInfo meshInfo, FbxNode fbxNode, FbxScene fbxScene)
             {
-            	if (!meshInfo.IsValid)
-            		return null;
+                if (!meshInfo.IsValid)
+                    return null;
 
-            	// create the mesh structure.
-            	FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Mesh"));
+                // create the mesh structure.
+                FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Mesh"));
 
-            	// Create control points.
-            	int NumControlPoints = meshInfo.VertexCount;
+                // Create control points.
+                int NumControlPoints = meshInfo.VertexCount;
 
-            	fbxMesh.InitControlPoints (NumControlPoints);
+                fbxMesh.InitControlPoints (NumControlPoints);
 
-            	// copy control point data from Unity to FBX
-            	for (int v = 0; v < NumControlPoints; v++) 
+                // copy control point data from Unity to FBX
+                for (int v = 0; v < NumControlPoints; v++) 
                 {
-            		fbxMesh.SetControlPointAt (new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
-            	}
+                    fbxMesh.SetControlPointAt (new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
+                }
 
-            	ExportNormalsEtc (meshInfo, fbxMesh);
-            	ExportUVs (meshInfo, fbxMesh);
+                ExportNormalsEtc (meshInfo, fbxMesh);
+                ExportUVs (meshInfo, fbxMesh);
 
                 var fbxMaterial = ExportMaterial (meshInfo.Material, fbxScene);
                 fbxNode.AddMaterial (fbxMaterial);
 
-            	/* 
-            	 * Create polygons after FbxLayerElementMaterial have been created. 
-            	 */
-            	int vId = 0;
-            	for (int f = 0; f < meshInfo.Triangles.Length / 3; f++) {
-            		fbxMesh.BeginPolygon ();
-            		fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
-            		fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
-            		fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
-            		fbxMesh.EndPolygon ();
-            	}
+                /* 
+                 * Create polygons after FbxLayerElementMaterial have been created. 
+                 */
+                int vId = 0;
+                for (int f = 0; f < meshInfo.Triangles.Length / 3; f++) {
+                    fbxMesh.BeginPolygon ();
+                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
+                    fbxMesh.EndPolygon ();
+                }
 
                 return fbxMesh;
             }
@@ -446,8 +446,8 @@ namespace FbxSdk.Examples
                     // FbxAxisSystem.ConvertScene doesn't work we'll set it to right handed so 
                     // that it will import into Maya right way up just mirrored.
                     var fbxAxisSystem = new FbxAxisSystem (FbxAxisSystem.EUpVector.eYAxis,
-														   FbxAxisSystem.EFrontVector.eParityOdd,
-														   FbxAxisSystem.ECoordSystem.eRightHanded);
+                                                           FbxAxisSystem.EFrontVector.eParityOdd,
+                                                           FbxAxisSystem.ECoordSystem.eRightHanded);
                     fbxSettings.SetAxisSystem(fbxAxisSystem);
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
@@ -459,7 +459,7 @@ namespace FbxSdk.Examples
 
                         if (unityGo) 
                         {
-							this.ExportComponents (unityGo, fbxScene, fbxRootNode);
+                            this.ExportComponents (unityGo, fbxScene, fbxRootNode);
                         }
                     }
 
@@ -595,138 +595,138 @@ namespace FbxSdk.Examples
             ///</summary>
             public struct MeshInfo
             {
-            	/// <summary>
-            	/// The transform of the mesh.
-            	/// </summary>
-            	public Matrix4x4 xform;
-            	public Mesh mesh;
+                /// <summary>
+                /// The transform of the mesh.
+                /// </summary>
+                public Matrix4x4 xform;
+                public Mesh mesh;
 
-            	/// <summary>
-            	/// The gameobject in the scene to which this mesh is attached.
-            	/// This can be null: don't rely on it existing!
-            	/// </summary>
-            	public GameObject unityObject;
+                /// <summary>
+                /// The gameobject in the scene to which this mesh is attached.
+                /// This can be null: don't rely on it existing!
+                /// </summary>
+                public GameObject unityObject;
 
-            	/// <summary>
-            	/// Return true if there's a valid mesh information
-            	/// </summary>
-            	/// <value>The vertex count.</value>
-            	public bool IsValid { get { return mesh != null; } }
+                /// <summary>
+                /// Return true if there's a valid mesh information
+                /// </summary>
+                /// <value>The vertex count.</value>
+                public bool IsValid { get { return mesh != null; } }
 
-            	/// <summary>
-            	/// Gets the vertex count.
-            	/// </summary>
-            	/// <value>The vertex count.</value>
-            	public int VertexCount { get { return mesh.vertexCount; } }
+                /// <summary>
+                /// Gets the vertex count.
+                /// </summary>
+                /// <value>The vertex count.</value>
+                public int VertexCount { get { return mesh.vertexCount; } }
 
-            	/// <summary>
-            	/// Gets the triangles. Each triangle is represented as 3 indices from the vertices array.
-            	/// Ex: if triangles = [3,4,2], then we have one triangle with vertices vertices[3], vertices[4], and vertices[2]
-            	/// </summary>
-            	/// <value>The triangles.</value>
-            	public int [] Triangles { get { return mesh.triangles; } }
+                /// <summary>
+                /// Gets the triangles. Each triangle is represented as 3 indices from the vertices array.
+                /// Ex: if triangles = [3,4,2], then we have one triangle with vertices vertices[3], vertices[4], and vertices[2]
+                /// </summary>
+                /// <value>The triangles.</value>
+                public int [] Triangles { get { return mesh.triangles; } }
 
-            	/// <summary>
-            	/// Gets the vertices, represented in local coordinates.
-            	/// </summary>
-            	/// <value>The vertices.</value>
-            	public Vector3 [] Vertices { get { return mesh.vertices; } }
+                /// <summary>
+                /// Gets the vertices, represented in local coordinates.
+                /// </summary>
+                /// <value>The vertices.</value>
+                public Vector3 [] Vertices { get { return mesh.vertices; } }
 
-            	/// <summary>
-            	/// Gets the normals for the vertices.
-            	/// </summary>
-            	/// <value>The normals.</value>
-            	public Vector3 [] Normals { get { return mesh.normals; } }
+                /// <summary>
+                /// Gets the normals for the vertices.
+                /// </summary>
+                /// <value>The normals.</value>
+                public Vector3 [] Normals { get { return mesh.normals; } }
 
-            	/// <summary>
-            	/// TODO: Gets the binormals for the vertices.
-            	/// </summary>
-            	/// <value>The normals.</value>
-            	private Vector3 [] m_Binormals;
-            	public Vector3 [] Binormals {
-            		get {
-            			/// NOTE: LINQ
-            			///    return mesh.normals.Zip (mesh.tangents, (first, second)
-            			///    => Math.cross (normal, tangent.xyz) * tangent.w
-            			if (m_Binormals == null || m_Binormals.Length == 0) {
-            				m_Binormals = new Vector3 [mesh.normals.Length];
+                /// <summary>
+                /// TODO: Gets the binormals for the vertices.
+                /// </summary>
+                /// <value>The normals.</value>
+                private Vector3 [] m_Binormals;
+                public Vector3 [] Binormals {
+                    get {
+                        /// NOTE: LINQ
+                        ///    return mesh.normals.Zip (mesh.tangents, (first, second)
+                        ///    => Math.cross (normal, tangent.xyz) * tangent.w
+                        if (m_Binormals == null || m_Binormals.Length == 0) {
+                            m_Binormals = new Vector3 [mesh.normals.Length];
 
-            				for (int i = 0; i < mesh.normals.Length; i++)
-            					m_Binormals [i] = Vector3.Cross (mesh.normals [i],
-            													 mesh.tangents [i])
-            											 * mesh.tangents [i].w;
+                            for (int i = 0; i < mesh.normals.Length; i++)
+                                m_Binormals [i] = Vector3.Cross (mesh.normals [i],
+                                                                 mesh.tangents [i])
+                                                         * mesh.tangents [i].w;
 
-            			}
-            			return m_Binormals;
-            		}
-            	}
+                        }
+                        return m_Binormals;
+                    }
+                }
 
-            	/// <summary>
-            	/// TODO: Gets the triangle vertex indices
-            	/// </summary>
-            	/// <value>The normals.</value>
-            	public int [] Indices {
-            		get {
-            			return mesh.triangles;
-            		}
-            	}
+                /// <summary>
+                /// TODO: Gets the triangle vertex indices
+                /// </summary>
+                /// <value>The normals.</value>
+                public int [] Indices {
+                    get {
+                        return mesh.triangles;
+                    }
+                }
 
-            	/// <summary>
-            	/// TODO: Gets the tangents for the vertices.
-            	/// </summary>
-            	/// <value>The tangents.</value>
-            	public Vector4 [] Tangents { get { return mesh.tangents; } }
+                /// <summary>
+                /// TODO: Gets the tangents for the vertices.
+                /// </summary>
+                /// <value>The tangents.</value>
+                public Vector4 [] Tangents { get { return mesh.tangents; } }
 
-            	/// <summary>
-            	/// TODO: Gets the tangents for the vertices.
-            	/// </summary>
-            	/// <value>The tangents.</value>
-            	public Color [] VertexColors { get { return mesh.colors; } }
+                /// <summary>
+                /// TODO: Gets the tangents for the vertices.
+                /// </summary>
+                /// <value>The tangents.</value>
+                public Color [] VertexColors { get { return mesh.colors; } }
 
-            	/// <summary>
-            	/// Gets the uvs.
-            	/// </summary>
-            	/// <value>The uv.</value>
-            	public Vector2 [] UV { get { return mesh.uv; } }
+                /// <summary>
+                /// Gets the uvs.
+                /// </summary>
+                /// <value>The uv.</value>
+                public Vector2 [] UV { get { return mesh.uv; } }
 
                 /// <summary>
                 /// The material used, if any; otherwise null.
                 /// We don't support multiple materials on one gameobject.
                 /// </summary>
                 public Material Material {
-                	get {
-                		if (!unityObject) { return null; }
-                		var renderer = unityObject.GetComponent<Renderer> ();
-                		if (!renderer) { return null; }
-                		// .material instantiates a new material, which is bad
-                		// most of the time.
-                		return renderer.sharedMaterial;
-                	}
+                    get {
+                        if (!unityObject) { return null; }
+                        var renderer = unityObject.GetComponent<Renderer> ();
+                        if (!renderer) { return null; }
+                        // .material instantiates a new material, which is bad
+                        // most of the time.
+                        return renderer.sharedMaterial;
+                    }
                 }
-            	/// <summary>
-            	/// Initializes a new instance of the <see cref="MeshInfo"/> struct.
-            	/// </summary>
-            	/// <param name="mesh">A mesh we want to export</param>
-            	public MeshInfo (Mesh mesh)
-            	{
-            		this.mesh = mesh;
-            		this.xform = Matrix4x4.identity;
-            		this.unityObject = null;
-            		this.m_Binormals = null;
-            	}
+                /// <summary>
+                /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
+                /// </summary>
+                /// <param name="mesh">A mesh we want to export</param>
+                public MeshInfo (Mesh mesh)
+                {
+                    this.mesh = mesh;
+                    this.xform = Matrix4x4.identity;
+                    this.unityObject = null;
+                    this.m_Binormals = null;
+                }
 
-            	/// <summary>
-            	/// Initializes a new instance of the <see cref="MeshInfo"/> struct.
-            	/// </summary>
-            	/// <param name="gameObject">The GameObject the mesh is attached to.</param>
-            	/// <param name="mesh">A mesh we want to export</param>
-            	public MeshInfo (GameObject gameObject, Mesh mesh)
-            	{
-            		this.mesh = mesh;
-            		this.xform = gameObject.transform.localToWorldMatrix;
-            		this.unityObject = gameObject;
-            		this.m_Binormals = null;
-            	}
+                /// <summary>
+                /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
+                /// </summary>
+                /// <param name="gameObject">The GameObject the mesh is attached to.</param>
+                /// <param name="mesh">A mesh we want to export</param>
+                public MeshInfo (GameObject gameObject, Mesh mesh)
+                {
+                    this.mesh = mesh;
+                    this.xform = gameObject.transform.localToWorldMatrix;
+                    this.unityObject = gameObject;
+                    this.m_Binormals = null;
+                }
             }
 
             /// <summary>
@@ -734,8 +734,8 @@ namespace FbxSdk.Examples
             /// </summary>
             private static bool IsModelPrefab (GameObject unityObj)
             {
-            	return PrefabUtility.GetPrefabType (unityObj) == PrefabType.Prefab ||
-            						PrefabUtility.GetPrefabType (unityObj) == PrefabType.ModelPrefab;
+                return PrefabUtility.GetPrefabType (unityObj) == PrefabType.Prefab ||
+                                    PrefabUtility.GetPrefabType (unityObj) == PrefabType.ModelPrefab;
             }
 
             /// <summary>
@@ -743,17 +743,17 @@ namespace FbxSdk.Examples
             /// </summary>
             private GameObject GetGameObject (Object obj)
             {
-            	if (obj is UnityEngine.Transform) {
-            		var xform = obj as UnityEngine.Transform;
-            		return xform.gameObject;
-            	} else if (obj is UnityEngine.GameObject) {
-            		return obj as UnityEngine.GameObject;
-            	} else if (obj is MonoBehaviour) {
-            		var mono = obj as MonoBehaviour;
-            		return mono.gameObject;
-            	}
+                if (obj is UnityEngine.Transform) {
+                    var xform = obj as UnityEngine.Transform;
+                    return xform.gameObject;
+                } else if (obj is UnityEngine.GameObject) {
+                    return obj as UnityEngine.GameObject;
+                } else if (obj is MonoBehaviour) {
+                    var mono = obj as MonoBehaviour;
+                    return mono.gameObject;
+                }
 
-            	return null;
+                return null;
             }
 
             /// <summary>
@@ -761,24 +761,24 @@ namespace FbxSdk.Examples
             /// </summary>
             private MeshInfo GetMeshInfo (GameObject gameObject, bool requireRenderer = true)
             {
-            	if (requireRenderer) {
-            		// Verify that we are rendering. Otherwise, don't export.
-            		var renderer = gameObject.gameObject.GetComponent<MeshRenderer> ();
-            		if (!renderer || !renderer.enabled) {
-            			return new MeshInfo ();
-            		}
-            	}
+                if (requireRenderer) {
+                    // Verify that we are rendering. Otherwise, don't export.
+                    var renderer = gameObject.gameObject.GetComponent<MeshRenderer> ();
+                    if (!renderer || !renderer.enabled) {
+                        return new MeshInfo ();
+                    }
+                }
 
-            	var meshFilter = gameObject.GetComponent<MeshFilter> ();
-            	if (!meshFilter) {
-            		return new MeshInfo ();
-            	}
-            	var mesh = meshFilter.sharedMesh;
-            	if (!mesh) {
-            		return new MeshInfo ();
-            	}
+                var meshFilter = gameObject.GetComponent<MeshFilter> ();
+                if (!meshFilter) {
+                    return new MeshInfo ();
+                }
+                var mesh = meshFilter.sharedMesh;
+                if (!mesh) {
+                    return new MeshInfo ();
+                }
 
-            	return new MeshInfo (gameObject, mesh);
+                return new MeshInfo (gameObject, mesh);
             }
 
             private static string MakeObjectName (string name)
