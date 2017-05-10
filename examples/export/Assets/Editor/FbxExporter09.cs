@@ -20,6 +20,8 @@ namespace FbxSdk.Examples
 
         public class FbxExporter09 : System.IDisposable
         {
+            bool Verbose = true;
+
             const string Title =
                 "Example 09: exporting animation clips";
 
@@ -47,12 +49,12 @@ namespace FbxSdk.Examples
                 { "field of view",          "FocalLength" },
                 { "near clip plane",        "NearPlane" },
                 { "far clip plane",         "FarPlane" },
-                { "m_LocalPosition.x",      "LclTranslation" },
-                { "m_LocalPosition.y",      "LclTranslation" },
-                { "m_LocalPosition.z",              "LclTranslation" },
-                { "localEulerAnglesRaw.x",          "LclRotation" },
-                { "localEulerAnglesRaw.y",          "LclRotation" },
-                { "localEulerAnglesRaw.z",          "LclRotation" },
+                { "m_LocalPosition.x",      "Lcl Translation" },
+                { "m_LocalPosition.y",      "Lcl Translation" },
+                { "m_LocalPosition.z",              "Lcl Translation" },
+                { "localEulerAnglesRaw.x",          "Lcl Rotation" },
+                { "localEulerAnglesRaw.y",          "Lcl Rotation" },
+                { "localEulerAnglesRaw.z",          "Lcl Rotation" },
             };
 
             /// <summary>
@@ -335,8 +337,6 @@ namespace FbxSdk.Examples
             /// </summary>
             public int ExportAll (IEnumerable<UnityEngine.Object> unityExportSet)
             {
-                Verbose = true;
-
                 // Create the FBX manager
                 using (var fbxManager = FbxManager.Create ()) 
                 {
@@ -344,7 +344,7 @@ namespace FbxSdk.Examples
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
                     // Create the exporter 
-                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
+                    var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
                     bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
@@ -353,10 +353,10 @@ namespace FbxSdk.Examples
                         return 0;
 
                     // Create a scene
-                    var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
+                    var fbxScene = FbxScene.Create (fbxManager, "Scene");
 
                     // create scene info
-                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
+                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, "SceneInfo");
 
                     // set some scene info values
                     fbxSceneInfo.mTitle = Title;
@@ -440,10 +440,6 @@ namespace FbxSdk.Examples
             /// </summary>
             public void Dispose () { }
 
-
-            const string NamePrefix = "";
-            public bool Verbose { private set; get; }
-
             /// <summary>
             /// manage the selection of a filename
             /// </summary>
@@ -466,11 +462,6 @@ namespace FbxSdk.Examples
                 }
 
                 return null;
-            }
-
-            private static string MakeObjectName (string name)
-            {
-                 return NamePrefix + name;
             }
 
             private static string MakeFileName(string basename = "test", string extension = "fbx")
