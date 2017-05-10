@@ -18,7 +18,7 @@ namespace FbxSdk.Examples
 
         public class FbxProgressBarExample
         {
-            const string MenuItemName = "File/Export FBX/99. Progress Bar Example";
+            const string MenuItemName = "File/Export FBX/10. Progress Bar Example";
 
             const string FileBaseName = "example_empty_scene_with_progress";
 
