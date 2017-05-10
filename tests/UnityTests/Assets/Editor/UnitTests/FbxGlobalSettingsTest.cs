@@ -37,6 +37,10 @@ namespace UnitTests
             Assert.That(settings != settings2);
             Assert.That(settings as FbxObject != settings2 as FbxObject);
             Assert.That(settings as FbxEmitter != settings2 as FbxEmitter);
+
+            // test SetDefaultCamera
+            settings.SetDefaultCamera("camera");
+            Assert.AreEqual ("camera", settings.GetDefaultCamera ());
         }
     }
 }

@@ -22,6 +22,7 @@ namespace UnitTests
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyEBlendMode), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyEWrapMode), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyEProjectionType), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
         }
 #endif
@@ -216,6 +217,17 @@ namespace UnitTests
                 Assert.IsFalse(didFind);
 
                 root.DestroyRecursively();
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT for FbxCamera enum EProjectionType
+                var camera = FbxCamera.Create(manager, "camera");
+
+                FbxPropertyTest.GenericPropertyTests(camera.ProjectionType, camera, "CameraProjectionType", Globals.FbxEnumDT);
+                camera.ProjectionType.Set(FbxCamera.EProjectionType.ePerspective);
+                Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.Get());
+                camera.ProjectionType.Set(5.0f);
+                Assert.AreEqual(5, (int)camera.ProjectionType.Get());
             }
         }
     }

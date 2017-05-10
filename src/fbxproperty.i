@@ -162,3 +162,4 @@
 %template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
+%template("FbxPropertyEProjectionType") FbxPropertyT<FbxCamera::EProjectionType>;
