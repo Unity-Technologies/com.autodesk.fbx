@@ -7,8 +7,6 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-#define UNI_15773
-
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
@@ -66,7 +64,6 @@ namespace FbxSdk.Examples
 
                 using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, MakeObjectName ("Normals"))) 
                 {
-#if UNI_15773
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
@@ -83,11 +80,9 @@ namespace FbxSdk.Examples
                                                              mesh.Normals [n] [1], 
                                                              mesh.Normals [n] [2]));
                     }
-#endif
                     fbxLayer.SetNormals (fbxLayerElement);
                 }
 
-#if UNI_15773
                 /// Set the binormals on Layer 0. 
                 using (var fbxLayerElement = FbxLayerElementBinormal.Create (fbxMesh, MakeObjectName ("Binormals"))) 
                 {
@@ -108,9 +103,7 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetBinormals (fbxLayerElement);
                 }
-#endif
 
-#if UNI_15773
                 /// Set the tangents on Layer 0.
                 using (var fbxLayerElement = FbxLayerElementTangent.Create (fbxMesh, MakeObjectName ("Tangents"))) 
                 {
@@ -131,7 +124,6 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetTangents (fbxLayerElement);
                 }
-#endif
             }
 
             /// <summary>
@@ -140,7 +132,6 @@ namespace FbxSdk.Examples
             /// 
             public void ExportVertexColors (MeshInfo mesh, FbxMesh fbxMesh)
             {
-#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) 
@@ -171,7 +162,6 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetVertexColors (fbxLayerElement);
                 }
-#endif
             }
 
             /// <summary>
@@ -180,7 +170,6 @@ namespace FbxSdk.Examples
             /// 
             public void ExportUVs (MeshInfo mesh, FbxMesh fbxMesh)
             {
-#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) 
@@ -212,7 +201,6 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.EType.eTextureDiffuse);
                 }
-#endif
             }
 
             /// <summary>
