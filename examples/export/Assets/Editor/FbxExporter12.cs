@@ -535,7 +535,7 @@ namespace FbxSdk.Examples
                 ExportUVs (meshInfo, fbxMesh);
 
                 var fbxMaterial = ExportMaterial (meshInfo.Material, fbxScene);
-                fbxNode.AddMaterial (fbxMaterial);
+                meshNode.AddMaterial (fbxMaterial);
 
             	/* 
             	 * Create polygons
@@ -776,7 +776,8 @@ namespace FbxSdk.Examples
                 /// </summary>
                 public Material Material {
                 	get {
-                		if (!renderer) { return null; }
+                        if (!unityObject) { return null; }
+                        var renderer = unityObject.GetComponentInChildren<Renderer>();
                         if (!renderer) { Debug.LogError("no mesh renderer"); return null; }
                 		// .material instantiates a new material, which is bad
                 		// most of the time.
