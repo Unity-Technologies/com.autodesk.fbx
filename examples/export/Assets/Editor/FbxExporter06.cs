@@ -286,6 +286,9 @@ namespace FbxSdk.Examples
                     // Configure fbx IO settings.
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
+                    // Export texture as embedded
+                    fbxManager.GetIOSettings ().SetBoolProp (Globals.EXP_FBX_EMBEDDED, true);
+
                     // Create the exporter
                     var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
