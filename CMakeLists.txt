@@ -7,6 +7,10 @@
 
 cmake_minimum_required (VERSION 2.6)
 
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+find_package(SWIG 3.0.12) # lower than this not guaranteed to work on Linux
+endif()
+
 # has to be done before project is set, or else CMAKE_INSTALL_PREFIX will already by set to a default value
 SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins" CACHE PATH "Install path prefix")
 MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
@@ -25,7 +29,7 @@ set(CMAKE_CXX_STANDARD 11)
 # promote warnings to errors
 if(MSVC)
 set(PROJECT_COMPILE_FLAGS "/WX")
-else()
+elseif(NOT (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")) # these flags don't work on Linux (TODO: figure out what does)
 set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference")
 endif()
 
