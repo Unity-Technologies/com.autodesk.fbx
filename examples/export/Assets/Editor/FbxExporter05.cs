@@ -1,13 +1,9 @@
-//#define UNI_15935
-//#define UNI_15773
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
 // Licensed under the ##LICENSENAME##. 
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
-
-#define UNI_15773
 
 using System.IO;
 using System.Collections.Generic;
@@ -66,7 +62,6 @@ namespace FbxSdk.Examples
 
                 using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, MakeObjectName ("Normals"))) 
                 {
-#if UNI_15773
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
                     // TODO: normals for each triangle vertex instead of averaged per control point
@@ -83,11 +78,9 @@ namespace FbxSdk.Examples
                                                              mesh.Normals [n] [1], 
                                                              mesh.Normals [n] [2]));
                     }
-#endif
                     fbxLayer.SetNormals (fbxLayerElement);
                 }
 
-#if UNI_15773
                 /// Set the binormals on Layer 0. 
                 using (var fbxLayerElement = FbxLayerElementBinormal.Create (fbxMesh, MakeObjectName ("Binormals"))) 
                 {
@@ -108,9 +101,7 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetBinormals (fbxLayerElement);
                 }
-#endif
 
-#if UNI_15773
                 /// Set the tangents on Layer 0.
                 using (var fbxLayerElement = FbxLayerElementTangent.Create (fbxMesh, MakeObjectName ("Tangents"))) 
                 {
@@ -131,7 +122,6 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetTangents (fbxLayerElement);
                 }
-#endif
             }
 
             /// <summary>
@@ -140,7 +130,6 @@ namespace FbxSdk.Examples
             /// 
             public void ExportVertexColors (MeshInfo mesh, FbxMesh fbxMesh)
             {
-#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) 
@@ -169,7 +158,6 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetVertexColors (fbxLayerElement);
                 }
-#endif
             }
 
             /// <summary>
@@ -178,7 +166,6 @@ namespace FbxSdk.Examples
             /// 
             public void ExportUVs (MeshInfo mesh, FbxMesh fbxMesh)
             {
-#if UNI_15773
                 // Set the normals on Layer 0.
                 FbxLayer fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 if (fbxLayer == null) 
@@ -210,7 +197,6 @@ namespace FbxSdk.Examples
                     }
                     fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.EType.eTextureDiffuse);
                 }
-#endif
             }
 
             /// <summary>
@@ -245,7 +231,7 @@ namespace FbxSdk.Examples
                 ExportUVs (mesh, fbxMesh);
 
                 /* 
-                 * Create polygons after FbxLayerElementMaterial have been created. 
+                 * Create polygons 
                  */
                 int vId = 0;
                 for (int f = 0; f < mesh.Triangles.Length / 3; f++) 
@@ -325,7 +311,8 @@ namespace FbxSdk.Examples
                     var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
 
                     // Initialize the exporter.
-                    bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
+                    int fileFormat = fbxManager.GetIOPluginRegistry ().FindWriterIDByDescription ("FBX ascii (*.fbx)");
+                    bool status = fbxExporter.Initialize (LastFilePath, fileFormat, fbxManager.GetIOSettings ());
                     // Check that initialization of the fbxExporter was successful
                     if (!status)
                         return 0;
@@ -451,7 +438,7 @@ namespace FbxSdk.Examples
                 public Vector3 [] Normals { get { return mesh.normals; } }
 
                 /// <summary>
-                /// TODO: Gets the binormals for the vertices.
+                /// Gets the binormals for the vertices.
                 /// </summary>
                 /// <value>The normals.</value>
                 private Vector3 [] m_Binormals;
@@ -477,25 +464,19 @@ namespace FbxSdk.Examples
                 }
 
                 /// <summary>
-                /// TODO: Gets the triangle vertex indices
+                /// Gets the triangle vertex indices
                 /// </summary>
                 /// <value>The normals.</value>
-                public int [] Indices 
-                {
-                    get 
-                    {
-                        return mesh.triangles;
-                    }
-                }
+                public int [] Indices { get { return mesh.triangles; } }
 
                 /// <summary>
-                /// TODO: Gets the tangents for the vertices.
+                /// Gets the tangents for the vertices.
                 /// </summary>
                 /// <value>The tangents.</value>
                 public Vector4 [] Tangents { get { return mesh.tangents; } }
 
                 /// <summary>
-                /// TODO: Gets the tangents for the vertices.
+                /// Gets the vertexcolors for the vertices.
                 /// </summary>
                 /// <value>The tangents.</value>
                 public Color [] VertexColors { get { return mesh.colors; } }

@@ -150,7 +150,8 @@ namespace FbxSdk.Examples
                     var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
 
                     // Initialize the exporter.
-                    bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
+                    int fileFormat = fbxManager.GetIOPluginRegistry ().FindWriterIDByDescription ("FBX ascii (*.fbx)");
+                    bool status = fbxExporter.Initialize (LastFilePath, fileFormat, fbxManager.GetIOSettings ());
                     // Check that initialization of the fbxExporter was successful
                     if (!status)
                         return 0;

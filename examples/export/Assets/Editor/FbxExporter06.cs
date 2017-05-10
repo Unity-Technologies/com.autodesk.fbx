@@ -40,7 +40,7 @@ namespace FbxSdk.Examples
             const string Comments =
                 @"";
 
-            const string MenuItemName = "File/Export FBX/WIP 6. Static mesh with materials and textures";
+            const string MenuItemName = "File/Export FBX/6. Static mesh with materials and textures";
 
             const string FileBaseName = "example_static_mesh_with_materials_and_textures";
 
@@ -113,9 +113,15 @@ namespace FbxSdk.Examples
                 var textureSourceFullPath = AssetDatabase.GetAssetPath(unityTexture);
                 if (textureSourceFullPath == "") { return; }
 
+                // get absolute filepath to texture
+                textureSourceFullPath  = Path.GetFullPath(textureSourceFullPath);
+
+                if (Verbose)
+                    Debug.Log(string.Format("{2}.{1} setting texture path {0}", textureSourceFullPath, fbxPropName, fbxMaterial.GetName()));
+
                 // Find the corresponding property on the fbx material.
                 var fbxMaterialProperty = fbxMaterial.FindProperty (fbxPropName);
-                if (fbxMaterialProperty == null || !fbxMaterialProperty.IsValid()) { return; }
+                if (fbxMaterialProperty == null || !fbxMaterialProperty.IsValid()) { Debug.Log("property not found"); return; }
 
                 // Find or create an fbx texture and link it up to the fbx material.
                 if (!TextureMap.ContainsKey(textureSourceFullPath)) {
@@ -125,7 +131,7 @@ namespace FbxSdk.Examples
                     fbxTexture.SetMappingType (FbxTexture.EMappingType.eUV);
                     TextureMap.Add(textureSourceFullPath, fbxTexture);
                 }
-                TextureMap[textureSourceFullPath].ConnectDstProperty (fbxMaterialProperty);
+                TextureMap[textureSourceFullPath].ConnectDstProperty(fbxMaterialProperty);
             }
 
             /// <summary>
@@ -144,6 +150,9 @@ namespace FbxSdk.Examples
             /// </summary>
             public FbxSurfaceMaterial ExportMaterial (Material unityMaterial, FbxScene fbxScene)
             {
+                if (Verbose)
+                    Debug.Log(string.Format("exporting material {0}",unityMaterial.name));
+                              
                 var materialName = unityMaterial ? unityMaterial.name : "DefaultMaterial";
                 if (MaterialMap.ContainsKey (materialName)) {
                     return MaterialMap [materialName];
@@ -183,40 +192,40 @@ namespace FbxSdk.Examples
             /// Unconditionally export this mesh object to the file.
             /// We have decided; this mesh is definitely getting exported.
             /// </summary>
-            public void ExportMesh (MeshInfo mesh, FbxNode fbxNode, FbxScene fbxScene)
+            public void ExportMesh (MeshInfo meshInfo, FbxNode fbxNode, FbxScene fbxScene)
             {
-                if (!mesh.IsValid)
+                if (!meshInfo.IsValid)
                     return;
 
                 NumMeshes++;
-                NumTriangles += mesh.Triangles.Length / 3;
-                NumVertices += mesh.VertexCount;
+                NumTriangles += meshInfo.Triangles.Length / 3;
+                NumVertices += meshInfo.VertexCount;
 
                 // create the mesh structure.
                 FbxMesh fbxMesh = FbxMesh.Create (fbxScene, "Scene");
 
                 // Create control points.
-                int NumControlPoints = mesh.VertexCount;
+                int NumControlPoints = meshInfo.VertexCount;
 
                 fbxMesh.InitControlPoints (NumControlPoints);
 
                 // copy control point data from Unity to FBX
                 for (int v = 0; v < NumControlPoints; v++)
                 {
-                    fbxMesh.SetControlPointAt(new FbxVector4 (mesh.Vertices [v].x, mesh.Vertices [v].y, mesh.Vertices [v].z), v);
+                    fbxMesh.SetControlPointAt(new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
                 }
 
-                ExportUVs (mesh, fbxMesh);
+                ExportUVs (meshInfo, fbxMesh);
 
-                var fbxMaterial = ExportMaterial (mesh.material, fbxScene);
+                var fbxMaterial = ExportMaterial (meshInfo.Material, fbxScene);
                 fbxNode.AddMaterial (fbxMaterial);
 
-                for (int f = 0; f < mesh.Triangles.Length / 3; f++)
+                for (int f = 0; f < meshInfo.Triangles.Length / 3; f++)
                 {
                     fbxMesh.BeginPolygon ();
-                    fbxMesh.AddPolygon (mesh.Triangles [3 * f]);
-                    fbxMesh.AddPolygon (mesh.Triangles [3 * f + 1]);
-                    fbxMesh.AddPolygon (mesh.Triangles [3 * f + 2]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 1]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 2]);
                     fbxMesh.EndPolygon ();
                 }
 
@@ -290,7 +299,8 @@ namespace FbxSdk.Examples
                     var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
-                    bool status = fbxExporter.Initialize (LastFilePath, -1, fbxManager.GetIOSettings ());
+                    int fileFormat = fbxManager.GetIOPluginRegistry ().FindWriterIDByDescription ("FBX ascii (*.fbx)");
+                    bool status = fbxExporter.Initialize (LastFilePath, fileFormat, fbxManager.GetIOSettings ());
                     // Check that initialization of the fbxExporter was successful
                     if (!status)
                         return 0;
@@ -460,7 +470,7 @@ namespace FbxSdk.Examples
                 /// The material used, if any; otherwise null.
                 /// We don't support multiple materials on one gameobject.
                 /// </summary>
-                public Material material {
+                public Material Material {
                     get {
                         if (!unityObject) { return null; }
                         var renderer = unityObject.GetComponent<Renderer>();
