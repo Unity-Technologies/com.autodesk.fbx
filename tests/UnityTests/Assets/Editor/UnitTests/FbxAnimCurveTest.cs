@@ -175,7 +175,7 @@ namespace UnitTests
 
                 // test KeyAdd
                 int last = 0;
-                int index = curve.KeyAdd (new FbxTime (5), ref last);
+                int index = curve.KeyAdd (FbxTime.FromFrame (5), ref last);
                 Assert.GreaterOrEqual (index, 0);
 
                 // test KeyAdd null FbxTime
