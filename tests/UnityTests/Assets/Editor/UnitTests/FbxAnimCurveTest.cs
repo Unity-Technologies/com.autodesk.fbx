@@ -246,13 +246,13 @@ namespace UnitTests
         }
     }
 
-    public class FbxAnimCurveDefTest
+    public class FbxAnimCurveDefTest : TestBase<FbxAnimCurveDef>
     {
         [Test]
         public void TestBasics()
         {
-            FbxAnimCurveTest.TestGetter (FbxAnimCurveDef.sDEFAULT_VELOCITY);
-            FbxAnimCurveTest.TestGetter (FbxAnimCurveDef.sDEFAULT_WEIGHT);
+            TestGetter (FbxAnimCurveDef.sDEFAULT_VELOCITY);
+            TestGetter (FbxAnimCurveDef.sDEFAULT_WEIGHT);
         }
     }
 }
