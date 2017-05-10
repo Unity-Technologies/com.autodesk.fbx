@@ -181,5 +181,31 @@ namespace UnitTests
                 Assert.AreEqual (mesh, node.GetMesh ());
             }
         }
+
+        [Test]
+        public void TestSetPreRotation(){
+            using (FbxNode node = CreateObject ("root")) {
+                FbxVector4 rot = new FbxVector4 (1, 2, 3);
+                node.SetPreRotation (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual(rot, node.GetPreRotation(FbxNode.EPivotSet.eSourcePivot));
+                Assert.AreNotEqual (rot, node.GetPreRotation (FbxNode.EPivotSet.eDestinationPivot));
+            }
+        }
+
+        [Test]
+        public void TestSetPivotState(){
+            using (FbxNode node = CreateObject ("root")) {
+                // make sure it doesn't crash
+                node.SetPivotState (FbxNode.EPivotSet.eSourcePivot, FbxNode.EPivotState.ePivotActive);
+            }
+        }
+
+        [Test]
+        public void TestSetRotationActive(){
+            using (FbxNode node = CreateObject ("root")) {
+                node.SetRotationActive (true);
+                Assert.AreEqual(true, node.GetRotationActive());
+            }
+        }
     }
 }

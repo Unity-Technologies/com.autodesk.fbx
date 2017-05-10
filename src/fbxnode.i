@@ -30,9 +30,17 @@
 /* Visibility */
 %rename("%s") FbxNode::SetVisibility;
 %rename("%s") FbxNode::GetVisibility;
+
+/* Skinned Mesh */
 %rename("%s") FbxNode::EvaluateGlobalTransform;
 %rename("%s") FbxNode::EPivotSet;
 %rename("%s") FbxNode::GetMesh;
+%rename("%s") FbxNode::SetPreRotation;
+%rename("%s") FbxNode::GetPreRotation;
+%rename("%s") FbxNode::EPivotState;
+%rename("%s") FbxNode::SetPivotState;
+%rename("%s") FbxNode::SetRotationActive;
+%rename("%s") FbxNode::GetRotationActive;
 #endif
 
 /* The properties need to be marked immutable. */

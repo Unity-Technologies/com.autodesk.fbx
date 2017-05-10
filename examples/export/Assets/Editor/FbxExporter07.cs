@@ -93,7 +93,7 @@ namespace FbxSdk.Examples
                     ExportSkin (meshInfo, fbxScene, fbxMesh, fbxMeshNode, boneNodes);
 
                     // add bind pose
-                    ExportBindPose (fbxNode, fbxScene, boneNodes);
+                    ExportBindPose (fbxNode, fbxMeshNode, fbxScene, boneNodes);
 
                     fbxParentNode.AddChild (fbxNode);
                     NumNodes++;
@@ -174,8 +174,12 @@ namespace FbxSdk.Examples
                     matrix.GetElements (out translation, out rotation, out shear, out scale, out sign);
 
                     t.Value.LclTranslation.Set (new FbxDouble3(translation.X, translation.Y, translation.Z));
-                    t.Value.LclRotation.Set (new FbxDouble3(rotation.X, rotation.Y, rotation.Z));
+                    t.Value.LclRotation.Set (new FbxDouble3(0,0,0));
                     t.Value.LclScaling.Set (new FbxDouble3 (scale.X, scale.Y, scale.Z));
+
+                    t.Value.SetRotationActive (true);
+                    t.Value.SetPivotState (FbxNode.EPivotSet.eSourcePivot, FbxNode.EPivotState.ePivotReference);
+                    t.Value.SetPreRotation (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (rotation.X, rotation.Y, rotation.Z));
                 }
 
                 return true;
@@ -262,7 +266,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export bind pose of mesh to skeleton
             /// </summary>
-            protected void ExportBindPose (FbxNode fbxRootNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
+            protected void ExportBindPose (FbxNode fbxRootNode, FbxNode meshNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
             {
                 FbxPose fbxPose = FbxPose.Create (fbxScene, MakeObjectName(fbxRootNode.GetName()));
 
@@ -286,6 +290,10 @@ namespace FbxSdk.Examples
 
                     fbxPose.Add (fbxNode, fbxBindMatrix);
                 }
+
+                FbxMatrix bindMatrix = new FbxMatrix(meshNode.EvaluateGlobalTransform ());
+
+                fbxPose.Add (meshNode, bindMatrix);
 
                 // add the pose to the scene
                 fbxScene.AddPose (fbxPose);
@@ -402,9 +410,11 @@ namespace FbxSdk.Examples
                     var fbxSettings = fbxScene.GetGlobalSettings();
                     fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
 
-                    // The Unity axis system has Y up, Z forward, X to the right:
-                    //var axisSystem = new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded);
-                    //fbxSettings.SetAxisSystem(axisSystem);
+                    // The Unity axis system has Y up, Z forward, X to the right (left handed system with odd parity).
+                    // The Maya axis system has Y up, Z forward, X to the left (right handed system with odd parity).
+                    // We need to export right-handed for Maya because ConvertScene can't switch handedness:
+                    // https://forums.autodesk.com/t5/fbx-forum/get-confused-with-fbxaxissystem-convertscene/td-p/4265472
+                    fbxSettings.SetAxisSystem (FbxAxisSystem.MayaYUp);
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
