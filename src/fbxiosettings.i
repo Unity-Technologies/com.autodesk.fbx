@@ -9,4 +9,14 @@
 %rename("%s", %$isclass) FbxIOSettings;
 %rename("%s") FbxIOSettings::SetBoolProp;
 
+// make sure SetBoolProp() doesn't crash if we pass it a null string
+// Note: Have to add pValue too even though we don't need it so this doesn't
+// also match argument pName in Create (which already handles null values)
+%typemap(check, canthrow=1) (const char* pName, bool pValue) %{
+  if(!$1){
+    SWIG_CSharpSetPendingException(SWIG_CSharpNullReferenceException, "$1_basetype $1_name is null");
+    return $null;
+  }
+%}
+
 %include "fbxsdk/fileio/fbxiosettings.h"

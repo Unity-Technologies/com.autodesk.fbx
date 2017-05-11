@@ -50,8 +50,7 @@ namespace UnitTests
                 ioSettings.SetBoolProp (Globals.EXP_FBX_EMBEDDED, true);
                 ioSettings.SetBoolProp ("", true);
 
-                // TODO: passing null string crashes Unity
-                //ioSettings.SetBoolProp (null, true);
+                Assert.That (() => { ioSettings.SetBoolProp (null, true); }, Throws.Exception.TypeOf<System.NullReferenceException>());
             }
         }
     }

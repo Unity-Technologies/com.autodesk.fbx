@@ -327,7 +327,12 @@ namespace FbxSdk.Examples
                     // Set up the axes (Y up, Z forward, X to the right) and units (meters)
                     var fbxSettings = fbxScene.GetGlobalSettings();
                     fbxSettings.SetSystemUnit(FbxSystemUnit.m);
-                    fbxSettings.SetAxisSystem(new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded));
+
+                    // The Unity axis system has Y up, Z forward, X to the right (left handed system with odd parity).
+                    // The Maya axis system has Y up, Z forward, X to the left (right handed system with odd parity).
+                    // We need to export right-handed for Maya because ConvertScene can't switch handedness:
+                    // https://forums.autodesk.com/t5/fbx-forum/get-confused-with-fbxaxissystem-convertscene/td-p/4265472
+                    fbxSettings.SetAxisSystem (FbxAxisSystem.MayaYUp);
 
                     // export set of object
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
