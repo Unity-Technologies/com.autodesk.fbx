@@ -10,19 +10,6 @@ fbxsdk.i
 %include "fbxemitter.i"
 ```
 
-2. compile with warning as errors
-
-CMakeList.txt
-```
-# compile with warnings as errors
-
-# Mac and Linux
-set(PROJECT_COMPILE_FLAGS -Werror -Wno-error=null-dereference)
-
-# On Windows
-set(PROJECT_COMPILE_FLAGS "/WX")
-```
-
 3. compile against a local version of FBXSDK so that, you can experiment with fixes
 
 FindFBXSDK.cmake
