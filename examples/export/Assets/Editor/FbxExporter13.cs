@@ -44,7 +44,7 @@ namespace FbxSdk.Examples
             const int InstanceCount = 1000;
             const float ScaleFactor = 2.0f;
                                         
-            static Dictionary<string, FbxMesh> SharedMeshes = new Dictionary<string, FbxMesh>();
+            static Dictionary<Object, FbxMesh> SharedMeshes = new Dictionary<Object, FbxMesh>();
 
             /// <summary>
             /// Create instance of example
@@ -67,14 +67,10 @@ namespace FbxSdk.Examples
                 
                 FbxMesh fbxMesh = null;
 
-                if (SharedMeshes.ContainsKey (unityPrefabParent.name))
-                {
-                    fbxMesh = SharedMeshes [unityPrefabParent.name];
-                } 
-                else 
+                if (SharedMeshes.TryGetValue (unityPrefabParent, out fbxMesh))
                 {
                     fbxMesh = ExportMesh (GetMeshInfo( unityGo ), fbxNode, fbxScene);
-                    SharedMeshes [unityPrefabParent.name] = fbxMesh;
+                    SharedMeshes [unityPrefabParent] = fbxMesh;
                 }
                     
                 if (fbxMesh == null) return;
