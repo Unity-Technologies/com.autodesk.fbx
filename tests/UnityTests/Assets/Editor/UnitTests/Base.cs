@@ -304,6 +304,65 @@ namespace UnitTests
                     Assert.AreEqual(nDst - 1, obj2.GetDstPropertyCount());
                 }
             }
+
+            /************************************************************
+             * Test object connection functions
+             ************************************************************/
+            using (obj = CreateObject ("obj")) {
+                using (var ownerObj = CreateObject ("ownerObj")) {
+                    // Test ConnectSrcObject functions
+                    bool result = ownerObj.ConnectSrcObject (obj);
+                    Assert.IsTrue (result);
+                    Assert.IsTrue (ownerObj.IsConnectedSrcObject (obj));
+                    Assert.AreEqual (1, ownerObj.GetSrcObjectCount ());
+                    Assert.AreEqual (obj, ownerObj.GetSrcObject ());
+                    Assert.AreEqual (obj, ownerObj.GetSrcObject (0));
+                    Assert.AreEqual (obj, ownerObj.FindSrcObject ("obj"));
+                    Assert.IsNull (ownerObj.FindSrcObject ("obj", 1));
+
+                    // TODO: Fix so this doesn't crash
+                    /*Assert.That (() => {
+                        ownerObj.FindSrcObject (null);
+                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());*/
+
+                    result = ownerObj.DisconnectSrcObject (obj);
+                    Assert.IsTrue (result);
+                    Assert.IsFalse (ownerObj.IsConnectedSrcObject (obj));
+
+                    Assert.That (() => {
+                        ownerObj.ConnectSrcObject (null);
+                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+
+                    result = ownerObj.ConnectSrcObject (obj, FbxConnection.EType.eData);
+                    Assert.IsTrue (result);
+
+                    // Test ConnectDstObject functions
+                    result = ownerObj.ConnectDstObject (obj);
+                    Assert.IsTrue (result);
+                    Assert.IsTrue (ownerObj.IsConnectedDstObject (obj));
+                    Assert.AreEqual (1, ownerObj.GetDstObjectCount ());
+                    Assert.AreEqual (obj, ownerObj.GetDstObject ());
+                    Assert.AreEqual (obj, ownerObj.GetDstObject (0));
+                    Assert.AreEqual (obj, ownerObj.FindDstObject ("obj"));
+                    Assert.IsNull (ownerObj.FindDstObject ("obj", 1));
+
+                    // TODO: Fix so this doesn't crash
+                    /*Assert.That (() => {
+                        ownerObj.FindDstObject (null);
+                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());*/
+
+                    result = ownerObj.DisconnectDstObject (obj);
+                    Assert.IsTrue (result);
+                    Assert.IsFalse (ownerObj.IsConnectedDstObject (obj));
+
+                    Assert.That (() => {
+                        ownerObj.ConnectDstObject (null);
+                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+
+                    result = ownerObj.ConnectDstObject (obj, FbxConnection.EType.eData);
+                    Assert.IsTrue (result);
+                }
+            }
         }
     }
 }

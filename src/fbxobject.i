@@ -46,6 +46,21 @@
 %rename("%s") FbxObject::GetDstProperty(int pIndex=0) const;
 %rename("%s") FbxObject::FindDstProperty(const char* pName, int pStartIndex=0) const;
 
+/* Object to Object Connection */
+%rename("%s") FbxObject::ConnectSrcObject;
+%rename("%s") FbxObject::IsConnectedSrcObject;
+%rename("%s") FbxObject::DisconnectSrcObject;
+%rename("%s") FbxObject::GetSrcObjectCount() const;
+%rename("%s") FbxObject::GetSrcObject(int pIndex=0) const;
+%rename("%s") FbxObject::FindSrcObject(const char* pName, int pStartIndex=0) const;
+
+%rename("%s") FbxObject::ConnectDstObject;
+%rename("%s") FbxObject::IsConnectedDstObject;
+%rename("%s") FbxObject::DisconnectDstObject;
+%rename("%s") FbxObject::GetDstObjectCount() const;
+%rename("%s") FbxObject::GetDstObject(int pIndex=0) const;
+%rename("%s") FbxObject::FindDstObject(const char* pName, int pStartIndex=0) const;
+
 /* Shader implementation. */
 %rename("%s") FbxObject::AddImplementation;
 %rename("%s") FbxObject::RemoveImplementation;

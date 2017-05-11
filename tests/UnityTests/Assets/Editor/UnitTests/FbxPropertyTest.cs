@@ -119,10 +119,20 @@ namespace UnitTests
                 bool result = property.ConnectSrcObject (obj);
                 Assert.IsTrue (result);
                 Assert.IsTrue (property.IsConnectedSrcObject (obj));
+                Assert.AreEqual (1, property.GetSrcObjectCount ());
+                Assert.AreEqual (obj, property.GetSrcObject ());
+                Assert.AreEqual (obj, property.GetSrcObject (0));
+                Assert.AreEqual (obj, property.FindSrcObject ("obj"));
+                Assert.IsNull (property.FindSrcObject ("obj", 1));
+
+                // TODO: Fix so this doesn't crash
+                //Assert.That (() => { property.FindSrcObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
                 result = property.DisconnectSrcObject (obj);
                 Assert.IsTrue (result);
                 Assert.IsFalse (property.IsConnectedSrcObject (obj));
+
+                Assert.That (() => { property.ConnectSrcObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
                 result = property.ConnectSrcObject (obj, FbxConnection.EType.eData);
                 Assert.IsTrue (result);
@@ -131,10 +141,20 @@ namespace UnitTests
                 result = property.ConnectDstObject (obj);
                 Assert.IsTrue (result);
                 Assert.IsTrue (property.IsConnectedDstObject (obj));
+                Assert.AreEqual (1, property.GetDstObjectCount ());
+                Assert.AreEqual (obj, property.GetDstObject ());
+                Assert.AreEqual (obj, property.GetDstObject (0));
+                Assert.AreEqual (obj, property.FindDstObject ("obj"));
+                Assert.IsNull (property.FindDstObject ("obj", 1));
+
+                // TODO: Fix so this doesn't crash
+                //Assert.That (() => { property.FindDstObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
                 result = property.DisconnectDstObject (obj);
                 Assert.IsTrue (result);
                 Assert.IsFalse (property.IsConnectedDstObject (obj));
+
+                Assert.That (() => { property.ConnectDstObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
                 result = property.ConnectDstObject (obj, FbxConnection.EType.eData);
                 Assert.IsTrue (result);
