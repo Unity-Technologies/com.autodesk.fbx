@@ -152,9 +152,14 @@ namespace FbxSdk.Examples
 
                     for (int n = 0; n < mesh.VertexColors.Length; n++) 
                     {
-                        fbxElementArray.Add (new FbxColor(mesh.VertexColors[n][0], 
-                                                          mesh.VertexColors[n][1], 
-                                                          mesh.VertexColors[n][2]));
+                        // Converting to Color from Color32, as Color32 stores the colors
+                        // as ints between 0-255, while FbxColor and Color
+                        // use doubles between 0-1
+                        Color color = mesh.VertexColors [n];
+                        fbxElementArray.Add (new FbxColor(color.r, 
+                                                          color.g, 
+                                                          color.b,
+                                                          color.a));
                     }
                     fbxLayer.SetVertexColors (fbxLayerElement);
                 }
@@ -479,7 +484,7 @@ namespace FbxSdk.Examples
                 /// Gets the vertexcolors for the vertices.
                 /// </summary>
                 /// <value>The tangents.</value>
-                public Color [] VertexColors { get { return mesh.colors; } }
+                public Color32 [] VertexColors { get { return mesh.colors32; } }
 
                 /// <summary>
                 /// Gets the uvs.
