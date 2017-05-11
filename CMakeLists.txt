@@ -26,6 +26,7 @@ set(CMAKE_CXX_STANDARD 11)
 if(MSVC)
 set(PROJECT_COMPILE_FLAGS "/WX")
 else()
+# requires gcc 6 or higher
 set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference")
 endif()
 
@@ -44,7 +45,7 @@ SET(CMAKE_SWIG_FLAGS -fvirtual)
 
 ###########################################################################
 # Find packages that we need.
-find_package(SWIG REQUIRED)
+find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Linux
 include(${SWIG_USE_FILE})
 
 include(deps/cmake/UseFixHeaders.cmake)
