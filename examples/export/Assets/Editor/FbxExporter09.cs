@@ -211,12 +211,6 @@ namespace FbxSdk.Examples
                 }
 
                 // Create the AnimCurve on the channel
-                // TODO: check we can do this with FOV and NearPlane - might need to create via
-                //
-                // float defaultValue = ?
-                // int childId = 0;
-                // fbxCurveNode.SetChannelValue( childId, defaultValue );
-                // fbxCurveNode->ConnectToChannel fbxAnimCurve, childId );
                 FbxAnimCurve fbxAnimCurve = fbxProperty.GetCurve (fbxAnimLayer, fbxName.Channel, true);
 
                 // copy Unity AnimCurve to FBX AnimCurve.
@@ -226,13 +220,7 @@ namespace FbxSdk.Examples
                     var key = unityAnimCurve[keyIndex];
                     var fbxTime = FbxTime.FromSecondDouble(key.time);
                     fbxAnimCurve.KeyAdd (fbxTime);
-
-                    //var leftTangent = AnimationUtility.GetKeyLeftTangentMode (unityAnimCurve, keyIndex);
-                    //var rightTangent = AnimationUtility.GetKeyRightTangentMode (unityAnimCurve, keyIndex);
-
-                    fbxAnimCurve.KeySet (keyIndex, fbxTime, key.value,
-                            FbxAnimCurveDef.EInterpolationType.eInterpolationCubic,
-                            FbxAnimCurveDef.ETangentMode.eTangentAuto);
+                    fbxAnimCurve.KeySet (keyIndex, fbxTime, key.value);
                 }
 
                 fbxAnimCurve.KeyModifyEnd();
@@ -286,12 +274,11 @@ namespace FbxSdk.Examples
 
                     int index = QuaternionCurve.GetQuaternionIndex(unityCurveBinding.propertyName);
                     if (index == -1) {
-                        /* Some normal property (translation, field of
-                         * view, etc); export it right away. */
+                        /* Some normal property (e.g. translation), export right away */
                         ExportAnimCurve (unityObj, unityAnimCurve, unityCurveBinding.propertyName,
                                 fbxScene, fbxAnimLayer);
                     } else {
-                        /* Quaternion property; save it to calculate later. */
+                        /* Rotation property; save it to convert quaternion -> euler later. */
                         QuaternionCurve quat;
                         if (!quaternions.TryGetValue(unityObj, out quat)) {
                             quat = new QuaternionCurve();
