@@ -114,6 +114,15 @@
   }
   $1 = ($1_ltype)$input; %}
 
+%define %null_arg_check(PARAMS)
+%typemap(check, canthrow=1) PARAMS %{
+  if(!$1){
+    SWIG_CSharpSetPendingException(SWIG_CSharpNullReferenceException, "$1_basetype $1_name is null");
+    return $null;
+  }
+%}
+%enddef  
+  
 /*
  * How to handle strings. Must be before the includes that actually include code.
  */

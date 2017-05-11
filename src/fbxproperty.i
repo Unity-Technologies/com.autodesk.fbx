@@ -145,6 +145,12 @@
  * compile in C#. */
 %typemap("csvarin") const FbxPropertyT& {#error this should be a %fbximmutable}
 
+// make sure Connect[Src|Dst]Object(), Disonnect[Src|Dst]Object(), 
+// and Find[Src|Dst]Object() don't crash if we pass a null object
+%null_arg_check(FbxObject* pObject);
+// Applies to Create() as well, and causes tests that call create with "" to fail
+//%null_arg_check(const char* pName);
+
 
 /***************************************************************************/
 %include "fbxsdk/core/fbxproperty.h"
