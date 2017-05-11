@@ -63,6 +63,9 @@ namespace UnitTests
 #endif
         }
 
+        /* Instances of this class definitely don't cast to T. */
+        class WrongClass { };
+
         /*
          * Test all the equality and hashing functions on type T.
          *
@@ -74,6 +77,11 @@ namespace UnitTests
          * notion of equality for this type is reference equality)
          */
         public static void TestEquality(T a, T b, T acopy) {
+            // Test Equals(object) on a.
+            Assert.IsTrue(a.Equals((object) acopy));
+            Assert.IsFalse(a.Equals((object) b));
+            Assert.IsFalse(a.Equals((object) new WrongClass()));
+
             // Test all the Equals functions on a.
             // a.Equals(a) is true
             // a.Equals(b) is false

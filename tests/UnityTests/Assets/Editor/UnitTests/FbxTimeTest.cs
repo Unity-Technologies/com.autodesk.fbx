@@ -14,6 +14,31 @@ namespace UnitTests
     public class FbxTimeTest : TestBase<FbxTime>
     {
         [Test]
+        public void TestComparison ()
+        {
+            var a = FbxTime.FromSecondDouble(5);
+            var b = FbxTime.FromSecondDouble(6);
+            var acopy = FbxTime.FromSecondDouble(5);
+
+            // Test equality.
+            EqualityTester<FbxTime>.TestEquality(a, b, acopy);
+
+            // Test inequality.
+            Assert.IsTrue(a.CompareTo(b) < 0);
+            Assert.IsTrue(b.CompareTo(a) > 0);
+            Assert.IsTrue(a.CompareTo(acopy) == 0);
+            Assert.IsTrue(a.CompareTo((object)null) > 0);
+            Assert.That(() => a.CompareTo("a string"), Throws.Exception.TypeOf<System.ArgumentException>());
+            Assert.IsTrue(a < b);
+            Assert.IsTrue(a <= b);
+            Assert.IsFalse(a >= b);
+            Assert.IsFalse(a > b);
+            Assert.IsTrue((FbxTime)null < b);
+            Assert.IsFalse(a < (FbxTime)null);
+            Assert.IsFalse((FbxTime)null < (FbxTime)null);
+        }
+
+        [Test]
         public void TestBasics ()
         {
             // try the static functions
