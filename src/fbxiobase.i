@@ -18,6 +18,7 @@
 
 /* Also include global constants that should seemingly be a part of FbxIOBase */
 %rename("%s") IOSROOT;
+%rename("%s") EXP_FBX_EMBEDDED;
 %include "fbxsdk/fileio/fbxiosettingspath.h"
 
 %include "fbxsdk/fileio/fbxiobase.h"

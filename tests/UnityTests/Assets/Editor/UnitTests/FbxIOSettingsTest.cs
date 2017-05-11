@@ -41,5 +41,18 @@ namespace UnitTests
                 Assert.AreEqual (ioSettings1, ioSettings2);
             }
         }
+
+        [Test]
+        public void TestSetBoolProp()
+        {
+            // just make sure it doesn't crash
+            using (FbxIOSettings ioSettings = FbxIOSettings.Create (Manager, "")) {
+                ioSettings.SetBoolProp (Globals.EXP_FBX_EMBEDDED, true);
+                ioSettings.SetBoolProp ("", true);
+
+                // TODO: passing null string crashes Unity
+                //ioSettings.SetBoolProp (null, true);
+            }
+        }
     }
 }

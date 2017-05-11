@@ -5,9 +5,8 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-#ifdef IGNORE_ALL_INCLUDE_SOME
 // Unignore class
-%rename("%s") FbxIOSettings;
-#endif
+%rename("%s", %$isclass) FbxIOSettings;
+%rename("%s") FbxIOSettings::SetBoolProp;
 
 %include "fbxsdk/fileio/fbxiosettings.h"
