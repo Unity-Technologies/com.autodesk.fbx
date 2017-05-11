@@ -113,6 +113,33 @@ namespace UnitTests
             Assert.That (() => { property.GetCurveNode((FbxAnimStack)null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
             Assert.That (() => { property.GetCurveNode((FbxAnimLayer)null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
+            using (FbxManager manager = FbxManager.Create ()) {
+                // Test ConnectSrcObject functions
+                FbxObject obj = FbxObject.Create (manager, "obj");
+                bool result = property.ConnectSrcObject (obj);
+                Assert.IsTrue (result);
+                Assert.IsTrue (property.IsConnectedSrcObject (obj));
+
+                result = property.DisconnectSrcObject (obj);
+                Assert.IsTrue (result);
+                Assert.IsFalse (property.IsConnectedSrcObject (obj));
+
+                result = property.ConnectSrcObject (obj, FbxConnection.EType.eData);
+                Assert.IsTrue (result);
+
+                // Test ConnectDstObject functions
+                result = property.ConnectDstObject (obj);
+                Assert.IsTrue (result);
+                Assert.IsTrue (property.IsConnectedDstObject (obj));
+
+                result = property.DisconnectDstObject (obj);
+                Assert.IsTrue (result);
+                Assert.IsFalse (property.IsConnectedDstObject (obj));
+
+                result = property.ConnectDstObject (obj, FbxConnection.EType.eData);
+                Assert.IsTrue (result);
+            }
+
             // verify this in the future: will dispose destroy?
             property.Dispose();
         }

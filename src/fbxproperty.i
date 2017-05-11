@@ -102,16 +102,10 @@
 %ignore FbxProperty::CreateCurveNode;
 %ignore FbxProperty::GetCurve(FbxAnimLayer* pAnimLayer, bool pCreate=false);
 %ignore FbxProperty::GetCurve(FbxAnimLayer* pAnimLayer, const char* pName, const char* pChannel, bool pCreate);
-%ignore FbxProperty::ConnectSrcObject;
-%ignore FbxProperty::IsConnectedSrcObject;
-%ignore FbxProperty::DisconnectSrcObject;
 %ignore FbxProperty::DisconnectAllSrcObject;
 %ignore FbxProperty::GetSrcObjectCount;
 %ignore FbxProperty::GetSrcObject;
 %ignore FbxProperty::FindSrcObject;
-%ignore FbxProperty::ConnectDstObject;
-%ignore FbxProperty::IsConnectedDstObject;
-%ignore FbxProperty::DisconnectDstObject;
 %ignore FbxProperty::DisconnectAllDstObject;
 %ignore FbxProperty::GetDstObjectCount;
 %ignore FbxProperty::GetDstObject;
