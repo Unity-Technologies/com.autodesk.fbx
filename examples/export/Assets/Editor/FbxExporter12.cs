@@ -623,11 +623,11 @@ namespace FbxSdk.Examples
                     var fbxSettings = fbxScene.GetGlobalSettings();
                     fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
 
-                    /// NOTE: The Unity axis system has Y up, Z forward (parity odd), X to the right (left handed)
-                    /// The Maya axis system has Y up, Z forward, X to the left (right handed).
-                    /// FbxAxisSystem.ConvertScene doesn't work so we cannot automatically convert from Left-Handed 
-                    /// to Right-Handed. We export as a right handed axis system but will the 
-                    /// models flipped about the -X axis.
+                    /// The Unity axis system has Y up, Z forward, X to the right (left handed system with odd parity).
+                    /// The Maya axis system has Y up, Z forward, X to the left (right handed system with odd parity).
+                    /// We need to export right-handed for Maya because ConvertScene can't switch handedness:
+                    /// https://forums.autodesk.com/t5/fbx-forum/get-confused-with-fbxaxissystem-convertscene/td-p/4265472
+                    /// NOTE: models will flipped about the -X axis.
                     var axisSystem = FbxAxisSystem.MayaYUp;
 
                     fbxSettings.SetAxisSystem(axisSystem);
