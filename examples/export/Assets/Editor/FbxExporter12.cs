@@ -29,7 +29,7 @@ namespace FbxSdk.Examples
                     4) exported mesh, normals etc, UVs, material
                     5) bind mesh to skeleton
                     6) create a bind pose
-                    7) export the skinned mesh to a FBX file (FBX201400 compatible)
+                    7) export the skinned mesh to a FBX file (FBX201400 compatible, ASCII)
                 ";
 
             const string Keywords =
@@ -582,6 +582,9 @@ namespace FbxSdk.Examples
                     // Configure IO settings.
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
+                    // Export embedded textures
+                    fbxManager.GetIOSettings ().SetBoolProp (Globals.EXP_FBX_EMBEDDED, true);
+
                     // Create the exporter 
                     var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
 
@@ -620,9 +623,14 @@ namespace FbxSdk.Examples
                     var fbxSettings = fbxScene.GetGlobalSettings();
                     fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
 
-                    // The Unity axis system has Y up, Z forward, X to the right:
-                    //var axisSystem = new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded);
-                    //fbxSettings.SetAxisSystem(axisSystem);
+                    /// NOTE: The Unity axis system has Y up, Z forward (parity odd), X to the right (left handed)
+                    /// The Maya axis system has Y up, Z forward, X to the left (right handed).
+                    /// FbxAxisSystem.ConvertScene doesn't work so we cannot automatically convert from Left-Handed 
+                    /// to Right-Handed. We export as a right handed axis system but will the 
+                    /// models flipped about the -X axis.
+                    var axisSystem = FbxAxisSystem.MayaYUp;
+
+                    fbxSettings.SetAxisSystem(axisSystem);
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
