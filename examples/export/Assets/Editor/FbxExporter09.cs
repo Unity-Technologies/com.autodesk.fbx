@@ -193,7 +193,7 @@ namespace FbxSdk.Examples
             {
 #if UNI_16421
                 // setup anim stack
-                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, MakeObjectName (unityAnimClip.name));
+                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, unityAnimClip.name);
                 fbxAnimStack.Description.Set ("Animation Take: " + unityAnimClip.name);
 
                 // add one mandatory animation layer

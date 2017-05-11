@@ -194,7 +194,7 @@ namespace FbxSdk.Examples
                 SkinnedMeshRenderer unitySkinnedMeshRenderer
                     = meshInfo.renderer as SkinnedMeshRenderer;
 
-                FbxSkin fbxSkin = FbxSkin.Create (fbxScene, MakeObjectName (meshInfo.unityObject.name + "_Skin"));
+                FbxSkin fbxSkin = FbxSkin.Create (fbxScene, (meshInfo.unityObject.name + "_Skin"));
 
                 FbxAMatrix fbxMeshMatrix = fbxRootNode.EvaluateGlobalTransform ();
 
@@ -205,7 +205,7 @@ namespace FbxSdk.Examples
                     FbxNode fbxBoneNode = boneNodes [unitySkinnedMeshRenderer.bones[i]];
 
                     // Create the deforming cluster
-                    FbxCluster fbxCluster = FbxCluster.Create (fbxScene, MakeObjectName ("Cluster"));
+                    FbxCluster fbxCluster = FbxCluster.Create (fbxScene, "BoneWeightCluster");
 
                     fbxCluster.SetLink (fbxBoneNode);
                     fbxCluster.SetLinkMode (FbxCluster.ELinkMode.eTotalOne);
@@ -267,7 +267,7 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportBindPose (FbxNode fbxRootNode, FbxNode meshNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
             {
-                FbxPose fbxPose = FbxPose.Create (fbxScene, MakeObjectName(fbxRootNode.GetName()));
+                FbxPose fbxPose = FbxPose.Create (fbxScene, fbxRootNode.GetName());
 
                 // set as bind pose
                 fbxPose.SetIsBindPose (true);
@@ -312,33 +312,33 @@ namespace FbxSdk.Examples
                 // create a node for the mesh
                 FbxNode meshNode = FbxNode.Create(fbxScene, "geo");
 
-            	// create the mesh structure.
-            	FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Scene"));
+                // create the mesh structure.
+                FbxMesh fbxMesh = FbxMesh.Create (fbxScene, "Mesh");
 
-            	// Create control points.
-            	int NumControlPoints = meshInfo.VertexCount;
-            	fbxMesh.InitControlPoints (NumControlPoints);
+                // Create control points.
+                int NumControlPoints = meshInfo.VertexCount;
+                fbxMesh.InitControlPoints (NumControlPoints);
 
-            	// copy control point data from Unity to FBX
-            	for (int v = 0; v < NumControlPoints; v++) {
-            		fbxMesh.SetControlPointAt (new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
-            	}
+                // copy control point data from Unity to FBX
+                for (int v = 0; v < NumControlPoints; v++) {
+                    fbxMesh.SetControlPointAt (new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
+                }
 
-            	/* 
-            	 * Create polygons
-            	 */
-            	int vId = 0;
-            	for (int f = 0; f < meshInfo.Triangles.Length / 3; f++) {
-            		fbxMesh.BeginPolygon ();
-            		fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
-            		fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
-            		fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
-            		fbxMesh.EndPolygon ();
-            	}
+                /* 
+                 * Create polygons
+                 */
+                int vId = 0;
+                for (int f = 0; f < meshInfo.Triangles.Length / 3; f++) {
+                    fbxMesh.BeginPolygon ();
+                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
+                    fbxMesh.EndPolygon ();
+                }
 
-            	// set the fbxNode containing the mesh
-            	meshNode.SetNodeAttribute (fbxMesh);
-            	meshNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+                // set the fbxNode containing the mesh
+                meshNode.SetNodeAttribute (fbxMesh);
+                meshNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
 
                 fbxNode.AddChild (meshNode);
 
@@ -370,7 +370,7 @@ namespace FbxSdk.Examples
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
                     // Create the exporter 
-                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
+                    var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
                     int fileFormat = -1;
@@ -389,10 +389,10 @@ namespace FbxSdk.Examples
                     fbxExporter.SetFileExportVersion("FBX201400");
 
                     // Create a scene
-                    var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
+                    var fbxScene = FbxScene.Create (fbxManager, "Scene");
 
                     // create scene info
-                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
+                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, "SceneInfo");
 
                     // set some scene info values
                     fbxSceneInfo.mTitle = Title;
@@ -480,72 +480,72 @@ namespace FbxSdk.Examples
             ///</summary>
             public struct MeshInfo
             {
-            	/// <summary>
-            	/// The transform of the mesh.
-            	/// </summary>
-            	public Matrix4x4 xform;
+                /// <summary>
+                /// The transform of the mesh.
+                /// </summary>
+                public Matrix4x4 xform;
                 public Mesh mesh;
                 public Renderer renderer;
 
-            	/// <summary>
-            	/// The gameobject in the scene to which this mesh is attached.
-            	/// This can be null: don't rely on it existing!
-            	/// </summary>
-            	public GameObject unityObject;
+                /// <summary>
+                /// The gameobject in the scene to which this mesh is attached.
+                /// This can be null: don't rely on it existing!
+                /// </summary>
+                public GameObject unityObject;
 
-            	/// <summary>
-            	/// Return true if there's a valid mesh information
-            	/// </summary>
-            	/// <value>The vertex count.</value>
-            	public bool IsValid { get { return mesh != null; } }
+                /// <summary>
+                /// Return true if there's a valid mesh information
+                /// </summary>
+                /// <value>The vertex count.</value>
+                public bool IsValid { get { return mesh != null; } }
 
-            	/// <summary>
-            	/// Gets the vertex count.
-            	/// </summary>
-            	/// <value>The vertex count.</value>
-            	public int VertexCount { get { return mesh.vertexCount; } }
+                /// <summary>
+                /// Gets the vertex count.
+                /// </summary>
+                /// <value>The vertex count.</value>
+                public int VertexCount { get { return mesh.vertexCount; } }
 
-            	/// <summary>
-            	/// Gets the triangles. Each triangle is represented as 3 indices from the vertices array.
-            	/// Ex: if triangles = [3,4,2], then we have one triangle with vertices vertices[3], vertices[4], and vertices[2]
-            	/// </summary>
-            	/// <value>The triangles.</value>
-            	public int [] Triangles { get { return mesh.triangles; } }
+                /// <summary>
+                /// Gets the triangles. Each triangle is represented as 3 indices from the vertices array.
+                /// Ex: if triangles = [3,4,2], then we have one triangle with vertices vertices[3], vertices[4], and vertices[2]
+                /// </summary>
+                /// <value>The triangles.</value>
+                public int [] Triangles { get { return mesh.triangles; } }
 
-            	/// <summary>
-            	/// Gets the vertices, represented in local coordinates.
-            	/// </summary>
-            	/// <value>The vertices.</value>
-            	public Vector3 [] Vertices { get { return mesh.vertices; } }
+                /// <summary>
+                /// Gets the vertices, represented in local coordinates.
+                /// </summary>
+                /// <value>The vertices.</value>
+                public Vector3 [] Vertices { get { return mesh.vertices; } }
 
-            	/// <summary>
-            	/// Gets the normals for the vertices.
-            	/// </summary>
-            	/// <value>The normals.</value>
-            	public Vector3 [] Normals { get { return mesh.normals; } }
+                /// <summary>
+                /// Gets the normals for the vertices.
+                /// </summary>
+                /// <value>The normals.</value>
+                public Vector3 [] Normals { get { return mesh.normals; } }
 
-            	/// <summary>
-            	/// Gets the uvs.
-            	/// </summary>
-            	/// <value>The uv.</value>
-            	public Vector2 [] UV { get { return mesh.uv; } }
+                /// <summary>
+                /// Gets the uvs.
+                /// </summary>
+                /// <value>The uv.</value>
+                public Vector2 [] UV { get { return mesh.uv; } }
 
                 public BoneWeight[] BoneWeights { get { return mesh.boneWeights; } }
 
                 public Matrix4x4[] BindPoses { get { return mesh.bindposes; } }
 
-            	/// <summary>
-            	/// Initializes a new instance of the <see cref="MeshInfo"/> struct.
-            	/// </summary>
-            	/// <param name="gameObject">The GameObject the mesh is attached to.</param>
-            	/// <param name="mesh">A mesh we want to export</param>
-            	public MeshInfo (GameObject gameObject, Mesh mesh, Renderer renderer)
-            	{
+                /// <summary>
+                /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
+                /// </summary>
+                /// <param name="gameObject">The GameObject the mesh is attached to.</param>
+                /// <param name="mesh">A mesh we want to export</param>
+                public MeshInfo (GameObject gameObject, Mesh mesh, Renderer renderer)
+                {
                     this.renderer = renderer;
                     this.mesh = mesh;
-            		this.xform = gameObject.transform.localToWorldMatrix;
-            		this.unityObject = gameObject;
-            	}
+                    this.xform = gameObject.transform.localToWorldMatrix;
+                    this.unityObject = gameObject;
+                }
             }
 
             /// <summary>
@@ -553,20 +553,20 @@ namespace FbxSdk.Examples
             /// </summary>
             private MeshInfo GetSkinnedMeshInfo (GameObject gameObject)
             {
-        		// Verify that we are rendering. Otherwise, don't export.
-        		var renderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer> ();
-        		if (!renderer || !renderer.enabled) {
+                // Verify that we are rendering. Otherwise, don't export.
+                var renderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer> ();
+                if (!renderer || !renderer.enabled) {
                     Debug.LogError ("could not find renderer");
-        			return new MeshInfo ();
-        		}
+                    return new MeshInfo ();
+                }
 
-            	var mesh = renderer.sharedMesh;
-            	if (!mesh) {
+                var mesh = renderer.sharedMesh;
+                if (!mesh) {
                     Debug.LogError ("Could not find mesh");
-            		return new MeshInfo ();
-            	}
+                    return new MeshInfo ();
+                }
 
-            	return new MeshInfo (gameObject, mesh, renderer);
+                return new MeshInfo (gameObject, mesh, renderer);
             }
 
             /// <summary>
@@ -590,11 +590,6 @@ namespace FbxSdk.Examples
                 }
 
                 return null;
-            }
-
-            private static string MakeObjectName (string name)
-            {
-                return NamePrefix + name;
             }
 
             private static string MakeFileName(string basename = "test", string extension = "fbx")
