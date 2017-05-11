@@ -580,7 +580,12 @@ namespace FbxSdk.Examples
                 using (var fbxManager = FbxManager.Create ()) 
                 {
                     // Configure IO settings.
-                    fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
+                    var fbxIOSettings = FbxIOSettings.Create (fbxManager, Globals.IOSROOT);
+
+                    // Export embedded textures
+                    fbxIOSettings.SetBoolProp (Globals.EXP_FBX_EMBEDDED, true);
+
+                    fbxManager.SetIOSettings (fbxIOSettings);
 
                     // Export embedded textures
                     fbxManager.GetIOSettings ().SetBoolProp (Globals.EXP_FBX_EMBEDDED, true);
@@ -589,7 +594,8 @@ namespace FbxSdk.Examples
                     var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
-                    int fileFormat = fbxManager.GetIOPluginRegistry().FindWriterIDByDescription("FBX ascii (*.fbx)");
+                    // NOTE: only the binary FBX file format supports embedded media
+                    int fileFormat = -1; // automatically detect the file format
 
                     bool status = fbxExporter.Initialize (LastFilePath, fileFormat, fbxManager.GetIOSettings ());
 
