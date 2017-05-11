@@ -154,6 +154,9 @@ namespace FbxSdk.Examples
 
                     for (int n = 0; n < mesh.VertexColors.Length; n++) 
                     {
+                        // Converting to Color from Color32, as Color32 stores the colors
+                        // as ints between 0-255, while FbxColor and Color
+                        // use doubles between 0-1
                         Color color = mesh.VertexColors [n];
                         fbxElementArray.Add (new FbxColor(color.r, 
                                                           color.g, 
