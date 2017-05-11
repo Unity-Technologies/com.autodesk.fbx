@@ -79,7 +79,7 @@ namespace FbxSdk.Examples
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
                     // Create the exporter 
-                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("fbxExporter"));
+                    var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
                     int fileFormat = fbxManager.GetIOPluginRegistry ().FindWriterIDByDescription ("FBX ascii (*.fbx)");
@@ -94,10 +94,10 @@ namespace FbxSdk.Examples
                     fbxExporter.SetFileExportVersion("FBX201400");
 
                     // Create a scene
-                    var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
+                    var fbxScene = FbxScene.Create (fbxManager, "Scene");
 
                     // create scene info
-                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
+                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, "SceneInfo");
 
                     // set some scene info values
                     fbxSceneInfo.mTitle = Title;
@@ -193,11 +193,6 @@ namespace FbxSdk.Examples
             /// </summary>
             static string LastFilePath { get; set; }
             const string Extension = "fbx";
-
-            private static string MakeObjectName (string name)
-            {
-                 return NamePrefix + name;
-            }
 
             private static string MakeFileName(string basename = "test", string extension = "fbx")
             {

@@ -60,7 +60,7 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, MakeObjectName ("Normals"))) 
+                using (var fbxLayerElement = FbxLayerElementNormal.Create (fbxMesh, "Normals")) 
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
@@ -82,7 +82,7 @@ namespace FbxSdk.Examples
                 }
 
                 /// Set the binormals on Layer 0. 
-                using (var fbxLayerElement = FbxLayerElementBinormal.Create (fbxMesh, MakeObjectName ("Binormals"))) 
+                using (var fbxLayerElement = FbxLayerElementBinormal.Create (fbxMesh, "Binormals")) 
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
@@ -103,7 +103,7 @@ namespace FbxSdk.Examples
                 }
 
                 /// Set the tangents on Layer 0.
-                using (var fbxLayerElement = FbxLayerElementTangent.Create (fbxMesh, MakeObjectName ("Tangents"))) 
+                using (var fbxLayerElement = FbxLayerElementTangent.Create (fbxMesh, "Tangents")) 
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
@@ -138,7 +138,7 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, MakeObjectName ("VertexColor"))) 
+                using (var fbxLayerElement = FbxLayerElementVertexColor.Create (fbxMesh, "VertexColors")) 
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
 
@@ -156,10 +156,10 @@ namespace FbxSdk.Examples
                         // as ints between 0-255, while FbxColor and Color
                         // use doubles between 0-1
                         Color color = mesh.VertexColors [n];
-                        fbxElementArray.Add (new FbxColor(color.r, 
-                                                          color.g, 
-                                                          color.b,
-                                                          color.a));
+                        fbxElementArray.Add (new FbxColor (color.r,
+                                                           color.g,
+                                                           color.b,
+                                                           color.a));
                     }
                     fbxLayer.SetVertexColors (fbxLayerElement);
                 }
@@ -179,7 +179,7 @@ namespace FbxSdk.Examples
                     fbxLayer = fbxMesh.GetLayer (0 /* default layer */);
                 }
 
-                using (var fbxLayerElement = FbxLayerElementUV.Create (fbxMesh, MakeObjectName ("UVSet")))
+                using (var fbxLayerElement = FbxLayerElementUV.Create (fbxMesh, "UVSet"))
                 {
                     fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByPolygonVertex);
                     fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eIndexToDirect);
@@ -218,7 +218,7 @@ namespace FbxSdk.Examples
                 NumVertices += mesh.VertexCount;
 
                 // create the mesh structure.
-                FbxMesh fbxMesh = FbxMesh.Create (fbxScene, MakeObjectName ("Scene"));
+                FbxMesh fbxMesh = FbxMesh.Create (fbxScene, "Mesh");
 
                 // Create control points.
                 int NumControlPoints = mesh.VertexCount;
@@ -313,7 +313,7 @@ namespace FbxSdk.Examples
                     fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
 
                     // Create the exporter 
-                    var fbxExporter = FbxExporter.Create (fbxManager, MakeObjectName ("Exporter"));
+                    var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
                     int fileFormat = fbxManager.GetIOPluginRegistry ().FindWriterIDByDescription ("FBX ascii (*.fbx)");
@@ -327,10 +327,10 @@ namespace FbxSdk.Examples
                     fbxExporter.SetFileExportVersion("FBX201400");
 
                     // Create a scene
-                    var fbxScene = FbxScene.Create (fbxManager, MakeObjectName ("Scene"));
+                    var fbxScene = FbxScene.Create (fbxManager, "Scene");
 
                     // create scene info
-                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, MakeObjectName ("SceneInfo"));
+                    FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create (fbxManager, "SceneInfo");
 
                     // set some scene info values
                     fbxSceneInfo.mTitle     = Title;
@@ -592,11 +592,6 @@ namespace FbxSdk.Examples
             /// </summary>
             static string LastFilePath { get; set; }
             const string Extension = "fbx";
-
-            private static string MakeObjectName (string name)
-            {
-                return NamePrefix + name;
-            }
 
             private static string MakeFileName(string basename = "test", string extension = "fbx")
             {

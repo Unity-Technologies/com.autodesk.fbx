@@ -1,4 +1,4 @@
-//#define UNI_16810
+//#define UNI_17561
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -18,30 +18,30 @@ namespace FbxSdk.Examples
     namespace Editor
     {
 
-        public class FbxExporter11 : System.IDisposable
+        public class FbxExporter14 : System.IDisposable
         {
             const string Title =
-                "Example 11: exporting selected cameras with their settings and animation.";
+                "Example 14: exporting selected lights with their settings and animation.";
 
             const string Subject =
-                 @"Example FbxExporter11 illustrates how to:
+                 @"Example     FbxExporter14 illustrates how to:
                                             1) create and initialize an exporter
                                             2) create a scene
-                                            3) create a camera node and export some settings
-                                            4) create animation take for the animated camera settings and SRT
-                                            5) set the default camera for the scene
-                                            6) export a scene to a FBX file (FBX201400 compatible)
+                                            3) create a light and set its gobo (stencil or template that is placed inside or in front of a light source)
+                                            4) create animation take for the animated light settings and SRT
+                                            5) set the ambient light for the scene
+                                            6) export a scene to a FBX file (FBX201400 compatible, ASCII)
                                                     ";
 
             const string Keywords =
-                 "export camera node animation";
+                 "export light node animation";
 
             const string Comments =
-                 @"We set the filmback to 35mm TV Projection.";
+                 @"";
 
-            const string MenuItemName = "File/Export FBX/WIP 11. camera with animation";
+            const string MenuItemName = "File/Export FBX/WIP 14. lights with animation";
 
-            const string FileBaseName = "example_camera_animation";
+            const string FileBaseName = "example_lights_with_animation";
 
             /// <summary>
             /// map Unity animatable property to FbxProperty
@@ -49,9 +49,6 @@ namespace FbxSdk.Examples
             /// </summary>
             static Dictionary<string, string> MapUnityToFbxPropertyName = new Dictionary<string, string> ()
             {
-                { "field of view",          "FocalLength" },
-                { "near clip plane",        "NearPlane" },
-                { "far clip plane",         "FarPlane" },
                 { "m_LocalPosition.x",      "LclTranslation" },
                 { "m_LocalPosition.y",      "LclTranslation" },
                 { "m_LocalPosition.z",      "LclTranslation" },
@@ -65,9 +62,6 @@ namespace FbxSdk.Examples
             /// </summary>
             static Dictionary<string, string> MapUnityToFbxChannelName = new Dictionary<string, string> ()
             {
-                { "field of view",          "FocalLength" },
-                { "near clip plane",        "NearPlane" },
-                { "far clip plane",         "FarPlane" },
                 { "m_LocalPosition.x",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
                 { "m_LocalPosition.y",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
                 { "m_LocalPosition.z",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
@@ -76,79 +70,141 @@ namespace FbxSdk.Examples
                 { "localEulerAnglesRaw.z",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
             };
 
-            /// <summary>
-            /// name of the scene's default camera
-            /// </summary>
-            static string DefaultCamera = "";
+#if UNI_17561
+            static Dictionary<UnityEngine.LightType, FbxLight.Type> MapLightType = new Dictionary<UnityEngine.LightType, FbxLight.Type> () {
+                { UnityEngine.LightType.Directional,    FbxLight.Type.eDirectional },
+                { UnityEngine.LightType.Spot,           FbxLight.Type.eSpot },
+                { UnityEngine.LightType.Point,          FbxLight.Type.ePoint },
+            };
+#endif
+            static Dictionary<string, float> MapScalingFactor = new Dictionary<string, float> () {
+				{ "intensity",    1.0f },
+				{ "spotAngle",    1.0f },
+			};
 
             /// <summary>
-            /// collected list of cameras to export
+            /// collected list of lights to export
             /// </summary>
-            List<Camera> Cameras = new List<Camera>();
+            List<Light> Lights = new List<Light> ();
 
             /// <summary>
             /// Create instance of example
             /// </summary>
-            public static FbxExporter11 Create () { return new FbxExporter11 (); }
+            public static FbxExporter14 Create () { return new FbxExporter14 (); }
 
             /// <summary>
-            /// Exports camera component
+            /// Exports light component.
+            /// Supported types: point, spot and directional
+            /// Cookie => Gobo
             /// </summary>
-            protected void ExportCamera (Camera unityCamera, FbxScene fbxScene, FbxNode fbxNode)
+            protected void ExportLight (Light unityLight, FbxScene fbxScene, FbxNode fbxNode)
             {
-                FbxCamera fbxCamera = FbxCamera.Create (fbxScene.GetFbxManager(), unityCamera.name);
+#if UNI_17561
+                FbxLight fbxLight = FbxLight.Create (fbxScene.GetFbxManager(), unityLight.name);
 
-                bool perspective = unityCamera.orthographic!=true;
-                float aspectRatio = unityCamera.aspect;
+                FbxLight.EType fbxLightType = null;
 
-                // Configure FilmBack settings: 35mm TV Projection (0.816 x 0.612)
-                float apertureHeightInInches = 0.612f;
-                float apertureWidthInInches = aspectRatio * apertureHeightInInches;
-
-                FbxCamera.EProjectionType projectionType =
-                    perspective ? FbxCamera.EProjectionType.ePerspective : FbxCamera.EProjectionType.eOrthogonal;
+                // is light type supported
+                if (!MapLightTypes.TryGetValue (unityLight.type, out fbxLightType))
+                    return;
                 
-                fbxCamera.ProjectionType.Set(projectionType);
-                fbxCamera.SetAspect (FbxCamera.EAspectRatioMode.eFixedRatio, aspectRatio, 1.0f);
-                fbxCamera.FilmAspectRatio.Set(aspectRatio);
-                fbxCamera.SetApertureWidth (apertureWidthInInches);
-                fbxCamera.SetApertureHeight (apertureHeightInInches);
-                fbxCamera.SetApertureMode (FbxCamera.EApertureMode.eFocalLength);
+                //type The type of the light.      
+                fbxLight.LightType.Set(fbxLightType);
 
-                // FOV / Focal Length
-                fbxCamera.FocalLength.Set(fbxCamera.ComputeFocalLength (unityCamera.fieldOfView));
+                switch (unityLight.type) 
+                {
+                    case LightType.Directional : {
+                        break;
+                    }
+                    case LightType.Spot : {
+                        // Set the angle of the light's spotlight cone in degrees.
+                        fbxLight.InnerAngle.Set(0.01f);
+                        fbxLight.OuterAngle.Set(unityLight.spotAngle * MapScalingFactor["spotAngle"]);
+                        break;
+                    }
+                    case LightType.Point : {
+                        break;
+                    }
+                }
 
-                // NearPlane
-                fbxCamera.SetNearPlane (unityCamera.nearClipPlane);
+                // areaSize          The size of the area light.
 
-                // FarPlane
-                fbxCamera.SetFarPlane (unityCamera.farClipPlane);
+                // bounceIntensity   The multiplier that defines the strength of the bounce lighting.
 
-                fbxNode.SetNodeAttribute (fbxCamera);
+                // color             The color of the light.
+                var unityLightColor = unityLight.color;
 
-                // make the last camera exported the default camera
-                DefaultCamera = fbxNode.GetName ();
-            }
+                fbxLight.Color.Set (unityLightColor.r, unityLightColor.g, unityLightColor.b);
 
-            /// <summary>
-            /// Export camera animation as a single take
-            /// </summary>
-            protected void ExportCameraAnimation (Camera unityCamera, FbxScene fbxScene)
-            {
-#if UNI_16810
-                ExportAnimationClips (unityCamera.gameObject.GetComponent<Animation> (), fbxScene);
+                // colorTemperature  The color temperature of the light. Correlated Color Temperature (abbreviated as CCT) is multiplied with the color filter when calculating the final color of a light source.The color temperature of the electromagnetic radiation emitted from an ideal black body is defined as its surface temperature in Kelvin.White is 6500K according to the D65 standard. Candle light is 1800K.If you want to use lightsUseCCT, lightsUseLinearIntensity has to be enabled to ensure physically correct output. See Also: GraphicsSettings.lightsUseLinearIntensity, GraphicsSettings.lightsUseCCT.
+                // commandBufferCount Number of command buffers set up on this light (Read Only).
+
+                // cookie            The cookie texture projected by the light.
+                var unityCookieTexture = unityLight.cookie;
+
+                if (unityCookieTexture !=null)
+                {
+                    // Find its filename
+                    var textureSourceFullPath = AssetDatabase.GetAssetPath (unityCookieTexture);
+                    if (textureSourceFullPath != "") {
+                        
+                        // get absolute filepath to texture
+                        textureSourceFullPath = Path.GetFullPath (textureSourceFullPath);
+
+                        fbxLight.FileName.Set (textureSourceFullPath);
+                        fbxLight.DrawGroundProjection.Set (true);
+                        fbxLight.DrawVolumetricLight.Set (true);
+                        fbxLight.DrawFrontFacingVolumetricLight.Set (false);
+                    }
+                }
+
+                // cookieSize        The size of a directional light's cookie.
+
+                // cullingMask       This is used to light certain objects in the scene selectively.
+                // flare             The flare asset to use for this light.
+
+                // Set the Intensity of a light is multiplied with the Light color.
+                fbxLight.Intensity.Set (unityLight.intensity * MapScalingFactor["intensity"]);
+                        
+                // isBaked           Is the light contribution already stored in lightmaps and/or lightprobes (Read Only).
+                // lightmapBakeType  This property describes what part of a light's contribution can be baked.
+
+                // range             The range of the light.
+
+                // renderMode        How to render the light.
+                // shadowBias        Shadow mapping constant bias.
+                // shadowCustomResolution The custom resolution of the shadow map.
+                // shadowNearPlane   Near plane value to use for shadow frustums.
+                // shadowNormalBias  Shadow mapping normal-based bias.
+                // shadowResolution  The resolution of the shadow map.
+                // shadows           How this light casts shadows
+                // shadowStrength    Strength of light's shadows.
+
+                fbxNode.SetNodeAttribute (fbxLight);
 #endif
             }
 
             /// <summary>
-            /// configures default camera for the scene
+            /// Export each animationclip as a single fbxtake
             /// </summary>
-            protected void SetDefaultCamera (FbxScene fbxScene)
+            protected void ExportAnimationClips (GameObject unityGo, FbxScene fbxScene)
             {
-                if (DefaultCamera == "")
-                    DefaultCamera = FbxSdk.Globals.FBXSDK_CAMERA_PERSPECTIVE;
+                // TODO: cut and paste animation code here
+            }
 
-                fbxScene.GetGlobalSettings ().SetDefaultCamera (DefaultCamera);
+            /// <summary>
+            /// configures ambient lighting for the scene
+            /// </summary>
+            protected void SetAmbientLighting (FbxScene fbxScene)
+            {
+                // if we're using flat lighting copy the color across
+                if (RenderSettings.ambientMode == UnityEngine.Rendering.AmbientMode.Flat) {
+                    Color unityColor = RenderSettings.ambientLight;
+
+#if UNI_17561
+                    fbxScene.GetGlobalSettings ().SetAmbientColor (FbxColor (unityColor.r, unityColor.g, unityColor.b));
+#endif
+                }
             }
 
             /// <summary>
@@ -156,30 +212,30 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportAllAnimation(FbxScene fbxScene)
             {
-                foreach (Camera unityCamera in this.Cameras) 
+                foreach (Light unityLight in this.Lights) 
                 {
-                    ExportCameraAnimation (unityCamera, fbxScene);
+                    ExportAnimationClips (unityLight.gameObject, fbxScene);
                 }
             }
 
             /// <summary>
-            /// Exports the game object has a camera component
+            /// Exports the game object has a light component
             /// </summary>
             protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxNodeParent)
             {
-                Camera unityCamera = unityGo.GetComponent<Camera> ();
+                Light unityLight = unityGo.GetComponent<Light> ();
 
-                if (unityCamera == null)
+                if (unityLight == null)
                     return;
 
-                // add to the list of cameras
-                Cameras.Add(unityCamera);
+                // add to the list of lights
+                Lights.Add(unityLight);
 
                 // create an node and add it as a child of parent
                 FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
                 NumNodes++;
 
-                ExportCamera (unityCamera, fbxScene, fbxNode);
+                ExportLight (unityLight, fbxScene, fbxNode);
 
                 if (Verbose)
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
@@ -251,8 +307,8 @@ namespace FbxSdk.Examples
 
                     ExportAllAnimation (fbxScene);
 
-                    // Set the scene's default camera.
-                    SetDefaultCamera (fbxScene);
+                    // Set the scene's ambient lighting.
+                    SetAmbientLighting (fbxScene);
 
                     // Export the scene to the file.
                     status = fbxExporter.Export (fbxScene);
@@ -289,7 +345,7 @@ namespace FbxSdk.Examples
                 if (Selection.activeTransform == null)
                     return false;
 
-                return Selection.activeTransform.gameObject.GetComponent<Camera> () != null;
+                return Selection.activeTransform.gameObject.GetComponent<Light> () != null;
             }
 
             /// <summary>
