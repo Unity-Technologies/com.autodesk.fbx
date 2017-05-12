@@ -91,7 +91,7 @@ namespace FbxSdk.Examples
                     ExportSkin (meshInfo, fbxScene, fbxMesh, fbxMeshNode, boneNodes);
 
                     // add bind pose
-                    ExportBindPose (fbxNode, fbxScene, boneNodes);
+                    ExportBindPose (fbxNode, fbxMeshNode, fbxScene, boneNodes);
 
                     fbxParentNode.AddChild (fbxNode);
                     NumNodes++;
@@ -260,7 +260,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export bind pose of mesh to skeleton
             /// </summary>
-            protected void ExportBindPose (FbxNode fbxRootNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
+            protected void ExportBindPose (FbxNode fbxRootNode, FbxNode fbxMeshNode, FbxScene fbxScene, Dictionary<Transform, FbxNode> boneNodes)
             {
                 FbxPose fbxPose = FbxPose.Create (fbxScene, fbxRootNode.GetName());
 
@@ -284,6 +284,8 @@ namespace FbxSdk.Examples
 
                     fbxPose.Add (fbxNode, fbxBindMatrix);
                 }
+
+                fbxPose.Add (fbxMeshNode, new FbxMatrix (fbxMeshNode.EvaluateGlobalTransform ()));
 
                 // add the pose to the scene
                 fbxScene.AddPose (fbxPose);
@@ -517,7 +519,7 @@ namespace FbxSdk.Examples
                 }
 
                 // create a node for the mesh
-                FbxNode meshNode = FbxNode.Create(fbxScene, "geo");
+                FbxNode fbxMeshNode = FbxNode.Create(fbxScene, "geo");
 
                 // create the mesh structure.
                 FbxMesh fbxMesh = FbxMesh.Create (fbxScene, "Mesh");
@@ -535,7 +537,7 @@ namespace FbxSdk.Examples
                 ExportUVs (meshInfo, fbxMesh);
 
                 var fbxMaterial = ExportMaterial (meshInfo.Material, fbxScene);
-                meshNode.AddMaterial (fbxMaterial);
+                fbxMeshNode.AddMaterial (fbxMaterial);
 
                 /* 
                  * Create polygons
@@ -550,12 +552,12 @@ namespace FbxSdk.Examples
                 }
 
                 // set the fbxNode containing the mesh
-                meshNode.SetNodeAttribute (fbxMesh);
-                meshNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+                fbxMeshNode.SetNodeAttribute (fbxMesh);
+                fbxMeshNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
 
-                fbxNode.AddChild (meshNode);
+                fbxNode.AddChild (fbxMeshNode);
 
-                return meshNode;
+                return fbxMeshNode;
             }
 
             protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
