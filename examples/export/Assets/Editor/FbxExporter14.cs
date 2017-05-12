@@ -70,13 +70,12 @@ namespace FbxSdk.Examples
                 { "localEulerAnglesRaw.z",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
             };
 
-#if UNI_17561
-            static Dictionary<UnityEngine.LightType, FbxLight.Type> MapLightType = new Dictionary<UnityEngine.LightType, FbxLight.Type> () {
-                { UnityEngine.LightType.Directional,    FbxLight.Type.eDirectional },
-                { UnityEngine.LightType.Spot,           FbxLight.Type.eSpot },
-                { UnityEngine.LightType.Point,          FbxLight.Type.ePoint },
+            static Dictionary<UnityEngine.LightType, FbxLight.EType> MapLightType = new Dictionary<UnityEngine.LightType, FbxLight.EType> () {
+                { UnityEngine.LightType.Directional,    FbxLight.EType.eDirectional },
+                { UnityEngine.LightType.Spot,           FbxLight.EType.eSpot },
+                { UnityEngine.LightType.Point,          FbxLight.EType.ePoint },
             };
-#endif
+
             static Dictionary<string, float> MapScalingFactor = new Dictionary<string, float> () {
 				{ "intensity",    1.0f },
 				{ "spotAngle",    1.0f },
@@ -99,15 +98,14 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportLight (Light unityLight, FbxScene fbxScene, FbxNode fbxNode)
             {
-#if UNI_17561
                 FbxLight fbxLight = FbxLight.Create (fbxScene.GetFbxManager(), unityLight.name);
 
-                FbxLight.EType fbxLightType = null;
+                FbxLight.EType fbxLightType;
 
                 // is light type supported
-                if (!MapLightTypes.TryGetValue (unityLight.type, out fbxLightType))
+                if (!MapLightType.TryGetValue (unityLight.type, out fbxLightType))
                     return;
-                
+
                 //type The type of the light.      
                 fbxLight.LightType.Set(fbxLightType);
 
@@ -134,7 +132,7 @@ namespace FbxSdk.Examples
                 // color             The color of the light.
                 var unityLightColor = unityLight.color;
 
-                fbxLight.Color.Set (unityLightColor.r, unityLightColor.g, unityLightColor.b);
+                fbxLight.Color.Set (new FbxDouble3(unityLightColor.r, unityLightColor.g, unityLightColor.b));
 
                 // colorTemperature  The color temperature of the light. Correlated Color Temperature (abbreviated as CCT) is multiplied with the color filter when calculating the final color of a light source.The color temperature of the electromagnetic radiation emitted from an ideal black body is defined as its surface temperature in Kelvin.White is 6500K according to the D65 standard. Candle light is 1800K.If you want to use lightsUseCCT, lightsUseLinearIntensity has to be enabled to ensure physically correct output. See Also: GraphicsSettings.lightsUseLinearIntensity, GraphicsSettings.lightsUseCCT.
                 // commandBufferCount Number of command buffers set up on this light (Read Only).
@@ -181,7 +179,6 @@ namespace FbxSdk.Examples
                 // shadowStrength    Strength of light's shadows.
 
                 fbxNode.SetNodeAttribute (fbxLight);
-#endif
             }
 
             /// <summary>
@@ -201,9 +198,7 @@ namespace FbxSdk.Examples
                 if (RenderSettings.ambientMode == UnityEngine.Rendering.AmbientMode.Flat) {
                     Color unityColor = RenderSettings.ambientLight;
 
-#if UNI_17561
-                    fbxScene.GetGlobalSettings ().SetAmbientColor (FbxColor (unityColor.r, unityColor.g, unityColor.b));
-#endif
+                    fbxScene.GetGlobalSettings ().SetAmbientColor (new FbxColor (unityColor.r, unityColor.g, unityColor.b));
                 }
             }
 

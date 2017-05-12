@@ -49,16 +49,30 @@ struct FbxSharpDouble4 {
         w = fbx.mData[3];
     }
     inline operator FbxDouble4 () const { return FbxDouble4(x, y, z, w); }
+    inline operator FbxVector4 () const { return FbxVector4(x, y, z, w); }
+};
+
+struct FbxSharpColor {
+    double r;
+    double g;
+    double b;
+    double a;
+    
+    inline void operator = (const FbxColor& fbx) {
+        r = fbx.mRed;
+        g = fbx.mGreen;
+        b = fbx.mBlue;
+        a = fbx.mAlpha;
+    }
     inline operator FbxColor () const {
         /* The constructor with four doubles does some checks on the values.
          * We don't want those, since it prevents us from checking IsValid!
          * Setting the fields by hand thwarts the checks. */
         FbxColor c;
-        c.mRed = x;
-        c.mGreen = y;
-        c.mBlue = z;
-        c.mAlpha = w;
+        c.mRed = r;
+        c.mGreen = g;
+        c.mBlue = b;
+        c.mAlpha = a;
         return c;
     }
-    inline operator FbxVector4 () const { return FbxVector4(x, y, z, w); }
 };
