@@ -304,6 +304,81 @@ namespace UnitTests
                     Assert.AreEqual(nDst - 1, obj2.GetDstPropertyCount());
                 }
             }
+
+            /************************************************************
+             * Test object connection functions
+             ************************************************************/
+
+            // need to order them this way for FbxScene, which deletes obj if Source Object is destroyed
+            using (var ownerObj = CreateObject ("ownerObj")) {
+                using (obj = CreateObject ("obj")) {
+                    // Test ConnectSrcObject functions
+                    int origCount = ownerObj.GetSrcObjectCount ();
+
+                    bool result = ownerObj.ConnectSrcObject (obj);
+                    Assert.IsTrue (result);
+                    Assert.IsTrue (ownerObj.IsConnectedSrcObject (obj));
+                    Assert.AreEqual (origCount + 1, ownerObj.GetSrcObjectCount ());
+                    if (origCount == 0) {
+                        Assert.AreEqual (obj, ownerObj.GetSrcObject ());
+                    } else {
+                        // FbxScene has more than one object set as source
+                        Assert.AreNotEqual (obj, ownerObj.GetSrcObject ());
+                    }
+                    Assert.AreEqual (obj, ownerObj.GetSrcObject (origCount));
+                    Assert.AreEqual (obj, ownerObj.FindSrcObject ("obj"));
+                    Assert.IsNull (ownerObj.FindSrcObject ("obj", origCount + 1));
+
+                    // TODO: Fix so this doesn't crash
+                    /*Assert.That (() => {
+                        ownerObj.FindSrcObject (null);
+                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());*/
+
+                    result = ownerObj.DisconnectSrcObject (obj);
+                    Assert.IsTrue (result);
+                    Assert.IsFalse (ownerObj.IsConnectedSrcObject (obj));
+
+                    Assert.That (() => {
+                        ownerObj.ConnectSrcObject (null);
+                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+
+                    result = ownerObj.ConnectSrcObject (obj, FbxConnection.EType.eData);
+                    Assert.IsTrue (result);
+                }
+            }
+
+            // need to order them this way for FbxScene, which deletes ownerObj if Destination Object is destroyed
+            using (obj = CreateObject ("obj")) {
+                using (var ownerObj = CreateObject ("ownerObj")) {
+                    // Test ConnectDstObject functions
+                    int origCount = ownerObj.GetDstObjectCount ();
+
+                    bool result = ownerObj.ConnectDstObject (obj);
+                    Assert.IsTrue (result);
+                    Assert.IsTrue (ownerObj.IsConnectedDstObject (obj));
+                    Assert.AreEqual (origCount + 1, ownerObj.GetDstObjectCount ());
+                    Assert.AreEqual (obj, ownerObj.GetDstObject ());
+                    Assert.AreEqual (obj, ownerObj.GetDstObject (origCount));
+                    Assert.AreEqual (obj, ownerObj.FindDstObject ("obj"));
+                    Assert.IsNull (ownerObj.FindDstObject ("obj", origCount+1));
+
+                    // TODO: Fix so this doesn't crash
+                    /*Assert.That (() => {
+                        ownerObj.FindDstObject (null);
+                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());*/
+
+                    result = ownerObj.DisconnectDstObject (obj);
+                    Assert.IsTrue (result);
+                    Assert.IsFalse (ownerObj.IsConnectedDstObject (obj));
+
+                    Assert.That (() => {
+                        ownerObj.ConnectDstObject (null);
+                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+
+                    result = ownerObj.ConnectDstObject (obj, FbxConnection.EType.eData);
+                    Assert.IsTrue (result);
+                }
+            }
         }
     }
 }

@@ -102,20 +102,14 @@
 %ignore FbxProperty::CreateCurveNode;
 %ignore FbxProperty::GetCurve(FbxAnimLayer* pAnimLayer, bool pCreate=false);
 %ignore FbxProperty::GetCurve(FbxAnimLayer* pAnimLayer, const char* pName, const char* pChannel, bool pCreate);
-%ignore FbxProperty::ConnectSrcObject;
-%ignore FbxProperty::IsConnectedSrcObject;
-%ignore FbxProperty::DisconnectSrcObject;
 %ignore FbxProperty::DisconnectAllSrcObject;
-%ignore FbxProperty::GetSrcObjectCount;
-%ignore FbxProperty::GetSrcObject;
-%ignore FbxProperty::FindSrcObject;
-%ignore FbxProperty::ConnectDstObject;
-%ignore FbxProperty::IsConnectedDstObject;
-%ignore FbxProperty::DisconnectDstObject;
+%ignore FbxProperty::GetSrcObjectCount(const FbxCriteria& pCriteria) const;
+%ignore FbxProperty::GetSrcObject(const FbxCriteria& pCriteria, const int pIndex=0) const;
+%ignore FbxProperty::FindSrcObject(const FbxCriteria& pCriteria, const char* pName, const int pStartIndex=0) const;
 %ignore FbxProperty::DisconnectAllDstObject;
-%ignore FbxProperty::GetDstObjectCount;
-%ignore FbxProperty::GetDstObject;
-%ignore FbxProperty::FindDstObject;
+%ignore FbxProperty::GetDstObjectCount(const FbxCriteria& pCriteria) const;
+%ignore FbxProperty::GetDstObject(const FbxCriteria& pCriteria, const int pIndex=0) const;
+%ignore FbxProperty::FindDstObject(const FbxCriteria& pCriteria, const char* pName, const int pStartIndex=0) const;
 %ignore FbxProperty::ConnectSrcProperty;
 %ignore FbxProperty::IsConnectedSrcProperty;
 %ignore FbxProperty::DisconnectSrcProperty;
@@ -150,6 +144,12 @@
  * But in case you forget, this creates a warning 844 in swig and will fail to
  * compile in C#. */
 %typemap("csvarin") const FbxPropertyT& {#error this should be a %fbximmutable}
+
+// make sure Connect[Src|Dst]Object(), Disonnect[Src|Dst]Object(), 
+// and Find[Src|Dst]Object() don't crash if we pass a null object
+%null_arg_check(FbxObject* pObject);
+// Applies to Create() as well, and causes tests that call create with "" to fail
+//%null_arg_check(const char* pName);
 
 
 /***************************************************************************/

@@ -13,12 +13,7 @@
 %rename("%s") FbxIOPluginRegistry::FindWriterIDByDescription;
 
 // make sure FindWriterIDByDescription() doesn't crash if we pass it a null string
-%typemap(check, canthrow=1) const char* pDesc %{
-  if(!$1){
-    SWIG_CSharpSetPendingException(SWIG_CSharpNullReferenceException, "$1_basetype $1_name is null");
-    return $null;
-  }
-%}
+%null_arg_check(const char* pDesc);
 #endif
 
 %include "fbxsdk/fileio/fbxiopluginregistry.h"
