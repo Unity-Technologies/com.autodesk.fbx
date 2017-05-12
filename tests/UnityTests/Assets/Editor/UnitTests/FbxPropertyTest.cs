@@ -24,6 +24,7 @@ namespace UnitTests
             CoverageTester.TestCoverage(typeof(FbxPropertyEWrapMode), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyEProjectionType), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyELightType), this.GetType ());
         }
 #endif
 
@@ -64,6 +65,18 @@ namespace UnitTests
                 var impl = FbxImplementation.Create(manager, "impl");
                 var renderAPIcopy = impl.RenderAPI; // TODO: impl.FindProperty("RenderAPI");
                 EqualityTester<FbxPropertyString>.TestEquality(impl.RenderAPI, impl.RenderAPIVersion, renderAPIcopy);
+
+                // FbxPropertyT<> for FbxCamera enum EProjectionType
+                var cam1 = FbxCamera.Create(manager, "cam1");
+                var cam2 = FbxCamera.Create(manager, "cam2");
+                var projectionCopy = cam1.ProjectionType;
+                EqualityTester<FbxPropertyEProjectionType>.TestEquality(cam1.ProjectionType, cam2.ProjectionType, projectionCopy);
+
+                // FbxPropertyT<> for FbxLight enum EType
+                var light1 = FbxLight.Create(manager, "light1");
+                var light2 = FbxLight.Create(manager, "light2");
+                var typeCopy = light1.LightType;
+                EqualityTester<FbxPropertyELightType>.TestEquality(light1.LightType, light2.LightType, typeCopy);
             }
         }
 
@@ -275,6 +288,17 @@ namespace UnitTests
                 Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.Get());
                 camera.ProjectionType.Set(5.0f);
                 Assert.AreEqual(5, (int)camera.ProjectionType.Get());
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT for FbxLight enum EType
+                var light = FbxLight.Create(manager, "light");
+
+                FbxPropertyTest.GenericPropertyTests(light.LightType, light, "LightType", Globals.FbxEnumDT);
+                light.LightType.Set(FbxLight.EType.eSpot);
+                Assert.AreEqual(FbxLight.EType.eSpot, light.LightType.Get());
+                light.LightType.Set(5.0f);
+                Assert.AreEqual(5, (int)light.LightType.Get());
             }
         }
     }
