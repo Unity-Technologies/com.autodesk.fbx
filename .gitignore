@@ -16,13 +16,6 @@ spike/2016.0/
 # swig output files
 *_wrap.cxx
 
-# cmake
-CMakeCache.txt
-CMakeFiles/
-Makefile
-
-build/
-
 # vim temp files
 *.swp
 *.swo
