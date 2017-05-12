@@ -21,11 +21,17 @@
 %rename("%s") FbxTime::EMode;
 %rename("%s") FbxTime::EProtocol;
 
-
-%define_equality_from_operator(FbxTime);
+/* Equality and comparison operators.
+ * We implement both IComparable<FbxTime> and IEquatable<FbxTime> */
+%define_comparison_functions(FbxTime);
 %extend FbxTime { %proxycode %{
   public override int GetHashCode() { return GetRaw().GetHashCode(); }
+  public int CompareTo(FbxTime other) {
+    if (object.ReferenceEquals(other, null)) { return 1; }
+    return GetRaw().CompareTo(other.GetRaw());
+  }
 %} }
+%typemap(csinterfaces) THETYPE "IDisposable, IEquatable<FbxTime>, IComparable<FbxTime>";
 
 /*
  * https://developer.blender.org/T48610

@@ -5,22 +5,32 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
+/*
+ * This file has macros that allow easily setting up IEquatable<> and
+ * IComparable<> proxies.
+ */
+
 
 /*
- * Add various functions that fulfill most of the IEquatable<THETYPE> contract.
+ * Add various functions that fulfill most of the IEquatable<THETYPE> interface.
  *
- * THETYPE must also define Equals(THETYPE) and GetHashCode().
- * That's on you.
+ * The caller of this macro must define C# functions:
+ *      public bool THETYPE.Equals(THETYPE)
+ *      public override int THETYPE.GetHashCode()
+ *
+ * This macro defines C# functions:
+ *      public override bool THETYPE.Equals(object)
+ *      public static bool operator == (THETYPE, THETYPE)
+ *      public static bool operator != (THETYPE, THETYPE)
+ *
+ * The caller may also want to add IEquatable<THETYPE> to the interface list by declaring:
+ *      %typemap(csinterfaces) THETYPE "IDisposable, IEquatable<THETYPE>";
  *
  * If you have a C++ operator== or equivalent, look at %define_equality_from_function.
  *
  * If you want reference equality, look at %define_pointer_equality_functions
  * (the standard C# reference equality won't match when you get two proxies to the
  * same C++ object; %define_pointer_equality_functions fixes that).
- *
- * You might also want to add IEquatable<THETYPE> to the interface list:
- *   %typemap(csinterfaces) THETYPE "IDisposable, IEquatable<THETYPE>";
- * But that's on you as well.
  */
 %define %define_generic_equality_functions(THETYPE)
 %extend THETYPE { %proxycode %{
@@ -52,12 +62,22 @@
 %enddef
 
 /*
- * Given a function:
- *    bool THETYPE::EQUALFN(const THETYPE&)
- * use that to define equality, and create all the C# Equals functions and
- * operators you'd expect.
+ * Add various functions that fulfill most of the IEquatable<THETYPE> interface.
  *
- * You need to define GetHashCode.
+ * The caller of this macro must define C# function:
+ *      public override int THETYPE.GetHashCode()
+ * And C++ function:
+ *      bool THETYPE::EQUALFN(const THETYPE&)
+ *
+ * This macro uses EQUALFN to define equality. It defines C# functions:
+ *      private bool THETYPE._equals(THETYPE)
+ *      public bool THETYPE.Equals(THETYPE)
+ *      public override bool THETYPE.Equals(object)
+ *      public static bool operator == (THETYPE, THETYPE)
+ *      public static bool operator != (THETYPE, THETYPE)
+ *
+ * The caller may also want to add IEquatable<THETYPE> to the interface list by declaring:
+ *      %typemap(csinterfaces) THETYPE "IDisposable, IEquatable<THETYPE>";
  */
 %define %define_equality_from_function(THETYPE, EQUALFN)
 %rename ("_equals") THETYPE::EQUALFN;
@@ -72,9 +92,19 @@
 %enddef
 
 /*
- * Use operator== to define equality. Hide operator!=.
+ * The caller of this macro must define C# function:
+ *      public override int THETYPE.GetHashCode()
+ * And be wrapping a C++ type with operator== defined.
  *
- * You need to define GetHashCode.
+ * This macro uses operator== to define equality. It defines C# functions:
+ *      private bool THETYPE._equals(THETYPE)
+ *      public bool THETYPE.Equals(THETYPE)
+ *      public override bool THETYPE.Equals(object)
+ *      public static bool operator == (THETYPE, THETYPE)
+ *      public static bool operator != (THETYPE, THETYPE)
+ *
+ * The caller may also want to add IEquatable<THETYPE> to the interface list by declaring:
+ *      %typemap(csinterfaces) THETYPE "IDisposable, IEquatable<THETYPE>";
  */
 %define %define_equality_from_operator(THETYPE)
 %ignore THETYPE::operator!=;
@@ -82,10 +112,21 @@
 %enddef
 
 /*
- * Add a GetHashCode() and Equals() function to allow
- * us to perform identity tests in C#.
+ * Add all the functions needed to fulfill the IEquatable<THETYPE> interface.
  *
- * Uses the swigCPtr to check for equality.
+ * The caller of this macro must be wrapping a C++ type where pointer equality
+ * is a reasonable definition of equality.
+ *
+ * This macro uses the C++ pointer to define equality and the hash code. It
+ * defines C# functions:
+ *      public override bool THETYPE.Equals(object)
+ *      public bool THETYPE.Equals(THETYPE)
+ *      public static bool operator == (THETYPE, THETYPE)
+ *      public static bool operator != (THETYPE, THETYPE)
+ *      public override int THETYPE.GetHashCode()
+ *
+ * The caller may also want to add IEquatable<THETYPE> to the interface list by declaring:
+ *      %typemap(csinterfaces) THETYPE "IDisposable, IEquatable<THETYPE>";
  */
 %define %define_pointer_equality_functions(THETYPE)
 %extend THETYPE { %proxycode %{
@@ -99,4 +140,55 @@
   }
 %} }
 %define_generic_equality_functions(THETYPE)
+%enddef
+
+/*
+ * Add functions that fulfill most of the IEquatable<THETYPE> and
+ * IComparable<THETYPE> interfaces.
+ *
+ * The caller of this macro must define C# functions:
+ *      public int THETYPE.CompareTo(THETYPE)
+ *      public override int THETYPE.GetHashCode()
+ *
+ * This macro defines:
+ *      public override bool THETYPE.Equals(object)
+ *      public int THETYPE.CompareTo(THETYPE)
+ *      public static bool operator <  (THETYPE, THETYPE)
+ *      public static bool operator <= (THETYPE, THETYPE)
+ *      public static bool operator == (THETYPE, THETYPE)
+ *      public static bool operator != (THETYPE, THETYPE)
+ *      public static bool operator >= (THETYPE, THETYPE)
+ *      public static bool operator >  (THETYPE, THETYPE)
+ *
+ * We sort null as smallest.
+ *
+ * The caller may also want to add IEquatable and IComparable to the interface list by declaring:
+ *      %typemap(csinterfaces) THETYPE "IDisposable, IEquatable<THETYPE>, IComparable<THETYPE>";
+ */
+%define %define_comparison_functions(THETYPE)
+%extend THETYPE { %proxycode %{
+  public override bool Equals(object other) {
+    if (object.ReferenceEquals(other, null)) { return false; }
+    if (! (other is $csclassname)) { return false; }
+    return CompareTo(($csclassname)other) == 0;
+  }
+  public int CompareTo(object other) {
+    if (object.ReferenceEquals(other, null)) { return 1; }
+    if (! (other is $csclassname)) { throw new System.ArgumentException("other is not the same type as this instance of $csclassname"); }
+    return CompareTo(($csclassname)other);
+  }
+  static int _compare($csclassname a, $csclassname b) {
+    if (object.ReferenceEquals(a, b))    { return  0; }
+    if (object.ReferenceEquals(a, null)) { return -1; }
+    if (object.ReferenceEquals(b, null)) { return  1; }
+    return a.CompareTo(b);
+  }
+  public static bool operator <  ($csclassname a, $csclassname b) { return _compare(a, b) <  0; }
+  public static bool operator <= ($csclassname a, $csclassname b) { return _compare(a, b) <= 0; }
+  public static bool operator == ($csclassname a, $csclassname b) { return _compare(a, b) == 0; }
+  public static bool operator != ($csclassname a, $csclassname b) { return _compare(a, b) != 0; }
+  public static bool operator >= ($csclassname a, $csclassname b) { return _compare(a, b) >= 0; }
+  public static bool operator >  ($csclassname a, $csclassname b) { return _compare(a, b) >  0; }
+  public bool Equals($csclassname other) { return CompareTo(other) == 0; }
+%} }
 %enddef
