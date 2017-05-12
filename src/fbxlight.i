@@ -7,17 +7,14 @@
 
 %rename("%s", %$isclass) FbxLight;
 %rename("%s") FbxLight::EType;
+%rename("%s") FbxLight::EAreaLightShape;
+%rename("%s") FbxLight::EDecayType;
 %rename("%s") FbxLight::Create;
+%rename("%s") FbxLight::SetShadowTexture;
+%rename("%s") FbxLight::GetShadowTexture;
 
-/* Properties */
-%fbximmutable(FbxLight::LightType);
-%fbximmutable(FbxLight::Color);
-%fbximmutable(FbxLight::Intensity);
-%fbximmutable(FbxLight::FileName);
-%fbximmutable(FbxLight::DrawGroundProjection);
-%fbximmutable(FbxLight::DrawVolumetricLight);
-%fbximmutable(FbxLight::DrawFrontFacingVolumetricLight);
-%fbximmutable(FbxLight::InnerAngle);
-%fbximmutable(FbxLight::OuterAngle);
+/* Mark all the constants and properties immutable.
+ * This file is auto-generated. */
+%include "fbxlightimmutables.i"
 
 %include "fbxsdk/scene/geometry/fbxlight.h"

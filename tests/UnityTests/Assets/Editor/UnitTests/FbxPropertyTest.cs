@@ -25,6 +25,9 @@ namespace UnitTests
             CoverageTester.TestCoverage(typeof(FbxPropertyEProjectionType), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyELightType), this.GetType ());
+            CoverageTester.TestCoverage(typeof(FbxPropertyEAreaLightShape), this.GetType ());
+            CoverageTester.TestCoverage(typeof(FbxPropertyEDecayType), this.GetType ());
+            CoverageTester.TestCoverage(typeof(FbxPropertyFloat), this.GetType ());
         }
 #endif
 
@@ -77,6 +80,12 @@ namespace UnitTests
                 var light2 = FbxLight.Create(manager, "light2");
                 var typeCopy = light1.LightType;
                 EqualityTester<FbxPropertyELightType>.TestEquality(light1.LightType, light2.LightType, typeCopy);
+                var lightShapeCopy = light1.AreaLightShape;
+                EqualityTester<FbxPropertyEAreaLightShape>.TestEquality(light1.AreaLightShape, light2.AreaLightShape, lightShapeCopy);
+                var decayCopy = light1.DecayType;
+                EqualityTester<FbxPropertyEDecayType>.TestEquality(light1.DecayType, light2.DecayType, decayCopy);
+                var floatCopy = light1.LeftBarnDoor;
+                EqualityTester<FbxPropertyFloat>.TestEquality(light1.LeftBarnDoor, light2.LeftBarnDoor, floatCopy);
             }
         }
 
@@ -291,7 +300,7 @@ namespace UnitTests
             }
 
             using (var manager = FbxManager.Create()) {
-                // FbxPropertyT for FbxLight enum EType
+                // FbxPropertyT for FbxLight enums
                 var light = FbxLight.Create(manager, "light");
 
                 FbxPropertyTest.GenericPropertyTests(light.LightType, light, "LightType", Globals.FbxEnumDT);
@@ -299,6 +308,22 @@ namespace UnitTests
                 Assert.AreEqual(FbxLight.EType.eSpot, light.LightType.Get());
                 light.LightType.Set(5.0f);
                 Assert.AreEqual(5, (int)light.LightType.Get());
+
+                FbxPropertyTest.GenericPropertyTests(light.AreaLightShape, light, "AreaLightShape", Globals.FbxEnumDT);
+                light.AreaLightShape.Set(FbxLight.EAreaLightShape.eSphere);
+                Assert.AreEqual(FbxLight.EAreaLightShape.eSphere, light.AreaLightShape.Get());
+                light.AreaLightShape.Set(5.0f);
+                Assert.AreEqual(5, (int)light.AreaLightShape.Get());
+
+                FbxPropertyTest.GenericPropertyTests(light.DecayType, light, "DecayType", Globals.FbxEnumDT);
+                light.DecayType.Set(FbxLight.EDecayType.eCubic);
+                Assert.AreEqual(FbxLight.EDecayType.eCubic, light.DecayType.Get());
+                light.DecayType.Set(5.0f);
+                Assert.AreEqual(5, (int)light.DecayType.Get());
+
+                FbxPropertyTest.GenericPropertyTests(light.LeftBarnDoor, light, "LeftBarnDoor", Globals.FbxFloatDT);
+                light.LeftBarnDoor.Set(5.0f);
+                Assert.AreEqual(5, (int)light.LeftBarnDoor.Get());
             }
         }
     }
