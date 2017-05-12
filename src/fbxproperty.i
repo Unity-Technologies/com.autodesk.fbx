@@ -163,3 +163,4 @@
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
 %template("FbxPropertyEProjectionType") FbxPropertyT<FbxCamera::EProjectionType>;
+%template("FbxPropertyELook") FbxPropertyT<FbxMarker::ELook>;

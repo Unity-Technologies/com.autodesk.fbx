@@ -104,6 +104,12 @@ fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxtextureimmutables.i
         HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxtexture.h ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxfiletexture.h
 )
 
+# Find the constants and properties for FbxMarker
+fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxmarkerimmutables.i
+        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxmarker.h
+)
+
 # Autogenerate the weakpointerhandles.i file.
 # It's a 2-step process:
 # 1. generate the typedefs map. Unfortunately we need to generate all the code for that!
