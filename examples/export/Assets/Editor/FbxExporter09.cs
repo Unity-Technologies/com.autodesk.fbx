@@ -112,7 +112,15 @@ namespace FbxSdk.Examples
                     unityKeys[t] = keyvalues;
                 }
 
-                Key [] ComputeKeys() {
+                Key [] ComputeKeys(FbxNode node) {
+                    // Get the source pivot pre-rotation if any, so we can
+                    // remove it from the animation we get from Unity.
+                    var fbxPreRotationEuler = node.GetRotationActive() ? node.GetPreRotation(FbxNode.EPivotSet.eSourcePivot)
+                        : new FbxVector4();
+                    var fbxPreRotationInverse = new FbxQuaternion();
+                    fbxPreRotationInverse.ComposeSphericalXYZ(fbxPreRotationEuler);
+                    fbxPreRotationInverse.Inverse();
+
                     // Evaluate the quaternion at each key. The curves may
                     // not have all the same keys! And we may not have all
                     // four channels.  But normally we will.
@@ -128,11 +136,21 @@ namespace FbxSdk.Examples
                     foreach(var kvp in unityKeys) {
                         var seconds = kvp.Key;
                         var unityQuaternion = kvp.Value;
-                        var fbxQuaternion = new FbxQuaternion(unityQuaternion.x, unityQuaternion.y, unityQuaternion.z, unityQuaternion.w);
 
+                        // The final animation, including the effect of pre-rotation:
+                        var fbxFinalAnimation = new FbxQuaternion(unityQuaternion.x, unityQuaternion.y, unityQuaternion.z, unityQuaternion.w);
+
+                        // Cancel out the pre-rotation. Order matters. FBX reads left-to-right.
+                        // When we run animation we will apply:
+                        //      pre-rotation
+                        //      then pre-rotation inverse
+                        //      then animation.
+                        var fbxAnimation = fbxPreRotationInverse * fbxFinalAnimation;
+
+                        // Store the key so we can sort them later.
                         Key key;
                         key.time = FbxTime.FromSecondDouble(seconds);
-                        key.euler = fbxQuaternion.DecomposeSphericalXYZ();
+                        key.euler = fbxAnimation.DecomposeSphericalXYZ();
                         keys[i++] = key;
                     }
 
@@ -142,8 +160,8 @@ namespace FbxSdk.Examples
                     return keys;
                 }
 
-                public void Animate(FbxNode fbxNode, FbxAnimLayer fbxAnimLayer) {
-                    /* find or create the three curves */
+                public void Animate(FbxNode fbxNode, FbxAnimLayer fbxAnimLayer, bool Verbose) {
+                    /* Find or create the three curves. */
                     var x = fbxNode.LclRotation.GetCurve(fbxAnimLayer, Globals.FBXSDK_CURVENODE_COMPONENT_X, true);
                     var y = fbxNode.LclRotation.GetCurve(fbxAnimLayer, Globals.FBXSDK_CURVENODE_COMPONENT_Y, true);
                     var z = fbxNode.LclRotation.GetCurve(fbxAnimLayer, Globals.FBXSDK_CURVENODE_COMPONENT_Z, true);
@@ -153,7 +171,7 @@ namespace FbxSdk.Examples
                     y.KeyModifyBegin();
                     z.KeyModifyBegin();
 
-                    var keys = ComputeKeys();
+                    var keys = ComputeKeys(fbxNode);
                     for(int i = 0, n = keys.Length; i < n; ++i) {
                         var key = keys[i];
                         x.KeyAdd(key.time);
@@ -169,6 +187,10 @@ namespace FbxSdk.Examples
                     z.KeyModifyEnd();
                     y.KeyModifyEnd();
                     x.KeyModifyEnd();
+
+                    if (Verbose) {
+                        Debug.Log("Exported rotation animation for " + fbxNode.GetName());
+                    }
                 }
             }
 
@@ -176,6 +198,114 @@ namespace FbxSdk.Examples
             /// Create instance of example
             /// </summary>
             public static FbxExporter09 Create () { return new FbxExporter09 (); }
+
+            /// <summary>
+            /// Export bones of skinned mesh, if this is a skinned mesh with
+            /// bones and bind poses.
+            /// </summary>
+            void ExportSkeleton (GameObject unityGo, FbxScene fbxScene)
+            {
+                var unitySkinnedMeshRenderer = unityGo.GetComponent<SkinnedMeshRenderer>();
+                if (!unitySkinnedMeshRenderer) { return; }
+                var bones = unitySkinnedMeshRenderer.bones;
+                if (bones == null || bones.Length == 0) { return; }
+                var mesh = unitySkinnedMeshRenderer.sharedMesh;
+                if (!mesh) { return; }
+                var bindPoses = mesh.bindposes;
+                if (bindPoses == null || bindPoses.Length != bones.Length) { return; }
+
+                // Three steps:
+                // 0. Set up the map from bone to index.
+                // 1. Create the bones, in arbitrary order.
+                // 2. Connect up the hierarchy.
+                // 3. Set the transforms.
+                // Step 0 supports step 1 (finding which is the root bone) and step 3
+                // (setting up transforms; the complication is the use of pivots).
+
+                // Step 0: map transform to index so we can look up index by bone.
+                Dictionary<Transform, int> index = new Dictionary<Transform, int>();
+                for (int boneIndex = 0, n = bones.Length; boneIndex < n; boneIndex++) {
+                    Transform unityBoneTransform = bones [boneIndex];
+                    index[unityBoneTransform] = boneIndex;
+                }
+
+                // Step 1: create the bones.
+                for (int boneIndex = 0, n = bones.Length; boneIndex < n; boneIndex++) {
+                    Transform unityBoneTransform = bones [boneIndex];
+
+                    // Create the bone node if we haven't already. Parent it to
+                    // its corresponding parent, or to the scene if there is none.
+                    FbxNode fbxBoneNode;
+                    if (!MapUnityObjectToFbxNode.TryGetValue(unityBoneTransform.gameObject, out fbxBoneNode)) {
+                        var unityParent = unityBoneTransform.parent;
+                        FbxNode fbxParent;
+                        if (MapUnityObjectToFbxNode.TryGetValue(unityParent.gameObject, out fbxParent)) {
+                            fbxBoneNode = FbxNode.Create (fbxParent, unityBoneTransform.name);
+                        } else {
+                            fbxBoneNode = FbxNode.Create (fbxScene, unityBoneTransform.name);
+                        }
+                        MapUnityObjectToFbxNode.Add(unityBoneTransform.gameObject, fbxBoneNode);
+                    }
+
+                    // Set it up as a skeleton node if we haven't already.
+                    if (fbxBoneNode.GetSkeleton() == null) {
+                        FbxSkeleton fbxSkeleton = FbxSkeleton.Create (fbxScene, unityBoneTransform.name + "_Skel");
+                        var fbxSkeletonType = index.ContainsKey(unityBoneTransform.parent)
+                            ? FbxSkeleton.EType.eLimbNode : FbxSkeleton.EType.eRoot;
+                        fbxSkeleton.SetSkeletonType (fbxSkeletonType);
+                        fbxSkeleton.Size.Set (1.0f);
+                        fbxBoneNode.SetNodeAttribute (fbxSkeleton);
+                        if (Verbose) { Debug.Log("Converted " + unityBoneTransform.name + " to a " + fbxSkeletonType + " bone"); }
+                    }
+                }
+
+                // Step 2: connect up the hierarchy.
+                foreach (var unityBone in bones) {
+                    var fbxBone = MapUnityObjectToFbxNode[unityBone.gameObject];
+                    var fbxParent = MapUnityObjectToFbxNode[unityBone.parent.gameObject];
+                    fbxParent.AddChild(fbxBone);
+                }
+
+                // Step 3: set up the transforms.
+                for (int boneIndex = 0, n = bones.Length; boneIndex < n; boneIndex++) {
+                    var unityBone = bones[boneIndex];
+                    var fbxBone = MapUnityObjectToFbxNode[unityBone.gameObject];
+
+                    Matrix4x4 pose;
+                    if (fbxBone.GetSkeleton().GetSkeletonType() == FbxSkeleton.EType.eRoot) {
+                        // bind pose is local -> root. We want root -> local, so invert.
+                        pose = bindPoses[boneIndex].inverse; // assuming parent is identity matrix
+                    } else {
+                        // Bind pose is local -> parent -> ... -> root.
+                        // We want parent -> local.
+                        // Invert our bind pose to get root -> local.
+                        // The apply parent -> root to leave just parent -> local.
+                        pose = bindPoses[index[unityBone.parent]] * bindPoses[boneIndex].inverse;
+                    }
+
+                    // FBX is transposed relative to Unity: transpose as we convert.
+                    FbxMatrix matrix = new FbxMatrix ();
+                    matrix.SetColumn (0, new FbxVector4 (pose.GetRow (0).x, pose.GetRow (0).y, pose.GetRow (0).z, pose.GetRow (0).w));
+                    matrix.SetColumn (1, new FbxVector4 (pose.GetRow (1).x, pose.GetRow (1).y, pose.GetRow (1).z, pose.GetRow (1).w));
+                    matrix.SetColumn (2, new FbxVector4 (pose.GetRow (2).x, pose.GetRow (2).y, pose.GetRow (2).z, pose.GetRow (2).w));
+                    matrix.SetColumn (3, new FbxVector4 (pose.GetRow (3).x, pose.GetRow (3).y, pose.GetRow (3).z, pose.GetRow (3).w));
+
+                    // FBX wants translation, rotation (in euler angles) and scale.
+                    // We assume there's no real shear, just rounding error.
+                    FbxVector4 translation, rotation, shear, scale;
+                    double sign;
+                    matrix.GetElements (out translation, out rotation, out shear, out scale, out sign);
+
+                    // Bones should have zero rotation, and use a pivot instead.
+                    fbxBone.LclTranslation.Set (new FbxDouble3(translation.X, translation.Y, translation.Z));
+                    fbxBone.LclRotation.Set (new FbxDouble3(0,0,0));
+                    fbxBone.LclScaling.Set (new FbxDouble3 (scale.X, scale.Y, scale.Z));
+
+                    fbxBone.SetRotationActive (true);
+                    fbxBone.SetPivotState (FbxNode.EPivotSet.eSourcePivot, FbxNode.EPivotState.ePivotReference);
+                    fbxBone.SetPreRotation (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (rotation.X, rotation.Y, rotation.Z));
+                }
+            }
 
             /// <summary>
             /// Export an AnimationCurve.
@@ -297,7 +427,7 @@ namespace FbxSdk.Examples
                     if (!MapUnityObjectToFbxNode.TryGetValue(GetGameObject(unityObj), out fbxNode)) {
                         continue;
                     }
-                    quat.Animate(fbxNode, fbxAnimLayer);
+                    quat.Animate(fbxNode, fbxAnimLayer, Verbose);
                 }
             }
 
@@ -313,22 +443,12 @@ namespace FbxSdk.Examples
                 var controller = animator.runtimeAnimatorController;
                 if (!controller) { return; }
 
-                // Only export each clip once.
+                // Only export each clip once per game object.
                 var exported = new HashSet<AnimationClip>();
                 foreach (var clip in controller.animationClips) {
                     if (exported.Add(clip)) {
                         ExportAnimationClip(clip, unityRoot, fbxScene);
                     }
-                }
-            }
-
-            /// <summary>
-            /// Exports all animation
-            /// </summary>
-            protected void ExportAllAnimation (FbxScene fbxScene)
-            {
-                foreach (GameObject unityGo in this.MapUnityObjectToFbxNode.Keys) {
-                    ExportAnimationClips (unityGo, fbxScene);
                 }
             }
 
@@ -406,14 +526,22 @@ namespace FbxSdk.Examples
                     foreach (var obj in unityExportSet)
                     {
                         var unityGo = GetGameObject (obj);
+                        if (!unityGo) { continue; }
 
-                        if ( unityGo )
-                        {
-                            CreateHierarchy (unityGo, fbxScene, fbxRootNode);
-                        }
+                        // Create the node itself, plus the hierarchy below it.
+                        // This creates MapUnityObjectToFbxNode.
+                        CreateHierarchy (unityGo, fbxScene, fbxRootNode);
                     }
 
-                    ExportAllAnimation (fbxScene);
+                    // Export skeletons.
+                    foreach (var unityGo in MapUnityObjectToFbxNode.Keys) {
+                        ExportSkeleton(unityGo, fbxScene);
+                    }
+
+                    // Export animations.
+                    foreach (var unityGo in MapUnityObjectToFbxNode.Keys) {
+                        ExportAnimationClips(unityGo, fbxScene);
+                    }
 
                     // Export the scene to the file.
                     status = fbxExporter.Export (fbxScene);
