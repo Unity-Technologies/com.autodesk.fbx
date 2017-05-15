@@ -108,6 +108,7 @@ fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxtextureimmutables.i
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxmarkerimmutables.i
         TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
         HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxmarker.h
+)
 
 # Find the constants and properties for FbxLight.
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxlightimmutables.i
@@ -170,4 +171,4 @@ install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
 install(TARGETS unity_tests DESTINATION fbxsdk)
 
 enable_testing()
-add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -runEditorTests)
+add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests runEditorTests)
