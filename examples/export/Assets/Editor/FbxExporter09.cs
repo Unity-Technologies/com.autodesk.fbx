@@ -75,7 +75,6 @@ namespace FbxSdk.Examples
                 public AnimationCurve y;
                 public AnimationCurve z;
                 public AnimationCurve w;
-                Key [] m_keys;
 
                 public struct Key {
                     public FbxTime time;
@@ -105,14 +104,7 @@ namespace FbxSdk.Examples
                     }
                 }
 
-                static void Update(Dictionary<float, Quaternion> unityKeys, float t, int i, float v) {
-                    Quaternion keyvalues;
-                    unityKeys.TryGetValue(t, out keyvalues);
-                    keyvalues[i] = v;
-                    unityKeys[t] = keyvalues;
-                }
-
-                Key [] ComputeKeys(FbxNode node) {
+                Key [] ComputeKeys(UnityEngine.Quaternion restRotation, FbxNode node) {
                     // Get the source pivot pre-rotation if any, so we can
                     // remove it from the animation we get from Unity.
                     var fbxPreRotationEuler = node.GetRotationActive() ? node.GetPreRotation(FbxNode.EPivotSet.eSourcePivot)
@@ -121,24 +113,31 @@ namespace FbxSdk.Examples
                     fbxPreRotationInverse.ComposeSphericalXYZ(fbxPreRotationEuler);
                     fbxPreRotationInverse.Inverse();
 
-                    // Evaluate the quaternion at each key. The curves may
-                    // not have all the same keys! And we may not have all
-                    // four channels.  But normally we will.
-                    var unityKeys = new Dictionary<float, Quaternion>();
-                    if (x != null) { foreach(var key in x.keys) { Update(unityKeys, key.time, 0, key.value); } }
-                    if (y != null) { foreach(var key in y.keys) { Update(unityKeys, key.time, 1, key.value); } }
-                    if (z != null) { foreach(var key in z.keys) { Update(unityKeys, key.time, 2, key.value); } }
-                    if (w != null) { foreach(var key in w.keys) { Update(unityKeys, key.time, 3, key.value); } }
+                    // If we're only animating along certain coords for some
+                    // reason, we'll need to fill in the other coords with the
+                    // rest-pose value.
+                    var lclQuaternion = new FbxQuaternion(restRotation.x, restRotation.y, restRotation.z, restRotation.w);
+
+                    // Find when we have keys set.
+                    var keyTimes = new HashSet<float>();
+                    if (x != null) { foreach(var key in x.keys) { keyTimes.Add(key.time); } }
+                    if (y != null) { foreach(var key in y.keys) { keyTimes.Add(key.time); } }
+                    if (z != null) { foreach(var key in z.keys) { keyTimes.Add(key.time); } }
+                    if (w != null) { foreach(var key in w.keys) { keyTimes.Add(key.time); } }
 
                     // Convert to the Key type.
-                    var keys = new Key[unityKeys.Count];
+                    var keys = new Key[keyTimes.Count];
                     int i = 0;
-                    foreach(var kvp in unityKeys) {
-                        var seconds = kvp.Key;
-                        var unityQuaternion = kvp.Value;
+                    foreach(var seconds in keyTimes) {
 
-                        // The final animation, including the effect of pre-rotation:
-                        var fbxFinalAnimation = new FbxQuaternion(unityQuaternion.x, unityQuaternion.y, unityQuaternion.z, unityQuaternion.w);
+                        // The final animation, including the effect of pre-rotation.
+                        // If we have no curve, assume the node has the correct rotation right now.
+                        // We need to evaluate since we might only have keys in one of the axes.
+                        var fbxFinalAnimation = new FbxQuaternion(
+                            (x == null) ? lclQuaternion[0] : x.Evaluate(seconds),
+                            (y == null) ? lclQuaternion[1] : y.Evaluate(seconds),
+                            (z == null) ? lclQuaternion[2] : z.Evaluate(seconds),
+                            (w == null) ? lclQuaternion[3] : w.Evaluate(seconds));
 
                         // Cancel out the pre-rotation. Order matters. FBX reads left-to-right.
                         // When we run animation we will apply:
@@ -160,7 +159,7 @@ namespace FbxSdk.Examples
                     return keys;
                 }
 
-                public void Animate(FbxNode fbxNode, FbxAnimLayer fbxAnimLayer, bool Verbose) {
+                public void Animate(Transform unityTransform, FbxNode fbxNode, FbxAnimLayer fbxAnimLayer, bool Verbose) {
                     /* Find or create the three curves. */
                     var x = fbxNode.LclRotation.GetCurve(fbxAnimLayer, Globals.FBXSDK_CURVENODE_COMPONENT_X, true);
                     var y = fbxNode.LclRotation.GetCurve(fbxAnimLayer, Globals.FBXSDK_CURVENODE_COMPONENT_Y, true);
@@ -171,7 +170,7 @@ namespace FbxSdk.Examples
                     y.KeyModifyBegin();
                     z.KeyModifyBegin();
 
-                    var keys = ComputeKeys(fbxNode);
+                    var keys = ComputeKeys(unityTransform.localRotation, fbxNode);
                     for(int i = 0, n = keys.Length; i < n; ++i) {
                         var key = keys[i];
                         x.KeyAdd(key.time);
@@ -392,7 +391,7 @@ namespace FbxSdk.Examples
                 /* The major difficulty: Unity uses quaternions for rotation
                  * (which is how it should be) but FBX uses euler angles. So we
                  * need to gather up the list of transform curves per object. */
-                var quaternions = new Dictionary<UnityEngine.Object, QuaternionCurve>();
+                var quaternions = new Dictionary<UnityEngine.GameObject, QuaternionCurve>();
 
                 foreach (EditorCurveBinding unityCurveBinding in AnimationUtility.GetCurveBindings(unityAnimClip))
                 {
@@ -409,10 +408,14 @@ namespace FbxSdk.Examples
                                 fbxScene, fbxAnimLayer);
                     } else {
                         /* Rotation property; save it to convert quaternion -> euler later. */
+
+                        var unityGo = GetGameObject(unityObj);
+                        if (!unityGo) { continue; }
+
                         QuaternionCurve quat;
-                        if (!quaternions.TryGetValue(unityObj, out quat)) {
+                        if (!quaternions.TryGetValue(unityGo, out quat)) {
                             quat = new QuaternionCurve();
-                            quaternions.Add(unityObj, quat);
+                            quaternions.Add(unityGo, quat);
                         }
                         quat.SetCurve(index, unityAnimCurve);
                     }
@@ -420,14 +423,14 @@ namespace FbxSdk.Examples
 
                 /* now export all the quaternion curves */
                 foreach(var kvp in quaternions) {
-                    var unityObj = kvp.Key;
+                    var unityGo = kvp.Key;
                     var quat = kvp.Value;
 
                     FbxNode fbxNode;
-                    if (!MapUnityObjectToFbxNode.TryGetValue(GetGameObject(unityObj), out fbxNode)) {
+                    if (!MapUnityObjectToFbxNode.TryGetValue(unityGo, out fbxNode)) {
                         continue;
                     }
-                    quat.Animate(fbxNode, fbxAnimLayer, Verbose);
+                    quat.Animate(unityGo.transform, fbxNode, fbxAnimLayer, Verbose);
                 }
             }
 
