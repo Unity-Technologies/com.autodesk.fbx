@@ -211,4 +211,5 @@
 %include "fbxanimcurvenode.i"
 %include "fbxcamera.i"
 %include "fbxconnectionpoint.i"
+%include "fbxmarker.i"    
 %include "fbxlight.i"
