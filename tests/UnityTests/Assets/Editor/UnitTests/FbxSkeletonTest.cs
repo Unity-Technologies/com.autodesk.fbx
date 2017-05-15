@@ -11,13 +11,14 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxSkeletonTest : Base<FbxSkeleton>
+    public class FbxSkeletonTest : FbxNodeAttributeBase<FbxSkeleton>
     {
-
         [Test]
-        public void TestSetSkeletonType ()
+        public void TestBasics ()
         {
             var skeleton = CreateObject ("skeleton");
+            base.TestBasics(skeleton, FbxNodeAttribute.EType.eSkeleton);
+
             skeleton.SetSkeletonType(FbxSkeleton.EType.eLimb);
             Assert.AreEqual (FbxSkeleton.EType.eLimb, skeleton.GetSkeletonType ());
 

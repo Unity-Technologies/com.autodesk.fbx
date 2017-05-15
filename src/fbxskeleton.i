@@ -8,12 +8,14 @@
 #ifdef IGNORE_ALL_INCLUDE_SOME
 %rename("%s") FbxSkeleton;
 
+%typemap(csclassmodifiers) FbxSkeleton::EType "public new enum";
+%rename("%s") FbxSkeleton::EType;
+
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxSkeleton::Create;
 %rename("%s") FbxSkeleton::SetSkeletonType;
 %rename("%s") FbxSkeleton::GetSkeletonType;
-%rename("%s") FbxSkeleton::EType;
 %fbximmutable(FbxSkeleton::Size);
 #endif
 

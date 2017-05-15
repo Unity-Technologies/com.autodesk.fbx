@@ -44,18 +44,8 @@
 %ignore FbxTexture::ECoordinates;
 %ignore FbxTexture::EAlignMode;
 
-/* The textures include some property templates that wrap enums. We need to
- * rename them before including the header, then template them after including
- * the header. Because swig. */
-%rename("FbxPropertyEBlendMode") FbxPropertyT<FbxTexture::EBlendMode>;
-%rename("FbxPropertyEWrapMode") FbxPropertyT<FbxTexture::EWrapMode>;
-
 %include "fbxsdk/scene/shading/fbxtexture.h"
 %include "fbxsdk/scene/shading/fbxfiletexture.h"
-
-/* Remember to build the templates we previously renamed *before* ignoring things. */
-%template("FbxPropertyEBlendMode") FbxPropertyT<FbxTexture::EBlendMode>;
-%template("FbxPropertyEWrapMode") FbxPropertyT<FbxTexture::EWrapMode>;
 
 
 /****************************************************************************

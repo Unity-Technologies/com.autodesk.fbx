@@ -7,11 +7,12 @@
 
 %reveal_all_start;
 
-%fbximmutable(FbxNodeAttribute::sColor);
-%fbximmutable(FbxNodeAttribute::sDefaultColor);
-%fbximmutable(FbxNodeAttribute::Color);
+%fbximmutable(FbxNull::sSize);
+%fbximmutable(FbxNull::sLook);
+%fbximmutable(FbxNull::Size);
+%fbximmutable(FbxNull::Look);
 
-%include "fbxsdk/scene/geometry/fbxnodeattribute.h"
+%include "fbxsdk/scene/geometry/fbxnull.h"
 
 /****************************************************************************
  * We end reveal-all mode now. This must be at the end of the file.

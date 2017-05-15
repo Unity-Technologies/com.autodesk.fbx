@@ -38,6 +38,15 @@
     var ret = $imcall;$excode
     return ret;
   }
+%typemap(csvarin, excode=SWIGEXCODE2) CPPTYPE %{
+    set {
+      $imcall;$excode
+    } %}
+%typemap(csvarout, excode=SWIGEXCODE2) const CPPTYPE& %{
+    get {
+      var ret = $imcall;$excode
+      return ret;
+    } %}
 
 /**
  * Define OUTPUT and INOUT typemaps for a hand-optimized type.
