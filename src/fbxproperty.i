@@ -164,10 +164,15 @@
 %template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
+%template("FbxPropertyFloat") FbxPropertyT<float>;
 
 /* NodeAttribute and subclasses properties */
 %template("FbxPropertyEProjectionType") FbxPropertyT<FbxCamera::EProjectionType>;
-%template("FbxPropertyELook") FbxPropertyT<FbxNull::ELook>;
+%template("FbxPropertyELightType") FbxPropertyT<FbxLight::EType>;
+%template("FbxPropertyEAreaLightShape") FbxPropertyT<FbxLight::EAreaLightShape>;
+%template("FbxPropertyEDecayType") FbxPropertyT<FbxLight::EDecayType>;
+%template("FbxPropertyMarkerELook") FbxPropertyT<FbxMarker::ELook>;
+%template("FbxPropertyNullELook") FbxPropertyT<FbxNull::ELook>;
 
 /* Texture properties */
 %template("FbxPropertyEBlendMode") FbxPropertyT<FbxTexture::EBlendMode>;

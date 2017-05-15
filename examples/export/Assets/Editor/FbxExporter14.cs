@@ -39,48 +39,16 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"";
 
-            const string MenuItemName = "File/Export FBX/WIP 14. lights with animation";
+            const string MenuItemName = "File/Export FBX/14. lights with animation";
 
             const string FileBaseName = "example_lights_with_animation";
 
-            /// <summary>
-            /// map Unity animatable property to FbxProperty
-            /// TODO: intrinsic properties, check can we find by them name?
-            /// </summary>
-            static Dictionary<string, string> MapUnityToFbxPropertyName = new Dictionary<string, string> ()
-            {
-                { "m_LocalPosition.x",      "LclTranslation" },
-                { "m_LocalPosition.y",      "LclTranslation" },
-                { "m_LocalPosition.z",      "LclTranslation" },
-                { "localEulerAnglesRaw.x",  "LclRotation" },
-                { "localEulerAnglesRaw.y",  "LclRotation" },
-                { "localEulerAnglesRaw.z",  "LclRotation" },
+            static Dictionary<UnityEngine.LightType, FbxLight.EType> MapLightType = new Dictionary<UnityEngine.LightType, FbxLight.EType> () {
+                { UnityEngine.LightType.Directional,    FbxLight.EType.eDirectional },
+                { UnityEngine.LightType.Spot,           FbxLight.EType.eSpot },
+                { UnityEngine.LightType.Point,          FbxLight.EType.ePoint },
+                { UnityEngine.LightType.Area,           FbxLight.EType.eArea },
             };
-
-            /// <summary>
-            /// map Unity animatable property to FbxProperty
-            /// </summary>
-            static Dictionary<string, string> MapUnityToFbxChannelName = new Dictionary<string, string> ()
-            {
-                { "m_LocalPosition.x",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
-                { "m_LocalPosition.y",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
-                { "m_LocalPosition.z",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
-                { "localEulerAnglesRaw.x",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
-                { "localEulerAnglesRaw.y",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
-                { "localEulerAnglesRaw.z",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
-            };
-
-#if UNI_17561
-            static Dictionary<UnityEngine.LightType, FbxLight.Type> MapLightType = new Dictionary<UnityEngine.LightType, FbxLight.Type> () {
-                { UnityEngine.LightType.Directional,    FbxLight.Type.eDirectional },
-                { UnityEngine.LightType.Spot,           FbxLight.Type.eSpot },
-                { UnityEngine.LightType.Point,          FbxLight.Type.ePoint },
-            };
-#endif
-            static Dictionary<string, float> MapScalingFactor = new Dictionary<string, float> () {
-				{ "intensity",    1.0f },
-				{ "spotAngle",    1.0f },
-			};
 
             /// <summary>
             /// collected list of lights to export
@@ -97,18 +65,25 @@ namespace FbxSdk.Examples
             /// Supported types: point, spot and directional
             /// Cookie => Gobo
             /// </summary>
-            protected void ExportLight (Light unityLight, FbxScene fbxScene, FbxNode fbxNode)
+            protected FbxLight ExportLight (GameObject unityGo, FbxScene fbxScene, FbxNode fbxNode)
             {
-#if UNI_17561
-                FbxLight fbxLight = FbxLight.Create (fbxScene.GetFbxManager(), unityLight.name);
+                Light unityLight = unityGo.GetComponent<Light> ();
 
-                FbxLight.EType fbxLightType = null;
+                if (unityLight == null)
+                    return null;
 
-                // is light type supported
-                if (!MapLightTypes.TryGetValue (unityLight.type, out fbxLightType))
-                    return;
-                
-                //type The type of the light.      
+                FbxLight.EType fbxLightType;
+
+                // Is light type supported?
+                if (!MapLightType.TryGetValue (unityLight.type, out fbxLightType))
+                    return null;
+
+                // add to the list of lights
+                Lights.Add(unityLight);
+
+                FbxLight fbxLight = FbxLight.Create (fbxScene.GetFbxManager (), unityLight.name);
+
+                // Set the type of the light.      
                 fbxLight.LightType.Set(fbxLightType);
 
                 switch (unityLight.type) 
@@ -118,26 +93,30 @@ namespace FbxSdk.Examples
                     }
                     case LightType.Spot : {
                         // Set the angle of the light's spotlight cone in degrees.
-                        fbxLight.InnerAngle.Set(0.01f);
-                        fbxLight.OuterAngle.Set(unityLight.spotAngle * MapScalingFactor["spotAngle"]);
+                        fbxLight.InnerAngle.Set(unityLight.spotAngle);
+                        fbxLight.OuterAngle.Set(unityLight.spotAngle);
                         break;
                     }
                     case LightType.Point : {
                         break;
                     }
+                    case LightType.Area : {
+                        // TODO: areaSize          The size of the area light by scaling the node XY
+                        
+                        break;
+                    }
                 }
 
-                // areaSize          The size of the area light.
-
-                // bounceIntensity   The multiplier that defines the strength of the bounce lighting.
+                // TODO: bounceIntensity   The multiplier that defines the strength of the bounce lighting.
 
                 // color             The color of the light.
                 var unityLightColor = unityLight.color;
 
-                fbxLight.Color.Set (unityLightColor.r, unityLightColor.g, unityLightColor.b);
+                fbxLight.Color.Set (new FbxDouble3(unityLightColor.r, unityLightColor.g, unityLightColor.b));
 
-                // colorTemperature  The color temperature of the light. Correlated Color Temperature (abbreviated as CCT) is multiplied with the color filter when calculating the final color of a light source.The color temperature of the electromagnetic radiation emitted from an ideal black body is defined as its surface temperature in Kelvin.White is 6500K according to the D65 standard. Candle light is 1800K.If you want to use lightsUseCCT, lightsUseLinearIntensity has to be enabled to ensure physically correct output. See Also: GraphicsSettings.lightsUseLinearIntensity, GraphicsSettings.lightsUseCCT.
-                // commandBufferCount Number of command buffers set up on this light (Read Only).
+                // TODO: colorTemperature  The color temperature of the light. Correlated Color Temperature (abbreviated as CCT) is multiplied with the color filter when calculating the final color of a light source.The color temperature of the electromagnetic radiation emitted from an ideal black body is defined as its surface temperature in Kelvin.White is 6500K according to the D65 standard. Candle light is 1800K.If you want to use lightsUseCCT, lightsUseLinearIntensity has to be enabled to ensure physically correct output. See Also: GraphicsSettings.lightsUseLinearIntensity, GraphicsSettings.lightsUseCCT.
+                
+                // TODO: commandBufferCount Number of command buffers set up on this light (Read Only).
 
                 // cookie            The cookie texture projected by the light.
                 var unityCookieTexture = unityLight.cookie;
@@ -158,30 +137,38 @@ namespace FbxSdk.Examples
                     }
                 }
 
-                // cookieSize        The size of a directional light's cookie.
+                // TODO: cookieSize        The size of a directional light's cookie.
 
-                // cullingMask       This is used to light certain objects in the scene selectively.
-                // flare             The flare asset to use for this light.
+                // TODO: cullingMask       This is used to light certain objects in the scene selectively.
+                // TODO: flare             The flare asset to use for this light.
 
                 // Set the Intensity of a light is multiplied with the Light color.
-                fbxLight.Intensity.Set (unityLight.intensity * MapScalingFactor["intensity"]);
-                        
-                // isBaked           Is the light contribution already stored in lightmaps and/or lightprobes (Read Only).
-                // lightmapBakeType  This property describes what part of a light's contribution can be baked.
+                fbxLight.Intensity.Set (unityLight.intensity * 100.0f /*compensate for Maya scaling by system units*/ );
 
-                // range             The range of the light.
+                // TODO: isBaked           Is the light contribution already stored in lightmaps and/or lightprobes (Read Only).
+                // TODO: lightmapBakeType  This property describes what part of a light's contribution can be baked.
 
-                // renderMode        How to render the light.
-                // shadowBias        Shadow mapping constant bias.
-                // shadowCustomResolution The custom resolution of the shadow map.
-                // shadowNearPlane   Near plane value to use for shadow frustums.
-                // shadowNormalBias  Shadow mapping normal-based bias.
-                // shadowResolution  The resolution of the shadow map.
-                // shadows           How this light casts shadows
-                // shadowStrength    Strength of light's shadows.
+                // Set the range of the light.
+                // applies-to: Point & Spot
+                // => FarAttenuationStart, FarAttenuationEnd
+                fbxLight.FarAttenuationStart.Set (0.01f /* none zero start */);
+                fbxLight.FarAttenuationEnd.Set(unityLight.range);
 
-                fbxNode.SetNodeAttribute (fbxLight);
-#endif
+                // TODO: renderMode        How to render the light.
+
+                // shadows           Set how this light casts shadows
+                // applies-to: Point & Spot
+                bool unityLightCastShadows = unityLight.shadows != LightShadows.None;
+                fbxLight.CastShadows.Set (unityLightCastShadows);
+
+                // TODO: shadowBias        Shadow mapping constant bias.
+                // TODO: shadowCustomResolution The custom resolution of the shadow map.
+                // TODO: shadowNearPlane   Near plane value to use for shadow frustums.
+                // TODO: shadowNormalBias  Shadow mapping normal-based bias.
+                // TODO: shadowResolution  The resolution of the shadow map.
+                // TODO: shadowStrength    Strength of light's shadows.
+
+                return fbxLight;
             }
 
             /// <summary>
@@ -197,14 +184,9 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void SetAmbientLighting (FbxScene fbxScene)
             {
-                // if we're using flat lighting copy the color across
-                if (RenderSettings.ambientMode == UnityEngine.Rendering.AmbientMode.Flat) {
-                    Color unityColor = RenderSettings.ambientLight;
+                Color unityColor = RenderSettings.ambientLight;
 
-#if UNI_17561
-                    fbxScene.GetGlobalSettings ().SetAmbientColor (FbxColor (unityColor.r, unityColor.g, unityColor.b));
-#endif
-                }
+                fbxScene.GetGlobalSettings ().SetAmbientColor (new FbxColor (unityColor.r, unityColor.g, unityColor.b));
             }
 
             /// <summary>
@@ -223,19 +205,18 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxNodeParent)
             {
-                Light unityLight = unityGo.GetComponent<Light> ();
-
-                if (unityLight == null)
-                    return;
-
-                // add to the list of lights
-                Lights.Add(unityLight);
-
                 // create an node and add it as a child of parent
                 FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
                 NumNodes++;
 
-                ExportLight (unityLight, fbxScene, fbxNode);
+                ExportTransform (unityGo.transform, fbxNode);
+
+                FbxLight fbxLight = ExportLight (unityGo, fbxScene, fbxNode);
+
+                if (fbxLight != null)
+                {
+                    fbxNode.SetNodeAttribute (fbxLight);    
+                }
 
                 if (Verbose)
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
@@ -243,11 +224,35 @@ namespace FbxSdk.Examples
                 fbxNodeParent.AddChild (fbxNode);
 
                 // now  unityGo  through our children and recurse
-                foreach (Transform childT in  unityGo.transform) {
+                foreach (Transform childT in  unityGo.transform) 
+                {
                     ExportComponents (childT.gameObject, fbxScene, fbxNode);
                 }
 
-                 return;
+                return;
+            }
+
+            /// <summary>
+            /// Export GameObject's Transform component
+            /// </summary>
+            protected void ExportTransform (Transform unityTransform, FbxNode fbxNode)
+            {
+            	// get local position of fbxNode (from Unity)
+            	UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
+            	UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
+            	UnityEngine.Vector3 unityScale = unityTransform.localScale;
+
+            	// transfer transform data from Unity to Fbx
+            	var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
+            	var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+            	var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
+
+            	// set the local position of fbxNode
+            	fbxNode.LclTranslation.Set (fbxTranslate);
+            	fbxNode.LclRotation.Set (fbxRotate);
+            	fbxNode.LclScaling.Set (fbxScale);
+
+            	return;
             }
 
             /// <summary>
@@ -291,6 +296,16 @@ namespace FbxSdk.Examples
                     fbxSceneInfo.mComment = Comments;
 
                     fbxScene.SetSceneInfo (fbxSceneInfo);
+
+                    var fbxSettings = fbxScene.GetGlobalSettings ();
+                    /// Set system units : Unity unit is meters
+                    fbxSettings.SetSystemUnit(FbxSystemUnit.m); 
+                    /// Set axis system : Unity Y Up, Z Forward, X Right (left-handed with odd parity)
+                    /// The Maya axis system has Y up, Z forward, X Left (right handed system with odd parity).
+                    /// We export right-handed for Maya because ConvertScene can't switch handedness:
+                    /// https://forums.autodesk.com/t5/fbx-forum/get-confused-with-fbxaxissystem-convertscene/td-p/4265472
+                    /// NOTE: models will flipped about the -X axis.
+                    fbxSettings.SetAxisSystem(FbxAxisSystem.MayaYUp);
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 
@@ -342,10 +357,7 @@ namespace FbxSdk.Examples
             public static bool OnValidateMenuItem ()
             {
                 // Return true
-                if (Selection.activeTransform == null)
-                    return false;
-
-                return Selection.activeTransform.gameObject.GetComponent<Light> () != null;
+                return (Selection.activeTransform != null);
             }
 
             /// <summary>

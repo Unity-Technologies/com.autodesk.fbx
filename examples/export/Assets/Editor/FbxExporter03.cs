@@ -26,12 +26,12 @@ namespace FbxSdk.Examples
                     1) create and initialize an exporter        
                     2) create a scene                           
                     3) create a hierarchy of nodes              
-                    4) add transform data to each node          
+                    4) add transform data to each node with marker for node attribute     
                     5) export the nodes to a FBX file (FBX201400 compatible)
                 ";
             
             const string Keywords = 
-                "export node transform";
+                "export node transform marker";
             
             const string Comments = 
                 @"We are exporting rotations using the Euler angles from Unity.";
@@ -69,6 +69,21 @@ namespace FbxSdk.Examples
             }
 
             /// <summary>
+            /// Export GameObject as standard marker
+            /// </summary>
+            protected FbxMarker ExportMarker (FbxScene fbxScene)
+            {
+                // create the marker structure.
+                FbxMarker fbxMarker = FbxMarker.Create (fbxScene, "Marker");
+
+                fbxMarker.SetType (FbxMarker.EType.eStandard);
+                fbxMarker.Look.Set (FbxMarker.ELook.eCube);
+                fbxMarker.Size.Set (10.0f);
+                
+                return fbxMarker;
+            }
+
+            /// <summary>
             /// Unconditionally export components on this game object
             /// </summary>
             protected void ExportComponents (GameObject  unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
@@ -79,6 +94,12 @@ namespace FbxSdk.Examples
 
                 ExportTransform ( unityGo.transform, fbxNode);
 
+                var fbxNodeAttr = ExportMarker ( fbxScene );
+
+                // set the fbxNode's node attribute
+                fbxNode.SetNodeAttribute (fbxNodeAttr);
+                fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+                
                 if (Verbose)
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
 
@@ -141,9 +162,9 @@ namespace FbxSdk.Examples
                     var fbxSettings = fbxScene.GetGlobalSettings();
                     fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
 
-                    // The Unity axis system has Y up, Z forward, X to the right:
-                    var axisSystem = new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded);
-                    fbxSettings.SetAxisSystem(axisSystem);
+                    // The Unity axis system has Y up, Z forward, X to the right.
+                    // Export as Maya axis system.
+                    fbxSettings.SetAxisSystem(FbxAxisSystem.MayaYUp);
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();
 

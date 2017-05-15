@@ -44,7 +44,7 @@ namespace FbxSdk.Examples
             const int InstanceCount = 1000;
             const float ScaleFactor = 2.0f;
                                         
-            static Dictionary<string, FbxMesh> SharedMeshes = new Dictionary<string, FbxMesh>();
+            Dictionary<string, FbxMesh> SharedMeshes = new Dictionary<string, FbxMesh>();
 
             /// <summary>
             /// Create instance of example
