@@ -71,6 +71,11 @@ namespace UnitTests
                 var null2 = FbxNull.Create(manager, "null2");
                 EqualityTester<FbxPropertyNullELook>.TestEquality(null1.Look, null2.Look, null1.Look);
 
+                // FbxPropertyT<FbxMarker.ELook>
+                var marker1 = FbxMarker.Create(manager, "marker1");
+                var marker2 = FbxMarker.Create(manager, "marker2");
+                EqualityTester<FbxPropertyMarkerELook>.TestEquality(marker1.Look, marker2.Look, marker1.Look);
+
                 // FbxPropertyT<string>
                 var impl = FbxImplementation.Create(manager, "impl");
                 var renderAPIcopy = impl.RenderAPI; // TODO: impl.FindProperty("RenderAPI");
@@ -258,6 +263,17 @@ namespace UnitTests
                 Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.Get());
                 null1.Look.Set(5.0f);
                 Assert.AreEqual(5, (int)null1.Look.Get());
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT<FbxMarker.ELook>
+                var marker1 = FbxMarker.Create(manager, "marker1");
+
+                FbxPropertyTest.GenericPropertyTests(marker1.Look, marker1, "Look", Globals.FbxEnumDT);
+                marker1.Look.Set(FbxMarker.ELook.eCapsule);
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.Get());
+                marker1.Look.Set(5.0f);
+                Assert.AreEqual(5, (int)marker1.Look.Get());
             }
 
             using (var manager = FbxManager.Create()) {
