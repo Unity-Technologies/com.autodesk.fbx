@@ -30,7 +30,7 @@
 %typemap(imtype) CPPTYPE, const CPPTYPE& "CSTYPE";
 %typemap(cstype) CPPTYPE, const CPPTYPE& "CSTYPE";
 %typemap(csin) CPPTYPE, const CPPTYPE& "$csinput";
-%typemap(in) CPPTYPE %{$1 = $input;%}
+%typemap(in) CPPTYPE %{$1 = ($1_type&)$input;%}
 %typemap(in) const CPPTYPE& %{$*1_ltype $1_temp = $input; $1 = &$1_temp; %}
 %typemap(out, null="CPPTRANSITTYPE()") CPPTYPE %{$result = $1;%}
 %typemap(out, null="CPPTRANSITTYPE()") const CPPTYPE& %{$result = *$1;%}
@@ -62,6 +62,7 @@
     InOutReferenceManager<CPPTYPE, CPPTRANSITTYPE> $1_refmgr($input, /* isInOut */ true);
     $1 = $1_refmgr.GetCppPointer(); %}
 %enddef
+
 
 
 %{
@@ -113,7 +114,7 @@ struct InOutReferenceManager {
 %{
 #include "optimized/FbxDoubleTemplates.h"
 %}
-%declare_hand_optimized_type(FbxColor, FbxSharpColor, FbxColor);
+%declare_hand_optimized_type(FbxColor, FbxSharpDouble4, FbxColor);
 %declare_hand_optimized_type(FbxVectorTemplate2<double>, FbxSharpDouble2, FbxDouble2);
 %declare_hand_optimized_type(FbxVectorTemplate3<double>, FbxSharpDouble3, FbxDouble3);
 %declare_hand_optimized_type(FbxVectorTemplate4<double>, FbxSharpDouble4, FbxDouble4);
