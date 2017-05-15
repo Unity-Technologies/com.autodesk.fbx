@@ -1,7 +1,7 @@
 // ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.  
+// Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
-// Licensed under the ##LICENSENAME##. 
+// Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
@@ -103,8 +103,15 @@ namespace UnitTests
             // Add a material.
             var mat = FbxSurfaceMaterial.Create(Manager, "mat");
             Assert.AreEqual(0, fooNode.AddMaterial(mat));
+
+            // Test whether it's a skeleton, camera, etc. It isn't.
+            Assert.IsNull(fooNode.GetCamera());
+            Assert.IsNull(fooNode.GetGeometry());
+            Assert.IsNull(fooNode.GetMesh());
+            Assert.IsNull(fooNode.GetNodeAttribute());
+            Assert.IsNull(fooNode.GetSkeleton());
         }
-        
+
         [Test]
         public void TestSetNodeAttribute()
         {

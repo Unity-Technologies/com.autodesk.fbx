@@ -18,11 +18,17 @@
 %rename("%s") FbxNode::GetChild(int);
 %rename("%s") FbxNode::GetChildCount(bool pRecursive = false) const;
 %rename("%s") FbxNode::FindChild;
-%rename("%s") FbxNode::SetNodeAttribute;
-%rename("%s") FbxNode::GetNodeAttribute();
 %rename("%s") FbxNode::SetShadingMode;
 %rename("%s") FbxNode::GetShadingMode;
 %rename("%s") FbxNode::EShadingMode;
+
+/* Attributes */
+%rename("%s") FbxNode::SetNodeAttribute;
+%rename("%s") FbxNode::GetNodeAttribute();
+%rename("%s") FbxNode::GetSkeleton;
+%rename("%s") FbxNode::GetMesh;
+%rename("%s") FbxNode::GetGeometry;
+%rename("%s") FbxNode::GetCamera(); /* non-const to avoid warning */
 
 /* Materials */
 %rename("%s") FbxNode::AddMaterial;
