@@ -164,3 +164,7 @@
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
 %template("FbxPropertyEProjectionType") FbxPropertyT<FbxCamera::EProjectionType>;
 %template("FbxPropertyELook") FbxPropertyT<FbxMarker::ELook>;
+%template("FbxPropertyELightType") FbxPropertyT<FbxLight::EType>;
+%template("FbxPropertyEAreaLightShape") FbxPropertyT<FbxLight::EAreaLightShape>;
+%template("FbxPropertyEDecayType") FbxPropertyT<FbxLight::EDecayType>;
+%template("FbxPropertyFloat") FbxPropertyT<float>;

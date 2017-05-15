@@ -212,3 +212,4 @@
 %include "fbxcamera.i"
 %include "fbxconnectionpoint.i"
 %include "fbxmarker.i"    
+%include "fbxlight.i"

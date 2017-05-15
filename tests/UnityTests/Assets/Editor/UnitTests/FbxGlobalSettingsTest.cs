@@ -41,6 +41,10 @@ namespace UnitTests
             // test SetDefaultCamera
             settings.SetDefaultCamera("camera");
             Assert.AreEqual ("camera", settings.GetDefaultCamera ());
+
+            // test SetAmbientColor
+            settings.SetAmbientColor(new FbxColor(1,1,1));
+            Assert.AreEqual (new FbxColor (1, 1, 1), settings.GetAmbientColor ());
         }
     }
 }
