@@ -184,12 +184,9 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void SetAmbientLighting (FbxScene fbxScene)
             {
-                // if we're using flat lighting copy the color across
-                if (RenderSettings.ambientMode == UnityEngine.Rendering.AmbientMode.Flat) {
-                    Color unityColor = RenderSettings.ambientLight;
+                Color unityColor = RenderSettings.ambientLight;
 
-                    fbxScene.GetGlobalSettings ().SetAmbientColor (new FbxColor (unityColor.r, unityColor.g, unityColor.b));
-                }
+                fbxScene.GetGlobalSettings ().SetAmbientColor (new FbxColor (unityColor.r, unityColor.g, unityColor.b));
             }
 
             /// <summary>
