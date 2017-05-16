@@ -39,9 +39,14 @@ namespace FbxSdk.Examples
             const string Comments =
                  "";
 
-            const string MenuItemName = "File/Export FBX/WIP - 9. Animation clips";
+            const string MenuItemName = "File/Export FBX/9. Animation clips";
 
             const string FileBaseName = "example_animation_clips";
+
+            /// <summary>
+            /// Create instance of example
+            /// </summary>
+            public static FbxExporter09 Create () { return new FbxExporter09 (); }
 
             struct PropertyChannel {
                 public string Property { get ; private set; }
@@ -50,21 +55,33 @@ namespace FbxSdk.Examples
                     Property = p;
                     Channel = c;
                 }
-            }
 
-            /// <summary>
-            /// Map a Unity property name to the corresponding FBX property and
-            /// channel names.
-            /// </summary>
-            static Dictionary<string, PropertyChannel> MapUnityPropertyNameToFbx = new Dictionary<string, PropertyChannel> ()
-            {
-                { "field of view",          new PropertyChannel("FocalLength", "FocalLength") },
-                { "near clip plane",        new PropertyChannel("NearPlane", "NearPlane") },
-                { "far clip plane",         new PropertyChannel("FarPlane", "FarPlane") },
-                { "m_LocalPosition.x",      new PropertyChannel("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X) },
-                { "m_LocalPosition.y",      new PropertyChannel("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y) },
-                { "m_LocalPosition.z",      new PropertyChannel("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z) },
-            };
+                /// <summary>
+                /// Map a Unity property name to the corresponding FBX property and
+                /// channel names.
+                /// </summary>
+                public static bool TryGetValue(string unityName, out PropertyChannel prop)
+                {
+                    System.StringComparison ct = System.StringComparison.CurrentCulture;
+
+                    if (unityName.StartsWith ("m_LocalPosition.x", ct) || unityName.EndsWith ("T.x", ct)) {
+                        prop = new PropertyChannel ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X);
+                        return true;
+                    }
+                    if (unityName.StartsWith ("m_LocalPosition.y", ct) || unityName.EndsWith ("T.y", ct)) {
+                        prop = new PropertyChannel ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y);
+                        return true;
+                    }
+
+                    if (unityName.StartsWith ("m_LocalPosition.z", ct) || unityName.EndsWith ("T.z", ct)) {
+                        prop = new PropertyChannel ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z);
+                        return true;
+                    }
+
+                    prop = new PropertyChannel ();
+                    return false;
+                }
+            }
 
             /// <summary>
             /// Exporting rotations is more complicated. We need to convert
@@ -84,7 +101,17 @@ namespace FbxSdk.Examples
                 public QuaternionCurve() { }
 
                 public static int GetQuaternionIndex(string unityPropertyName) {
-                    if (!unityPropertyName.StartsWith("m_LocalRotation.")) { return -1; }
+                    System.StringComparison ct = System.StringComparison.CurrentCulture;
+                    bool isQuaternionComponent = false;
+
+                    isQuaternionComponent |= unityPropertyName.StartsWith ("m_LocalRotation.", ct);
+                    isQuaternionComponent |= unityPropertyName.EndsWith ("Q.x", ct);
+                    isQuaternionComponent |= unityPropertyName.EndsWith ("Q.y", ct);
+                    isQuaternionComponent |= unityPropertyName.EndsWith ("Q.z", ct);
+                    isQuaternionComponent |= unityPropertyName.EndsWith ("Q.w", ct);
+
+                    if (!isQuaternionComponent) { return -1; }
+
                     switch(unityPropertyName[unityPropertyName.Length - 1]) {
                         case 'x': return 0;
                         case 'y': return 1;
@@ -192,11 +219,6 @@ namespace FbxSdk.Examples
                     }
                 }
             }
-
-            /// <summary>
-            /// Create instance of example
-            /// </summary>
-            public static FbxExporter09 Create () { return new FbxExporter09 (); }
 
             /// <summary>
             /// Export bones of skinned mesh, if this is a skinned mesh with
@@ -318,25 +340,33 @@ namespace FbxSdk.Examples
                                             FbxScene fbxScene,
                                             FbxAnimLayer fbxAnimLayer)
             {
-                if (Verbose) {
-                    Debug.Log("Exporting animation for " + unityObj.name + " (" + unityPropertyName + ")");
-                }
-
                 PropertyChannel fbxName;
-                if (!MapUnityPropertyNameToFbx.TryGetValue(unityPropertyName, out fbxName)) {
+                if (!PropertyChannel.TryGetValue(unityPropertyName, out fbxName)) {
+                    Debug.LogError (string.Format("no mapping from unity '{0}' to fbx property", unityPropertyName));
                     return;
                 }
 
                 GameObject unityGo = GetGameObject(unityObj);
+                if (unityGo == null) {
+                    Debug.LogError (string.Format("cannot find gameobject for {0}", unityObj.name)); 
+                    return;
+                }
+
                 FbxNode fbxNode;
                 if (!MapUnityObjectToFbxNode.TryGetValue(unityGo, out fbxNode)) {
+                    Debug.LogError ("no fbx node");
                     return;
                 }
 
                 // map unity property name to fbx property
                 var fbxProperty = fbxNode.FindProperty (fbxName.Property, false);
                 if (!fbxProperty.IsValid()) {
+                    Debug.LogError (string.Format("no fbx property {0} found on {1} ", fbxName.Property, fbxNode.GetName()));
                     return;
+                }
+
+                if (Verbose) {
+                    Debug.Log("Exporting animation for " + unityObj.name + " (" + unityPropertyName + ")");
                 }
 
                 // Create the AnimCurve on the channel
@@ -360,6 +390,9 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportAnimationClip (AnimationClip unityAnimClip, GameObject unityRoot, FbxScene fbxScene)
             {
+                if (Verbose)
+                    Debug.Log (string.Format ("exporting clip {1} for {0}", unityRoot.name, unityAnimClip.name));
+
                 // setup anim stack
                 FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, unityAnimClip.name);
                 fbxAnimStack.Description.Set ("Animation Take: " + unityAnimClip.name);
@@ -398,6 +431,9 @@ namespace FbxSdk.Examples
                     Object unityObj = AnimationUtility.GetAnimatedObject (unityRoot, unityCurveBinding);
                     if (!unityObj) { continue; }
 
+                    if (Verbose)
+                        Debug.Log (string.Format ("export binding {1} for {0}", unityCurveBinding.propertyName, unityObj.ToString()));
+
                     AnimationCurve unityAnimCurve = AnimationUtility.GetEditorCurve (unityAnimClip, unityCurveBinding);
                     if (unityAnimCurve == null) { continue; }
 
@@ -428,6 +464,7 @@ namespace FbxSdk.Examples
 
                     FbxNode fbxNode;
                     if (!MapUnityObjectToFbxNode.TryGetValue(unityGo, out fbxNode)) {
+                        Debug.LogError (string.Format("no fbxnode found for '0'", unityGo.name));
                         continue;
                     }
                     quat.Animate(unityGo.transform, fbxNode, fbxAnimLayer, Verbose);
@@ -461,10 +498,6 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void CreateHierarchy (GameObject unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
             {
-                if (Verbose) {
-                    Debug.Log ("exporting " + unityGo.name);
-                }
-
                 FbxNode fbxNode = FbxNode.Create (fbxParentNode, unityGo.name);
 
                 MapUnityObjectToFbxNode [unityGo] = fbxNode;
@@ -606,6 +639,9 @@ namespace FbxSdk.Examples
                     return xform.gameObject;
                 } else if (obj is UnityEngine.GameObject) {
                     return obj as UnityEngine.GameObject;
+                } else if (obj is Animator) {
+                    var anim = obj as Animator;
+                    return anim.gameObject;
                 } else if (obj is MonoBehaviour) {
                     var mono = obj as MonoBehaviour;
                     return mono.gameObject;

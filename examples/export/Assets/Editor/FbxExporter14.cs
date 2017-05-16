@@ -39,7 +39,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"";
 
-            const string MenuItemName = "File/Export FBX/14. lights with animation";
+            const string MenuItemName = "File/Export FBX/WIP 14. lights with animation";
 
             const string FileBaseName = "example_lights_with_animation";
 
@@ -108,6 +108,7 @@ namespace FbxSdk.Examples
                 }
 
                 // TODO: bounceIntensity   The multiplier that defines the strength of the bounce lighting.
+                // "Unity_bounceIntensity"
 
                 // color             The color of the light.
                 var unityLightColor = unityLight.color;
@@ -200,6 +201,196 @@ namespace FbxSdk.Examples
                 }
             }
 
+            ///<summary>
+            ///Information about the mesh that is important for exporting.
+            ///</summary>
+            public struct MeshInfo
+            {
+                /// <summary>
+                /// The transform of the mesh.
+                /// </summary>
+                public Matrix4x4 xform;
+                public Mesh mesh;
+
+                /// <summary>
+                /// The gameobject in the scene to which this mesh is attached.
+                /// This can be null: don't rely on it existing!
+                /// </summary>
+                public GameObject unityObject;
+
+                /// <summary>
+                /// Return true if there's a valid mesh information
+                /// </summary>
+                /// <value>The vertex count.</value>
+                public bool IsValid { get { return mesh != null; } }
+
+                /// <summary>
+                /// Gets the vertex count.
+                /// </summary>
+                /// <value>The vertex count.</value>
+                public int VertexCount { get { return mesh.vertexCount; } }
+
+                /// <summary>
+                /// Gets the triangles. Each triangle is represented as 3 indices from the vertices array.
+                /// Ex: if triangles = [3,4,2], then we have one triangle with vertices vertices[3], vertices[4], and vertices[2]
+                /// </summary>
+                /// <value>The triangles.</value>
+                public int [] Triangles { get { return mesh.triangles; } }
+
+                /// <summary>
+                /// Gets the vertices, represented in local coordinates.
+                /// </summary>
+                /// <value>The vertices.</value>
+                public Vector3 [] Vertices { get { return mesh.vertices; } }
+
+                /// <summary>
+                /// Gets the normals for the vertices.
+                /// </summary>
+                /// <value>The normals.</value>
+                public Vector3 [] Normals { get { return mesh.normals; } }
+
+                /// <summary>
+                /// TODO: Gets the binormals for the vertices.
+                /// </summary>
+                /// <value>The normals.</value>
+                private Vector3 [] m_Binormals;
+                public Vector3 [] Binormals {
+                    get {
+                        /// NOTE: LINQ
+                        ///    return mesh.normals.Zip (mesh.tangents, (first, second)
+                        ///    => Math.cross (normal, tangent.xyz) * tangent.w
+                        if (m_Binormals.Length == 0) {
+                            m_Binormals = new Vector3 [mesh.normals.Length];
+
+                            for (int i = 0; i < mesh.normals.Length; i++)
+                                m_Binormals [i] = Vector3.Cross (mesh.normals [i],
+                                                                 mesh.tangents [i])
+                                                         * mesh.tangents [i].w;
+
+                        }
+                        return m_Binormals;
+                    }
+                }
+
+                /// <summary>
+                /// TODO: Gets the tangents for the vertices.
+                /// </summary>
+                /// <value>The tangents.</value>
+                public Vector4 [] Tangents { get { return mesh.tangents; } }
+
+                /// <summary>
+                /// TODO: Gets the tangents for the vertices.
+                /// </summary>
+                /// <value>The tangents.</value>
+                public Color [] VertexColors { get { return mesh.colors; } }
+
+                /// <summary>
+                /// Gets the uvs.
+                /// </summary>
+                /// <value>The uv.</value>
+                public Vector2 [] UV { get { return mesh.uv; } }
+
+                /// <summary>
+                /// The material used, if any; otherwise null.
+                /// We don't support multiple materials on one gameobject.
+                /// </summary>
+                public Material Material {
+                    get {
+                        if (!unityObject) { return null; }
+                        var renderer = unityObject.GetComponent<Renderer> ();
+                        if (!renderer) { return null; }
+                        // .material instantiates a new material, which is bad
+                        // most of the time.
+                        return renderer.sharedMaterial;
+                    }
+                }
+
+                /// <summary>
+                /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
+                /// </summary>
+                /// <param name="mesh">A mesh we want to export</param>
+                public MeshInfo (Mesh mesh)
+                {
+                    this.mesh = mesh;
+                    this.xform = Matrix4x4.identity;
+                    this.unityObject = null;
+                    this.m_Binormals = null;
+                }
+
+                /// <summary>
+                /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
+                /// </summary>
+                /// <param name="gameObject">The GameObject the mesh is attached to.</param>
+                /// <param name="mesh">A mesh we want to export</param>
+                public MeshInfo (GameObject gameObject, Mesh mesh)
+                {
+                    this.mesh = mesh;
+                    this.xform = gameObject.transform.localToWorldMatrix;
+                    this.unityObject = gameObject;
+                    this.m_Binormals = null;
+                }
+            }
+
+            /// <summary>
+            /// Get a mesh renderer's mesh.
+            /// </summary>
+            private MeshInfo GetMeshInfo (GameObject gameObject, bool requireRenderer = true)
+            {
+                // Two possibilities: it's a skinned mesh, or we have a mesh filter.
+                Mesh mesh;
+                var meshFilter = gameObject.GetComponent<MeshFilter> ();
+                if (meshFilter) {
+                    mesh = meshFilter.sharedMesh;
+                } else {
+                    var renderer = gameObject.GetComponent<SkinnedMeshRenderer> ();
+                    if (!renderer) {
+                        mesh = null;
+                    } else {
+                        mesh = new Mesh ();
+                        renderer.BakeMesh (mesh);
+                    }
+                }
+                if (!mesh) {
+                    return new MeshInfo ();
+                }
+                return new MeshInfo (gameObject, mesh);
+            }
+
+            /// <summary>
+            /// Unconditionally export this mesh object to the file.
+            /// We have decided; this mesh is definitely getting exported.
+            /// </summary>
+            public FbxMesh ExportMesh (GameObject unityGo, FbxScene fbxScene)
+            {
+                var meshInfo = GetMeshInfo (unityGo);
+
+                if (!meshInfo.IsValid)
+                    return null;
+
+                // create the mesh structure.
+                FbxMesh fbxMesh = FbxMesh.Create (fbxScene, "Scene");
+
+                // Create control points.
+                int NumControlPoints = meshInfo.VertexCount;
+
+                fbxMesh.InitControlPoints (NumControlPoints);
+
+                // copy control point data from Unity to FBX
+                for (int v = 0; v < NumControlPoints; v++) {
+                    fbxMesh.SetControlPointAt (new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
+                }
+
+                for (int f = 0; f < meshInfo.Triangles.Length / 3; f++) {
+                    fbxMesh.BeginPolygon ();
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 1]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 2]);
+                    fbxMesh.EndPolygon ();
+                }
+
+                return fbxMesh;
+            }
+
             /// <summary>
             /// Exports the game object has a light component
             /// </summary>
@@ -210,6 +401,15 @@ namespace FbxSdk.Examples
                 NumNodes++;
 
                 ExportTransform (unityGo.transform, fbxNode);
+
+                var fbxMesh = ExportMesh (unityGo, fbxScene);
+
+                if (fbxMesh!=null)
+                {
+                    // set the fbxNode containing the mesh
+                    fbxNode.SetNodeAttribute (fbxMesh);
+                    fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+                }
 
                 FbxLight fbxLight = ExportLight (unityGo, fbxScene, fbxNode);
 
@@ -237,22 +437,22 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportTransform (Transform unityTransform, FbxNode fbxNode)
             {
-            	// get local position of fbxNode (from Unity)
-            	UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
-            	UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
-            	UnityEngine.Vector3 unityScale = unityTransform.localScale;
+                // get local position of fbxNode (from Unity)
+                UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
+                UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
+                UnityEngine.Vector3 unityScale = unityTransform.localScale;
 
-            	// transfer transform data from Unity to Fbx
-            	var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
-            	var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
-            	var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
+                // transfer transform data from Unity to Fbx
+                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
 
-            	// set the local position of fbxNode
-            	fbxNode.LclTranslation.Set (fbxTranslate);
-            	fbxNode.LclRotation.Set (fbxRotate);
-            	fbxNode.LclScaling.Set (fbxScale);
+                // set the local position of fbxNode
+                fbxNode.LclTranslation.Set (fbxTranslate);
+                fbxNode.LclRotation.Set (fbxRotate);
+                fbxNode.LclScaling.Set (fbxScale);
 
-            	return;
+                return;
             }
 
             /// <summary>
