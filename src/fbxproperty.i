@@ -164,6 +164,8 @@
 %template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
+
+%csmethodmodifiers FbxPropertyT<float>::Set(const float&) "public new";
 %template("FbxPropertyFloat") FbxPropertyT<float>;
 
 /* NodeAttribute and subclasses properties */
