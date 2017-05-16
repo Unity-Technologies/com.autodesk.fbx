@@ -5,18 +5,20 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-#ifdef IGNORE_ALL_INCLUDE_SOME
-%rename("%s") FbxSkeleton;
+%reveal_all_start;
 
 %typemap(csclassmodifiers) FbxSkeleton::EType "public new enum";
-%rename("%s") FbxSkeleton::EType;
 
-// As the ignore everything will include the constructor, destructor, methods etc
-// in the class, these have to be explicitly unignored too:
-%rename("%s") FbxSkeleton::Create;
-%rename("%s") FbxSkeleton::SetSkeletonType;
-%rename("%s") FbxSkeleton::GetSkeletonType;
+%fbximmutable(FbxSkeleton::sSize);
+%fbximmutable(FbxSkeleton::sLimbLength);
+%fbximmutable(FbxSkeleton::sDefaultSize);
+%fbximmutable(FbxSkeleton::sDefaultLimbLength);
 %fbximmutable(FbxSkeleton::Size);
-#endif
+%fbximmutable(FbxSkeleton::LimbLength);
 
 %include "fbxsdk/scene/geometry/fbxskeleton.h"
+
+/****************************************************************************
+ * We end reveal-all mode now. This must be at the end of the file.
+ ****************************************************************************/
+%reveal_all_end;
