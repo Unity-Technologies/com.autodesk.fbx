@@ -14,6 +14,9 @@
 /* helpers for defining equality correctly */
 %include "equality.i"
 
+/* Helper for defining static classes correctly */
+%include "staticclass.i"
+
 /* Helper for defining ToString() correctly:
  *   %define_tostring(FbxDataType, GetName())
  * Defines a C# function FbxDataType.ToString() that returns GetName()

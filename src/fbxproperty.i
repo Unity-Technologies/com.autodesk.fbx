@@ -51,18 +51,35 @@
 %ignore FbxProperty::IsValid;
 */
 
-/* TODO: take more of this stuff in! */
-%ignore FbxProperty::CreateFrom;
-%ignore FbxProperty::SetUserTag;
-%ignore FbxProperty::GetUserTag;
-%ignore FbxProperty::SetUserDataPtr;
-%ignore FbxProperty::GetUserDataPtr;
+/*
+ * Flags.
+ * We also need to take in fbxpropertydef so we get the FbxPropertyFlags enums.
+ * Do that right now.
+ *
+ * FbxPropertyDef and FbxPropertyValue are internal classes; we just need the
+ * enums.
+ */
+/*
 %ignore FbxProperty::ModifyFlag;
 %ignore FbxProperty::GetFlag;
 %ignore FbxProperty::GetFlags;
 %ignore FbxProperty::GetFlagInheritType;
 %ignore FbxProperty::SetFlagInheritType;
 %ignore FbxProperty::ModifiedFlag;
+*/
+%ignore FbxPropertyValue;
+%rename("$ignore", %$isfunction, regextarget=1, fullname=1) "FbxPropertyFlags::.*";
+%rename("%s") FbxPropertyFlags::EFlags;
+%rename("%s") FbxPropertyFlags::EInheritType;
+%declare_static_class(FbxPropertyFlags);
+%include "fbxsdk/core/fbxpropertydef.h"
+
+/* TODO: take more of this stuff in! */
+%ignore FbxProperty::CreateFrom;
+%ignore FbxProperty::SetUserTag;
+%ignore FbxProperty::GetUserTag;
+%ignore FbxProperty::SetUserDataPtr;
+%ignore FbxProperty::GetUserDataPtr;
 %ignore FbxProperty::CompareValue;
 %ignore FbxProperty::CopyValue;
 %ignore FbxProperty::HasDefaultValue;
@@ -145,7 +162,7 @@
  * compile in C#. */
 %typemap("csvarin") const FbxPropertyT& {#error this should be a %fbximmutable}
 
-// make sure Connect[Src|Dst]Object(), Disonnect[Src|Dst]Object(), 
+// make sure Connect[Src|Dst]Object(), Disonnect[Src|Dst]Object(),
 // and Find[Src|Dst]Object() don't crash if we pass a null object
 %null_arg_check(FbxObject* pObject);
 // Applies to Create() as well, and causes tests that call create with "" to fail
@@ -157,6 +174,7 @@
 /***************************************************************************/
 
 %template(Set) FbxProperty::Set<float>;
+%template(GetFloat) FbxProperty::Get<float>;
 
 %template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
 %template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
