@@ -357,7 +357,12 @@ namespace UnitTests
                     Assert.IsTrue (result);
                     Assert.IsTrue (ownerObj.IsConnectedDstObject (obj));
                     Assert.AreEqual (origCount + 1, ownerObj.GetDstObjectCount ());
-                    Assert.AreEqual (obj, ownerObj.GetDstObject ());
+                    if (origCount == 0) {
+                        Assert.AreEqual (obj, ownerObj.GetDstObject ());
+                    } else {
+                        // FbxAnimCurve has the scene as a DstObject
+                        Assert.AreNotEqual (obj, ownerObj.GetDstObject ());
+                    }
                     Assert.AreEqual (obj, ownerObj.GetDstObject (origCount));
                     Assert.AreEqual (obj, ownerObj.FindDstObject ("obj"));
                     Assert.IsNull (ownerObj.FindDstObject ("obj", origCount+1));

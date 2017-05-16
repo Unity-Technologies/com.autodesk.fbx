@@ -5,11 +5,20 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-// Unignore class
+// Unignore class... but nothing in it.
 %rename("%s", %$isclass) FbxAnimCurveBase;
 
-// As the ignore everything will include the constructor, destructor, methods etc
-// in the class, these have to be explicitly unignored too:
-%rename("%s") FbxAnimCurveBase::Create;
+// FbxAnimCurveBase is abstract, so you can't create it.
+// Throw exceptions if we try.
+%ignore FbxAnimCurveBase::Create(FbxManager*, const char*);
+%ignore FbxAnimCurveBase::Create(FbxObject*, const char*);
+%extend FbxAnimCurveBase { %proxycode %{
+  public static new FbxAnimCurveBase Create(FbxManager pManager, string pName) {
+    throw new System.NotImplementedException("FbxAnimCurveBase is abstract; create FbxAnimCurve instead");
+  }
+  public static new FbxAnimCurveBase Create(FbxObject pContainer, string pName) {
+    throw new System.NotImplementedException("FbxAnimCurveBase is abstract; create FbxAnimCurve instead");
+  }
+%} }
 
 %include "fbxsdk/scene/animation/fbxanimcurvebase.h"

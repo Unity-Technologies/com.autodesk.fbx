@@ -8,6 +8,20 @@
 // Unignore class
 %rename("%s", %$isclass) FbxAnimCurve;
 
+// Create is funny: you *only* get the form with an FbxScene.
+// The base class defined Create with the other arguments,
+// make them throw (they return null in C++).
+%ignore FbxAnimCurve::Create(FbxManager*, const char*);
+%rename("%s") FbxAnimCurve::Create(FbxScene*, const char*);
+%extend FbxAnimCurve { %proxycode %{
+  public static new FbxAnimCurve Create(FbxManager pManager, string pName) {
+    throw new System.NotImplementedException("FbxAnimCurve can only be created with a scene as argument.");
+  }
+  public static new FbxAnimCurve Create(FbxObject pContainer, string pName) {
+    throw new System.NotImplementedException("FbxAnimCurve can only be created with a scene as argument.");
+  }
+%} }
+
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxAnimCurve::KeyModifyBegin;
@@ -21,7 +35,7 @@
         FbxTime pTime,
         float pValue,
         FbxAnimCurveDef::EInterpolationType pInterpolation=FbxAnimCurveDef::eInterpolationCubic,
-		FbxAnimCurveDef::ETangentMode pTangentMode=FbxAnimCurveDef::eTangentAuto,
+        FbxAnimCurveDef::ETangentMode pTangentMode=FbxAnimCurveDef::eTangentAuto,
         float pData0=0.0,
         float pData1=0.0,
         FbxAnimCurveDef::EWeightedMode pTangentWeightMode=FbxAnimCurveDef::eWeightedNone,
@@ -38,7 +52,17 @@
 %rename("%s") FbxAnimCurveDef::EInterpolationType;
 %rename("%s") FbxAnimCurveDef::ETangentMode;
 %rename("%s") FbxAnimCurveDef::EWeightedMode;
-%rename("%s") FbxAnimCurveDef::sDEFAULT_WEIGHT;
-%rename("%s") FbxAnimCurveDef::sDEFAULT_VELOCITY;
+%fbximmutable(FbxAnimCurveDef::sDEFAULT_WEIGHT);
+%fbximmutable(FbxAnimCurveDef::sDEFAULT_VELOCITY);
+%fbximmutable(FbxAnimCurveDef::sMIN_WEIGHT);
+%fbximmutable(FbxAnimCurveDef::sMAX_WEIGHT);
+
+// FbxAnimCurveDef is a static class. Take out all the standard cruft; we don't
+// need it. We use the method modifiers to comment out the Dispose function.
+%typemap(csclassmodifiers) FbxAnimCurveDef "public static class";
+%typemap(csinterfaces) FbxAnimCurveDef "";
+%typemap(csbody) FbxAnimCurveDef %{ %}
+%typemap(csdestruct, methodname="Dispose", methodmodifiers="//") FbxAnimCurveDef %{ { } %}
+%typemap(csfinalize) FbxAnimCurveDef %{ %}
 
 %include "fbxsdk/scene/animation/fbxanimcurve.h"
