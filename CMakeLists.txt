@@ -126,8 +126,10 @@ get_filename_component(FBXSDK_SWIG_I_FILE src/fbxsdk.i ABSOLUTE)
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
         COMMAND "${SWIG_EXECUTABLE}"
-        ARGS "-debug-typedef" "-DSWIG_GENERATING_TYPEDEFS" "-outdir" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
-        "-c++" "-csharp" ${CMAKE_SWIG_FLAGS} -I${FBXSDK_INCLUDE_DIR} ${FBXSDK_SWIG_I_FILE}
+        ARGS "-debug-typedef" "-DSWIG_GENERATING_TYPEDEFS" "-c++" "-csharp"
+        "-outdir" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
+        "-o" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp/wrap.cxx"
+        ${CMAKE_SWIG_FLAGS} -I${FBXSDK_INCLUDE_DIR} ${FBXSDK_SWIG_I_FILE}
         ">" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
         BYPRODUCTS "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
         MAIN_DEPENDENCY ${FBXSDK_SWIG_I_FILE}
