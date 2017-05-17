@@ -168,12 +168,11 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
 %typemap(csfinalize) THETYPE %{ %}
 
 /*
- * Derived classes just call the superclass.
- * Probably there's a way to not even emit this call, though it's nice for debugging.
+ * SWIG requires there be a destructor, but we can say it's a // method instead
+ * of a public method... which comments it out. (It would be nice if we could
+ * just not emit this at all.)
  */
-%typemap(csdestruct_derived, methodname="Dispose", methodmodifiers="public") THETYPE %{{
-    base.Dispose();
-  }%}
+%typemap(csdestruct_derived, methodname="Dispose", methodmodifiers="//") THETYPE %{{base.Dispose();}%}
 
 /*
  * Equality and letting everyone know it's equatable.
