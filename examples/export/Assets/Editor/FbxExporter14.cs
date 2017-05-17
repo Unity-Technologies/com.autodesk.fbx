@@ -51,6 +51,23 @@ namespace FbxSdk.Examples
             };
 
             /// <summary>
+            /// Map a Unity property name to the corresponding FBX property and
+            /// channel names.
+            /// </summary>
+            /// 
+            static Dictionary<string, FbxPropertyChannelPair> MapUnityPropertyNameToFbx = new Dictionary<string, FbxPropertyChannelPair> ()
+            {
+                { "m_Color.r",              new FbxPropertyChannelPair (FbxNodeAttribute.sColor, Globals.FBXSDK_CURVENODE_COLOR_RED) },
+                { "m_Color.g",              new FbxPropertyChannelPair (FbxNodeAttribute.sColor, Globals.FBXSDK_CURVENODE_COLOR_GREEN) },
+                { "m_Color.b",              new FbxPropertyChannelPair (FbxNodeAttribute.sColor, Globals.FBXSDK_CURVENODE_COLOR_BLUE) },
+                // ignore m_Color.a; no mapping
+                { "m_SpotAngle",            new FbxPropertyChannelPair ("InnerAngle") },
+                { "m_LocalPosition.x",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X) },
+                { "m_LocalPosition.y",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y) },
+                { "m_LocalPosition.z",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z) },
+            };
+
+            /// <summary>
             /// collected list of lights to export
             /// </summary>
             List<Light> Lights = new List<Light> ();
@@ -108,6 +125,7 @@ namespace FbxSdk.Examples
                 }
 
                 // TODO: bounceIntensity   The multiplier that defines the strength of the bounce lighting.
+                // "Unity_bounceIntensity"
 
                 // color             The color of the light.
                 var unityLightColor = unityLight.color;
@@ -167,16 +185,164 @@ namespace FbxSdk.Examples
                 // TODO: shadowNormalBias  Shadow mapping normal-based bias.
                 // TODO: shadowResolution  The resolution of the shadow map.
                 // TODO: shadowStrength    Strength of light's shadows.
-
+        
                 return fbxLight;
             }
 
             /// <summary>
-            /// Export each animationclip as a single fbxtake
+            /// Export an AnimationCurve.
+            ///
+            /// This is not used for rotations, because we need to convert from
+            /// quaternion to euler and various other stuff.
             /// </summary>
-            protected void ExportAnimationClips (GameObject unityGo, FbxScene fbxScene)
+            protected void ExportAnimCurve (UnityEngine.Object unityObj,
+                                            AnimationCurve unityAnimCurve,
+                                            string unityPropertyName,
+                                            FbxAnimLayer fbxAnimLayer)
             {
-                // TODO: cut and paste animation code here
+                FbxPropertyChannelPair fbxPair;
+
+                if (!MapUnityPropertyNameToFbx.TryGetValue (unityPropertyName, out fbxPair)) {
+                    Debug.LogWarning (string.Format ("no property-channel mapping found for {0}", unityPropertyName));
+                    return;
+                }
+
+                GameObject unityGo = GetGameObject (unityObj);
+                if (unityGo==null)
+                {
+                    Debug.LogError(string.Format("cannot convert to GameObject from {0}",unityObj.ToString()));
+                    return;
+                }
+
+                FbxNode fbxNode;
+                if (!MapUnityObjectToFbxNode.TryGetValue(unityGo, out fbxNode)) {
+                    Debug.LogError(string.Format ("cannot find fbxNode for {0}", unityGo.ToString()));
+                    return;
+                }
+
+                FbxProperty fbxProperty = null;
+
+                // try finding unity property name on node attribute
+                FbxNodeAttribute fbxNodeAttribute = fbxNode.GetNodeAttribute ();
+                if (fbxNodeAttribute != null) {
+                    fbxProperty = fbxNodeAttribute.FindProperty (fbxPair.Property, false);
+                }
+
+                // try finding unity property on the node
+                if (fbxProperty == null) {
+                    fbxProperty = fbxNode.FindProperty (fbxPair.Property, false);
+                }
+
+                if (!fbxProperty.IsValid ()) {
+                    Debug.LogError (string.Format ("cannot find fbxProperty {0} on {1}", fbxPair.Property, fbxNode.GetName ()));
+                    return;
+                }
+
+                if (Verbose) {
+                    Debug.Log ( string.Format("Exporting animation for {0} ({1})", 
+                                              unityObj.ToString(), 
+                                              fbxPair.Property));
+                }
+
+                // Create the AnimCurve on the channel
+                FbxAnimCurve fbxAnimCurve = (fbxPair.Channel != null)
+                    ? fbxProperty.GetCurve (fbxAnimLayer, fbxPair.Channel, true)
+                                 : fbxProperty.GetCurve (fbxAnimLayer, true);
+                
+                // copy Unity AnimCurve to FBX AnimCurve.
+                fbxAnimCurve.KeyModifyBegin ();
+
+                for (int keyIndex = 0, n = unityAnimCurve.length; keyIndex < n; ++keyIndex) 
+                {
+                    var key = unityAnimCurve [keyIndex];
+                    var fbxTime = FbxTime.FromSecondDouble (key.time);
+                    fbxAnimCurve.KeyAdd (fbxTime);
+                    fbxAnimCurve.KeySet (keyIndex, fbxTime, key.value);
+                }
+
+                fbxAnimCurve.KeyModifyEnd ();
+            }
+
+            /// <summary>
+            /// Exports all animation
+            /// </summary>
+            private void ExportAnimationClip (AnimationClip unityAnimClip, GameObject unityRoot, FbxScene fbxScene)
+            {
+                if (unityAnimClip == null) return;
+
+                // setup anim stack
+                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, unityAnimClip.name);
+                fbxAnimStack.Description.Set ("Animation Take: " + unityAnimClip.name);
+
+                // add one mandatory animation layer
+                FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (fbxScene, "Animation Base Layer");
+                fbxAnimStack.AddMember (fbxAnimLayer);
+
+                // Set up the FPS so our frame-relative math later works out
+                // Custom frame rate isn't really supported in FBX SDK (there's
+                // a bug), so try hard to find the nearest time mode.
+                FbxTime.EMode timeMode = FbxTime.EMode.eCustom;
+                double precision = 1e-6;
+                while (timeMode == FbxTime.EMode.eCustom && precision < 1000) {
+                    timeMode = FbxTime.ConvertFrameRateToTimeMode (unityAnimClip.frameRate, precision);
+                    precision *= 10;
+                }
+                if (timeMode == FbxTime.EMode.eCustom) {
+                    timeMode = FbxTime.EMode.eFrames30;
+                }
+                FbxTime.SetGlobalTimeMode (timeMode);
+
+                // set time correctly
+                var fbxStartTime = FbxTime.FromSecondDouble (0);
+                var fbxStopTime = FbxTime.FromSecondDouble (unityAnimClip.length);
+
+                fbxAnimStack.SetLocalTimeSpan (new FbxTimeSpan (fbxStartTime, fbxStopTime));
+
+                foreach (EditorCurveBinding unityCurveBinding in AnimationUtility.GetCurveBindings(unityAnimClip))
+                {
+                    Object unityObj = AnimationUtility.GetAnimatedObject (unityRoot, unityCurveBinding);
+                    if (!unityObj) { continue; }
+
+                    AnimationCurve unityAnimCurve = AnimationUtility.GetEditorCurve (unityAnimClip, unityCurveBinding);
+                    if (unityAnimCurve == null) { continue; }
+
+                    ExportAnimCurve (unityObj, unityAnimCurve, unityCurveBinding.propertyName, fbxAnimLayer);
+                }
+            }
+
+            /// <summary>
+            /// Export the Animator component on this game object
+            /// </summary>
+            protected void ExportAnimationClips (GameObject unityRoot, FbxScene fbxScene)
+            {
+                var unityAnimator = unityRoot.GetComponent<Animator> ();
+                if (!unityAnimator) { return; }
+
+                // Get the controller.
+                var unityAnimController = unityAnimator.runtimeAnimatorController;
+                if (!unityAnimController) { return; }
+
+                // Only export each clip once per game object.
+                var unityExportedAnimClip = new HashSet<AnimationClip> ();
+                foreach (var unityAnimClip in unityAnimController.animationClips) 
+                {
+                    if (unityExportedAnimClip.Add (unityAnimClip)) 
+                    {
+                        ExportAnimationClip (unityAnimClip, unityRoot, fbxScene);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Exports all animation
+            /// </summary>
+            protected void ExportAllAnimation (FbxScene fbxScene)
+            {
+                // Export animations.
+                foreach (var unityGo in MapUnityObjectToFbxNode.Keys) 
+                {
+                    ExportAnimationClips (unityGo, fbxScene);
+                }
             }
 
             /// <summary>
@@ -189,15 +355,217 @@ namespace FbxSdk.Examples
                 fbxScene.GetGlobalSettings ().SetAmbientColor (new FbxColor (unityColor.r, unityColor.g, unityColor.b));
             }
 
-            /// <summary>
-            /// Exports all animation
-            /// </summary>
-            protected void ExportAllAnimation(FbxScene fbxScene)
+            ///<summary>
+            ///struct use to map Unity Object to FbxProperty Channel Name
+            ///</summary>
+            struct FbxPropertyChannelPair
             {
-                foreach (Light unityLight in this.Lights) 
+                public string Property { get; private set; }
+                public string Channel { get; private set; }
+                public FbxPropertyChannelPair (string p, string c = null)
                 {
-                    ExportAnimationClips (unityLight.gameObject, fbxScene);
+                    Property = p;
+                    Channel = c;
                 }
+
+                public bool IsValid { get { return Property.Length>0; } }
+
+            };
+            
+            /// <summary>
+            /// keep a map between GameObject and FbxNode for quick lookup when we export
+            /// animation.
+            /// </summary>
+            Dictionary<GameObject, FbxNode> MapUnityObjectToFbxNode = new Dictionary<GameObject, FbxNode> ();
+
+            ///<summary>
+            ///Information about the mesh that is important for exporting.
+            ///</summary>
+            public struct MeshInfo
+            {
+                /// <summary>
+                /// The transform of the mesh.
+                /// </summary>
+                public Matrix4x4 xform;
+                public Mesh mesh;
+
+                /// <summary>
+                /// The gameobject in the scene to which this mesh is attached.
+                /// This can be null: don't rely on it existing!
+                /// </summary>
+                public GameObject unityObject;
+
+                /// <summary>
+                /// Return true if there's a valid mesh information
+                /// </summary>
+                /// <value>The vertex count.</value>
+                public bool IsValid { get { return mesh != null; } }
+
+                /// <summary>
+                /// Gets the vertex count.
+                /// </summary>
+                /// <value>The vertex count.</value>
+                public int VertexCount { get { return mesh.vertexCount; } }
+
+                /// <summary>
+                /// Gets the triangles. Each triangle is represented as 3 indices from the vertices array.
+                /// Ex: if triangles = [3,4,2], then we have one triangle with vertices vertices[3], vertices[4], and vertices[2]
+                /// </summary>
+                /// <value>The triangles.</value>
+                public int [] Triangles { get { return mesh.triangles; } }
+
+                /// <summary>
+                /// Gets the vertices, represented in local coordinates.
+                /// </summary>
+                /// <value>The vertices.</value>
+                public Vector3 [] Vertices { get { return mesh.vertices; } }
+
+                /// <summary>
+                /// Gets the normals for the vertices.
+                /// </summary>
+                /// <value>The normals.</value>
+                public Vector3 [] Normals { get { return mesh.normals; } }
+
+                /// <summary>
+                /// TODO: Gets the binormals for the vertices.
+                /// </summary>
+                /// <value>The normals.</value>
+                private Vector3 [] m_Binormals;
+                public Vector3 [] Binormals {
+                    get {
+                        /// NOTE: LINQ
+                        ///    return mesh.normals.Zip (mesh.tangents, (first, second)
+                        ///    => Math.cross (normal, tangent.xyz) * tangent.w
+                        if (m_Binormals.Length == 0) {
+                            m_Binormals = new Vector3 [mesh.normals.Length];
+
+                            for (int i = 0; i < mesh.normals.Length; i++)
+                                m_Binormals [i] = Vector3.Cross (mesh.normals [i],
+                                                                 mesh.tangents [i])
+                                                         * mesh.tangents [i].w;
+
+                        }
+                        return m_Binormals;
+                    }
+                }
+
+                /// <summary>
+                /// TODO: Gets the tangents for the vertices.
+                /// </summary>
+                /// <value>The tangents.</value>
+                public Vector4 [] Tangents { get { return mesh.tangents; } }
+
+                /// <summary>
+                /// TODO: Gets the tangents for the vertices.
+                /// </summary>
+                /// <value>The tangents.</value>
+                public Color [] VertexColors { get { return mesh.colors; } }
+
+                /// <summary>
+                /// Gets the uvs.
+                /// </summary>
+                /// <value>The uv.</value>
+                public Vector2 [] UV { get { return mesh.uv; } }
+
+                /// <summary>
+                /// The material used, if any; otherwise null.
+                /// We don't support multiple materials on one gameobject.
+                /// </summary>
+                public Material Material {
+                    get {
+                        if (!unityObject) { return null; }
+                        var renderer = unityObject.GetComponent<Renderer> ();
+                        if (!renderer) { return null; }
+                        // .material instantiates a new material, which is bad
+                        // most of the time.
+                        return renderer.sharedMaterial;
+                    }
+                }
+
+                /// <summary>
+                /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
+                /// </summary>
+                /// <param name="mesh">A mesh we want to export</param>
+                public MeshInfo (Mesh mesh)
+                {
+                    this.mesh = mesh;
+                    this.xform = Matrix4x4.identity;
+                    this.unityObject = null;
+                    this.m_Binormals = null;
+                }
+
+                /// <summary>
+                /// Initializes a new instance of the <see cref="MeshInfo"/> struct.
+                /// </summary>
+                /// <param name="gameObject">The GameObject the mesh is attached to.</param>
+                /// <param name="mesh">A mesh we want to export</param>
+                public MeshInfo (GameObject gameObject, Mesh mesh)
+                {
+                    this.mesh = mesh;
+                    this.xform = gameObject.transform.localToWorldMatrix;
+                    this.unityObject = gameObject;
+                    this.m_Binormals = null;
+                }
+            }
+
+            /// <summary>
+            /// Get a mesh renderer's mesh.
+            /// </summary>
+            private MeshInfo GetMeshInfo (GameObject gameObject, bool requireRenderer = true)
+            {
+                // Two possibilities: it's a skinned mesh, or we have a mesh filter.
+                Mesh mesh;
+                var meshFilter = gameObject.GetComponent<MeshFilter> ();
+                if (meshFilter) {
+                    mesh = meshFilter.sharedMesh;
+                } else {
+                    var renderer = gameObject.GetComponent<SkinnedMeshRenderer> ();
+                    if (!renderer) {
+                        mesh = null;
+                    } else {
+                        mesh = new Mesh ();
+                        renderer.BakeMesh (mesh);
+                    }
+                }
+                if (!mesh) {
+                    return new MeshInfo ();
+                }
+                return new MeshInfo (gameObject, mesh);
+            }
+
+            /// <summary>
+            /// Unconditionally export this mesh object to the file.
+            /// We have decided; this mesh is definitely getting exported.
+            /// </summary>
+            public FbxMesh ExportMesh (GameObject unityGo, FbxScene fbxScene)
+            {
+                var meshInfo = GetMeshInfo (unityGo);
+
+                if (!meshInfo.IsValid)
+                    return null;
+
+                // create the mesh structure.
+                FbxMesh fbxMesh = FbxMesh.Create (fbxScene, "Scene");
+
+                // Create control points.
+                int NumControlPoints = meshInfo.VertexCount;
+
+                fbxMesh.InitControlPoints (NumControlPoints);
+
+                // copy control point data from Unity to FBX
+                for (int v = 0; v < NumControlPoints; v++) {
+                    fbxMesh.SetControlPointAt (new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
+                }
+
+                for (int f = 0; f < meshInfo.Triangles.Length / 3; f++) {
+                    fbxMesh.BeginPolygon ();
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 1]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 2]);
+                    fbxMesh.EndPolygon ();
+                }
+
+                return fbxMesh;
             }
 
             /// <summary>
@@ -211,6 +579,15 @@ namespace FbxSdk.Examples
 
                 ExportTransform (unityGo.transform, fbxNode);
 
+                var fbxMesh = ExportMesh (unityGo, fbxScene);
+
+                if (fbxMesh!=null)
+                {
+                    // set the fbxNode containing the mesh
+                    fbxNode.SetNodeAttribute (fbxMesh);
+                    fbxNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
+                }
+
                 FbxLight fbxLight = ExportLight (unityGo, fbxScene, fbxNode);
 
                 if (fbxLight != null)
@@ -222,6 +599,10 @@ namespace FbxSdk.Examples
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
 
                 fbxNodeParent.AddChild (fbxNode);
+
+                // add mapping between fbxnode for light 
+                // and unity game object for animation export
+                MapUnityObjectToFbxNode [unityGo] = fbxNode;
 
                 // now  unityGo  through our children and recurse
                 foreach (Transform childT in  unityGo.transform) 
@@ -237,22 +618,22 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportTransform (Transform unityTransform, FbxNode fbxNode)
             {
-            	// get local position of fbxNode (from Unity)
-            	UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
-            	UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
-            	UnityEngine.Vector3 unityScale = unityTransform.localScale;
+                // get local position of fbxNode (from Unity)
+                UnityEngine.Vector3 unityTranslate = unityTransform.localPosition;
+                UnityEngine.Vector3 unityRotate = unityTransform.localRotation.eulerAngles;
+                UnityEngine.Vector3 unityScale = unityTransform.localScale;
 
-            	// transfer transform data from Unity to Fbx
-            	var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
-            	var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
-            	var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
+                // transfer transform data from Unity to Fbx
+                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
 
-            	// set the local position of fbxNode
-            	fbxNode.LclTranslation.Set (fbxTranslate);
-            	fbxNode.LclRotation.Set (fbxRotate);
-            	fbxNode.LclScaling.Set (fbxScale);
+                // set the local position of fbxNode
+                fbxNode.LclTranslation.Set (fbxTranslate);
+                fbxNode.LclRotation.Set (fbxRotate);
+                fbxNode.LclScaling.Set (fbxScale);
 
-            	return;
+                return;
             }
 
             /// <summary>
@@ -320,6 +701,7 @@ namespace FbxSdk.Examples
                         }
                     }
 
+                    // Export animations
                     ExportAllAnimation (fbxScene);
 
                     // Set the scene's ambient lighting.
@@ -365,17 +747,16 @@ namespace FbxSdk.Examples
             /// </summary>
             private GameObject GetGameObject (Object obj)
             {
-                 if (obj is UnityEngine.Transform) {
-                      var xform = obj as UnityEngine.Transform;
-                      return xform.gameObject;
-                 } else if (obj is UnityEngine.GameObject) {
-                      return obj as UnityEngine.GameObject;
-                 } else if (obj is MonoBehaviour) {
-                      var mono = obj as MonoBehaviour;
-                      return mono.gameObject;
-                 }
-
-                 return null;
+                if (obj is UnityEngine.Transform) {
+                    var xform = obj as UnityEngine.Transform;
+                    return xform.gameObject;
+                } else if (obj is UnityEngine.GameObject) {
+                    return obj as UnityEngine.GameObject;
+                } else if (obj is UnityEngine.Component) {
+                    var component = obj as Component;
+                    return component.gameObject;
+                }
+                return null;
             }
 
             /// <summary>
