@@ -1038,7 +1038,7 @@ namespace FbxSdk.Examples
 
                         if ( unityGo ) 
                         {
-                            this.ExportComponents (unityGo, fbxScene, fbxRootNode);
+                            ExportComponents (unityGo, fbxScene, fbxRootNode);
                         }
                     }
 

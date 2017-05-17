@@ -48,10 +48,175 @@ namespace FbxSdk.Examples
             /// </summary>
             public static FbxExporter09 Create () { return new FbxExporter09 (); }
 
-            struct PropertyChannel {
+            /// <summary>
+            /// Export an AnimationCurve.
+            /// NOTE: This is not used for rotations, because we need to convert from
+            /// quaternion to euler and various other stuff.
+            /// </summary>
+            protected void ExportAnimCurve (UnityEngine.Object unityObj,
+                                            AnimationCurve unityAnimCurve,
+                                            string unityPropertyName,
+                                            FbxScene fbxScene,
+                                            FbxAnimLayer fbxAnimLayer)
+            {
+                FbxPropertyChannelPair fbxPropertyChannelPair;
+                if (!FbxPropertyChannelPair.TryGetValue (unityPropertyName, out fbxPropertyChannelPair)) {
+                    Debug.LogWarning (string.Format ("no mapping from Unity '{0}' to fbx property", unityPropertyName));
+                    return;
+                }
+
+                GameObject unityGo = GetGameObject (unityObj);
+                if (unityGo == null) {
+                    Debug.LogError (string.Format ("cannot find gameobject for {0}", unityObj.ToString()));
+                    return;
+                }
+
+                FbxNode fbxNode;
+                if (!MapUnityObjectToFbxNode.TryGetValue (unityGo, out fbxNode)) {
+                    Debug.LogError ( string.Format("no fbx node for {0}", unityGo.ToString()));
+                    return;
+                }
+
+                // map unity property name to fbx property
+                var fbxProperty = fbxNode.FindProperty (fbxPropertyChannelPair.Property, false);
+                if (!fbxProperty.IsValid ()) {
+                    Debug.LogError (string.Format ("no fbx property {0} found on {1} ", fbxPropertyChannelPair.Property, fbxNode.GetName ()));
+                    return;
+                }
+
+                if (Verbose) {
+                    Debug.Log ("Exporting animation for " + unityObj.ToString() + " (" + unityPropertyName + ")");
+                }
+
+                // Create the AnimCurve on the channel
+                FbxAnimCurve fbxAnimCurve = fbxProperty.GetCurve (fbxAnimLayer, fbxPropertyChannelPair.Channel, true);
+
+                // copy Unity AnimCurve to FBX AnimCurve.
+                fbxAnimCurve.KeyModifyBegin ();
+
+                for (int keyIndex = 0, n = unityAnimCurve.length; keyIndex < n; ++keyIndex) {
+                    var key = unityAnimCurve [keyIndex];
+                    var fbxTime = FbxTime.FromSecondDouble (key.time);
+                    fbxAnimCurve.KeyAdd (fbxTime);
+                    fbxAnimCurve.KeySet (keyIndex, fbxTime, key.value);
+                }
+
+                fbxAnimCurve.KeyModifyEnd ();
+            }
+
+            /// <summary>
+            /// Export an AnimationClip as a single take
+            /// </summary>
+            protected void ExportAnimationClip (AnimationClip unityAnimClip, GameObject unityRoot, FbxScene fbxScene)
+            {
+                if (Verbose)
+                    Debug.Log (string.Format ("exporting clip {1} for {0}", unityRoot.name, unityAnimClip.name));
+
+                // setup anim stack
+                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, unityAnimClip.name);
+                fbxAnimStack.Description.Set ("Animation Take: " + unityAnimClip.name);
+
+                // add one mandatory animation layer
+                FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (fbxScene, "Animation Base Layer");
+                fbxAnimStack.AddMember (fbxAnimLayer);
+
+                // Set up the FPS so our frame-relative math later works out
+                // Custom frame rate isn't really supported in FBX SDK (there's
+                // a bug), so try hard to find the nearest time mode.
+                FbxTime.EMode timeMode = FbxTime.EMode.eCustom;
+                double precision = 1e-6;
+                while (timeMode == FbxTime.EMode.eCustom && precision < 1000) {
+                    timeMode = FbxTime.ConvertFrameRateToTimeMode (unityAnimClip.frameRate, precision);
+                    precision *= 10;
+                }
+                if (timeMode == FbxTime.EMode.eCustom) {
+                    timeMode = FbxTime.EMode.eFrames30;
+                }
+                FbxTime.SetGlobalTimeMode (timeMode);
+
+                // set time correctly
+                var fbxStartTime = FbxTime.FromSecondDouble (0);
+                var fbxStopTime = FbxTime.FromSecondDouble (unityAnimClip.length);
+
+                fbxAnimStack.SetLocalTimeSpan (new FbxTimeSpan (fbxStartTime, fbxStopTime));
+
+                /* The major difficulty: Unity uses quaternions for rotation
+                 * (which is how it should be) but FBX uses euler angles. So we
+                 * need to gather up the list of transform curves per object. */
+                var quaternions = new Dictionary<UnityEngine.GameObject, QuaternionCurve> ();
+
+                foreach (EditorCurveBinding unityCurveBinding in AnimationUtility.GetCurveBindings (unityAnimClip)) {
+                    Object unityObj = AnimationUtility.GetAnimatedObject (unityRoot, unityCurveBinding);
+                    if (!unityObj) { continue; }
+
+                    AnimationCurve unityAnimCurve = AnimationUtility.GetEditorCurve (unityAnimClip, unityCurveBinding);
+                    if (unityAnimCurve == null) { continue; }
+
+                    int index = QuaternionCurve.GetQuaternionIndex (unityCurveBinding.propertyName);
+                    if (index == -1) {
+                        if (Verbose)
+                            Debug.Log (string.Format ("export binding {1} for {0}", unityCurveBinding.propertyName, unityObj.ToString ()));
+
+                        /* Some normal property (e.g. translation), export right away */
+                        ExportAnimCurve (unityObj, unityAnimCurve, unityCurveBinding.propertyName,
+                                fbxScene, fbxAnimLayer);
+                    } else {
+                        /* Rotation property; save it to convert quaternion -> euler later. */
+
+                        var unityGo = GetGameObject (unityObj);
+                        if (!unityGo) { continue; }
+
+                        QuaternionCurve quat;
+                        if (!quaternions.TryGetValue (unityGo, out quat)) {
+                            quat = new QuaternionCurve ();
+                            quaternions.Add (unityGo, quat);
+                        }
+                        quat.SetCurve (index, unityAnimCurve);
+                    }
+                }
+
+                /* now export all the quaternion curves */
+                foreach (var kvp in quaternions) {
+                    var unityGo = kvp.Key;
+                    var quat = kvp.Value;
+
+                    FbxNode fbxNode;
+                    if (!MapUnityObjectToFbxNode.TryGetValue (unityGo, out fbxNode)) {
+                        Debug.LogError (string.Format ("no fbxnode found for '0'", unityGo.name));
+                        continue;
+                    }
+                    quat.Animate (unityGo.transform, fbxNode, fbxAnimLayer, Verbose);
+                }
+            }
+
+            /// <summary>
+            /// Export the Animator component on this game object
+            /// </summary>
+            protected void ExportAnimationClips (GameObject unityRoot, FbxScene fbxScene)
+            {
+                var animator = unityRoot.GetComponent<Animator> ();
+                if (!animator) { return; }
+
+                // Get the controller.
+                var controller = animator.runtimeAnimatorController;
+                if (!controller) { return; }
+
+                // Only export each clip once per game object.
+                var exported = new HashSet<AnimationClip> ();
+                foreach (var clip in controller.animationClips) {
+                    if (exported.Add (clip)) {
+                        ExportAnimationClip (clip, unityRoot, fbxScene);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Store FBX property name and channel name 
+            /// </summary>
+            struct FbxPropertyChannelPair {
                 public string Property { get ; private set; }
                 public string Channel { get ; private set; }
-                public PropertyChannel(string p, string c) {
+                public FbxPropertyChannelPair(string p, string c) {
                     Property = p;
                     Channel = c;
                 }
@@ -60,25 +225,25 @@ namespace FbxSdk.Examples
                 /// Map a Unity property name to the corresponding FBX property and
                 /// channel names.
                 /// </summary>
-                public static bool TryGetValue(string unityName, out PropertyChannel prop)
+                public static bool TryGetValue(string unityPropertyName, out FbxPropertyChannelPair prop)
                 {
                     System.StringComparison ct = System.StringComparison.CurrentCulture;
 
-                    if (unityName.StartsWith ("m_LocalPosition.x", ct) || unityName.EndsWith ("T.x", ct)) {
-                        prop = new PropertyChannel ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X);
+                    if (unityPropertyName.StartsWith ("m_LocalPosition.x", ct) || unityPropertyName.EndsWith ("T.x", ct)) {
+                        prop = new FbxPropertyChannelPair ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X);
                         return true;
                     }
-                    if (unityName.StartsWith ("m_LocalPosition.y", ct) || unityName.EndsWith ("T.y", ct)) {
-                        prop = new PropertyChannel ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y);
-                        return true;
-                    }
-
-                    if (unityName.StartsWith ("m_LocalPosition.z", ct) || unityName.EndsWith ("T.z", ct)) {
-                        prop = new PropertyChannel ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z);
+                    if (unityPropertyName.StartsWith ("m_LocalPosition.y", ct) || unityPropertyName.EndsWith ("T.y", ct)) {
+                        prop = new FbxPropertyChannelPair ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y);
                         return true;
                     }
 
-                    prop = new PropertyChannel ();
+                    if (unityPropertyName.StartsWith ("m_LocalPosition.z", ct) || unityPropertyName.EndsWith ("T.z", ct)) {
+                        prop = new FbxPropertyChannelPair ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z);
+                        return true;
+                    }
+
+                    prop = new FbxPropertyChannelPair ();
                     return false;
                 }
             }
@@ -221,19 +386,37 @@ namespace FbxSdk.Examples
             }
 
             /// <summary>
+            /// Export the node hierarchy and store the mapping from Unity
+            /// object to FBX node.
+            /// NOTE: we export everything in the hierarchy. We need all the ancestors
+            /// between the root and the root of the bone hierarchy. We could filter
+            /// out everything not leading to a bone.
+            /// </summary>
+            protected void ExportNodeHierarchy (GameObject unityGo, FbxNode fbxParentNode)
+            {
+                FbxNode fbxNode = FbxNode.Create (fbxParentNode, unityGo.name);
+
+                MapUnityObjectToFbxNode [unityGo] = fbxNode;
+
+                foreach (Transform unityChild in unityGo.transform) {
+                    ExportNodeHierarchy (unityChild.gameObject, fbxNode);
+                }
+            }
+
+            /// <summary>
             /// Export bones of skinned mesh, if this is a skinned mesh with
             /// bones and bind poses.
             /// </summary>
-            void ExportSkeleton (GameObject unityGo, FbxScene fbxScene)
+            private bool ExportSkeleton (GameObject unityGo, FbxScene fbxScene)
             {
-                var unitySkinnedMeshRenderer = unityGo.GetComponent<SkinnedMeshRenderer>();
-                if (!unitySkinnedMeshRenderer) { return; }
+                var unitySkinnedMeshRenderer = unityGo.GetComponentInChildren<SkinnedMeshRenderer> ();
+                if (!unitySkinnedMeshRenderer) { return false; }
                 var bones = unitySkinnedMeshRenderer.bones;
-                if (bones == null || bones.Length == 0) { return; }
+                if (bones == null || bones.Length == 0) { return false; }
                 var mesh = unitySkinnedMeshRenderer.sharedMesh;
-                if (!mesh) { return; }
+                if (!mesh) { return false; }
                 var bindPoses = mesh.bindposes;
-                if (bindPoses == null || bindPoses.Length != bones.Length) { return; }
+                if (bindPoses == null || bindPoses.Length != bones.Length) { return false; }
 
                 // Three steps:
                 // 0. Set up the map from bone to index.
@@ -326,186 +509,28 @@ namespace FbxSdk.Examples
                     fbxBone.SetPivotState (FbxNode.EPivotSet.eSourcePivot, FbxNode.EPivotState.ePivotReference);
                     fbxBone.SetPreRotation (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (rotation.X, rotation.Y, rotation.Z));
                 }
+
+                return true;
             }
 
-            /// <summary>
-            /// Export an AnimationCurve.
-            ///
-            /// This is not used for rotations, because we need to convert from
-            /// quaternion to euler and various other stuff.
-            /// </summary>
-            protected void ExportAnimCurve (UnityEngine.Object unityObj,
-                                            AnimationCurve unityAnimCurve,
-                                            string unityPropertyName,
-                                            FbxScene fbxScene,
-                                            FbxAnimLayer fbxAnimLayer)
+            protected void ExportComponents (GameObject unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
             {
-                PropertyChannel fbxName;
-                if (!PropertyChannel.TryGetValue(unityPropertyName, out fbxName)) {
-                    Debug.LogError (string.Format("no mapping from unity '{0}' to fbx property", unityPropertyName));
-                    return;
-                }
+                // create an sketelon root
+                FbxNode fbxRootNode = FbxNode.Create (fbxScene, unityGo.name);
 
-                GameObject unityGo = GetGameObject(unityObj);
-                if (unityGo == null) {
-                    Debug.LogError (string.Format("cannot find gameobject for {0}", unityObj.name)); 
-                    return;
-                }
+                // create node hierarchy
+                ExportNodeHierarchy (unityGo, fbxRootNode);
 
-                FbxNode fbxNode;
-                if (!MapUnityObjectToFbxNode.TryGetValue(unityGo, out fbxNode)) {
-                    Debug.LogError ("no fbx node");
-                    return;
-                }
-
-                // map unity property name to fbx property
-                var fbxProperty = fbxNode.FindProperty (fbxName.Property, false);
-                if (!fbxProperty.IsValid()) {
-                    Debug.LogError (string.Format("no fbx property {0} found on {1} ", fbxName.Property, fbxNode.GetName()));
-                    return;
-                }
-
-                if (Verbose) {
-                    Debug.Log("Exporting animation for " + unityObj.name + " (" + unityPropertyName + ")");
-                }
-
-                // Create the AnimCurve on the channel
-                FbxAnimCurve fbxAnimCurve = fbxProperty.GetCurve (fbxAnimLayer, fbxName.Channel, true);
-
-                // copy Unity AnimCurve to FBX AnimCurve.
-                fbxAnimCurve.KeyModifyBegin();
-
-                for(int keyIndex = 0, n = unityAnimCurve.length; keyIndex < n; ++keyIndex) {
-                    var key = unityAnimCurve[keyIndex];
-                    var fbxTime = FbxTime.FromSecondDouble(key.time);
-                    fbxAnimCurve.KeyAdd (fbxTime);
-                    fbxAnimCurve.KeySet (keyIndex, fbxTime, key.value);
-                }
-
-                fbxAnimCurve.KeyModifyEnd();
-            }
-
-            /// <summary>
-            /// Export an AnimationClip as a single take
-            /// </summary>
-            protected void ExportAnimationClip (AnimationClip unityAnimClip, GameObject unityRoot, FbxScene fbxScene)
-            {
-                if (Verbose)
-                    Debug.Log (string.Format ("exporting clip {1} for {0}", unityRoot.name, unityAnimClip.name));
-
-                // setup anim stack
-                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, unityAnimClip.name);
-                fbxAnimStack.Description.Set ("Animation Take: " + unityAnimClip.name);
-
-                // add one mandatory animation layer
-                FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (fbxScene, "Animation Base Layer");
-                fbxAnimStack.AddMember (fbxAnimLayer);
-
-                // Set up the FPS so our frame-relative math later works out
-                // Custom frame rate isn't really supported in FBX SDK (there's
-                // a bug), so try hard to find the nearest time mode.
-                FbxTime.EMode timeMode = FbxTime.EMode.eCustom;
-                double precision = 1e-6;
-                while (timeMode == FbxTime.EMode.eCustom && precision < 1000) {
-                    timeMode = FbxTime.ConvertFrameRateToTimeMode(unityAnimClip.frameRate, precision);
-                    precision *= 10;
-                }
-                if (timeMode == FbxTime.EMode.eCustom) {
-                    timeMode = FbxTime.EMode.eFrames30;
-                }
-                FbxTime.SetGlobalTimeMode (timeMode);
-
-                // set time correctly
-                var fbxStartTime = FbxTime.FromSecondDouble(0);
-                var fbxStopTime = FbxTime.FromSecondDouble(unityAnimClip.length);
-
-                fbxAnimStack.SetLocalTimeSpan (new FbxTimeSpan(fbxStartTime, fbxStopTime));
-
-                /* The major difficulty: Unity uses quaternions for rotation
-                 * (which is how it should be) but FBX uses euler angles. So we
-                 * need to gather up the list of transform curves per object. */
-                var quaternions = new Dictionary<UnityEngine.GameObject, QuaternionCurve>();
-
-                foreach (EditorCurveBinding unityCurveBinding in AnimationUtility.GetCurveBindings(unityAnimClip))
+                // create skeleton bones
+                if (ExportSkeleton (unityGo, fbxScene))
                 {
-                    Object unityObj = AnimationUtility.GetAnimatedObject (unityRoot, unityCurveBinding);
-                    if (!unityObj) { continue; }
-
-                    if (Verbose)
-                        Debug.Log (string.Format ("export binding {1} for {0}", unityCurveBinding.propertyName, unityObj.ToString()));
-
-                    AnimationCurve unityAnimCurve = AnimationUtility.GetEditorCurve (unityAnimClip, unityCurveBinding);
-                    if (unityAnimCurve == null) { continue; }
-
-                    int index = QuaternionCurve.GetQuaternionIndex(unityCurveBinding.propertyName);
-                    if (index == -1) {
-                        /* Some normal property (e.g. translation), export right away */
-                        ExportAnimCurve (unityObj, unityAnimCurve, unityCurveBinding.propertyName,
-                                fbxScene, fbxAnimLayer);
-                    } else {
-                        /* Rotation property; save it to convert quaternion -> euler later. */
-
-                        var unityGo = GetGameObject(unityObj);
-                        if (!unityGo) { continue; }
-
-                        QuaternionCurve quat;
-                        if (!quaternions.TryGetValue(unityGo, out quat)) {
-                            quat = new QuaternionCurve();
-                            quaternions.Add(unityGo, quat);
-                        }
-                        quat.SetCurve(index, unityAnimCurve);
-                    }
+                    fbxParentNode.AddChild (fbxRootNode);
                 }
 
-                /* now export all the quaternion curves */
-                foreach(var kvp in quaternions) {
-                    var unityGo = kvp.Key;
-                    var quat = kvp.Value;
+                // create animation takes
+                ExportAnimationClips (unityGo, fbxScene);
 
-                    FbxNode fbxNode;
-                    if (!MapUnityObjectToFbxNode.TryGetValue(unityGo, out fbxNode)) {
-                        Debug.LogError (string.Format("no fbxnode found for '0'", unityGo.name));
-                        continue;
-                    }
-                    quat.Animate(unityGo.transform, fbxNode, fbxAnimLayer, Verbose);
-                }
-            }
-
-            /// <summary>
-            /// Export the Animator component on this game object
-            /// </summary>
-            protected void ExportAnimationClips (GameObject unityRoot, FbxScene fbxScene)
-            {
-                var animator = unityRoot.GetComponent<Animator>();
-                if (!animator) { return; }
-
-                // Get the controller.
-                var controller = animator.runtimeAnimatorController;
-                if (!controller) { return; }
-
-                // Only export each clip once per game object.
-                var exported = new HashSet<AnimationClip>();
-                foreach (var clip in controller.animationClips) {
-                    if (exported.Add(clip)) {
-                        ExportAnimationClip(clip, unityRoot, fbxScene);
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Create the node hierarchy and store the mapping from Unity
-            /// object to FBX node.
-            /// </summary>
-            protected void CreateHierarchy (GameObject unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
-            {
-                FbxNode fbxNode = FbxNode.Create (fbxParentNode, unityGo.name);
-
-                MapUnityObjectToFbxNode [unityGo] = fbxNode;
-
-                foreach (Transform unityChild in unityGo.transform)
-                {
-                    CreateHierarchy (unityChild.gameObject, fbxScene, fbxNode);
-                }
+                return;
             }
 
             /// <summary>
@@ -564,19 +589,7 @@ namespace FbxSdk.Examples
                         var unityGo = GetGameObject (obj);
                         if (!unityGo) { continue; }
 
-                        // Create the node itself, plus the hierarchy below it.
-                        // This creates MapUnityObjectToFbxNode.
-                        CreateHierarchy (unityGo, fbxScene, fbxRootNode);
-                    }
-
-                    // Export skeletons.
-                    foreach (var unityGo in MapUnityObjectToFbxNode.Keys) {
-                        ExportSkeleton(unityGo, fbxScene);
-                    }
-
-                    // Export animations.
-                    foreach (var unityGo in MapUnityObjectToFbxNode.Keys) {
-                        ExportAnimationClips(unityGo, fbxScene);
+                        ExportComponents (unityGo, fbxScene, fbxRootNode);
                     }
 
                     // Export the scene to the file.
