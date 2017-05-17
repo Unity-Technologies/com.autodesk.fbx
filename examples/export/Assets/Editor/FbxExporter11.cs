@@ -39,9 +39,42 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"We set the filmback to 35mm TV Projection.";
 
-            const string MenuItemName = "File/Export FBX/11. camera with animation";
+            const string MenuItemName = "File/Export FBX/WIP 11. camera with animation";
 
             const string FileBaseName = "example_camera_animation";
+
+            /// <summary>
+            /// map Unity animatable property to FbxProperty
+            /// TODO: intrinsic properties, check can we find by them name?
+            /// </summary>
+            static Dictionary<string, string> MapUnityToFbxPropertyName = new Dictionary<string, string> ()
+            {
+                { "field of view",          "FocalLength" },
+                { "near clip plane",        "NearPlane" },
+                { "far clip plane",         "FarPlane" },
+                { "m_LocalPosition.x",      "LclTranslation" },
+                { "m_LocalPosition.y",      "LclTranslation" },
+                { "m_LocalPosition.z",      "LclTranslation" },
+                { "localEulerAnglesRaw.x",  "LclRotation" },
+                { "localEulerAnglesRaw.y",  "LclRotation" },
+                { "localEulerAnglesRaw.z",  "LclRotation" },
+            };
+
+            /// <summary>
+            /// map Unity animatable property to FbxProperty
+            /// </summary>
+            static Dictionary<string, string> MapUnityToFbxChannelName = new Dictionary<string, string> ()
+            {
+                { "field of view",          "FocalLength" },
+                { "near clip plane",        "NearPlane" },
+                { "far clip plane",         "FarPlane" },
+                { "m_LocalPosition.x",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "m_LocalPosition.y",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "m_LocalPosition.z",      FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+                { "localEulerAnglesRaw.x",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_X },
+                { "localEulerAnglesRaw.y",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Y },
+                { "localEulerAnglesRaw.z",  FbxSdk.Globals.FBXSDK_CURVENODE_COMPONENT_Z },
+            };
 
             /// <summary>
             /// name of the scene's default camera
