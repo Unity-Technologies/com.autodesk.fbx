@@ -747,20 +747,16 @@ namespace FbxSdk.Examples
             /// </summary>
             private GameObject GetGameObject (Object obj)
             {
-                 if (obj is UnityEngine.Transform) {
-                      var xform = obj as UnityEngine.Transform;
-                      return xform.gameObject;
-                 } else if (obj is UnityEngine.GameObject) {
-                      return obj as UnityEngine.GameObject;
-                 } else if (obj is UnityEngine.Light) {
-                      var light = obj as Light;
-                      return light.gameObject;
-                 } else if (obj is MonoBehaviour) {
-                      var mono = obj as MonoBehaviour;
-                      return mono.gameObject;
-                 }
-
-                 return null;
+                if (obj is UnityEngine.Transform) {
+                    var xform = obj as UnityEngine.Transform;
+                    return xform.gameObject;
+                } else if (obj is UnityEngine.GameObject) {
+                    return obj as UnityEngine.GameObject;
+                } else if (obj is UnityEngine.Component) {
+                    var component = obj as Component;
+                    return component.gameObject;
+                }
+                return null;
             }
 
             /// <summary>
