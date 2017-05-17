@@ -652,12 +652,9 @@ namespace FbxSdk.Examples
                     return xform.gameObject;
                 } else if (obj is UnityEngine.GameObject) {
                     return obj as UnityEngine.GameObject;
-                } else if (obj is Animator) {
-                    var anim = obj as Animator;
-                    return anim.gameObject;
-                } else if (obj is MonoBehaviour) {
-                    var mono = obj as MonoBehaviour;
-                    return mono.gameObject;
+                } else if (obj is Component) {
+                    var component = obj as Component;
+                    return component.gameObject;
                 }
 
                 return null;

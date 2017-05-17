@@ -34,7 +34,7 @@ namespace FbxSdk.Examples
                 ";
 
             const string Keywords =
-                "export skeleton mesh skin skeleton cluster bindpose animation takes animcurve";
+                "export skeleton mesh skin skeleton cluster bindpose animation clips animcurve";
 
             const string Comments =
                 "";
@@ -55,7 +55,7 @@ namespace FbxSdk.Examples
             Dictionary<GameObject, FbxNode> MapUnityObjectToFbxNode = new Dictionary<GameObject, FbxNode> ();
 
             /// <summary>
-            /// Export GameObject's as a skinned mesh with bones, a skin and, a bind pose.
+            /// Export GameObject as a skinned mesh with material, bones, a skin and, a bind pose.
             /// </summary>
             protected void ExportSkinnedMesh (GameObject unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
             {
@@ -1244,15 +1244,10 @@ namespace FbxSdk.Examples
                 {
                     return obj as UnityEngine.GameObject;
                 } 
-                else if (obj is Animator) 
+                else if (obj is Component) 
                 {
-                    var anim = obj as Animator;
-                    return anim.gameObject;
-                }
-                else if (obj is MonoBehaviour) 
-                {
-                    var mono = obj as MonoBehaviour;
-                    return mono.gameObject;
+                    var component = obj as Component;
+                    return component.gameObject;
                 }
 
                 return null;
