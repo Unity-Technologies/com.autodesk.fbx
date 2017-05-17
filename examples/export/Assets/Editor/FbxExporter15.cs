@@ -47,6 +47,27 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export GameObject's Transform component
             /// </summary>
+            FbxProperty ExportCustomData (Transform unityTransform, FbxNode fbxNode)
+            {
+                // add (not particularly useful) custom data: how many Unity
+                // components does the unity object have?
+                var fbxProperty = FbxProperty.Create(fbxNode, Globals.FbxIntDT, "unity_component_count", "Number of Unity Components");
+                if (!fbxProperty.IsValid()) {
+                    throw new System.NullReferenceException();
+                }
+                var numComponents = unityTransform.GetComponents<UnityEngine.Component>().Length;
+                fbxProperty.Set(numComponents);
+
+                // Must be marked user-defined or it won't be shown in most DCCs
+                fbxProperty.ModifyFlag(FbxPropertyFlags.EFlags.eUserDefined, true);
+                fbxProperty.ModifyFlag(FbxPropertyFlags.EFlags.eAnimatable, true);
+
+                return fbxProperty;
+            }
+
+            /// <summary>
+            /// Export GameObject's Transform component
+            /// </summary>
             protected void ExportTransform (Transform unityTransform, FbxNode fbxNode)
             {
                 // get local position of fbxNode (from Unity)
@@ -76,18 +97,8 @@ namespace FbxSdk.Examples
                 FbxNode fbxNode = FbxNode.Create (fbxScene,  unityGo.name);
                 NumNodes++;
 
-                ExportTransform ( unityGo.transform, fbxNode);
-
-                // add (not particularly useful) custom data: how many Unity
-                // components does the unity object have?
-                var numComponents = unityGo.GetComponents<UnityEngine.Component>().Length;
-                var fbxProperty = FbxProperty.Create(fbxNode, Globals.FbxIntDT, "unity_component_count", "Number of Unity Components");
-                if (!fbxProperty.IsValid()) {
-                    throw new System.NullReferenceException();
-                }
-                fbxProperty.ModifyFlag(FbxPropertyFlags.EFlags.eUserDefined, true);
-                fbxProperty.ModifyFlag(FbxPropertyFlags.EFlags.eAnimatable, true);
-                fbxProperty.Set(numComponents);
+                ExportTransform (unityGo.transform, fbxNode);
+                var fbxProperty = ExportCustomData (unityGo.transform, fbxNode);
 
                 if (Verbose) {
                     Debug.Log (string.Format ("exporting {0} ({1} components)", fbxNode.GetName (), (int) fbxProperty.GetFloat()));
