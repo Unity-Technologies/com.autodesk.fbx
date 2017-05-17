@@ -11,30 +11,27 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxLayerContainerTest : Base<FbxLayerContainer>
+    public class FbxLayerContainerBase<T> : FbxNodeAttributeBase<T> where T:FbxLayerContainer
     {
-
-        [Test]
-        public void TestCreateLayer()
+        override public void TestBasics(T layerContainer, FbxNodeAttribute.EType typ)
         {
-            using (FbxLayerContainer layerContainer = CreateObject ("layerContainer")) {
-                int index = layerContainer.CreateLayer ();
-                Assert.GreaterOrEqual (index, -1); // check an index is returned (-1 is error)
-            }
+            base.TestBasics(layerContainer, typ);
+
+            int index = layerContainer.CreateLayer ();
+            Assert.GreaterOrEqual (index, 0); // check an index is returned (-1 is error)
+
+            // make sure doesn't crash and returns expected value
+            Assert.IsNotNull (layerContainer.GetLayer (index));
+            Assert.IsNull (layerContainer.GetLayer (int.MinValue));
+            Assert.IsNull (layerContainer.GetLayer (int.MaxValue));
         }
+    }
 
+    public class FbxLayerContainerTest : FbxLayerContainerBase<FbxLayerContainer>
+    {
         [Test]
-        public void TestGetLayer()
-        {
-            using (FbxLayerContainer layerContainer = CreateObject ("layerContainer")) {
-                int index = layerContainer.CreateLayer ();
-                Assert.GreaterOrEqual (index, 0); // check we created a valid layer
-
-                // make sure doesn't crash and returns expected value
-                Assert.IsNotNull (layerContainer.GetLayer (index));
-                Assert.IsNull (layerContainer.GetLayer (int.MinValue));
-                Assert.IsNull (layerContainer.GetLayer (int.MaxValue));
-            }
+        public void TestBasics() {
+            base.TestBasics(CreateObject(), FbxNodeAttribute.EType.eUnknown);
         }
     }
 }

@@ -191,6 +191,7 @@
 %include "fbxiosettings.i"
 %include "fbxnode.i"
 %include "fbxnodeattribute.i"
+%include "fbxnull.i"
 %include "fbxlayercontainer.i"
 %include "fbxgeometrybase.i"
 %include "fbxgeometry.i"

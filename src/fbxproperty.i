@@ -148,7 +148,6 @@
 %define SWIGWARN_FBXSHARP_MUTABLE_PROPERTY_MSG "999:FbxProperty variable should be marked %fbximmutable" %enddef
 %typemap("csvarin",warning=SWIGWARN_FBXSHARP_MUTABLE_PROPERTY_MSG) const FbxPropertyT& {#error this should have been marked %fbximmutable}
 
-
 /***************************************************************************/
 %include "fbxsdk/core/fbxproperty.h"
 /***************************************************************************/
@@ -157,13 +156,23 @@
 %template(GetFloat) FbxProperty::Get<float>;
 %template(EvaluateValue) FbxProperty::EvaluateValue<float>;
 
-%template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
-%template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
-%template("FbxPropertyString") FbxPropertyT<FbxString>;
+/* Generic properties */
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
+%template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
+%template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
+%template("FbxPropertyString") FbxPropertyT<FbxString>;
+
+%csmethodmodifiers FbxPropertyT<float>::Set(const float&) "public new";
+%template("FbxPropertyFloat") FbxPropertyT<float>;
+
+/* NodeAttribute and subclasses properties */
 %template("FbxPropertyEProjectionType") FbxPropertyT<FbxCamera::EProjectionType>;
-%template("FbxPropertyELook") FbxPropertyT<FbxMarker::ELook>;
 %template("FbxPropertyELightType") FbxPropertyT<FbxLight::EType>;
 %template("FbxPropertyEAreaLightShape") FbxPropertyT<FbxLight::EAreaLightShape>;
 %template("FbxPropertyEDecayType") FbxPropertyT<FbxLight::EDecayType>;
-%template("FbxPropertyFloat") FbxPropertyT<float>;
+%template("FbxPropertyMarkerELook") FbxPropertyT<FbxMarker::ELook>;
+%template("FbxPropertyNullELook") FbxPropertyT<FbxNull::ELook>;
+
+/* Texture properties */
+%template("FbxPropertyEBlendMode") FbxPropertyT<FbxTexture::EBlendMode>;
+%template("FbxPropertyEWrapMode") FbxPropertyT<FbxTexture::EWrapMode>;

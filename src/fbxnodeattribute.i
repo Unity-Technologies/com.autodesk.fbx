@@ -5,11 +5,15 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-#ifdef IGNORE_ALL_INCLUDE_SOME
-%rename("%s") FbxNodeAttribute;
+%reveal_all_start;
 
-// As the ignore everything will include the constructor, destructor, methods etc
-// in the class, these have to be explicitly unignored too:
-#endif
+%fbximmutable(FbxNodeAttribute::sColor);
+%fbximmutable(FbxNodeAttribute::sDefaultColor);
+%fbximmutable(FbxNodeAttribute::Color);
 
 %include "fbxsdk/scene/geometry/fbxnodeattribute.h"
+
+/****************************************************************************
+ * We end reveal-all mode now. This must be at the end of the file.
+ ****************************************************************************/
+%reveal_all_end;

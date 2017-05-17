@@ -7,16 +7,12 @@
 
 %reveal_all_start;
 
-%typemap(csclassmodifiers) FbxSkeleton::EType "public new enum";
+%fbximmutable(FbxNull::sSize);
+%fbximmutable(FbxNull::sLook);
+%fbximmutable(FbxNull::Size);
+%fbximmutable(FbxNull::Look);
 
-%fbximmutable(FbxSkeleton::sSize);
-%fbximmutable(FbxSkeleton::sLimbLength);
-%fbximmutable(FbxSkeleton::sDefaultSize);
-%fbximmutable(FbxSkeleton::sDefaultLimbLength);
-%fbximmutable(FbxSkeleton::Size);
-%fbximmutable(FbxSkeleton::LimbLength);
-
-%include "fbxsdk/scene/geometry/fbxskeleton.h"
+%include "fbxsdk/scene/geometry/fbxnull.h"
 
 /****************************************************************************
  * We end reveal-all mode now. This must be at the end of the file.

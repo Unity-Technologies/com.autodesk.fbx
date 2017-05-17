@@ -23,6 +23,8 @@ namespace UnitTests
             CoverageTester.TestCoverage(typeof(FbxPropertyEBlendMode), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyEWrapMode), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyEProjectionType), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyMarkerELook), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyNullELook), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyELightType), this.GetType ());
             CoverageTester.TestCoverage(typeof(FbxPropertyEAreaLightShape), this.GetType ());
@@ -67,6 +69,16 @@ namespace UnitTests
                 EqualityTester<FbxPropertyEBlendMode>.TestEquality(tex1.CurrentTextureBlendMode, tex2.CurrentTextureBlendMode, blendCopy);
                 var wrapCopy = tex1.WrapModeU; // TODO: tex1.FindProperty(...)
                 EqualityTester<FbxPropertyEWrapMode>.TestEquality(tex1.WrapModeU, tex2.WrapModeU, wrapCopy);
+
+                // FbxPropertyT<FbxNull.ELook>
+                var null1 = FbxNull.Create(manager, "null1");
+                var null2 = FbxNull.Create(manager, "null2");
+                EqualityTester<FbxPropertyNullELook>.TestEquality(null1.Look, null2.Look, null1.Look);
+
+                // FbxPropertyT<FbxMarker.ELook>
+                var marker1 = FbxMarker.Create(manager, "marker1");
+                var marker2 = FbxMarker.Create(manager, "marker2");
+                EqualityTester<FbxPropertyMarkerELook>.TestEquality(marker1.Look, marker2.Look, marker1.Look);
 
                 // FbxPropertyT<string>
                 var impl = FbxImplementation.Create(manager, "impl");
@@ -284,6 +296,30 @@ namespace UnitTests
                 Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.EvaluateValue());
                 Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.EvaluateValue(FbxTime.FromSecondDouble(5)));
                 Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT<FbxNull.ELook>
+                var null1 = FbxNull.Create(manager, "null1");
+
+                FbxPropertyTest.GenericPropertyTests(null1.Look, null1, "Look", Globals.FbxEnumDT);
+                null1.Look.Set(FbxNull.ELook.eCross);
+                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.Get());
+                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.EvaluateValue());
+                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT<FbxMarker.ELook>
+                var marker1 = FbxMarker.Create(manager, "marker1");
+
+                FbxPropertyTest.GenericPropertyTests(marker1.Look, marker1, "Look", Globals.FbxEnumDT);
+                marker1.Look.Set(FbxMarker.ELook.eCapsule);
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.Get());
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.EvaluateValue());
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.EvaluateValue(FbxTime.FromSecondDouble(5), true));
             }
 
             using (var manager = FbxManager.Create()) {

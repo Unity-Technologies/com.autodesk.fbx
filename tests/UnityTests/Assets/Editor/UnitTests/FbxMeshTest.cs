@@ -11,12 +11,12 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxMeshTest : Base<FbxMesh>
+    public class FbxMeshTest : FbxGeometryTestBase<FbxMesh>
     {
         [Test]
         public void TestBasics()
         {
-            FbxGeometryTest.GenericTests(CreateObject("mesh"), Manager);
+            base.TestBasics(CreateObject("mesh"), FbxNodeAttribute.EType.eMesh);
 
             using (FbxMesh mesh = CreateObject ("mesh")) {
                 mesh.InitControlPoints(4);
