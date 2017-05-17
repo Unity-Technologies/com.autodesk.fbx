@@ -11,10 +11,12 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxGeometryBaseTest : Base<FbxGeometryBase>
+    public class FbxGeometryBaseTestBase<T> : FbxLayerContainerBase<T> where T : FbxGeometryBase
     {
-        public static void GenericTests<T>(T geometryBase) where T : FbxGeometryBase
+        override public void TestBasics(T geometryBase, FbxNodeAttribute.EType typ)
         {
+            base.TestBasics(geometryBase, typ);
+
             geometryBase.InitControlPoints (24);
             Assert.AreEqual (geometryBase.GetControlPointsCount (), 24);
             geometryBase.SetControlPointAt(new FbxVector4(1,2,3,4), 0);
@@ -39,11 +41,13 @@ namespace UnitTests
             geometryBase.GetControlPointAt(-1);
             geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
         }
+    }
 
+    public class FbxGeometryBaseTest : FbxGeometryBaseTestBase<FbxGeometryBase> {
         [Test]
         public void TestBasics()
         {
-            GenericTests(CreateObject("geometry base"));
+            base.TestBasics(CreateObject("geometry base"), FbxNodeAttribute.EType.eUnknown);
 
             // You can even initialize to a negative number of control points:
             using (FbxGeometryBase geometryBase2 = CreateObject ("geometry base")) {
@@ -53,14 +57,14 @@ namespace UnitTests
         }
     }
 
-    public class FbxGeometryTest : Base<FbxGeometry>
+    public class FbxGeometryTestBase<T> : FbxGeometryBaseTestBase<T> where T : FbxGeometry
     {
-        public static void GenericTests<T>(T fbxGeometry, FbxManager manager) where T : FbxGeometry
+        override public void TestBasics(T fbxGeometry, FbxNodeAttribute.EType typ)
         {
-            FbxGeometryBaseTest.GenericTests (fbxGeometry);
+            base.TestBasics(fbxGeometry, typ);
 
             // test add deformer
-            FbxDeformer deformer = FbxDeformer.Create (manager, "deformer");
+            FbxDeformer deformer = FbxDeformer.Create (fbxGeometry, "deformer");
             int index = fbxGeometry.AddDeformer (deformer);
             Assert.GreaterOrEqual (index, 0);
             Assert.AreEqual(deformer, fbxGeometry.GetDeformer(index, new FbxStatus()));
@@ -79,11 +83,14 @@ namespace UnitTests
             // test get deformer null FbxStatus
             fbxGeometry.GetDeformer(0, null);
         }
+    }
 
+    public class FbxGeometryTest : FbxGeometryTestBase<FbxGeometry>
+    {
         [Test]
         public void TestBasics()
         {
-            GenericTests (CreateObject ("geometry"), Manager);
+            base.TestBasics(CreateObject ("geometry"), FbxNodeAttribute.EType.eUnknown);
         }
     }
 }

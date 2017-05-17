@@ -76,7 +76,7 @@ namespace FbxSdk.Examples
                 // create the marker structure.
                 FbxMarker fbxMarker = FbxMarker.Create (fbxScene, "Marker");
 
-                fbxMarker.SetType (FbxMarker.EType.eStandard);
+                fbxMarker.SetMarkerType (FbxMarker.EType.eStandard);
                 fbxMarker.Look.Set (FbxMarker.ELook.eCube);
                 fbxMarker.Size.Set (10.0f);
                 

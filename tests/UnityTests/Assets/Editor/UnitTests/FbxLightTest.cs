@@ -10,12 +10,14 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxLightTest : Base<FbxLight>
+    public class FbxLightTest : FbxNodeAttributeBase<FbxLight>
     {
         [Test]
         public void TestBasics()
         {
             using (var fbxLight = CreateObject ("light")) {
+                base.TestBasics(fbxLight, FbxNodeAttribute.EType.eLight);
+
                 var shadowTexture = FbxTexture.Create (Manager, "tex");
                 fbxLight.SetShadowTexture (shadowTexture);
                 Assert.AreEqual (shadowTexture, fbxLight.GetShadowTexture ());
@@ -33,7 +35,17 @@ namespace UnitTests
         public void TestProperties ()
         {
             using (var fbxLight = CreateObject ("light")) {
+                // Get the color. Both the one defined in FbxLight, and the one
+                // defined in its base class -- they're different functions!
                 TestGetter (fbxLight.Color);
+                TestGetter (((FbxNodeAttribute)fbxLight).Color);
+
+                // Make sure they return the same property handle under the hood.
+                // If in a future version that changes, we should rename both
+                // of the properties to avoid bug reports.
+                Assert.AreEqual(fbxLight.Color, ((FbxNodeAttribute)fbxLight).Color);
+
+                // Get everything else, which behaves normally.
                 TestGetter (fbxLight.DrawFrontFacingVolumetricLight);
                 TestGetter (fbxLight.DrawGroundProjection);
                 TestGetter (fbxLight.DrawVolumetricLight);

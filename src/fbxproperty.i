@@ -145,10 +145,11 @@
  * compile in C#. */
 %typemap("csvarin") const FbxPropertyT& {#error this should be a %fbximmutable}
 
-// make sure Connect[Src|Dst]Object(), Disonnect[Src|Dst]Object(), 
-// and Find[Src|Dst]Object() don't crash if we pass a null object
+/* make sure Connect[Src|Dst]Object(), Disonnect[Src|Dst]Object(),
+ * and Find[Src|Dst]Object() don't crash if we pass a null object */
 %null_arg_check(FbxObject* pObject);
-// Applies to Create() as well, and causes tests that call create with "" to fail
+
+/* Applies to Create() as well, and causes tests that call create with "" to fail */
 //%null_arg_check(const char* pName);
 
 
@@ -158,13 +159,23 @@
 
 %template(Set) FbxProperty::Set<float>;
 
+/* Generic properties */
 %template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
 %template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
+
+%csmethodmodifiers FbxPropertyT<float>::Set(const float&) "public new";
+%template("FbxPropertyFloat") FbxPropertyT<float>;
+
+/* NodeAttribute and subclasses properties */
 %template("FbxPropertyEProjectionType") FbxPropertyT<FbxCamera::EProjectionType>;
-%template("FbxPropertyELook") FbxPropertyT<FbxMarker::ELook>;
 %template("FbxPropertyELightType") FbxPropertyT<FbxLight::EType>;
 %template("FbxPropertyEAreaLightShape") FbxPropertyT<FbxLight::EAreaLightShape>;
 %template("FbxPropertyEDecayType") FbxPropertyT<FbxLight::EDecayType>;
-%template("FbxPropertyFloat") FbxPropertyT<float>;
+%template("FbxPropertyMarkerELook") FbxPropertyT<FbxMarker::ELook>;
+%template("FbxPropertyNullELook") FbxPropertyT<FbxNull::ELook>;
+
+/* Texture properties */
+%template("FbxPropertyEBlendMode") FbxPropertyT<FbxTexture::EBlendMode>;
+%template("FbxPropertyEWrapMode") FbxPropertyT<FbxTexture::EWrapMode>;

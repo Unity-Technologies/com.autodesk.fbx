@@ -11,13 +11,15 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxCameraTest : Base<FbxCamera>
+    public class FbxCameraTest : FbxNodeAttributeBase<FbxCamera>
     {
-
         [Test]
         public void TestBasics()
         {
             using (var fbxCamera = CreateObject ("camera")) {
+
+                base.TestBasics(fbxCamera, FbxNodeAttribute.EType.eCamera);
+
                 // test SetAspect
                 fbxCamera.SetAspect (FbxCamera.EAspectRatioMode.eFixedResolution, 100, 200);
                 Assert.AreEqual (FbxCamera.EAspectRatioMode.eFixedResolution, fbxCamera.GetAspectRatioMode ());
