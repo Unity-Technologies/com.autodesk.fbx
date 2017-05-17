@@ -60,8 +60,14 @@ namespace FbxSdk.Examples
                 { "m_Color.r",              new FbxPropertyChannelPair (FbxNodeAttribute.sColor, Globals.FBXSDK_CURVENODE_COLOR_RED) },
                 { "m_Color.g",              new FbxPropertyChannelPair (FbxNodeAttribute.sColor, Globals.FBXSDK_CURVENODE_COLOR_GREEN) },
                 { "m_Color.b",              new FbxPropertyChannelPair (FbxNodeAttribute.sColor, Globals.FBXSDK_CURVENODE_COLOR_BLUE) },
-                // ignore m_Color.a; no mapping
+                // ignore m_Color.a; there's no mapping to the FbxLight.Color; which is a Double3
+                { "m_Intensity",            new FbxPropertyChannelPair ("Intensity") },
                 { "m_SpotAngle",            new FbxPropertyChannelPair ("InnerAngle") },
+
+                // mapped these to custom properties e.g. Unity_ColorTemperature
+                { "m_ColorTemperature",     new FbxPropertyChannelPair(MakeName("colorTemperature")) }, 
+                { "m_CookieSize",           new FbxPropertyChannelPair(MakeName("cookieSize")) },
+
                 { "m_LocalPosition.x",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X) },
                 { "m_LocalPosition.y",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y) },
                 { "m_LocalPosition.z",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z) },
@@ -124,16 +130,22 @@ namespace FbxSdk.Examples
                     }
                 }
 
-                // TODO: bounceIntensity   The multiplier that defines the strength of the bounce lighting.
-                // "Unity_bounceIntensity"
+                // Export bounceIntensity as custom property
+                // NOTE: export on fbxNode so that it will show up in Maya
+                ExportFloatProperty (fbxNode, unityLight.bounceIntensity, 
+                                     MakeName("bounceIntensity"), 
+                                     "The multiplier that defines the strength of the bounce lighting.");
 
                 // color             The color of the light.
                 var unityLightColor = unityLight.color;
 
                 fbxLight.Color.Set (new FbxDouble3(unityLightColor.r, unityLightColor.g, unityLightColor.b));
 
-                // TODO: colorTemperature  The color temperature of the light. Correlated Color Temperature (abbreviated as CCT) is multiplied with the color filter when calculating the final color of a light source.The color temperature of the electromagnetic radiation emitted from an ideal black body is defined as its surface temperature in Kelvin.White is 6500K according to the D65 standard. Candle light is 1800K.If you want to use lightsUseCCT, lightsUseLinearIntensity has to be enabled to ensure physically correct output. See Also: GraphicsSettings.lightsUseLinearIntensity, GraphicsSettings.lightsUseCCT.
-                
+                // Export colorTemperature as custom property
+                ExportFloatProperty (fbxNode, unityLight.colorTemperature,
+                                     MakeName("colorTemperature"),
+                                     "The color temperature of the light. Correlated Color Temperature (abbreviated as CCT) is multiplied with the color filter when calculating the final color of a light source.The color temperature of the electromagnetic radiation emitted from an ideal black body is defined as its surface temperature in Kelvin.White is 6500K according to the D65 standard. Candle light is 1800K.If you want to use lightsUseCCT, lightsUseLinearIntensity has to be enabled to ensure physically correct output. See Also: GraphicsSettings.lightsUseLinearIntensity, GraphicsSettings.lightsUseCCT.");
+
                 // TODO: commandBufferCount Number of command buffers set up on this light (Read Only).
 
                 // cookie            The cookie texture projected by the light.
@@ -155,7 +167,10 @@ namespace FbxSdk.Examples
                     }
                 }
 
-                // TODO: cookieSize        The size of a directional light's cookie.
+                // Export cookieSize as custom property
+                ExportFloatProperty (fbxNode, unityLight.cookieSize,
+                                     MakeName("cookieSize"),
+                                     "The size of a directional light's cookie.");
 
                 // TODO: cullingMask       This is used to light certain objects in the scene selectively.
                 // TODO: flare             The flare asset to use for this light.
@@ -187,6 +202,26 @@ namespace FbxSdk.Examples
                 // TODO: shadowStrength    Strength of light's shadows.
         
                 return fbxLight;
+            }
+
+            /// <summary>
+            /// Export Unity Property as a Float Property
+            /// </summary>
+            FbxProperty ExportFloatProperty (FbxObject fbxObject, float value, string name, string label )
+            {
+            	// add (not particularly useful) custom data: how many Unity
+            	// components does the unity object have?
+            	var fbxProperty = FbxProperty.Create (fbxObject, Globals.FbxDoubleDT, name, label);
+            	if (!fbxProperty.IsValid ()) {
+            		throw new System.NullReferenceException ();
+            	}
+            	fbxProperty.Set (value);
+
+            	// Must be marked user-defined or it won't be shown in most DCCs
+            	fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
+            	fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
+
+            	return fbxProperty;
             }
 
             /// <summary>
@@ -229,11 +264,19 @@ namespace FbxSdk.Examples
                 }
 
                 // try finding unity property on the node
-                if (fbxProperty == null) {
-                    fbxProperty = fbxNode.FindProperty (fbxPair.Property, false);
+                if (fbxProperty==null || !fbxProperty.IsValid()) {
+                    fbxProperty = fbxNode.FindProperty(fbxPair.Property, false);
                 }
 
-                if (!fbxProperty.IsValid ()) {
+                if (fbxProperty==null || !fbxProperty.IsValid ()) {
+                    FbxProperty prop = fbxNode.GetFirstProperty ();
+
+                    while (prop.IsValid())
+                    {
+                        Debug.LogError (string.Format (".. {0}", prop.GetName ()));
+                        prop = fbxNode.GetNextProperty(prop);
+                    }
+
                     Debug.LogError (string.Format ("cannot find fbxProperty {0} on {1}", fbxPair.Property, fbxNode.GetName ()));
                     return;
                 }
@@ -769,7 +812,11 @@ namespace FbxSdk.Examples
             /// </summary>
             public void Dispose () { }
 
-            const string NamePrefix = "";
+            /// <summary>
+            /// define prefix used for new properties
+            /// </summary>
+            const string NamePrefix = "Unity_";
+
             bool Verbose { get { return true; } }
 
             /// <summary>
@@ -777,6 +824,11 @@ namespace FbxSdk.Examples
             /// </summary>
             static string LastFilePath { get; set; }
             const string Extension = "fbx";
+
+            private static string MakeName (string basename)
+            {
+            	return NamePrefix + basename;
+            }
 
             private static string MakeFileName(string basename = "test", string extension = "fbx")
             {
