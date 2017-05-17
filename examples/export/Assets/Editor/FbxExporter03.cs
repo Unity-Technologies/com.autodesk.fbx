@@ -19,26 +19,26 @@ namespace FbxSdk.Examples
         public class FbxExporter03 : System.IDisposable
         {
             const string Title = 
-                "Example 03: exporting a node hierarchy with transforms";
+                "Example 03: exporting a null hierarchy with transforms";
             
             const string Subject = 
                 @"Example FbxExporter03 illustrates how to:
                     1) create and initialize an exporter        
                     2) create a scene                           
-                    3) create a hierarchy of nodes              
-                    4) add transform data to each node with marker for node attribute     
+                    3) create a hierarchy of null
+                    4) add transform data to each node with null for node attribute
                     5) export the nodes to a FBX file (FBX201400 compatible)
                 ";
             
             const string Keywords = 
-                "export node transform marker";
+                "export node transform null";
             
             const string Comments = 
-                @"We are exporting rotations using the Euler angles from Unity.";
+                @"";
 
-            const string MenuItemName = "File/Export FBX/3. Nodes with transforms";
+            const string MenuItemName = "File/Export FBX/3. Null hierarchy with transforms";
 
-            const string FileBaseName = "example_nodes_with_transforms";
+            const string FileBaseName = "example_null_with_transforms";
 
             /// <summary>
             /// Create instance of example
@@ -71,16 +71,15 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Export GameObject as standard marker
             /// </summary>
-            protected FbxMarker ExportMarker (FbxScene fbxScene)
+            protected FbxNull ExportNull (FbxScene fbxScene)
             {
                 // create the marker structure.
-                FbxMarker fbxMarker = FbxMarker.Create (fbxScene, "Marker");
+                FbxNull fbxNull = FbxNull.Create (fbxScene, "Null");
 
-                fbxMarker.SetMarkerType (FbxMarker.EType.eStandard);
-                fbxMarker.Look.Set (FbxMarker.ELook.eCube);
-                fbxMarker.Size.Set (10.0f);
+                fbxNull.Look.Set (FbxNull.ELook.eCross);
+                fbxNull.Size.Set (1.0f);
                 
-                return fbxMarker;
+                return fbxNull;
             }
 
             /// <summary>
@@ -94,7 +93,7 @@ namespace FbxSdk.Examples
 
                 ExportTransform ( unityGo.transform, fbxNode);
 
-                var fbxNodeAttr = ExportMarker ( fbxScene );
+                var fbxNodeAttr = ExportNull ( fbxScene );
 
                 // set the fbxNode's node attribute
                 fbxNode.SetNodeAttribute (fbxNodeAttr);
