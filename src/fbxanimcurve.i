@@ -46,8 +46,9 @@
     );
 %rename("%s") FbxAnimCurve::KeyGetValue;
 
-// Unignore FbxAnimCurveDef
+// Unignore FbxAnimCurveDef. It's a static class.
 %rename("%s", %$isclass) FbxAnimCurveDef;
+%declare_static_class(FbxAnimCurveDef);
 
 %rename("%s") FbxAnimCurveDef::EInterpolationType;
 %rename("%s") FbxAnimCurveDef::ETangentMode;
@@ -56,13 +57,5 @@
 %fbximmutable(FbxAnimCurveDef::sDEFAULT_VELOCITY);
 %fbximmutable(FbxAnimCurveDef::sMIN_WEIGHT);
 %fbximmutable(FbxAnimCurveDef::sMAX_WEIGHT);
-
-// FbxAnimCurveDef is a static class. Take out all the standard cruft; we don't
-// need it. We use the method modifiers to comment out the Dispose function.
-%typemap(csclassmodifiers) FbxAnimCurveDef "public static class";
-%typemap(csinterfaces) FbxAnimCurveDef "";
-%typemap(csbody) FbxAnimCurveDef %{ %}
-%typemap(csdestruct, methodname="Dispose", methodmodifiers="//") FbxAnimCurveDef %{ { } %}
-%typemap(csfinalize) FbxAnimCurveDef %{ %}
 
 %include "fbxsdk/scene/animation/fbxanimcurve.h"
