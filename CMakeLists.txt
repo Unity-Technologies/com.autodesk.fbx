@@ -67,7 +67,7 @@ include_directories(${FBXSDK_INCLUDE_DIR})
 ###########################################################################
 # Set up the swig run.
 set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
-set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;FbxSdk")
+set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;FbxSdk;-Werror")
 
 # Set up extra swig dependencies. Must be before building the typemaps.
 file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
@@ -126,7 +126,8 @@ get_filename_component(FBXSDK_SWIG_I_FILE src/fbxsdk.i ABSOLUTE)
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
         COMMAND "${SWIG_EXECUTABLE}"
-        ARGS "-debug-typedef" "-DSWIG_GENERATING_TYPEDEFS" "-c++" "-csharp"
+        ARGS "-debug-typedef" "-DSWIG_GENERATING_TYPEDEFS"
+        "-c++" "-csharp" "-Werror"
         "-outdir" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
         "-o" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp/wrap.cxx"
         ${CMAKE_SWIG_FLAGS} -I${FBXSDK_INCLUDE_DIR} ${FBXSDK_SWIG_I_FILE}
