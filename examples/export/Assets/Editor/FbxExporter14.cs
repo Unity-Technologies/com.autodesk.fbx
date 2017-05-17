@@ -61,7 +61,7 @@ namespace FbxSdk.Examples
                 { "m_Color.g",              new FbxPropertyChannelPair (FbxNodeAttribute.sColor, Globals.FBXSDK_CURVENODE_COLOR_GREEN) },
                 { "m_Color.b",              new FbxPropertyChannelPair (FbxNodeAttribute.sColor, Globals.FBXSDK_CURVENODE_COLOR_BLUE) },
                 // ignore m_Color.a; no mapping
-                // { "m_SpotAngle",            new FbxPropertyChannelPair ("InnerAngle") },
+                { "m_SpotAngle",            new FbxPropertyChannelPair ("InnerAngle") },
 				{ "m_LocalPosition.x",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X) },
 				{ "m_LocalPosition.y",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y) },
 				{ "m_LocalPosition.z",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z) },
@@ -241,13 +241,13 @@ namespace FbxSdk.Examples
                 if (Verbose) {
                     Debug.Log ( string.Format("Exporting animation for {0} ({1})", 
                                               unityObj.ToString(), 
-                                              unityAnimCurve.ToString()));
+                                              fbxPair.Property));
                 }
 
             	// Create the AnimCurve on the channel
                 FbxAnimCurve fbxAnimCurve = (fbxPair.Channel != null)
                 	? fbxProperty.GetCurve (fbxAnimLayer, fbxPair.Channel, true)
-                				 : null /* TODO: fbxProperty.GetCurve (fbxAnimLayer, true) */;
+                				 : fbxProperty.GetCurve (fbxAnimLayer, true);
                 
             	// copy Unity AnimCurve to FBX AnimCurve.
             	fbxAnimCurve.KeyModifyBegin ();
