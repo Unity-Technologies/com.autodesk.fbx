@@ -5,14 +5,16 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-#ifdef IGNORE_ALL_INCLUDE_SOME
-// Unignore chosen class 'FbxObject'
-%rename("%s") FbxObject;
+%rename("%s", %$isclass) FbxObject;
 
-// As the ignore everything will include the constructor, destructor, methods etc
-// in the class, these have to be explicitly unignored too:
 %rename("%s") FbxObject::Create;
+
+/* Destroy is marked abstract in C# FbxEmitter but non-virtual in C++
+ * FbxObject. Mark it override in C#. */
+%csmethodmodifiers FbxObject::Destroy "public override";
 %rename("%s") FbxObject::Destroy;
+
+
 %rename("%s") FbxObject::GetName;
 %rename("%s") FbxObject::SetName;
 %rename("%s") FbxObject::GetInitialName;
@@ -67,7 +69,6 @@
 %rename("%s") FbxObject::HasDefaultImplementation;
 %rename("%s") FbxObject::GetDefaultImplementation;
 %rename("%s") FbxObject::SetDefaultImplementation;
-#endif
 
 %extend FbxObject {
   %proxycode %{
