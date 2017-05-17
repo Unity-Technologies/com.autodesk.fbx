@@ -5,25 +5,21 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-/* We are included with ignores off, so that we can generate the template code.
- * But that means we need to ignore a lot of stuff. */
-
-
-/* Use the more efficient GetName implementation, and map ToString to it. */
-%ignore FbxProperty::GetName() const;
-%rename("GetName") FbxProperty::GetNameAsCStr() const;
-%define_tostring(FbxProperty, GetName());
-
-/* Create has an optional output when looking for duplicates. */
-/* %ignore FbxProperty::Create; */
-%apply bool *OUTPUT { bool* pWasFound };
-
-
 /*
- * Define equality and hash code.
+ * Template classes (like FbxPropertyT) and %ignore "" don't mix well: the
+ * templates can't be found again.
  *
- * Ignore equality to an int. Make users call IsValid instead.
+ * In fbxsdk.i this file is included before the %ignore "".
+ *
+ * We still want to default to ignoring functions and classes, but we need to
+ * do that per class.
  */
+%rename("$ignore", regextarget=1, fullname=1) "FbxProperty::.*";
+%rename("$ignore", regextarget=1, fullname=1) "FbxPropertyT::.*";
+
+/***************************************************************************
+ * Define equality and hash code.
+ ***************************************************************************/
 %define_equality_from_operator(FbxProperty);
 %ignore FbxProperty::operator==(int) const;
 %extend FbxProperty { %proxycode %{
@@ -39,131 +35,132 @@
     return (int) hash;
   } %} }
 
-/*
- * These are the functions we've taken in, carefully, one by one.
- */
+/***************************************************************************
+ * Create/destroy
+ ***************************************************************************/
+
+/* Create has an optional output when looking for duplicates. */
+%apply bool *OUTPUT { bool* pWasFound };
+
+%rename("%s") FbxProperty::Create;
+%rename("%s") FbxProperty::Destroy;
+%rename("%s") FbxProperty::DestroyChildren;
+%rename("%s") FbxProperty::DestroyRecursively;
+
+/***************************************************************************
+ * Property metadata
+ ***************************************************************************/
+%rename("%s") FbxProperty::GetPropertyDataType;
+%rename("%s") FbxProperty::IsValid;
+
+%ignore FbxProperty::GetName() const; // returns FbxString
+%rename("GetName") FbxProperty::GetNameAsCStr() const; // returns const char*, faster to convert
+%define_tostring(FbxProperty, GetName());
+
+%rename("%s") FbxProperty::GetHierarchicalName;
+%rename("%s") FbxProperty::GetLabel;
+%rename("%s") FbxProperty::SetLabel;
+
+%rename("%s") FbxProperty::GetFbxObject;
+
+/***************************************************************************
+ * Flags.
+ ***************************************************************************/
+%rename("%s") FbxProperty::ModifyFlag;
+%rename("%s") FbxProperty::GetFlag;
+%rename("%s") FbxProperty::GetFlags;
+%rename("%s") FbxProperty::GetFlagInheritType;
+%rename("%s") FbxProperty::SetFlagInheritType;
+%rename("%s") FbxProperty::ModifiedFlag;
 
 /*
-%ignore FbxProperty::Destroy;
-%ignore FbxProperty::DestroyChildren;
-%ignore FbxProperty::DestroyRecursively;
-%ignore FbxProperty::GetPropertyDataType;
-%ignore FbxProperty::IsValid;
-*/
-
-/* TODO: take more of this stuff in! */
-%ignore FbxProperty::CreateFrom;
-%ignore FbxProperty::SetUserTag;
-%ignore FbxProperty::GetUserTag;
-%ignore FbxProperty::SetUserDataPtr;
-%ignore FbxProperty::GetUserDataPtr;
-%ignore FbxProperty::ModifyFlag;
-%ignore FbxProperty::GetFlag;
-%ignore FbxProperty::GetFlags;
-%ignore FbxProperty::GetFlagInheritType;
-%ignore FbxProperty::SetFlagInheritType;
-%ignore FbxProperty::ModifiedFlag;
-%ignore FbxProperty::CompareValue;
-%ignore FbxProperty::CopyValue;
-%ignore FbxProperty::HasDefaultValue;
-%ignore FbxProperty::GetValueInheritType;
-%ignore FbxProperty::SetValueInheritType;
-%ignore FbxProperty::Modified;
-%ignore FbxProperty::SupportSetLimitAsDouble;
-%ignore FbxProperty::SetMinLimit;
-%ignore FbxProperty::HasMinLimit;
-%ignore FbxProperty::GetMinLimit;
-%ignore FbxProperty::SetMaxLimit;
-%ignore FbxProperty::HasMaxLimit;
-%ignore FbxProperty::GetMaxLimit;
-%ignore FbxProperty::SetLimits;
-%ignore FbxProperty::AddEnumValue;
-%ignore FbxProperty::InsertEnumValue;
-%ignore FbxProperty::GetEnumCount;
-%ignore FbxProperty::SetEnumValue;
-%ignore FbxProperty::RemoveEnumValue;
-%ignore FbxProperty::GetEnumValue;
-%ignore FbxProperty::IsRoot;
-%ignore FbxProperty::IsChildOf;
-%ignore FbxProperty::IsDescendentOf;
-%ignore FbxProperty::GetParent;
-%ignore FbxProperty::GetChild;
-%ignore FbxProperty::GetSibling;
-%ignore FbxProperty::GetFirstDescendent;
-%ignore FbxProperty::GetNextDescendent;
-%ignore FbxProperty::Find;
-%ignore FbxProperty::FindHierarchical;
-%ignore FbxProperty::BeginCreateOrFindProperty;
-%ignore FbxProperty::EndCreateOrFindProperty;
-%ignore FbxProperty::FbxPropertyNameCache;
-%ignore FbxProperty::GetAnimationEvaluator;
-%ignore FbxProperty::IsAnimated;
-%ignore FbxProperty::EvaluateValue;
-%ignore FbxProperty::CreateCurveNode;
-%ignore FbxProperty::GetCurve(FbxAnimLayer* pAnimLayer, bool pCreate=false);
-%ignore FbxProperty::GetCurve(FbxAnimLayer* pAnimLayer, const char* pName, const char* pChannel, bool pCreate);
-%ignore FbxProperty::DisconnectAllSrcObject;
-%ignore FbxProperty::GetSrcObjectCount(const FbxCriteria& pCriteria) const;
-%ignore FbxProperty::GetSrcObject(const FbxCriteria& pCriteria, const int pIndex=0) const;
-%ignore FbxProperty::FindSrcObject(const FbxCriteria& pCriteria, const char* pName, const int pStartIndex=0) const;
-%ignore FbxProperty::DisconnectAllDstObject;
-%ignore FbxProperty::GetDstObjectCount(const FbxCriteria& pCriteria) const;
-%ignore FbxProperty::GetDstObject(const FbxCriteria& pCriteria, const int pIndex=0) const;
-%ignore FbxProperty::FindDstObject(const FbxCriteria& pCriteria, const char* pName, const int pStartIndex=0) const;
-%ignore FbxProperty::ConnectSrcProperty;
-%ignore FbxProperty::IsConnectedSrcProperty;
-%ignore FbxProperty::DisconnectSrcProperty;
-%ignore FbxProperty::GetSrcPropertyCount;
-%ignore FbxProperty::GetSrcProperty;
-%ignore FbxProperty::FindSrcProperty;
-%ignore FbxProperty::ConnectDstProperty;
-%ignore FbxProperty::IsConnectedDstProperty;
-%ignore FbxProperty::DisconnectDstProperty;
-%ignore FbxProperty::GetDstPropertyCount;
-%ignore FbxProperty::GetDstProperty;
-%ignore FbxProperty::FindDstProperty;
-%ignore FbxProperty::ClearConnectCache;
-%ignore FbxProperty::operator=;
-%ignore FbxProperty::sHierarchicalSeparator;
-
-%ignore FbxPropertyT::StaticInit;
-
-/* We likely don't want these ever. */
-%ignore FbxProperty::operator<;
-%ignore FbxProperty::operator>;
-%ignore FbxProperty::FbxProperty;
-%ignore FbxProperty::FbxProperty(const FbxProperty&);
-%ignore FbxPropertyT::FbxPropertyT;
-%ignore FbxPropertyT::FbxPropertyT(const FbxPropertyT&);
-%ignore FbxPropertyT::operator T;
-
-/*
- * We don't want to provide setters for properties, because we don't have operator=.
- * Solution: use %fbximmutable to declare a property.
+ * We also need to take in fbxpropertydef so we get the FbxPropertyFlags enums.
  *
- * But in case you forget, this creates a warning 844 in swig and will fail to
- * compile in C#. */
-%typemap("csvarin") const FbxPropertyT& {#error this should be a %fbximmutable}
+ * FbxPropertyFlags and FbxPropertyValue are internal classes; we don't really
+ * want them. But we do want the enums in FbxPropertyFlags.
+ *
+ * Since what we're exposing of FbxPropertyFlags is only the enums, we declare
+ * it as a static class.
+ */
+%ignore FbxPropertyValue;
+%rename("$ignore", fullname=1, regextarget=1, %$not %$isenum, %$not %$isenumitem) "FbxPropertyFlags::.*";
+%declare_static_class(FbxPropertyFlags);
+%include "fbxsdk/core/fbxpropertydef.h"
 
-/* make sure Connect[Src|Dst]Object(), Disonnect[Src|Dst]Object(),
- * and Find[Src|Dst]Object() don't crash if we pass a null object */
-%null_arg_check(FbxObject* pObject);
+/***************************************************************************
+ * Connecting to objects
+ ***************************************************************************/
+%rename("%s") FbxProperty::ConnectSrcObject;
+%rename("%s") FbxProperty::IsConnectedSrcObject;
+%rename("%s") FbxProperty::DisconnectSrcObject;
 
-/* Applies to Create() as well, and causes tests that call create with "" to fail */
-//%null_arg_check(const char* pName);
+// TODO: support the versions of these functions that take FbxCriteria
+%rename("%s") FbxProperty::DisconnectAllSrcObject();
+%rename("%s") FbxProperty::GetSrcObjectCount() const;
+%rename("%s") FbxProperty::GetSrcObject(const int pIndex=0) const;
+%rename("FindSrcObjectInternal") FbxProperty::FindSrcObject(const char* pName, const int pStartIndex) const;
+%csmethodmodifiers FbxProperty::FindSrcObject "private";
+%extend FbxProperty { %proxycode %{
+  public FbxObject FindSrcObject(string pName, int pStartIndex = 0) {
+    if (pName == null) { throw new System.NullReferenceException(); }
+    return FindSrcObjectInternal(pName, pStartIndex);
+  }
+%} }
 
+
+%rename("%s") FbxProperty::ConnectDstObject;
+%rename("%s") FbxProperty::IsConnectedDstObject;
+%rename("%s") FbxProperty::DisconnectDstObject;
+
+// TODO: support the versions of these functions that take FbxCriteria
+%rename("%s") FbxProperty::DisconnectAllDstObject();
+%rename("%s") FbxProperty::GetDstObjectCount() const;
+%rename("%s") FbxProperty::GetDstObject(const int pIndex=0) const;
+%rename("FindDstObjectInternal") FbxProperty::FindDstObject(const char* pName, const int pStartIndex) const;
+%csmethodmodifiers FbxProperty::FindDstObject "private";
+%extend FbxProperty { %proxycode %{
+  public FbxObject FindDstObject(string pName, int pStartIndex = 0) {
+    if (pName == null) { throw new System.NullReferenceException(); }
+    return FindDstObjectInternal(pName, pStartIndex);
+  }
+%} }
+
+/***************************************************************************
+ * Get/set. See also the %template after the %include.
+ ***************************************************************************/
+%rename("Set") FbxProperty::Set; // Actually just for Set<float>
+%rename("GetFloat") FbxProperty::Get; // Actually just for Get<float>
+%rename("%s") FbxProperty::GetCurve;
+%rename("%s") FbxProperty::GetCurveNode;
+
+%rename("%s") FbxPropertyT::Get;
+%rename("%s") FbxPropertyT::Set;
+%rename("%s") FbxPropertyT::EvaluateValue;
+
+/***************************************************************************
+ * There's no assignment operator for FbxProperty and FbxPropertyT.
+ * All the member variables that are properties need to be marked
+ * %fbximmutable.
+ *
+ * In case we forget, we will emit a custom warning 999 (and an 844, and a C#
+ * compile error).
+ ***************************************************************************/
+%define SWIGWARN_FBXSHARP_MUTABLE_PROPERTY_MSG "999:FbxProperty variable should be marked %fbximmutable" %enddef
+%typemap("csvarin",warning=SWIGWARN_FBXSHARP_MUTABLE_PROPERTY_MSG) const FbxPropertyT& {#error this should have been marked %fbximmutable}
 
 /***************************************************************************/
 %include "fbxsdk/core/fbxproperty.h"
 /***************************************************************************/
 
 %template(Set) FbxProperty::Set<float>;
+%template(GetFloat) FbxProperty::Get<float>;
+%template(EvaluateValue) FbxProperty::EvaluateValue<float>;
 
 /* Generic properties */
-%template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
-%template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
-%template("FbxPropertyString") FbxPropertyT<FbxString>;
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
+%template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
+%template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
+%template("FbxPropertyString") FbxPropertyT<FbxString>;
 
 %csmethodmodifiers FbxPropertyT<float>::Set(const float&) "public new";
 %template("FbxPropertyFloat") FbxPropertyT<float>;

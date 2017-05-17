@@ -9,14 +9,14 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxPropertyTest
+    public class FbxPropertyTest : TestBase<FbxProperty>
     {
 
 #if ENABLE_COVERAGE_TEST
         [Test]
-        public void TestCoverage() {
+        public override void TestCoverage() {
             // Alphabetical list, with FbxProperty at the top.
-            CoverageTester.TestCoverage(typeof(FbxProperty), this.GetType());
+            base.TestCoverage();
             CoverageTester.TestCoverage(typeof(FbxPropertyBool), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
@@ -57,6 +57,10 @@ namespace UnitTests
                 // FbxPropertyT<FbxDouble3>
                 var lclTranslationCopy = node.LclTranslation; // TODO: node.FindProperty("Lcl Translation");
                 EqualityTester<FbxPropertyDouble3>.TestEquality(node.LclTranslation, node.LclRotation, lclTranslationCopy);
+
+                // FbxPropertyT<float>
+                var light = FbxLight.Create(manager, "light");
+                EqualityTester<FbxPropertyFloat>.TestEquality(light.LeftBarnDoor, light.RightBarnDoor, light.LeftBarnDoor);
 
                 // FbxPropertyT<> for FbxTexture enums
                 var tex1 = FbxTexture.Create(manager, "tex1");
@@ -114,22 +118,33 @@ namespace UnitTests
             Assert.AreEqual(parent, property.GetFbxObject());
             Assert.AreEqual(property.GetFbxObject(), parent); // test it both ways just in case equals is busted
 
-            // test GetCurve() (make sure it doesn't crash)
+            // test the flags using the animatable flag
+            property.ModifyFlag(FbxPropertyFlags.EFlags.eAnimatable, true);
+            Assert.IsTrue(property.GetFlag(FbxPropertyFlags.EFlags.eAnimatable));
+            Assert.AreNotEqual(0, property.GetFlags() | FbxPropertyFlags.EFlags.eAnimatable);
+            property.SetFlagInheritType(FbxPropertyFlags.EFlags.eAnimatable, FbxPropertyFlags.EInheritType.eInherit);
+            Assert.AreEqual(FbxPropertyFlags.EInheritType.eInherit, property.GetFlagInheritType(FbxPropertyFlags.EFlags.eAnimatable));
+
+            // not clear when this ever returns true: whether we set animatable
+            // to true or false it says it has the default value.
+            Assert.IsFalse(property.ModifiedFlag(FbxPropertyFlags.EFlags.eAnimatable));
+
+            // Test setting the value with the generic float accessor.
+            // The value may not round-trip: a bool property will go to 1.0
+            property.Set(5.0f);
+            TestGetter(property.GetFloat());
+
+            // test GetCurve(). Just make sure it doesn't crash. We can't
+            // generically test actually getting curves, because the details
+            // (channel names etc) depend on the type of property and its
+            // flags.
             FbxAnimLayer layer = FbxAnimLayer.Create(parent, "layer");
-
-            FbxAnimCurve curve = property.GetCurve (layer, null);
-            Assert.IsNull (curve);
-
-            // should create curve if none found
-            // TODO: returns a null curve, maybe because there is no channel defined?
-            curve = property.GetCurve(layer, null, true);
-
-            FbxAnimCurve curve2 = property.GetCurve (layer, null);
-            Assert.AreEqual (curve, curve2);
-
-            // test GetCurve() null args
-            Assert.That (() => { property.GetCurve(null, ""); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-            property.GetCurve(layer, null); // doesn't throw an exception, gets handled in C++
+            property.GetCurve (layer);
+            property.GetCurve (layer, true);
+            property.GetCurve (layer, "asdf");
+            property.GetCurve (layer, "asdf", true);
+            property.GetCurve (layer, "asdf", "hjkl", true);
+            Assert.That (() => { property.GetCurve(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
             // test GetCurveNode() (make sure it doesn't crash)
             FbxAnimCurveNode curveNode = property.GetCurveNode();
@@ -158,18 +173,16 @@ namespace UnitTests
                 Assert.AreEqual (obj, property.GetSrcObject (0));
                 Assert.AreEqual (obj, property.FindSrcObject ("obj"));
                 Assert.IsNull (property.FindSrcObject ("obj", 1));
+                Assert.That (() => { property.FindSrcObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
-                // TODO: Fix so this doesn't crash
-                //Assert.That (() => { property.FindSrcObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-
-                result = property.DisconnectSrcObject (obj);
-                Assert.IsTrue (result);
+                Assert.IsTrue (property.DisconnectSrcObject (obj));
                 Assert.IsFalse (property.IsConnectedSrcObject (obj));
 
                 Assert.That (() => { property.ConnectSrcObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
-                result = property.ConnectSrcObject (obj, FbxConnection.EType.eData);
-                Assert.IsTrue (result);
+                Assert.IsTrue (property.ConnectSrcObject (obj, FbxConnection.EType.eData));
+
+                Assert.IsTrue(property.DisconnectAllSrcObject());
 
                 // Test ConnectDstObject functions
                 result = property.ConnectDstObject (obj);
@@ -180,18 +193,16 @@ namespace UnitTests
                 Assert.AreEqual (obj, property.GetDstObject (0));
                 Assert.AreEqual (obj, property.FindDstObject ("obj"));
                 Assert.IsNull (property.FindDstObject ("obj", 1));
+                Assert.That (() => { property.FindDstObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
-                // TODO: Fix so this doesn't crash
-                //Assert.That (() => { property.FindDstObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-
-                result = property.DisconnectDstObject (obj);
-                Assert.IsTrue (result);
+                Assert.IsTrue (property.DisconnectDstObject (obj));
                 Assert.IsFalse (property.IsConnectedDstObject (obj));
 
                 Assert.That (() => { property.ConnectDstObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
 
-                result = property.ConnectDstObject (obj, FbxConnection.EType.eData);
-                Assert.IsTrue (result);
+                Assert.IsTrue (property.ConnectDstObject (obj, FbxConnection.EType.eData));
+
+                Assert.IsTrue(property.DisconnectAllDstObject());
             }
 
             // verify this in the future: will dispose destroy?
@@ -209,9 +220,9 @@ namespace UnitTests
                 var property = node.VisibilityInheritance;
                 property.Set(false);
                 Assert.AreEqual(false, property.Get());
-
-                Assert.IsTrue(property.Set(5.0f));
-                Assert.AreEqual(true, property.Get());
+                Assert.AreEqual(false, property.EvaluateValue());
+                Assert.AreEqual(false, property.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(false, property.EvaluateValue(FbxTime.FromSecondDouble(5), true));
             }
 
             using(var manager = FbxManager.Create()) {
@@ -222,6 +233,9 @@ namespace UnitTests
                 var property = obj.EmissiveFactor;
                 property.Set(5.0); // bool Set<float> is not accessible here!
                 Assert.AreEqual(5.0, property.Get());
+                Assert.AreEqual(5.0, property.EvaluateValue());
+                Assert.AreEqual(5.0, property.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(5.0, property.EvaluateValue(FbxTime.FromSecondDouble(5), true));
             }
 
             using(var manager = FbxManager.Create()) {
@@ -232,48 +246,22 @@ namespace UnitTests
                 var property = node.LclTranslation;
                 property.Set(new FbxDouble3(1,2,3));
                 Assert.AreEqual(new FbxDouble3(1, 2, 3), property.Get());
-
-                Assert.IsTrue(property.Set(5.0f));
-                Assert.AreEqual(new FbxDouble3(5.0f), property.Get());
+                Assert.AreEqual(new FbxDouble3(1, 2, 3), property.EvaluateValue());
+                Assert.AreEqual(new FbxDouble3(1, 2, 3), property.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(new FbxDouble3(1, 2, 3), property.EvaluateValue(FbxTime.FromSecondDouble(5), true));
             }
 
-            using (var manager = FbxManager.Create()) {
-                // FbxPropertyT for FbxTexture enums EBlendMode and EWrapMode
-                var tex = FbxTexture.Create(manager, "tex");
+            using(var manager = FbxManager.Create()) {
+                // FbxPropertyT<float> example: the LeftBarnDoor on a light
+                var light = FbxLight.Create(manager, "light");
+                GenericPropertyTests(light.LeftBarnDoor, light, "LeftBarnDoor", Globals.FbxFloatDT);
 
-                FbxPropertyTest.GenericPropertyTests(tex.CurrentTextureBlendMode, tex, "CurrentTextureBlendMode", Globals.FbxEnumDT);
-                tex.CurrentTextureBlendMode.Set(FbxTexture.EBlendMode.eAdditive);
-                Assert.AreEqual(FbxTexture.EBlendMode.eAdditive, tex.CurrentTextureBlendMode.Get());
-                tex.CurrentTextureBlendMode.Set(5.0f);
-                Assert.AreEqual(5, (int)tex.CurrentTextureBlendMode.Get());
-
-                FbxPropertyTest.GenericPropertyTests(tex.WrapModeU, tex, "WrapModeU", Globals.FbxEnumDT);
-                tex.WrapModeU.Set(FbxTexture.EWrapMode.eClamp);
-                Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.Get());
-                tex.WrapModeU.Set(5.0f);
-                Assert.AreEqual(5, (int)tex.WrapModeU.Get());
-            }
-
-            using (var manager = FbxManager.Create()) {
-                // FbxPropertyT<FbxNull.ELook>
-                var null1 = FbxNull.Create(manager, "null1");
-
-                FbxPropertyTest.GenericPropertyTests(null1.Look, null1, "Look", Globals.FbxEnumDT);
-                null1.Look.Set(FbxNull.ELook.eCross);
-                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.Get());
-                null1.Look.Set(5.0f);
-                Assert.AreEqual(5, (int)null1.Look.Get());
-            }
-
-            using (var manager = FbxManager.Create()) {
-                // FbxPropertyT<FbxMarker.ELook>
-                var marker1 = FbxMarker.Create(manager, "marker1");
-
-                FbxPropertyTest.GenericPropertyTests(marker1.Look, marker1, "Look", Globals.FbxEnumDT);
-                marker1.Look.Set(FbxMarker.ELook.eCapsule);
-                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.Get());
-                marker1.Look.Set(5.0f);
-                Assert.AreEqual(5, (int)marker1.Look.Get());
+                var property = light.LeftBarnDoor;
+                light.LeftBarnDoor.Set(5.0f);
+                Assert.AreEqual(5.0f, light.LeftBarnDoor.Get());
+                Assert.AreEqual(5.0f, property.EvaluateValue());
+                Assert.AreEqual(5.0f, property.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(5.0f, property.EvaluateValue(FbxTime.FromSecondDouble(5), true));
             }
 
             using (var manager = FbxManager.Create()) {
@@ -285,11 +273,91 @@ namespace UnitTests
                 property.Set("a value");
                 Assert.AreEqual("a value", property.Get());
 
-                Assert.IsTrue(property.Set(5.0f));
-                Assert.AreEqual("5.000000", property.Get());
+                // animated strings come out as empty-string
+                Assert.AreEqual("", property.EvaluateValue());
+                Assert.AreEqual("", property.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual("", property.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
 
-                property.Dispose();
-                using(var prop2 = impl.RenderAPI) { }
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT for FbxTexture enums EBlendMode and EWrapMode
+                var tex = FbxTexture.Create(manager, "tex");
+
+                FbxPropertyTest.GenericPropertyTests(tex.CurrentTextureBlendMode, tex, "CurrentTextureBlendMode", Globals.FbxEnumDT);
+                tex.CurrentTextureBlendMode.Set(FbxTexture.EBlendMode.eAdditive);
+                Assert.AreEqual(FbxTexture.EBlendMode.eAdditive, tex.CurrentTextureBlendMode.Get());
+                Assert.AreEqual(FbxTexture.EBlendMode.eAdditive, tex.CurrentTextureBlendMode.EvaluateValue());
+                Assert.AreEqual(FbxTexture.EBlendMode.eAdditive, tex.CurrentTextureBlendMode.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxTexture.EBlendMode.eAdditive, tex.CurrentTextureBlendMode.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+
+                FbxPropertyTest.GenericPropertyTests(tex.WrapModeU, tex, "WrapModeU", Globals.FbxEnumDT);
+                tex.WrapModeU.Set(FbxTexture.EWrapMode.eClamp);
+                Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.Get());
+                Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.EvaluateValue());
+                Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxTexture.EWrapMode.eClamp, tex.WrapModeU.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT<FbxNull.ELook>
+                var null1 = FbxNull.Create(manager, "null1");
+
+                FbxPropertyTest.GenericPropertyTests(null1.Look, null1, "Look", Globals.FbxEnumDT);
+                null1.Look.Set(FbxNull.ELook.eCross);
+                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.Get());
+                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.EvaluateValue());
+                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxNull.ELook.eCross, null1.Look.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT<FbxMarker.ELook>
+                var marker1 = FbxMarker.Create(manager, "marker1");
+
+                FbxPropertyTest.GenericPropertyTests(marker1.Look, marker1, "Look", Globals.FbxEnumDT);
+                marker1.Look.Set(FbxMarker.ELook.eCapsule);
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.Get());
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.EvaluateValue());
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxMarker.ELook.eCapsule, marker1.Look.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT for FbxCamera enum EProjectionType
+                var camera = FbxCamera.Create(manager, "camera");
+
+                FbxPropertyTest.GenericPropertyTests(camera.ProjectionType, camera, "CameraProjectionType", Globals.FbxEnumDT);
+                camera.ProjectionType.Set(FbxCamera.EProjectionType.ePerspective);
+                Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.Get());
+                Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue());
+                Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT for FbxLight enums
+                var light = FbxLight.Create(manager, "light");
+
+                FbxPropertyTest.GenericPropertyTests(light.LightType, light, "LightType", Globals.FbxEnumDT);
+                light.LightType.Set(FbxLight.EType.eSpot);
+                Assert.AreEqual(FbxLight.EType.eSpot, light.LightType.Get());
+                Assert.AreEqual(FbxLight.EType.eSpot, light.LightType.EvaluateValue());
+                Assert.AreEqual(FbxLight.EType.eSpot, light.LightType.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxLight.EType.eSpot, light.LightType.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+
+                FbxPropertyTest.GenericPropertyTests(light.AreaLightShape, light, "AreaLightShape", Globals.FbxEnumDT);
+                light.AreaLightShape.Set(FbxLight.EAreaLightShape.eSphere);
+                Assert.AreEqual(FbxLight.EAreaLightShape.eSphere, light.AreaLightShape.Get());
+                Assert.AreEqual(FbxLight.EAreaLightShape.eSphere, light.AreaLightShape.EvaluateValue());
+                Assert.AreEqual(FbxLight.EAreaLightShape.eSphere, light.AreaLightShape.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxLight.EAreaLightShape.eSphere, light.AreaLightShape.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+
+                FbxPropertyTest.GenericPropertyTests(light.DecayType, light, "DecayType", Globals.FbxEnumDT);
+                light.DecayType.Set(FbxLight.EDecayType.eCubic);
+                Assert.AreEqual(FbxLight.EDecayType.eCubic, light.DecayType.Get());
+                Assert.AreEqual(FbxLight.EDecayType.eCubic, light.DecayType.EvaluateValue());
+                Assert.AreEqual(FbxLight.EDecayType.eCubic, light.DecayType.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxLight.EDecayType.eCubic, light.DecayType.EvaluateValue(FbxTime.FromSecondDouble(5), true));
             }
 
             using (var manager = FbxManager.Create()) {
@@ -320,44 +388,6 @@ namespace UnitTests
                 Assert.IsFalse(didFind);
 
                 root.DestroyRecursively();
-            }
-
-            using (var manager = FbxManager.Create()) {
-                // FbxPropertyT for FbxCamera enum EProjectionType
-                var camera = FbxCamera.Create(manager, "camera");
-
-                FbxPropertyTest.GenericPropertyTests(camera.ProjectionType, camera, "CameraProjectionType", Globals.FbxEnumDT);
-                camera.ProjectionType.Set(FbxCamera.EProjectionType.ePerspective);
-                Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.Get());
-                camera.ProjectionType.Set(5.0f);
-                Assert.AreEqual(5, (int)camera.ProjectionType.Get());
-            }
-
-            using (var manager = FbxManager.Create()) {
-                // FbxPropertyT for FbxLight enums
-                var light = FbxLight.Create(manager, "light");
-
-                FbxPropertyTest.GenericPropertyTests(light.LightType, light, "LightType", Globals.FbxEnumDT);
-                light.LightType.Set(FbxLight.EType.eSpot);
-                Assert.AreEqual(FbxLight.EType.eSpot, light.LightType.Get());
-                light.LightType.Set(5.0f);
-                Assert.AreEqual(5, (int)light.LightType.Get());
-
-                FbxPropertyTest.GenericPropertyTests(light.AreaLightShape, light, "AreaLightShape", Globals.FbxEnumDT);
-                light.AreaLightShape.Set(FbxLight.EAreaLightShape.eSphere);
-                Assert.AreEqual(FbxLight.EAreaLightShape.eSphere, light.AreaLightShape.Get());
-                light.AreaLightShape.Set(5.0f);
-                Assert.AreEqual(5, (int)light.AreaLightShape.Get());
-
-                FbxPropertyTest.GenericPropertyTests(light.DecayType, light, "DecayType", Globals.FbxEnumDT);
-                light.DecayType.Set(FbxLight.EDecayType.eCubic);
-                Assert.AreEqual(FbxLight.EDecayType.eCubic, light.DecayType.Get());
-                light.DecayType.Set(5.0f);
-                Assert.AreEqual(5, (int)light.DecayType.Get());
-
-                FbxPropertyTest.GenericPropertyTests(light.LeftBarnDoor, light, "LeftBarnDoor", Globals.FbxFloatDT);
-                light.LeftBarnDoor.Set(5.0f);
-                Assert.AreEqual(5, (int)light.LeftBarnDoor.Get());
             }
         }
     }
