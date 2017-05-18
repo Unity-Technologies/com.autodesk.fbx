@@ -57,10 +57,10 @@ namespace FbxSdk.Examples
                 { "m_BackGroundColor.b",    new FbxPropertyChannelPair (MakeName("backgroundColor"), Globals.FBXSDK_CURVENODE_COLOR_BLUE) },
                 { "m_BackGroundColor.a",    new FbxPropertyChannelPair (MakeName("backgroundColor"), "W") },
                 { "clearFlags",             new FbxPropertyChannelPair (MakeName("clearFlags")) },
-				{ "m_LocalPosition.x",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X) },
-				{ "m_LocalPosition.y",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y) },
-				{ "m_LocalPosition.z",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z) },
-			};
+                { "m_LocalPosition.x",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_X) },
+                { "m_LocalPosition.y",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Y) },
+                { "m_LocalPosition.z",      new FbxPropertyChannelPair("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z) },
+            };
 
             /// <summary>
             /// name of the scene's default camera
@@ -106,15 +106,15 @@ namespace FbxSdk.Examples
                 fbxCamera.SetFarPlane (unityCamera.farClipPlane);
 
                 // Export backgroundColor as a custom property
-				// NOTE: export on fbxNode so that it will show up in Maya
-				ExportColorProperty (fbxNode, unityCamera.backgroundColor,
-									 MakeName("backgroundColor"), 
+                // NOTE: export on fbxNode so that it will show up in Maya
+                ExportColorProperty (fbxNode, unityCamera.backgroundColor,
+                                     MakeName("backgroundColor"), 
                                      "The color with which the screen will be cleared.");
 
-				// Export clearFlags as a custom property
-				// NOTE: export on fbxNode so that it will show up in Maya
-				ExportIntProperty (fbxNode, (int)unityCamera.clearFlags,
-									 MakeName("clearFlags"), 
+                // Export clearFlags as a custom property
+                // NOTE: export on fbxNode so that it will show up in Maya
+                ExportIntProperty (fbxNode, (int)unityCamera.clearFlags,
+                                     MakeName("clearFlags"), 
                                      "How the camera clears the background.");
 
 
@@ -126,21 +126,21 @@ namespace FbxSdk.Examples
             /// </summary>
             FbxProperty ExportColorProperty (FbxObject fbxObject, Color value, string name, string label)
             {
-            	// create a custom property for component value
-            	var fbxProperty = FbxProperty.Create (fbxObject, Globals.FbxColor4DT, name, label);
-            	if (!fbxProperty.IsValid ()) {
-            		throw new System.NullReferenceException ();
-            	}
+                // create a custom property for component value
+                var fbxProperty = FbxProperty.Create (fbxObject, Globals.FbxColor4DT, name, label);
+                if (!fbxProperty.IsValid ()) {
+                    throw new System.NullReferenceException ();
+                }
 
                 FbxColor fbxColor = new FbxColor(value.r, value.g, value.b, value.a );
 
-            	fbxProperty.Set (fbxColor);
+                fbxProperty.Set (fbxColor);
 
-            	// Must be marked user-defined or it won't be shown in most DCCs
-            	fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
-            	fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
+                // Must be marked user-defined or it won't be shown in most DCCs
+                fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
+                fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
 
-            	return fbxProperty;
+                return fbxProperty;
             }
 
             /// <summary>
@@ -148,18 +148,18 @@ namespace FbxSdk.Examples
             /// </summary>
             FbxProperty ExportIntProperty (FbxObject fbxObject, int value, string name, string label)
             {
-            	// create a custom property for component value
-            	var fbxProperty = FbxProperty.Create (fbxObject, Globals.FbxIntDT, name, label);
-            	if (!fbxProperty.IsValid ()) {
-            		throw new System.NullReferenceException ();
-            	}
-            	fbxProperty.Set (value);
+                // create a custom property for component value
+                var fbxProperty = FbxProperty.Create (fbxObject, Globals.FbxIntDT, name, label);
+                if (!fbxProperty.IsValid ()) {
+                    throw new System.NullReferenceException ();
+                }
+                fbxProperty.Set (value);
 
-            	// Must be marked user-defined or it won't be shown in most DCCs
-            	fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
-            	fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
+                // Must be marked user-defined or it won't be shown in most DCCs
+                fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
+                fbxProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
 
-            	return fbxProperty;
+                return fbxProperty;
             }
 
             /// <summary>
@@ -169,57 +169,57 @@ namespace FbxSdk.Examples
             /// quaternion to euler and various other stuff.
             /// </summary>
             protected void ExportAnimCurve (UnityEngine.Object unityObj,
-            								AnimationCurve unityAnimCurve,
-            								string unityPropertyName,
-            								FbxAnimLayer fbxAnimLayer)
+                                            AnimationCurve unityAnimCurve,
+                                            string unityPropertyName,
+                                            FbxAnimLayer fbxAnimLayer)
             {
-            	FbxPropertyChannelPair fbxPair;
+                FbxPropertyChannelPair fbxPair;
 
-            	if (!MapUnityPropertyNameToFbx.TryGetValue (unityPropertyName, out fbxPair)) {
-            		Debug.LogWarning (string.Format ("no property-channel mapping found for {0}", unityPropertyName));
-            		return;
-            	}
+                if (!MapUnityPropertyNameToFbx.TryGetValue (unityPropertyName, out fbxPair)) {
+                    Debug.LogWarning (string.Format ("no property-channel mapping found for {0}", unityPropertyName));
+                    return;
+                }
 
-            	GameObject unityGo = GetGameObject (unityObj);
-            	if (unityGo == null) {
-            		Debug.LogError (string.Format ("cannot convert to GameObject from {0}", unityObj.ToString ()));
-            		return;
-            	}
+                GameObject unityGo = GetGameObject (unityObj);
+                if (unityGo == null) {
+                    Debug.LogError (string.Format ("cannot convert to GameObject from {0}", unityObj.ToString ()));
+                    return;
+                }
 
-            	FbxNode fbxNode;
-            	if (!MapUnityObjectToFbxNode.TryGetValue (unityGo, out fbxNode)) {
-            		Debug.LogError (string.Format ("cannot find fbxNode for {0}", unityGo.ToString ()));
-            		return;
-            	}
+                FbxNode fbxNode;
+                if (!MapUnityObjectToFbxNode.TryGetValue (unityGo, out fbxNode)) {
+                    Debug.LogError (string.Format ("cannot find fbxNode for {0}", unityGo.ToString ()));
+                    return;
+                }
 
-            	FbxProperty fbxProperty = null;
+                FbxProperty fbxProperty = null;
 
-            	// try finding unity property name on node attribute
-            	FbxNodeAttribute fbxNodeAttribute = fbxNode.GetNodeAttribute ();
-            	if (fbxNodeAttribute != null) {
-            		fbxProperty = fbxNodeAttribute.FindProperty (fbxPair.Property, false);
-            	}
+                // try finding unity property name on node attribute
+                FbxNodeAttribute fbxNodeAttribute = fbxNode.GetNodeAttribute ();
+                if (fbxNodeAttribute != null) {
+                    fbxProperty = fbxNodeAttribute.FindProperty (fbxPair.Property, false);
+                }
 
-            	// try finding unity property on the node
-            	if (fbxProperty == null || !fbxProperty.IsValid ()) {
-            		fbxProperty = fbxNode.FindProperty (fbxPair.Property, false);
-            	}
+                // try finding unity property on the node
+                if (fbxProperty == null || !fbxProperty.IsValid ()) {
+                    fbxProperty = fbxNode.FindProperty (fbxPair.Property, false);
+                }
 
-            	if (!fbxProperty.IsValid ()) {
-            		Debug.LogError (string.Format ("cannot find fbxProperty {0} on {1}", fbxPair.Property, fbxNode.GetName ()));
-            		return;
-            	}
+                if (!fbxProperty.IsValid ()) {
+                    Debug.LogError (string.Format ("cannot find fbxProperty {0} on {1}", fbxPair.Property, fbxNode.GetName ()));
+                    return;
+                }
 
-            	if (Verbose) {
-            		Debug.Log (string.Format ("Exporting animation for {0} ({1})",
-            								  unityObj.ToString (),
-            								  fbxPair.Property));
-            	}
+                if (Verbose) {
+                    Debug.Log (string.Format ("Exporting animation for {0} ({1})",
+                                              unityObj.ToString (),
+                                              fbxPair.Property));
+                }
 
-            	// Create the AnimCurve on the channel
-            	FbxAnimCurve fbxAnimCurve = (fbxPair.Channel != null)
-            		? fbxProperty.GetCurve (fbxAnimLayer, fbxPair.Channel, true)
-            					 : fbxProperty.GetCurve (fbxAnimLayer, true);
+                // Create the AnimCurve on the channel
+                FbxAnimCurve fbxAnimCurve = (fbxPair.Channel != null)
+                    ? fbxProperty.GetCurve (fbxAnimLayer, fbxPair.Channel, true)
+                                 : fbxProperty.GetCurve (fbxAnimLayer, true);
 
                 if (fbxAnimCurve == null)
                 {
@@ -227,17 +227,17 @@ namespace FbxSdk.Examples
                                                    fbxPair.Property, fbxPair.Channel, fbxNode.GetName ()));
                     return;                    
                 }
-            	// copy Unity AnimCurve to FBX AnimCurve.
-            	fbxAnimCurve.KeyModifyBegin ();
+                // copy Unity AnimCurve to FBX AnimCurve.
+                fbxAnimCurve.KeyModifyBegin ();
 
-            	for (int keyIndex = 0, n = unityAnimCurve.length; keyIndex < n; ++keyIndex) {
-            		var key = unityAnimCurve [keyIndex];
-            		var fbxTime = FbxTime.FromSecondDouble (key.time);
-            		fbxAnimCurve.KeyAdd (fbxTime);
-            		fbxAnimCurve.KeySet (keyIndex, fbxTime, key.value);
-            	}
+                for (int keyIndex = 0, n = unityAnimCurve.length; keyIndex < n; ++keyIndex) {
+                    var key = unityAnimCurve [keyIndex];
+                    var fbxTime = FbxTime.FromSecondDouble (key.time);
+                    fbxAnimCurve.KeyAdd (fbxTime);
+                    fbxAnimCurve.KeySet (keyIndex, fbxTime, key.value);
+                }
 
-            	fbxAnimCurve.KeyModifyEnd ();
+                fbxAnimCurve.KeyModifyEnd ();
             }
 
             /// <summary>
@@ -245,45 +245,45 @@ namespace FbxSdk.Examples
             /// </summary>
             private void ExportAnimationClip (AnimationClip unityAnimClip, GameObject unityRoot, FbxScene fbxScene)
             {
-            	if (unityAnimClip == null) return;
+                if (unityAnimClip == null) return;
 
-            	// setup anim stack
-            	FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, unityAnimClip.name);
-            	fbxAnimStack.Description.Set ("Animation Take: " + unityAnimClip.name);
+                // setup anim stack
+                FbxAnimStack fbxAnimStack = FbxAnimStack.Create (fbxScene, unityAnimClip.name);
+                fbxAnimStack.Description.Set ("Animation Take: " + unityAnimClip.name);
 
-            	// add one mandatory animation layer
-            	FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (fbxScene, "Animation Base Layer");
-            	fbxAnimStack.AddMember (fbxAnimLayer);
+                // add one mandatory animation layer
+                FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (fbxScene, "Animation Base Layer");
+                fbxAnimStack.AddMember (fbxAnimLayer);
 
-            	// Set up the FPS so our frame-relative math later works out
-            	// Custom frame rate isn't really supported in FBX SDK (there's
-            	// a bug), so try hard to find the nearest time mode.
-            	FbxTime.EMode timeMode = FbxTime.EMode.eCustom;
-            	double precision = 1e-6;
-            	while (timeMode == FbxTime.EMode.eCustom && precision < 1000) {
-            		timeMode = FbxTime.ConvertFrameRateToTimeMode (unityAnimClip.frameRate, precision);
-            		precision *= 10;
-            	}
-            	if (timeMode == FbxTime.EMode.eCustom) {
-            		timeMode = FbxTime.EMode.eFrames30;
-            	}
-            	FbxTime.SetGlobalTimeMode (timeMode);
+                // Set up the FPS so our frame-relative math later works out
+                // Custom frame rate isn't really supported in FBX SDK (there's
+                // a bug), so try hard to find the nearest time mode.
+                FbxTime.EMode timeMode = FbxTime.EMode.eCustom;
+                double precision = 1e-6;
+                while (timeMode == FbxTime.EMode.eCustom && precision < 1000) {
+                    timeMode = FbxTime.ConvertFrameRateToTimeMode (unityAnimClip.frameRate, precision);
+                    precision *= 10;
+                }
+                if (timeMode == FbxTime.EMode.eCustom) {
+                    timeMode = FbxTime.EMode.eFrames30;
+                }
+                FbxTime.SetGlobalTimeMode (timeMode);
 
-            	// set time correctly
-            	var fbxStartTime = FbxTime.FromSecondDouble (0);
-            	var fbxStopTime = FbxTime.FromSecondDouble (unityAnimClip.length);
+                // set time correctly
+                var fbxStartTime = FbxTime.FromSecondDouble (0);
+                var fbxStopTime = FbxTime.FromSecondDouble (unityAnimClip.length);
 
-            	fbxAnimStack.SetLocalTimeSpan (new FbxTimeSpan (fbxStartTime, fbxStopTime));
+                fbxAnimStack.SetLocalTimeSpan (new FbxTimeSpan (fbxStartTime, fbxStopTime));
 
-            	foreach (EditorCurveBinding unityCurveBinding in AnimationUtility.GetCurveBindings (unityAnimClip)) {
-            		Object unityObj = AnimationUtility.GetAnimatedObject (unityRoot, unityCurveBinding);
-            		if (!unityObj) { continue; }
+                foreach (EditorCurveBinding unityCurveBinding in AnimationUtility.GetCurveBindings (unityAnimClip)) {
+                    Object unityObj = AnimationUtility.GetAnimatedObject (unityRoot, unityCurveBinding);
+                    if (!unityObj) { continue; }
 
-            		AnimationCurve unityAnimCurve = AnimationUtility.GetEditorCurve (unityAnimClip, unityCurveBinding);
-            		if (unityAnimCurve == null) { continue; }
+                    AnimationCurve unityAnimCurve = AnimationUtility.GetEditorCurve (unityAnimClip, unityCurveBinding);
+                    if (unityAnimCurve == null) { continue; }
 
-            		ExportAnimCurve (unityObj, unityAnimCurve, unityCurveBinding.propertyName, fbxAnimLayer);
-            	}
+                    ExportAnimCurve (unityObj, unityAnimCurve, unityCurveBinding.propertyName, fbxAnimLayer);
+                }
             }
 
             /// <summary>
@@ -291,20 +291,20 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportAnimationClips (GameObject unityRoot, FbxScene fbxScene)
             {
-            	var unityAnimator = unityRoot.GetComponent<Animator> ();
-            	if (!unityAnimator) { return; }
+                var unityAnimator = unityRoot.GetComponent<Animator> ();
+                if (!unityAnimator) { return; }
 
-            	// Get the controller.
-            	var unityAnimController = unityAnimator.runtimeAnimatorController;
-            	if (!unityAnimController) { return; }
+                // Get the controller.
+                var unityAnimController = unityAnimator.runtimeAnimatorController;
+                if (!unityAnimController) { return; }
 
-            	// Only export each clip once per game object.
-            	var unityExportedAnimClip = new HashSet<AnimationClip> ();
-            	foreach (var unityAnimClip in unityAnimController.animationClips) {
-            		if (unityExportedAnimClip.Add (unityAnimClip)) {
-            			ExportAnimationClip (unityAnimClip, unityRoot, fbxScene);
-            		}
-            	}
+                // Only export each clip once per game object.
+                var unityExportedAnimClip = new HashSet<AnimationClip> ();
+                foreach (var unityAnimClip in unityAnimController.animationClips) {
+                    if (unityExportedAnimClip.Add (unityAnimClip)) {
+                        ExportAnimationClip (unityAnimClip, unityRoot, fbxScene);
+                    }
+                }
             }
 
             /// <summary>
@@ -312,10 +312,10 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportAllAnimation (FbxScene fbxScene)
             {
-            	// Export animations.
-            	foreach (var unityGo in MapUnityObjectToFbxNode.Keys) {
-            		ExportAnimationClips (unityGo, fbxScene);
-            	}
+                // Export animations.
+                foreach (var unityGo in MapUnityObjectToFbxNode.Keys) {
+                    ExportAnimationClips (unityGo, fbxScene);
+                }
             }
 
             /// <summary>
@@ -334,15 +334,15 @@ namespace FbxSdk.Examples
             ///</summary>
             struct FbxPropertyChannelPair
             {
-            	public string Property { get; private set; }
-            	public string Channel { get; private set; }
-            	public FbxPropertyChannelPair (string p, string c = null)
-            	{
-            		Property = p;
-            		Channel = c;
-            	}
+                public string Property { get; private set; }
+                public string Channel { get; private set; }
+                public FbxPropertyChannelPair (string p, string c = null)
+                {
+                    Property = p;
+                    Channel = c;
+                }
 
-            	public bool IsValid { get { return Property.Length > 0; } }
+                public bool IsValid { get { return Property.Length > 0; } }
 
             };
 
@@ -447,8 +447,8 @@ namespace FbxSdk.Examples
                         }
                     }
 
-					// Export animations
-					ExportAllAnimation (fbxScene);
+                    // Export animations
+                    ExportAllAnimation (fbxScene);
 
                     // Set the scene's default camera.
                     SetDefaultCamera (fbxScene);
@@ -526,7 +526,7 @@ namespace FbxSdk.Examples
 
             private static string MakeName (string basename)
             {
-            	return NamePrefix + basename;
+                return NamePrefix + basename;
             }
 
             bool Verbose { get { return true; } }
