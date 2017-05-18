@@ -368,15 +368,16 @@ namespace FbxSdk.Examples
 
                 FbxNodeAttribute fbxNodeAttr = ExportCamera (unityCamera, fbxScene, fbxNode);
 
-                if (fbxNodeAttr == null) return; 
+                if (fbxNodeAttr != null)
+                {
+                    fbxNode.SetNodeAttribute (fbxNodeAttr);
+
+                    // make the last camera exported the default camera
+                    DefaultCamera = fbxNode.GetName ();
+                }
 
                 if (Verbose)
                     Debug.Log (string.Format ("exporting {0}", fbxNode.GetName ()));
-
-                fbxNode.SetNodeAttribute (fbxNodeAttr);
-
-                // make the last camera exported the default camera
-                DefaultCamera = fbxNode.GetName ();
 
                 fbxNodeParent.AddChild (fbxNode);
 
