@@ -152,6 +152,7 @@
 %include "fbxsdk/core/fbxproperty.h"
 /***************************************************************************/
 
+%template(Set) FbxProperty::Set<FbxColor>;
 %template(Set) FbxProperty::Set<float>;
 %template(GetFloat) FbxProperty::Get<float>;
 %template(EvaluateValue) FbxProperty::EvaluateValue<float>;
