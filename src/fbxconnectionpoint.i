@@ -7,5 +7,6 @@
 
 %rename("%s", %$isclass) FbxConnection;
 %rename("%s") FbxConnection::EType;
+%declare_static_class(FbxConnection);
 
 %include "fbxsdk/core/fbxconnectionpoint.h"
