@@ -269,14 +269,6 @@ namespace FbxSdk.Examples
                 }
 
                 if (fbxProperty==null || !fbxProperty.IsValid ()) {
-                    FbxProperty prop = fbxNode.GetFirstProperty ();
-
-                    while (prop.IsValid())
-                    {
-                        Debug.LogError (string.Format (".. {0}", prop.GetName ()));
-                        prop = fbxNode.GetNextProperty(prop);
-                    }
-
                     Debug.LogError (string.Format ("cannot find fbxProperty {0} on {1}", fbxPair.Property, fbxNode.GetName ()));
                     return;
                 }
