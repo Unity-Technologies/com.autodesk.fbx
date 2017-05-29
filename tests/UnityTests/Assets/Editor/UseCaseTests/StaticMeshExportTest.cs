@@ -96,6 +96,14 @@ namespace UseCaseTests
 
     public class StaticMeshWithNormalsExportTest : StaticMeshExportTest 
     {
+        // Define normal vectors along each axis
+        protected FbxVector4 normalXPos = new FbxVector4(1,0,0);
+        protected FbxVector4 normalXNeg = new FbxVector4(-1,0,0);
+        protected FbxVector4 normalYPos = new FbxVector4(0,1,0);
+        protected FbxVector4 normalYNeg = new FbxVector4(0,-1,0);
+        protected FbxVector4 normalZPos = new FbxVector4(0,0,1);
+        protected FbxVector4 normalZNeg = new FbxVector4(0,0,-1);
+
         protected override FbxScene CreateScene (FbxManager manager)
         {
             FbxScene scene = base.CreateScene (manager);
@@ -111,14 +119,6 @@ namespace UseCaseTests
                 cubeMesh.CreateLayer ();
                 fbxLayer = cubeMesh.GetLayer (0 /* default layer */);
             }
-
-            // Define normal vectors along each axis
-            FbxVector4 normalXPos = new FbxVector4(1,0,0);
-            FbxVector4 normalXNeg = new FbxVector4(-1,0,0);
-            FbxVector4 normalYPos = new FbxVector4(0,1,0);
-            FbxVector4 normalYNeg = new FbxVector4(0,-1,0);
-            FbxVector4 normalZPos = new FbxVector4(0,0,1);
-            FbxVector4 normalZNeg = new FbxVector4(0,0,-1);
 
             using (var fbxLayerElement = FbxLayerElementNormal.Create (cubeMesh, "Normals")) 
             {
@@ -216,7 +216,84 @@ namespace UseCaseTests
         {
             base.CheckScene (scene);
 
+            FbxScene origScene = CreateScene (FbxManager);
+            Assert.IsNotNull (origScene);
 
+            // Retrieve the mesh from each scene
+            FbxMesh origMesh = origScene.GetRootNode().GetChild(0).GetMesh();
+            FbxMesh importMesh = scene.GetRootNode ().GetChild(0).GetMesh ();
+
+            // get the layers
+            FbxLayer origLayer = origMesh.GetLayer (0 /* default layer */);
+            FbxLayer importLayer = importMesh.GetLayer (0 /* default layer */);
+
+            // Check normals
+            CheckFbxElementVector4(origLayer.GetNormals(), importLayer.GetNormals());
+
+			// Check binormals
+            CheckFbxElementVector4(origLayer.GetBinormals(), importLayer.GetBinormals());
+
+			// Check tangents
+            CheckFbxElementVector4(origLayer.GetTangents(), importLayer.GetTangents());
+
+            // Check vertex colors
+            var origVertexColorElement = origLayer.GetVertexColors();
+            var importVertexColorElement = importLayer.GetVertexColors ();
+
+            Assert.AreEqual (origVertexColorElement.GetMappingMode (), importVertexColorElement.GetMappingMode());
+            Assert.AreEqual (origVertexColorElement.GetReferenceMode (), importVertexColorElement.GetReferenceMode ());
+
+            var origVertexColorElementArray = origVertexColorElement.GetDirectArray ();
+            var importVertexColorElementArray = importVertexColorElement.GetDirectArray ();
+
+            Assert.AreEqual (origVertexColorElementArray.GetCount (), importVertexColorElementArray.GetCount ());
+
+            for (int i = 0; i < origVertexColorElementArray.GetCount (); i++) {
+                Assert.AreEqual (origVertexColorElementArray.GetAt (i), importVertexColorElementArray.GetAt (i));
+            }
+
+            // Check UVs
+            var origUVElement = origLayer.GetUVs();
+            var importUVElement = importLayer.GetUVs ();
+
+            Assert.AreEqual (origUVElement.GetMappingMode (), importUVElement.GetMappingMode());
+            Assert.AreEqual (origUVElement.GetReferenceMode (), importUVElement.GetReferenceMode ());
+
+            var origUVElementArray = origUVElement.GetDirectArray ();
+            var importUVElementArray = importUVElement.GetDirectArray ();
+
+            Assert.AreEqual (origUVElementArray.GetCount (), importUVElementArray.GetCount ());
+
+            for (int i = 0; i < origUVElementArray.GetCount (); i++) {
+                Assert.AreEqual (origUVElementArray.GetAt (i), importUVElementArray.GetAt (i));
+            }
+
+            var origUVElementIndex = origUVElement.GetIndexArray ();
+            var importUVElementIndex = origUVElement.GetIndexArray ();
+
+            Assert.AreEqual (origUVElementIndex.GetCount (), importUVElementIndex.GetCount ());
+
+            for (int i = 0; i < origUVElementIndex.GetCount (); i++) {
+                Assert.AreEqual (origUVElementIndex.GetAt (i), importUVElementIndex.GetAt (i));
+            }
         }
+
+        // helper for above, to check normals, binormals, and tangents
+        protected void CheckFbxElementVector4(
+            FbxLayerElementTemplateFbxVector4 origElement,
+            FbxLayerElementTemplateFbxVector4 importElement)
+		{
+            Assert.AreEqual (origElement.GetMappingMode (), importElement.GetMappingMode());
+            Assert.AreEqual (origElement.GetReferenceMode (), importElement.GetReferenceMode ());
+
+            var origElementArray = origElement.GetDirectArray ();
+            var importElementArray = importElement.GetDirectArray ();
+
+            Assert.AreEqual (origElementArray.GetCount (), importElementArray.GetCount ());
+
+            for (int i = 0; i < origElementArray.GetCount (); i++) {
+                Assert.AreEqual (origElementArray.GetAt (i), importElementArray.GetAt (i));
+            }
+		}
     }
 }

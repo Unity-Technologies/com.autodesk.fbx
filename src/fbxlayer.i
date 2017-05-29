@@ -73,6 +73,12 @@
 %rename("%s") FbxLayer::SetUVs;
 %rename("%s") FbxLayer::SetTangents;
 %rename("%s") FbxLayer::SetMaterials;
+%rename("%s") FbxLayer::GetNormals() const;
+%rename("%s") FbxLayer::GetBinormals() const;
+%rename("%s") FbxLayer::GetVertexColors() const;
+%rename("%s") FbxLayer::GetUVs(FbxLayerElement::EType pTypeIdentifier=FbxLayerElement::eTextureDiffuse) const;
+%rename("%s") FbxLayer::GetTangents() const;
+%rename("%s") FbxLayer::GetMaterials() const;
 
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTemplate::.*";
 %rename("%s") FbxLayerElementTemplate::GetDirectArray() const;
@@ -135,6 +141,7 @@
 %ignore FbxLayerElementArray::mDataType;
 
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
+%rename("%s") FbxLayerElementArrayTemplate::GetAt;
 
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
 
@@ -147,6 +154,11 @@
 %template(SetAt) FbxLayerElementArray::SetAt<FbxColor>;
 %template(SetAt) FbxLayerElementArray::SetAt<FbxVector2>;
 %template(SetAt) FbxLayerElementArray::SetAt<FbxVector4>;
+
+%template(GetAt) FbxLayerElementArray::GetAt<int>;
+%template(GetAt) FbxLayerElementArray::GetAt<FbxColor>;
+%template(GetAt) FbxLayerElementArray::GetAt<FbxVector2>;
+%template(GetAt) FbxLayerElementArray::GetAt<FbxVector4>;
 
 // needed for FbxLayerElementTemplate templates (more specifically for the GetArray() functions)
 %template(FbxLayerElementArrayTemplateFbxColor) FbxLayerElementArrayTemplate<FbxColor>;
