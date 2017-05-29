@@ -15,17 +15,17 @@ namespace UseCaseTests
     {
         // Define the corners of a cube that spans from
         // -50 to 50 on the x and z axis, and 0 to 100 on the y axis
-        private FbxVector4 vertex0 = new FbxVector4(-50, 0, 50);
-        private FbxVector4 vertex1 = new FbxVector4(50, 0, 50);
-        private FbxVector4 vertex2 = new FbxVector4(50, 100, 50);
-        private FbxVector4 vertex3 = new FbxVector4(-50, 100, 50);
-        private FbxVector4 vertex4 = new FbxVector4(-50, 0, -50);
-        private FbxVector4 vertex5 = new FbxVector4(50, 0, -50);
-        private FbxVector4 vertex6 = new FbxVector4(50, 100, -50);
-        private FbxVector4 vertex7 = new FbxVector4(-50, 100, -50);
+        protected FbxVector4 vertex0 = new FbxVector4(-50, 0, 50);
+        protected FbxVector4 vertex1 = new FbxVector4(50, 0, 50);
+        protected FbxVector4 vertex2 = new FbxVector4(50, 100, 50);
+        protected FbxVector4 vertex3 = new FbxVector4(-50, 100, 50);
+        protected FbxVector4 vertex4 = new FbxVector4(-50, 0, -50);
+        protected FbxVector4 vertex5 = new FbxVector4(50, 0, -50);
+        protected FbxVector4 vertex6 = new FbxVector4(50, 100, -50);
+        protected FbxVector4 vertex7 = new FbxVector4(-50, 100, -50);
 
         // Control points for generating a simple cube
-        private FbxVector4[] m_controlPoints;
+        protected FbxVector4[] m_controlPoints;
 
         [SetUp]
         public override void Init ()
@@ -91,6 +91,132 @@ namespace UseCaseTests
                 Assert.AreEqual (origControlPoint.Y, importControlPoint.Y);
                 Assert.AreEqual (origControlPoint.Z, importControlPoint.Z);
             }
+        }
+    }
+
+    public class StaticMeshWithNormalsExportTest : StaticMeshExportTest 
+    {
+        protected override FbxScene CreateScene (FbxManager manager)
+        {
+            FbxScene scene = base.CreateScene (manager);
+
+            // Add normals, binormals, UVs, tangents and vertex colors to the cube
+            FbxMesh cubeMesh = scene.GetRootNode ().GetChild (0).GetMesh ();
+
+            // Add normals
+            /// Set the Normals on Layer 0.
+            FbxLayer fbxLayer = cubeMesh.GetLayer (0 /* default layer */);
+            if (fbxLayer == null)
+            {
+                cubeMesh.CreateLayer ();
+                fbxLayer = cubeMesh.GetLayer (0 /* default layer */);
+            }
+
+            // Define normal vectors along each axis
+            FbxVector4 normalXPos = new FbxVector4(1,0,0);
+            FbxVector4 normalXNeg = new FbxVector4(-1,0,0);
+            FbxVector4 normalYPos = new FbxVector4(0,1,0);
+            FbxVector4 normalYNeg = new FbxVector4(0,-1,0);
+            FbxVector4 normalZPos = new FbxVector4(0,0,1);
+            FbxVector4 normalZNeg = new FbxVector4(0,0,-1);
+
+            using (var fbxLayerElement = FbxLayerElementNormal.Create (cubeMesh, "Normals")) 
+            {
+                fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
+                fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
+
+                // Add one normal per each vertex face index (3 per triangle)
+                FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                // Assign the normal vectors in the same order the control points were defined
+                FbxVector4[] normals = {normalZPos, normalXPos, normalZNeg, normalXNeg, normalYPos, normalYNeg};
+                for (int n = 0; n < normals.Length; n++) {
+                    for (int i = 0; i < 4; i++) {
+                        fbxElementArray.Add (normals [n]);
+                    }
+                }
+                fbxLayer.SetNormals (fbxLayerElement);
+            }
+
+            /// Set the binormals on Layer 0. 
+            using (var fbxLayerElement = FbxLayerElementBinormal.Create (cubeMesh, "Binormals")) 
+            {
+                fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
+                fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
+
+                // Add one normal per each vertex face index (3 per triangle)
+                FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                for (int n = 0; n < cubeMesh.GetControlPointsCount(); n++) {
+                    fbxElementArray.Add (new FbxVector4 (-1,0,1)); // TODO: set to correct values
+                }
+                fbxLayer.SetBinormals (fbxLayerElement);
+            }
+
+            /// Set the tangents on Layer 0.
+            using (var fbxLayerElement = FbxLayerElementTangent.Create (cubeMesh, "Tangents")) 
+            {
+                fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
+                fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
+
+                // Add one normal per each vertex face index (3 per triangle)
+                FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                for (int n = 0; n < cubeMesh.GetControlPointsCount(); n++) {
+                    fbxElementArray.Add (new FbxVector4 (0,-1,1)); // TODO: set to correct values
+                }
+                fbxLayer.SetTangents (fbxLayerElement);
+            }
+
+            // set the vertex colors
+            using (var fbxLayerElement = FbxLayerElementVertexColor.Create (cubeMesh, "VertexColors")) 
+            {
+                fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByControlPoint);
+                fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eDirect);
+
+                // Add one normal per each vertex face index (3 per triangle)
+                FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                // make each vertex either black or white
+                for (int n = 0; n < cubeMesh.GetControlPointsCount (); n++) {
+                    fbxElementArray.Add (new FbxColor (n % 2, n % 2, n % 2));
+                }
+
+                fbxLayer.SetVertexColors (fbxLayerElement);
+            }
+
+            // set the UVs
+            using (var fbxLayerElement = FbxLayerElementUV.Create (cubeMesh, "UVSet"))
+            {
+                fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByPolygonVertex);
+                fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eIndexToDirect);
+
+                // set texture coordinates per vertex
+                FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                for (int n = 0; n < 8; n++) {
+                    fbxElementArray.Add (new FbxVector2 (n % 2,1)); // TODO: switch to correct values
+                }
+
+                // For each face index, point to a texture uv
+                FbxLayerElementArray fbxIndexArray = fbxLayerElement.GetIndexArray ();
+                fbxIndexArray.SetCount (12);
+
+                for (int vertIndex = 0; vertIndex < 12; vertIndex++)
+                {
+                    fbxIndexArray.SetAt (vertIndex, vertIndex % 8); // TODO: switch to correct values
+                }
+                fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.EType.eTextureDiffuse);
+            }
+
+            return scene;
+        }
+
+        protected override void CheckScene (FbxScene scene)
+        {
+            base.CheckScene (scene);
+
+
         }
     }
 }
