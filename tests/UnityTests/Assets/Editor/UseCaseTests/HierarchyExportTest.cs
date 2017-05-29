@@ -24,11 +24,11 @@ namespace UseCaseTests
             // create the following node hierarchy to test:
             //       Root
             //      /    \
-            // child0    child1
+            // Child0    Child1
             //              |
-            //            child2
+            //            Child2
             //         /    |     \
-            //    child3  child4  child5
+            //    Child3  Child4  Child5
             FbxScene scene = FbxScene.Create (manager, "myScene");
 
             FbxNode root = FbxNode.Create (scene, "Root");
@@ -70,10 +70,9 @@ namespace UseCaseTests
             Assert.IsNotNull (node2);
 
             Assert.AreEqual (node1.GetChildCount (), node2.GetChildCount ());
+            Assert.AreEqual (node1.GetName (), node2.GetName ());
 
             for (int i = 0; i < node1.GetChildCount (); i++) {
-                Assert.AreEqual (node1.GetChild (i).GetName (), node2.GetChild (i).GetName ());
-
                 // recurse through the hierarchy
                 CheckSceneHelper (node1.GetChild (i), node2.GetChild (i));
             }

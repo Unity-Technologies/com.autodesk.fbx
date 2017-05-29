@@ -15,13 +15,14 @@ namespace UseCaseTests
     public abstract class RoundTripTest
     {
         private string _filePath;
-        protected string filePath       { get { return _filePath ?? "."; } set { _filePath = value; } }
+        protected string filePath       { get { return string.IsNullOrEmpty(_filePath) ? "." : _filePath; } set { _filePath = value; } }
 
         private string _fileNamePrefix;
-        protected string fileNamePrefix { get { return _fileNamePrefix ?? "_safe_to_delete__"; } set { _fileNamePrefix = value; } }
+        protected string fileNamePrefix { get { return string.IsNullOrEmpty(_fileNamePrefix) ? "_safe_to_delete__" : _fileNamePrefix; }
+                                          set { _fileNamePrefix = value; } }
 
         private string _fileNameExt;
-        protected string fileNameExt    { get { return _fileNameExt ?? ".fbx"; } set { _fileNameExt = value; } }
+        protected string fileNameExt    { get { return string.IsNullOrEmpty(_fileNameExt) ? ".fbx" : _fileNameExt; } set { _fileNameExt = value; } }
 
         private string MakeFileName(string baseName = null, string prefixName = null, string extName = null)
         {
