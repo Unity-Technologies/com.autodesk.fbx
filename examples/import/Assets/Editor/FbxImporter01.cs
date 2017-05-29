@@ -21,14 +21,18 @@ namespace FbxSdk.Examples
         public class FbxImporter01 : System.IDisposable
         {
             const string Title =
-                 "Example 01: import scene and log basic info";
+                 "Example 01: import scene and report basic information";
 
             const string Subject =
                  @"Example FbxImporter01 illustrates how to:
                                 1) create and initialize the importer
-                                2) import the scene from an FBX file (FBX201400 compatible)
-                                3) report basic information about scene";
-
+                                2) report sdk and file versions
+                                3) report animation (stack) information
+                                3) import the scene
+                                4) report scene meta-data
+                                5) check if the system unit and axis system are compatible with Unity
+                    ";
+            
             const string Keywords =
                  "import scene";
 
