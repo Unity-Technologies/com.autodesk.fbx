@@ -296,4 +296,152 @@ namespace UseCaseTests
             }
 		}
     }
+
+    public class StaticMeshWithMaterialExportTest : StaticMeshExportTest {
+
+        private string m_materialName = "MaterialTest";
+
+        protected override FbxScene CreateScene (FbxManager manager)
+        {
+            FbxScene scene = base.CreateScene (manager);
+
+            // Set the UVs
+            FbxMesh cubeMesh = scene.GetRootNode ().GetChild (0).GetMesh ();
+
+            FbxLayer fbxLayer = cubeMesh.GetLayer (0 /* default layer */);
+            if (fbxLayer == null)
+            {
+                cubeMesh.CreateLayer ();
+                fbxLayer = cubeMesh.GetLayer (0 /* default layer */);
+            }
+
+            using (var fbxLayerElement = FbxLayerElementUV.Create (cubeMesh, "UVSet"))
+            {
+                fbxLayerElement.SetMappingMode (FbxLayerElement.EMappingMode.eByPolygonVertex);
+                fbxLayerElement.SetReferenceMode (FbxLayerElement.EReferenceMode.eIndexToDirect);
+
+                // set texture coordinates per vertex
+                FbxLayerElementArray fbxElementArray = fbxLayerElement.GetDirectArray ();
+
+                for (int n = 0; n < 8; n++) {
+                    fbxElementArray.Add (new FbxVector2 (n % 2,1)); // TODO: switch to correct values
+                }
+
+                // For each face index, point to a texture uv
+                FbxLayerElementArray fbxIndexArray = fbxLayerElement.GetIndexArray ();
+                fbxIndexArray.SetCount (12);
+
+                for (int vertIndex = 0; vertIndex < 12; vertIndex++)
+                {
+                    fbxIndexArray.SetAt (vertIndex, vertIndex % 8); // TODO: switch to correct values
+                }
+                fbxLayer.SetUVs (fbxLayerElement, FbxLayerElement.EType.eTextureDiffuse);
+            }
+
+            // Create the material
+            var fbxMaterial = FbxSurfacePhong.Create (scene, m_materialName);
+
+            fbxMaterial.Diffuse.Set(new FbxColor(1,1,1));
+            fbxMaterial.Emissive.Set(new FbxColor(0.5,0.1,0.2));
+            fbxMaterial.Ambient.Set(new FbxDouble3 (0.3, 0.4, 0));
+            fbxMaterial.BumpFactor.Set (0.6);
+            fbxMaterial.Specular.Set(new FbxDouble3(0.8, 0.7, 0.9));
+
+            // Create and add the texture
+            var fbxMaterialProperty = fbxMaterial.FindProperty (FbxSurfaceMaterial.sDiffuse);
+            Assert.IsNotNull (fbxMaterialProperty);
+            Assert.IsTrue (fbxMaterialProperty.IsValid ());
+
+            var fbxTexture = FbxFileTexture.Create (fbxMaterial, FbxSurfaceMaterial.sDiffuse + "_Texture");
+            fbxTexture.SetFileName ("/path/to/some/texture.jpg");
+            fbxTexture.SetTextureUse (FbxTexture.ETextureUse.eStandard);
+            fbxTexture.SetMappingType (FbxTexture.EMappingType.eUV);
+
+            fbxTexture.ConnectDstProperty (fbxMaterialProperty);
+
+            scene.GetRootNode ().GetChild (0).AddMaterial (fbxMaterial);
+            return scene;
+        }
+
+        protected override void CheckScene (FbxScene scene)
+        {
+            base.CheckScene (scene);
+
+            FbxScene origScene = CreateScene (FbxManager);
+            Assert.IsNotNull (origScene);
+
+            // Retrieve the mesh from each scene
+            FbxMesh origMesh = origScene.GetRootNode().GetChild(0).GetMesh();
+            FbxMesh importMesh = scene.GetRootNode ().GetChild(0).GetMesh ();
+
+            // get the layers
+            FbxLayer origLayer = origMesh.GetLayer (0 /* default layer */);
+            FbxLayer importLayer = importMesh.GetLayer (0 /* default layer */);
+
+            // Check UVs
+            var origUVElement = origLayer.GetUVs();
+            var importUVElement = importLayer.GetUVs ();
+
+            Assert.AreEqual (origUVElement.GetMappingMode (), importUVElement.GetMappingMode());
+            Assert.AreEqual (origUVElement.GetReferenceMode (), importUVElement.GetReferenceMode ());
+
+            var origUVElementArray = origUVElement.GetDirectArray ();
+            var importUVElementArray = importUVElement.GetDirectArray ();
+
+            Assert.AreEqual (origUVElementArray.GetCount (), importUVElementArray.GetCount ());
+
+            for (int i = 0; i < origUVElementArray.GetCount (); i++) {
+                Assert.AreEqual (origUVElementArray.GetAt (i), importUVElementArray.GetAt (i));
+            }
+
+            var origUVElementIndex = origUVElement.GetIndexArray ();
+            var importUVElementIndex = origUVElement.GetIndexArray ();
+
+            Assert.AreEqual (origUVElementIndex.GetCount (), importUVElementIndex.GetCount ());
+
+            for (int i = 0; i < origUVElementIndex.GetCount (); i++) {
+                Assert.AreEqual (origUVElementIndex.GetAt (i), importUVElementIndex.GetAt (i));
+            }
+
+            // Check material and texture
+            var origNode = origScene.GetRootNode().GetChild(0);
+            int origMatIndex = origNode.GetMaterialIndex (m_materialName);
+            Assert.GreaterOrEqual (origMatIndex, 0);
+            var origMaterial = origNode.GetMaterial(origMatIndex);
+            Assert.IsNotNull (origMaterial);
+
+            var importNode = scene.GetRootNode().GetChild(0);
+            int importMatIndex = importNode.GetMaterialIndex (m_materialName);
+            Assert.GreaterOrEqual (importMatIndex, 0);
+            var importMaterial = importNode.GetMaterial (importMatIndex);
+            Assert.IsNotNull (importMaterial);
+
+            // TODO: Trying to Downcast the material to an FbxSurfacePhong returns a null value,
+            //       need to figure out how to fix this so we can access the material properties.
+            /*Assert.AreEqual (origMaterial.Diffuse.Get (), importMaterial.Diffuse.Get ());
+            Assert.AreEqual (origMaterial.Emissive.Get (), importMaterial.Emissive.Get ());
+            Assert.AreEqual (origMaterial.Ambient.Get (), importMaterial.Ambient.Get ());
+            Assert.AreEqual (origMaterial.BumpFactor.Get (), importMaterial.BumpFactor.Get ());
+            Assert.AreEqual (origMaterial.Specular.Get (), importMaterial.Specular.Get ());*/
+
+            var origMaterialProperty = origMaterial.FindProperty (FbxSurfaceMaterial.sDiffuse);
+            Assert.IsNotNull (origMaterialProperty);
+            Assert.IsTrue (origMaterialProperty.IsValid ());
+
+            var importMaterialProperty = importMaterial.FindProperty (FbxSurfaceMaterial.sDiffuse);
+            Assert.IsNotNull (importMaterialProperty);
+            Assert.IsTrue (importMaterialProperty.IsValid ());
+
+            var origTexture = origMaterialProperty.FindSrcObject (FbxSurfaceMaterial.sDiffuse + "_Texture");
+            Assert.IsNotNull (origTexture);
+            var importTexture = importMaterialProperty.FindSrcObject (FbxSurfaceMaterial.sDiffuse + "_Texture");
+            Assert.IsNotNull (importTexture);
+
+            // TODO: Trying to Downcast the texture to an FbxFileTexture returns a null value,
+            //       need to figure out how to fix this so we can access the texture properties.
+            /*Assert.AreEqual (origTexture.GetFileName (), importTexture.GetFileName ());
+            Assert.AreEqual (origTexture.GetTextureUse (), importTexture.GetTextureUse ());
+            Assert.AreEqual (origTexture.GetMappingType (), importTexture.GetMappingType ());*/
+        }
+    }
 }
