@@ -103,6 +103,20 @@ namespace UnitTests
             // Add a material.
             var mat = FbxSurfaceMaterial.Create(Manager, "mat");
             Assert.AreEqual(0, fooNode.AddMaterial(mat));
+            Assert.That(() => { fooNode.AddMaterial (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
+            int matIndex = fooNode.GetMaterialIndex ("mat");
+            Assert.GreaterOrEqual (matIndex, 0);
+            Assert.AreEqual (fooNode.GetMaterial (matIndex), mat);
+
+            // test that invalid material index doesnt crash
+            fooNode.GetMaterial(int.MinValue);
+            fooNode.GetMaterial (int.MaxValue);
+
+            Assert.Less (fooNode.GetMaterialIndex ("not a mat"), 0);
+            // TODO: Find a way to do a null arg check without breaking Create function
+            //       (as they both us pName as a param)
+            //Assert.That(() => { fooNode.GetMaterialIndex (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // Test whether it's a skeleton, camera, etc. It isn't.
             Assert.IsNull(fooNode.GetCamera());
