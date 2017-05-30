@@ -49,6 +49,16 @@
 %rename("%s") FbxNode::SetPivotState;
 %rename("%s") FbxNode::SetRotationActive;
 %rename("%s") FbxNode::GetRotationActive;
+%rename("%s") FbxNode::GetPostRotation;
+%rename("%s") FbxNode::SetPostRotation;
+%rename("%s") FbxNode::GetRotationPivot;
+%rename("%s") FbxNode::SetRotationPivot;
+%rename("%s") FbxNode::GetRotationOffset;
+%rename("%s") FbxNode::SetRotationOffset;
+%rename("%s") FbxNode::GetScalingOffset;
+%rename("%s") FbxNode::SetScalingOffset;
+%rename("%s") FbxNode::GetScalingPivot;
+%rename("%s") FbxNode::SetScalingPivot;
 #endif
 
 /* The properties need to be marked immutable. */

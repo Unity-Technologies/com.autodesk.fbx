@@ -60,6 +60,18 @@ namespace UseCaseTests
             root.LclRotation.Set(new FbxDouble3(0,0,0));
             root.LclScaling.Set(new FbxDouble3(1,1,1));
 
+            // Set the pre/post rotation, pivots and offsets
+            // NOTE: For some reason when using PreRotation.Set() instead of SetPreRotation(),
+            //       the PreRotation does not get imported properly. Same is true for the other properties.
+            //       Also only works if EPivot set is SourcePivot.
+            //       TODO: figure out why the other ways don't work.
+            root.SetPreRotation(FbxNode.EPivotSet.eSourcePivot, new FbxVector4(30, 10, 45));
+            root.SetPostRotation (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (9, 10, 5));
+            root.SetRotationPivot (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (5, 6, 7));
+            root.SetScalingPivot (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (1, 2, 1));
+            root.SetRotationOffset (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (0.6, 8, 0.3));
+            root.SetScalingOffset (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (10, 4, 3));
+
             FbxNode[] children = new FbxNode[3];
             FbxDouble3[][] transforms = {
                 new FbxDouble3[]{new FbxDouble3(1,1,1), new FbxDouble3(0,0,90), new FbxDouble3(2,2,2)},
@@ -78,6 +90,14 @@ namespace UseCaseTests
                 children [i].LclTranslation.Set (transforms [i] [0]);
                 children [i].LclRotation.Set (transforms [i] [1]);
                 children [i].LclScaling.Set (transforms [i] [2]);
+
+                // set some values to check against later (doesn't really matter what the values are)
+                children [i].SetPreRotation(FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (i, i*2, i%3));
+                children [i].SetPostRotation (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (i-1, i+5, i));
+                children [i].SetRotationPivot (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (i/2, i, i+3));
+                children [i].SetScalingPivot (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (i*5, i-1, i/4));
+                children [i].SetRotationOffset (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (0.6*i, 8, i/2.0f));
+                children [i].SetScalingOffset (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (i, i, i));
             }
 
             // Create the hierarchy
@@ -117,9 +137,27 @@ namespace UseCaseTests
             Assert.AreEqual (node1.LclRotation.Get(), node2.LclRotation.Get());
             Assert.AreEqual (node1.LclScaling.Get(), node2.LclScaling.Get());
 
-            for (int i = 0; i < node1.GetChildCount (); i++) {
-                Assert.AreEqual (node1.GetChild (i).GetName (), node2.GetChild (i).GetName ());
+            Assert.AreEqual (node1.GetPreRotation (FbxNode.EPivotSet.eSourcePivot),
+                node2.GetPreRotation (FbxNode.EPivotSet.eSourcePivot));
+            
+            Assert.AreEqual (node1.GetPostRotation(FbxNode.EPivotSet.eSourcePivot), 
+                node2.GetPostRotation(FbxNode.EPivotSet.eSourcePivot));
+            
+            Assert.AreEqual (node1.GetRotationPivot(FbxNode.EPivotSet.eSourcePivot),
+                node2.GetRotationPivot(FbxNode.EPivotSet.eSourcePivot));
+            
+            Assert.AreEqual (node1.GetScalingPivot(FbxNode.EPivotSet.eSourcePivot),
+                node2.GetScalingPivot(FbxNode.EPivotSet.eSourcePivot));
+            
+            Assert.AreEqual (node1.GetRotationOffset(FbxNode.EPivotSet.eSourcePivot),
+                node2.GetRotationOffset(FbxNode.EPivotSet.eSourcePivot));
+            
+            Assert.AreEqual (node1.GetScalingOffset(FbxNode.EPivotSet.eSourcePivot),
+                node2.GetScalingOffset(FbxNode.EPivotSet.eSourcePivot));
 
+            Assert.AreEqual (node1.GetName (), node2.GetName ());
+
+            for (int i = 0; i < node1.GetChildCount (); i++) {
                 // recurse through the hierarchy
                 CheckSceneHelper (node1.GetChild (i), node2.GetChild (i));
             }
