@@ -23,7 +23,7 @@ namespace FbxSdk.Examples
         public class FbxImporter04 : System.IDisposable
         {
             const string Title =
-                 "Example 04: import scene with static meshes";
+                 "Example 04: import scene static mesh with UVs";
 
             const string Subject =
                  @"Example FbxImporter04 illustrates how to:
@@ -32,8 +32,8 @@ namespace FbxSdk.Examples
                                 3) visit each node in hierarchy
                                 4) construct local translation, rotation and scaling taking pre/post rotations, pivots and offsets into effect
                                 5) create mesh filter and renderer
-                                6) assign layer attributes: uv0, vertexcolors, normals and tangents
-                                7) create a game object with same name, parent, transformation matrix, mesh and, layer attributes
+                                6) assign mesh attributes: uv, uv2, uv3, uv4
+                                7) create a game object with same name, parent, transformation matrix, mesh and, mesh attributes
                     ";
 
             const string Keywords =
@@ -42,7 +42,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"";
 
-            const string MenuItemName = "File/Import FBX/04. Import UVs, VertexColors, Normals etc";
+            const string MenuItemName = "File/Import FBX/04. Import UVs";
 
             /// <summary>
             /// Create instance of example
