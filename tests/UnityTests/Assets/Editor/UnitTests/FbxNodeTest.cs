@@ -204,12 +204,31 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestSetPreRotation(){
+        public void TestSetRotationScalePivotOffset(){
             using (FbxNode node = CreateObject ("root")) {
                 FbxVector4 rot = new FbxVector4 (1, 2, 3);
                 node.SetPreRotation (FbxNode.EPivotSet.eSourcePivot, rot);
                 Assert.AreEqual(rot, node.GetPreRotation(FbxNode.EPivotSet.eSourcePivot));
                 Assert.AreNotEqual (rot, node.GetPreRotation (FbxNode.EPivotSet.eDestinationPivot));
+
+                node.SetPostRotation (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetPostRotation (FbxNode.EPivotSet.eSourcePivot));
+
+                rot.X = 5;
+                node.SetPostRotation (FbxNode.EPivotSet.eDestinationPivot, rot);
+                Assert.AreEqual (rot, node.GetPostRotation (FbxNode.EPivotSet.eDestinationPivot));
+
+                node.SetRotationPivot (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetRotationPivot (FbxNode.EPivotSet.eSourcePivot));
+
+                node.SetRotationOffset (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetRotationOffset (FbxNode.EPivotSet.eSourcePivot));
+
+                node.SetScalingPivot (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetScalingPivot (FbxNode.EPivotSet.eSourcePivot));
+
+                node.SetScalingOffset (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetScalingOffset (FbxNode.EPivotSet.eSourcePivot));
             }
         }
 
