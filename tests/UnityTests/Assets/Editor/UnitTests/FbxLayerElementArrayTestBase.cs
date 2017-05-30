@@ -11,62 +11,56 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxLayerElementArrayTest
+    public abstract class FbxLayerElementArrayTestBase<T> where T : FbxSdk.FbxLayerElementArray
     {
+        static System.Reflection.ConstructorInfo s_constructor;
+
+        static FbxLayerElementArrayTestBase() {
+            s_constructor = typeof(T).GetConstructor (new[] { typeof(EFbxType) });
+
+            #if ENABLE_COVERAGE_TEST
+            // Register the calls we make through reflection.
+
+            if (s_constructor != null) {
+                var constructor = typeof(FbxLayerElementArrayTestBase<T>).GetMethod("CreateObject", new System.Type[] { typeof(EFbxType) });
+                CoverageTester.RegisterReflectionCall(constructor, s_constructor);
+            }
+            #endif
+        }
+
+        public T CreateObject (EFbxType type = EFbxType.eFbxBlob) {
+            return Invoker.InvokeConstructor<T>(s_constructor, type);
+        }
 
         [Test]
-        public void TestSetCount ()
+        public virtual void TestBasics()
         {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxDouble);
+            T layerElementArray = CreateObject ();
 
+            // Test SetCount()
             layerElementArray.SetCount (1);
             Assert.AreEqual (layerElementArray.GetCount (), 1);
 
             // test invalid
             layerElementArray.SetCount (-1);
-        }
 
-        [Test]
-        public void TestAddInt ()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxInt);
-
+            // Test AddInt()
             layerElementArray.Add (0);
             layerElementArray.Add (-1);
-        }
 
-        [Test]
-        public void TestAddFbxColor ()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
-
+            // Test AddFbxColor()
             layerElementArray.Add (new FbxColor ());
             layerElementArray.Add (new FbxColor (1, 0, 0));
-        }
 
-        [Test]
-        public void TestAddFbxVector2 ()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
-
+            // Test AddFbxVector2()
             layerElementArray.Add (new FbxVector2 ());
             layerElementArray.Add (new FbxVector2 (1, 0));
-        }
 
-        [Test]
-        public void TestAddFbxVector4 ()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
-
+            // Test AddFbxVector4()
             layerElementArray.Add (new FbxVector4 ());
             layerElementArray.Add (new FbxVector4 (1, 0, 0));
-        }
 
-        [Test]
-        public void TestSetAtInt ()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
-
+            // Test SetAtInt()
             layerElementArray.SetAt (0, 1);
 
             // test invalid index
@@ -74,35 +68,20 @@ namespace UnitTests
 
             // test negative int
             layerElementArray.SetAt (1, -1);
-        }
 
-        [Test]
-        public void TestSetAtFbxColor ()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
-
+            // Test SetAtFbxColor()
             layerElementArray.SetAt (0, new FbxColor ());
 
             // test invalid index
             layerElementArray.SetAt (-1, new FbxColor ());
-        }
 
-        [Test]
-        public void TestSetAtFbxVector2 ()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
-
+            // Test SetFbxVector2()
             layerElementArray.SetAt (0, new FbxVector2 ());
 
             // test invalid index
             layerElementArray.SetAt (-1, new FbxVector2 ());
-        }
 
-        [Test]
-        public void TestSetAtFbxVector4 ()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
-
+            // Test SetAtFbxVector4()
             layerElementArray.SetAt (0, new FbxVector4 ());
 
             // test invalid index
@@ -127,29 +106,19 @@ namespace UnitTests
 
         #if ENABLE_COVERAGE_TEST
         [Test]
-        public virtual void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxLayerElementArray), this.GetType()); }
+        public void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
         #endif
     }
 
-    public abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTest where T : FbxSdk.FbxLayerElementArray {
+    public abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTestBase<T> where T : FbxSdk.FbxLayerElementArray {
 
-        static System.Reflection.ConstructorInfo s_constructor;
         static System.Reflection.MethodInfo s_getAt;
 
         static FbxLayerElementArrayTemplateTestBase() {
-            s_constructor = typeof(T).GetConstructor (new[] { typeof(EFbxType) });
-
             s_getAt = typeof(T).GetMethod("GetAt", new System.Type[] { typeof(int) });
 
             #if ENABLE_COVERAGE_TEST
             // Register the calls we make through reflection.
-
-            // We use reflection in CreateObject(FbxLayerContainer, string)
-            if (s_constructor != null) {
-                var constructor = typeof(FbxLayerElementArrayTemplateTestBase<T,U>).GetMethod("CreateObject", new System.Type[] { typeof(EFbxType) });
-                CoverageTester.RegisterReflectionCall(constructor, s_constructor);
-            }
-
             if(s_getAt != null){
                 var getAt = typeof(FbxLayerElementArrayTemplateTestBase<T,U>).GetMethod("GetAt");
                 CoverageTester.RegisterReflectionCall(getAt, s_getAt);
@@ -157,19 +126,9 @@ namespace UnitTests
             #endif
         }
 
-        /* Create an object with the default manager. */
-        public T CreateObject (EFbxType type = EFbxType.eFbxBlob) {
-            return Invoker.InvokeConstructor<T>(s_constructor, type);
-        }
-
         public U GetAt(T layerElementArray, int index){
             return Invoker.Invoke<U> (s_getAt, layerElementArray, index);
         }
-
-        #if ENABLE_COVERAGE_TEST
-        [Test]
-        public override void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
-        #endif
 
         [Test]
         public void TestGetAt()
@@ -182,6 +141,8 @@ namespace UnitTests
             GetAt (layerElementArrayTemplate, int.MaxValue);
         }
     }
+
+    public class FbxLayerElementArrayTest : FbxLayerElementArrayTestBase<FbxLayerElementArray> {}
 
     public class FbxLayerElementArrayTemplateFbxColorTest : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxColor,FbxColor> {}
