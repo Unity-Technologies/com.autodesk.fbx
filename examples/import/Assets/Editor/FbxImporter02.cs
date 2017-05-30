@@ -21,7 +21,7 @@ namespace FbxSdk.Examples
         public class FbxImporter02 : System.IDisposable
         {
             const string Title =
-                 "Example 01: import scene and report basic information";
+                 "Example 02: import node hierarchy";
 
             const string Subject =
                  @"Example FbxImporter02 illustrates how to:
@@ -29,7 +29,7 @@ namespace FbxSdk.Examples
                                 2) import the scene
                                 3) visit each node in hierarchy
                                 4) construct local translation, rotation and scaling taking pre/post rotations, pivots and offsets into effect
-                                4) create a game object with same name and parent
+                                4) create a Unity game object with same name, parent and, transformation matrix
                     ";
 
             const string Keywords =
