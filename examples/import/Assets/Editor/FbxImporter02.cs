@@ -79,8 +79,6 @@ namespace FbxSdk.Examples
                 FbxAMatrix fbxPostRotationM = new FbxAMatrix ();
                 fbxPostRotationM.SetR(fbxPostRotation);
 
-                FbxAMatrix fbxLRM = fbxPreRotationM * fbxRotationM * fbxPostRotationM;
-
                 // Construct translation matrix
                 FbxAMatrix fbxTranslationM = new FbxAMatrix ();
                 FbxVector4 fbxTranslation = new FbxVector4 (fbxNode.LclTranslation.Get ());
