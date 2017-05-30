@@ -11,7 +11,7 @@ using FbxSdk;
 
 namespace UseCaseTests
 {
-    public class StaticMeshExportTest : RoundTripTest
+    public class StaticMeshExportTest : RoundTripTestBase
     {
         // Define the corners of a cube that spans from
         // -50 to 50 on the x and z axis, and 0 to 100 on the y axis

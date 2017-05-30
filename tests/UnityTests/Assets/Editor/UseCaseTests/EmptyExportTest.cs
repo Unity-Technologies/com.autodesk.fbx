@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace UseCaseTests
 {
 
-    public class EmptyExportTest : RoundTripTest
+    public class EmptyExportTest : RoundTripTestBase
     {
 
         private static Dictionary<string, string> m_dataValues = new Dictionary<string, string> ()

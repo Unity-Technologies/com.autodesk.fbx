@@ -10,7 +10,7 @@ using FbxSdk;
 
 namespace UseCaseTests
 {
-    public class HierarchyExportTest : RoundTripTest
+    public class HierarchyExportTest : RoundTripTestBase
     {
         [SetUp]
         public override void Init ()

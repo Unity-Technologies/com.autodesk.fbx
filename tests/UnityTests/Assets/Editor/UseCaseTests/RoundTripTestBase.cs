@@ -12,7 +12,7 @@ using FbxSdk;
 
 namespace UseCaseTests
 {
-    public abstract class RoundTripTest
+    public abstract class RoundTripTestBase
     {
         private string _filePath;
         protected string filePath       { get { return string.IsNullOrEmpty(_filePath) ? "." : _filePath; } set { _filePath = value; } }
