@@ -49,6 +49,9 @@ namespace FbxSdk.Examples
             /// </summary>
             public static FbxImporter04 Create () { return new FbxImporter04 (); }
 
+            /// <summary>
+            /// Process a single UV dataset and return data for configuring a Mesh UV attribute
+            /// </summary>
             private Vector2 [] ProcessUVSet (FbxLayerElementUV element,
                                             int [] indices,
                                             int indexCount,
@@ -107,6 +110,9 @@ namespace FbxSdk.Examples
                 return result;
             }
 
+            /// <summary>
+            /// Process UV data and configure the Mesh's UV attributes
+            /// </summary>
             private void ProcessUVs (FbxMesh fbxMesh, Mesh unityMesh, int maxUVs = 4)
             {
                 // Import UV sets (maximum defined by maxUVs)
@@ -188,7 +194,10 @@ namespace FbxSdk.Examples
                 }
 #endif
             }
-                
+
+            /// <summary>
+            /// Process mesh data and setup MeshFilter component
+            /// </summary>
             private void ProcessMesh (FbxNode fbxNode, GameObject unityGo)
             {
                 FbxMesh fbxMesh = fbxNode.GetMesh ();
@@ -250,6 +259,9 @@ namespace FbxSdk.Examples
                 }
             }
 
+            /// <summary>
+            /// Process transformation data and setup Transform component
+            /// </summary>
             private void ProcessTransform (FbxNode fbxNode, GameObject unityGo)
             {
                 FbxVector4 lclTrs = new FbxVector4 ();
@@ -327,7 +339,7 @@ namespace FbxSdk.Examples
             }
 
             /// <summary>
-            /// Process fbx scene by doing nothing
+            /// Process fbxNode and create corresponding GameObject
             /// </summary>
             public void ProcessNode (FbxNode fbxNode, GameObject unityParentObj = null)
             {
