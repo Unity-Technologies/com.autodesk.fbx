@@ -131,7 +131,7 @@ namespace FbxSdk.Examples
 #endif
 
                 Debug.Log (string.Format ("processing {3} Lcl : T({0}) R({1}) S({2})",
-										 lclTrs.ToString (), 
+                                         lclTrs.ToString (), 
                                          lclRot.ToString (),
                                          lclScl.ToString (),
                                          fbxNode.GetName()));
@@ -144,7 +144,7 @@ namespace FbxSdk.Examples
                 {
                     ProcessNode(fbxNode.GetChild (i), unityGo);
                 }
-            }
+            }`
 
             /// <summary>
             /// Convert scene's system units but leave scaling unchanged
@@ -195,13 +195,13 @@ namespace FbxSdk.Examples
             {
                 Debug.Log (string.Format ("Scene name: {0}", fbxScene.GetName()));
 
-            	var fbxSettings = fbxScene.GetGlobalSettings ();
-            	FbxSystemUnit fbxSystemUnit = fbxSettings.GetSystemUnit ();
+                var fbxSettings = fbxScene.GetGlobalSettings ();
+                FbxSystemUnit fbxSystemUnit = fbxSettings.GetSystemUnit ();
 
-            	if (fbxSystemUnit != UnitySystemUnit) 
+                if (fbxSystemUnit != UnitySystemUnit) 
                 {
-            		Debug.LogWarning (string.Format ("file system unit do not match Unity. Expected {0}, found {1}",
-            								 UnitySystemUnit, fbxSystemUnit));
+                    Debug.LogWarning (string.Format ("file system unit do not match Unity. Expected {0}, found {1}",
+                                             UnitySystemUnit, fbxSystemUnit));
 
                     ConvertScene (fbxScene, UnitySystemUnit);
                 } 
@@ -210,18 +210,18 @@ namespace FbxSdk.Examples
                     Debug.Log (string.Format("file system units {0}", fbxSystemUnit));
                 }
 
-            	// The Unity axis system has Y up, Z forward, X to the right.
-            	FbxAxisSystem fbxAxisSystem = fbxSettings.GetAxisSystem ();
+                // The Unity axis system has Y up, Z forward, X to the right.
+                FbxAxisSystem fbxAxisSystem = fbxSettings.GetAxisSystem ();
 
-            	if (fbxAxisSystem != UnityAxisSystem) {
+                if (fbxAxisSystem != UnityAxisSystem) {
                     Debug.LogWarning (string.Format ("file axis system do not match Unity, Expected {0} found {1}",
                                                      AxisSystemToString (UnityAxisSystem),
                                                      AxisSystemToString (fbxAxisSystem)));
-            	}
+                }
 
                 ProcessNode (fbxScene.GetRootNode ());
 
-            	return;
+                return;
             }
 
 
