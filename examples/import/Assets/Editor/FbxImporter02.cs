@@ -62,8 +62,8 @@ namespace FbxSdk.Examples
                 }
 
                 FbxVector4 lclTrs = new FbxVector4();
-                FbxVector4 lclRot = new FbxVector4();
-                FbxVector4 lclScl = new FbxVector4();
+                FbxQuaternion lclRot = new FbxQuaternion();
+                FbxVector4 lclScl = new FbxVector4(1.0f, 1.0f, 1.0f);
 
 #if UNI_18844
                 // Construct rotation matrices
@@ -79,9 +79,7 @@ namespace FbxSdk.Examples
                 FbxAMatrix fbxPostRotationM = new FbxAMatrix ();
                 fbxPostRotationM.SetR(fbxPostRotation);
 
-                FbxAMatrix fbxLRM = new FbxAMatrix ();
-
-                fbxLRM = fbxPreRotationM * fbxRotationM * fbxPostRotationM;
+                FbxAMatrix fbxLRM = fbxPreRotationM * fbxRotationM * fbxPostRotationM;
 
                 // Construct translation matrix
                 FbxAMatrix fbxTranslationM = new FbxAMatrix ();
@@ -110,9 +108,7 @@ namespace FbxSdk.Examples
                 FbxVector4 fbxScalingPivot = fbxNode.ScalingPivot.Get ();
                 fbxScalingPivotM.SetT(fbxScalingPivot);
 
-                FbxAMatrix fbxTransform = new FbxAMatrix ();
-
-                fbxTransform = 
+                FbxAMatrix fbxTransform = 
                     fbxTranslationM * 
                     fbxRotationOffsetM * 
                     fbxRotationPivotM * 
@@ -126,7 +122,7 @@ namespace FbxSdk.Examples
                     fbxScalingPivotM.Inverse ();
                 
                 FbxVector4 lclTrs = fbxTransform.GetT ();
-                FbxVector4 lclRot = fbxTransform.GetR ();
+                FbxQuaternion lclRot = fbxTransform.GetQ ();
                 FbxVector4 lclScl = fbxTransform.GetS ();
 #endif
 
@@ -136,15 +132,20 @@ namespace FbxSdk.Examples
                                          lclScl.ToString (),
                                          fbxNode.GetName()));
 
+                // check we can handle translation value
+                Debug.Assert (lclTrs.X <= float.MaxValue && lclTrs.X >= float.MinValue);
+                Debug.Assert (lclTrs.Y <= float.MaxValue && lclTrs.Y >= float.MinValue);
+                Debug.Assert (lclTrs.Z <= float.MaxValue && lclTrs.Z >= float.MinValue);
+
                 unityGo.transform.localPosition = new Vector3 ((float)lclTrs.X, (float)lclTrs.Y, (float)lclTrs.Z);
-                unityGo.transform.localRotation = Quaternion.Euler((float)lclRot.X, (float)lclRot.Y, (float)lclRot.Z);
+                unityGo.transform.localRotation = new Quaternion((float)lclRot[0], (float)lclRot[1], (float)lclRot[2], (float)lclRot[3]);
                 unityGo.transform.localScale = new Vector3 ((float)lclScl.X, (float)lclScl.Y, (float)lclScl.Z);
 
                 for (int i = 0; i<fbxNode.GetChildCount (); ++i) 
                 {
                     ProcessNode(fbxNode.GetChild (i), unityGo);
                 }
-            }`
+            }
 
             /// <summary>
             /// Convert scene's system units but leave scaling unchanged
@@ -200,7 +201,7 @@ namespace FbxSdk.Examples
 
                 if (fbxSystemUnit != UnitySystemUnit) 
                 {
-                    Debug.LogWarning (string.Format ("file system unit do not match Unity. Expected {0}, found {1}",
+                    Debug.Log (string.Format ("converting system unit to match Unity. Expected {0}, found {1}.",
                                              UnitySystemUnit, fbxSystemUnit));
 
                     ConvertScene (fbxScene, UnitySystemUnit);
