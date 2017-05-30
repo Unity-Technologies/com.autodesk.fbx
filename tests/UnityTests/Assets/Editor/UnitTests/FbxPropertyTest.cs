@@ -134,6 +134,9 @@ namespace UnitTests
             property.Set(5.0f);
             TestGetter(property.GetFloat());
 
+            // Test setting the value with color accessor
+            property.Set (new FbxColor ());
+
             // test GetCurve(). Just make sure it doesn't crash. We can't
             // generically test actually getting curves, because the details
             // (channel names etc) depend on the type of property and its

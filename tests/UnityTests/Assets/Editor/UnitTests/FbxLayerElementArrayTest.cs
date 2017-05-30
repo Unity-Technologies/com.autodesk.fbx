@@ -127,7 +127,75 @@ namespace UnitTests
 
         #if ENABLE_COVERAGE_TEST
         [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxLayerElementArray), this.GetType()); }
+        public virtual void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxLayerElementArray), this.GetType()); }
         #endif
     }
+
+    public abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTest where T : FbxSdk.FbxLayerElementArray {
+
+        static System.Reflection.ConstructorInfo s_constructor;
+        static System.Reflection.MethodInfo s_getAt;
+
+        static FbxLayerElementArrayTemplateTestBase() {
+            s_constructor = typeof(T).GetConstructor (new[] { typeof(EFbxType) });
+
+            s_getAt = typeof(T).GetMethod("GetAt", new System.Type[] { typeof(int) });
+
+            #if ENABLE_COVERAGE_TEST
+            // Register the calls we make through reflection.
+
+            // We use reflection in CreateObject(FbxLayerContainer, string)
+            if (s_constructor != null) {
+                var constructor = typeof(FbxLayerElementArrayTemplateTestBase<T,U>).GetMethod("CreateObject", new System.Type[] { typeof(EFbxType) });
+                CoverageTester.RegisterReflectionCall(constructor, s_constructor);
+            }
+
+            if(s_getAt != null){
+                var getAt = typeof(FbxLayerElementArrayTemplateTestBase<T,U>).GetMethod("GetAt");
+                CoverageTester.RegisterReflectionCall(getAt, s_getAt);
+            }
+            #endif
+        }
+
+        /* Create an object with the default manager. */
+        public T CreateObject (EFbxType type = EFbxType.eFbxBlob) {
+            return Invoker.InvokeConstructor<T>(s_constructor, type);
+        }
+
+        public U GetAt(T layerElementArray, int index){
+            return Invoker.Invoke<U> (s_getAt, layerElementArray, index);
+        }
+
+        #if ENABLE_COVERAGE_TEST
+        [Test]
+        public override void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
+        #endif
+
+        [Test]
+        public void TestGetAt()
+        {
+            var layerElementArrayTemplate = CreateObject ();
+
+            // make sure doesn't crash
+            GetAt (layerElementArrayTemplate, 0);
+            GetAt (layerElementArrayTemplate, int.MinValue);
+            GetAt (layerElementArrayTemplate, int.MaxValue);
+        }
+    }
+
+    public class FbxLayerElementArrayTemplateFbxColorTest : 
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxColor,FbxColor> {}
+
+    public class FbxLayerElementArrayTemplateFbxSurfaceMaterialTest :
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {}
+
+    [Ignore("Calling GetAt() causes a crash")]
+    public class FbxLayerElementArrayTemplateFbxVector2Test : 
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector2,FbxVector2> {}
+
+    public class FbxLayerElementArrayTemplateFbxVector4Test : 
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector4,FbxVector4> {}
+
+    public class FbxLayerElementArrayTemplateIntTest : 
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateInt,int> {}
 }

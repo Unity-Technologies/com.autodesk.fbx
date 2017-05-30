@@ -140,7 +140,7 @@
 %ignore FbxLayerElementArray::ConvertDataType;
 %ignore FbxLayerElementArray::mDataType;
 
-%rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
+%rename("$ignore", "not" %$isconstructor, regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
 %rename("%s") FbxLayerElementArrayTemplate::GetAt;
 
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
@@ -154,11 +154,6 @@
 %template(SetAt) FbxLayerElementArray::SetAt<FbxColor>;
 %template(SetAt) FbxLayerElementArray::SetAt<FbxVector2>;
 %template(SetAt) FbxLayerElementArray::SetAt<FbxVector4>;
-
-%template(GetAt) FbxLayerElementArray::GetAt<int>;
-%template(GetAt) FbxLayerElementArray::GetAt<FbxColor>;
-%template(GetAt) FbxLayerElementArray::GetAt<FbxVector2>;
-%template(GetAt) FbxLayerElementArray::GetAt<FbxVector4>;
 
 // needed for FbxLayerElementTemplate templates (more specifically for the GetArray() functions)
 %template(FbxLayerElementArrayTemplateFbxColor) FbxLayerElementArrayTemplate<FbxColor>;
