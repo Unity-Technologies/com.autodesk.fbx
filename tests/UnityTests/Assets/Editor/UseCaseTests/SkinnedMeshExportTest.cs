@@ -267,6 +267,7 @@ namespace UseCaseTests
 
             for (int i = 0; i < origRootCluster.GetControlPointIndicesCount (); i++) {
                 Assert.AreEqual (origRootCluster.GetControlPointIndexAt (i), importRootCluster.GetControlPointIndexAt (i));
+                Assert.AreEqual (origRootCluster.GetControlPointWeightAt (i), importRootCluster.GetControlPointWeightAt (i));
             }
 
             Assert.AreEqual (origLimb1Cluster.GetLink (), importLimb1Cluster.GetLink ());
@@ -275,6 +276,7 @@ namespace UseCaseTests
 
             for (int i = 0; i < origLimb1Cluster.GetControlPointIndicesCount (); i++) {
                 Assert.AreEqual (origLimb1Cluster.GetControlPointIndexAt (i), importLimb1Cluster.GetControlPointIndexAt (i));
+                Assert.AreEqual (origLimb1Cluster.GetControlPointWeightAt (i), importLimb1Cluster.GetControlPointWeightAt (i));
             }
 
             Assert.AreEqual (origLimb2Cluster.GetLink (), importLimb2Cluster.GetLink ());
@@ -283,6 +285,7 @@ namespace UseCaseTests
 
             for (int i = 0; i < origLimb2Cluster.GetControlPointIndicesCount (); i++) {
                 Assert.AreEqual (origLimb2Cluster.GetControlPointIndexAt (i), importLimb2Cluster.GetControlPointIndexAt (i));
+                Assert.AreEqual (origLimb2Cluster.GetControlPointWeightAt (i), importLimb2Cluster.GetControlPointWeightAt (i));
             }
         }
     }
