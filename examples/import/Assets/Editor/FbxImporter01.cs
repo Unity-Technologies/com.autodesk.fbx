@@ -1,4 +1,6 @@
-//#define UNI_18892
+//#define UNI_18972
+//#define UNI_18971
+
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -39,7 +41,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"";
 
-            const string MenuItemName = "File/Import FBX/1. Import Scene";
+            const string MenuItemName = "File/Import FBX/01. Import Scene";
 
             /// <summary>
             /// Create instance of example
@@ -77,18 +79,16 @@ namespace FbxSdk.Examples
 
                     // Get the version number of the FBX file format.
                     int fileMajor = -1, fileMinor = -1, fileRevision = -1;
+                    fbxImporter.GetFileVersion (out fileMajor, out fileMinor, out fileRevision);
 
-#if UNI_18892
-                    fbxImporter.GetFileVersion (fileMajor, fileMinor, fileRevision);
-#endif
                     // Check that initialization of the fbxImporter was successful
                     if (!status) 
                     {
-                        string error = fbxStatus.GetErrorString ();
+                        Debug.LogError (string.Format ("failed to initialize FbxImporter, error returned {0}", 
+                                                       fbxStatus.GetErrorString ()));
 
-                        Debug.LogError (string.Format ("failed to initialize FbxImporter, error returned {0}", error));
-
-                        if (fbxStatus.GetCode () == FbxStatus.EStatusCode.eInvalidFileVersion) {
+                        if (fbxStatus.GetCode () == FbxStatus.EStatusCode.eInvalidFileVersion) 
+                        {
                             Debug.LogError (string.Format ("Invalid file version detected\nSDK version: {0}.{1}.{2}\nFile version: {3}.{4}.{5}",
                                                 sdkMajor, sdkMinor, sdkRevision,
                                                            fileMajor, fileMinor, fileRevision));
@@ -111,65 +111,54 @@ namespace FbxSdk.Examples
                                               sdkMajor, sdkMinor, sdkRevision);
                     msgLine += kNewLine;
 
-                    bool isFBX = true;
-#if UNI_18892
-                    isFBX = fbxImporter.IsFBX ();
-#endif
-                    if (isFBX) 
+                    if (!fbxImporter.IsFBX ()) 
                     {
-                        msgLine += kPadding + string.Format ("File version: {0}.{1}.{2}",
-                                                  fileMajor, fileMinor, fileRevision);
+                        Debug.LogError (string.Format ("file does not contain FBX data {0}", LastFilePath));
+                        return 0;   
+                    }
+
+                    msgLine += kPadding + string.Format ("File version: {0}.{1}.{2}",
+                                              fileMajor, fileMinor, fileRevision);
+                    msgLine += kNewLine;
+                    Debug.Log (msgLine);
+
+                    msgLine = kBorderLine;
+                    msgLine += "Animation";
+                    msgLine += kNewLine;
+                    msgLine += kBorderLine;
+
+                    int numAnimStack = fbxImporter.GetAnimStackCount ();
+
+                    msgLine += kPadding + string.Format ("number of stacks: {0}", numAnimStack);
+                    msgLine += kNewLine;
+                    msgLine += kPadding + string.Format ("active animation stack: \"{0}\"\n", fbxImporter.GetActiveAnimStackName());
+
+                    for (int i = 0; i < numAnimStack; i++) {
+#if UNI_18972
+                        FbxTakeInfo fbxTakeInfo = fbxImporter.GetTakeInfo (i);
+#endif
+                        msgLine += kPadding + string.Format ("Animation Stack ({0})", i);
                         msgLine += kNewLine;
-                        Debug.Log (msgLine);
-
-                        msgLine = kBorderLine;
-                        msgLine += "Animation";
+#if UNI_18972
+                        msgLine += kPadding +string.Format ("name: \"{0}\"", fbxTakeInfo.mName) + string.kNewLine;
                         msgLine += kNewLine;
-                        msgLine += kBorderLine;
-
-                        int numAnimStack = 0;
-#if UNI_18892
-                        numAnimStack = fbxImporter.GetAnimStackCount ();
-#endif
-
-                        msgLine += kPadding + string.Format ("number of stacks: {0}", numAnimStack);
+                        msgLine += kPadding +string.Format ("description: \"{0}\"", fbxTakeInfo.mDescription);
                         msgLine += kNewLine;
-#if UNI_18892
-                        msgLine += string.Format ("{0}active animation stack: \"{1}\"\n", fbxImporter.GetActiveAnimStackName());
-#endif
-
-                        for (int i = 0; i < numAnimStack; i++) {
-#if UNI_18892
-                            FbxTakeInfo fbxTakeInfo = fbxImporter.GetTakeInfo (i);
-#endif
-                            msgLine += kPadding + string.Format ("Animation Stack ({0})", i);
-                            msgLine += kNewLine;
-
-#if UNI_18892
-                            msgLine += kPadding +string.Format ("name: \"{0}\"", fbxTakeInfo.mName) + string.kNewLine;
-                            msgLine += kNewLine;
-                            msgLine += kPadding +string.Format ("description: \"{0}\"", fbxTakeInfo.mDescription);
-                            msgLine += kNewLine;
-                            msgLine += kPadding +string.Format ("import name: \"{0}\"", fbxTakeInfo.mImportName);
-                            msgLine += kNewLine;
-                            msgLine += kPadding +string.Format ("import state: \"{0}\"", fbxTakeInfo.mSelect);
-                            msgLine += kNewLine;
-#endif
-                        }
-
-                        // Import options. Determine what kind of data is to be imported.
-                        // The default is true, but here we set the options explictly.
-#if UNI_18892
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_MATERIAL,         false);
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_TEXTURE,          false);
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_LINK,             false);
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_SHAPE,            false);
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_GOBO,             false);
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_ANIMATION,        false);
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_GLOBAL_SETTINGS,  true);
+                        msgLine += kPadding +string.Format ("import name: \"{0}\"", fbxTakeInfo.mImportName);
+                        msgLine += kNewLine;
+                        msgLine += kPadding +string.Format ("import state: \"{0}\"", fbxTakeInfo.mSelect);
+                        msgLine += kNewLine;
 #endif
                     }
                     Debug.Log (msgLine);
+
+                    // Import options. Determine what kind of data is to be imported.
+                    // The default is true, but here we set the options explictly.
+                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_MATERIAL,         false);
+                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_TEXTURE,          false);
+                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_ANIMATION,        false);
+                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_EXTRACT_EMBEDDED_DATA, false);
+                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_GLOBAL_SETTINGS,  true);
 
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, "Scene");
@@ -178,26 +167,16 @@ namespace FbxSdk.Examples
                     status = fbxImporter.Import (fbxScene);
                     fbxStatus = fbxImporter.GetStatus ();
 
-                    if (status == false && fbxStatus.GetCode() == FbxStatus.EStatusCode.ePasswordError)
-                    {
-#if UNI_18892
-                        string password = "abc123";
-                        fbxIOSettings.SetStringProp(Globals.IMP_FBX_PASSWORD,      password);
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_PASSWORD_ENABLE, true);
-#endif
-
-                        status = fbxImporter.Import (fbxScene);
-
-                        if (status == false && 
-                            fbxImporter.GetStatus ().GetCode () == FbxStatus.EStatusCode.ePasswordError)
-                        {
-                			Debug.LogError ("\nWrong password.\n");
-                        }                        
-                    }
-
                     if (status == false) 
                     {
-                        Debug.LogError (string.Format ("failed to import file ({0})", fbxStatus.GetErrorString ()));
+                        if (fbxStatus.GetCode () == FbxStatus.EStatusCode.ePasswordError) 
+                        {
+                            Debug.LogError (string.Format ("failed to import, file is password protected ({0})", fbxStatus.GetErrorString ()));
+                        } 
+                        else 
+                        {
+                            Debug.LogError (string.Format ("failed to import file ({0})", fbxStatus.GetErrorString ()));
+                        }
                     } 
                     else 
                     {
@@ -229,17 +208,17 @@ namespace FbxSdk.Examples
                     msgLine += kNewLine;
                     msgLine += kBorderLine;
 
-                    msgLine += string.Format ("{0}Title: \"{1}\"", kPadding, sceneInfo.mTitle);
+                    msgLine += kPadding + string.Format ("Title: \"{0}\"", sceneInfo.mTitle);
                     msgLine += kNewLine;
-                    msgLine += string.Format ("{0}Subject: \"{1}\"", kPadding, sceneInfo.mSubject);
+                    msgLine += kPadding + string.Format ("Subject: \"{0}\"", sceneInfo.mSubject);
                     msgLine += kNewLine;
-                    msgLine += string.Format ("{0}Author: \"{1}\"", kPadding, sceneInfo.mAuthor);
+                    msgLine += kPadding + string.Format ("Author: \"{0}\"", sceneInfo.mAuthor);
                     msgLine += kNewLine;
-                    msgLine += string.Format ("{0}Keywords: \"{1}\"", kPadding, sceneInfo.mKeywords);
+                    msgLine += kPadding + string.Format ("Keywords: \"{0}\"", sceneInfo.mKeywords);
                     msgLine += kNewLine;
-                    msgLine += string.Format ("{0}Revision: \"{1}\"", kPadding, sceneInfo.mRevision);
+                    msgLine += kPadding + string.Format ("Revision: \"{0}\"", sceneInfo.mRevision);
                     msgLine += kNewLine;
-                    msgLine += string.Format ("{0}Comment: \"{1}\"", kPadding, sceneInfo.mComment);
+                    msgLine += kPadding + string.Format ("Comment: \"{0}\"", sceneInfo.mComment);
                     msgLine += kNewLine;
 
                     Debug.Log (msgLine);
@@ -250,7 +229,7 @@ namespace FbxSdk.Examples
 
                 if (fbxSystemUnit != UnitySystemUnit) 
                 {
-                    Debug.LogWarning (string.Format("file system unit do not match Unity. Expected {0}, found {1}", 
+                    Debug.LogWarning (string.Format("file system unit do not match Unity. Expected {0} Found {1}", 
                                              UnitySystemUnit.ToString(), fbxSystemUnit.ToString()));
                 }
 
@@ -260,7 +239,7 @@ namespace FbxSdk.Examples
 
                 if (fbxAxisSystem != UnityAxisSystem)
                 {
-                   Debug.LogWarning (string.Format ("file axis system do not match Unity, Expected [{0}, {1}, {2}] found [{3}, {4}, {5}]",
+                   Debug.LogWarning (string.Format ("file axis system do not match Unity, Expected [{0}, {1}, {2}] Found [{3}, {4}, {5}]",
                                                      UnityAxisSystem.GetUpVector().ToString (),
                                                      UnityAxisSystem.GetFrontVector().ToString (),
                                                      UnityAxisSystem.GetCoorSystem().ToString (),

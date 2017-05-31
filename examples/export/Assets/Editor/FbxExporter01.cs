@@ -52,17 +52,25 @@ namespace FbxSdk.Examples
                 // Create the FBX manager
                 using (var fbxManager = FbxManager.Create ()) 
                 {
+                    FbxIOSettings fbxIOSettings = FbxIOSettings.Create (fbxManager, Globals.IOSROOT);
+
                     // Configure the IO settings.
-                    fbxManager.SetIOSettings (FbxIOSettings.Create (fbxManager, Globals.IOSROOT));
+                    fbxManager.SetIOSettings (fbxIOSettings);
 
                     // Create the exporter 
                     var fbxExporter = FbxExporter.Create (fbxManager, "Exporter");
 
                     // Initialize the exporter.
-                    bool status = fbxExporter.Initialize (LastFilePath);
+                    int fileFormat = fbxManager.GetIOPluginRegistry ().FindWriterIDByDescription ("FBX ascii (*.fbx)");
+
+                    bool status = fbxExporter.Initialize (LastFilePath, fileFormat, fbxIOSettings);
                     // Check that initialization of the fbxExporter was successful
-                    if (!status)
+                    if (!status) 
+                    {
+                        Debug.LogError (string.Format ("failed to initialize exporter, reason:D {0}", 
+                                                       fbxExporter.GetStatus ().GetErrorString ()));
                         return 0;
+                    }
 
                     // By default, FBX exports in its most recent version. You might want to specify
                     // an older version for compatibility with other applications.
