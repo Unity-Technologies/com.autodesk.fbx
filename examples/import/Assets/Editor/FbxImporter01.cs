@@ -167,28 +167,16 @@ namespace FbxSdk.Examples
                     status = fbxImporter.Import (fbxScene);
                     fbxStatus = fbxImporter.GetStatus ();
 
-                    if (status == false && fbxStatus.GetCode() == FbxStatus.EStatusCode.ePasswordError)
-                    {
-#if UNI_18971
-                        string password = "abc123";
-
-                        /// altmethod of setting password
-                        fbxIOSettings.SetStringProp(Globals.IMP_FBX_PASSWORD,      password);
-#endif
-                        fbxIOSettings.SetBoolProp(Globals.IMP_FBX_PASSWORD_ENABLE, true);
-
-                        status = fbxImporter.Import (fbxScene);
-
-                        if (status == false && 
-                            fbxImporter.GetStatus ().GetCode () == FbxStatus.EStatusCode.ePasswordError)
-                        {
-                			Debug.LogError ("\nWrong password.\n");
-                        }                        
-                    }
-
                     if (status == false) 
                     {
-                        Debug.LogError (string.Format ("failed to import file ({0})", fbxStatus.GetErrorString ()));
+                        if (fbxStatus.GetCode () == FbxStatus.EStatusCode.ePasswordError) 
+                        {
+                            Debug.LogError (string.Format ("failed to import, file is password protected ({0})", fbxStatus.GetErrorString ()));
+                        } 
+                        else 
+                        {
+                            Debug.LogError (string.Format ("failed to import file ({0})", fbxStatus.GetErrorString ()));
+                        }
                     } 
                     else 
                     {
