@@ -263,39 +263,27 @@ namespace UseCaseTests
 
             Assert.AreEqual (origRootCluster.GetLink (), importRootCluster.GetLink ());
             Assert.AreEqual (origRootCluster.GetLinkMode (), importRootCluster.GetLinkMode ());
+            Assert.AreEqual (origRootCluster.GetControlPointIndicesCount (), importRootCluster.GetControlPointIndicesCount ());
+
+            for (int i = 0; i < origRootCluster.GetControlPointIndicesCount (); i++) {
+                Assert.AreEqual (origRootCluster.GetControlPointIndexAt (i), importRootCluster.GetControlPointIndexAt (i));
+            }
 
             Assert.AreEqual (origLimb1Cluster.GetLink (), importLimb1Cluster.GetLink ());
             Assert.AreEqual (origLimb1Cluster.GetLinkMode (), importLimb1Cluster.GetLinkMode ());
+            Assert.AreEqual (origLimb1Cluster.GetControlPointIndicesCount (), importLimb1Cluster.GetControlPointIndicesCount ());
+
+            for (int i = 0; i < origLimb1Cluster.GetControlPointIndicesCount (); i++) {
+                Assert.AreEqual (origLimb1Cluster.GetControlPointIndexAt (i), importLimb1Cluster.GetControlPointIndexAt (i));
+            }
 
             Assert.AreEqual (origLimb2Cluster.GetLink (), importLimb2Cluster.GetLink ());
             Assert.AreEqual (origLimb2Cluster.GetLinkMode (), importLimb2Cluster.GetLinkMode ());
+            Assert.AreEqual (origLimb2Cluster.GetControlPointIndicesCount (), importLimb2Cluster.GetControlPointIndicesCount ());
 
-            /*FbxCluster rootCluster = FbxCluster.Create (scene, "RootCluster");
-            rootCluster.SetLink (skelRootNode);
-            rootCluster.SetLinkMode (FbxCluster.ELinkMode.eTotalOne);
-            for (int i = 0; i < 4; i++) {
-                for (int j = 0; j < 4; j++) {
-                    rootCluster.AddControlPointIndex (4 * i + j, 1.0 - 0.25 * i);
-                }
+            for (int i = 0; i < origLimb2Cluster.GetControlPointIndicesCount (); i++) {
+                Assert.AreEqual (origLimb2Cluster.GetControlPointIndexAt (i), importLimb2Cluster.GetControlPointIndexAt (i));
             }
-
-            FbxCluster limb1Cluster = FbxCluster.Create (scene, "Limb1Cluster");
-            limb1Cluster.SetLink (limb1);
-            limb1Cluster.SetLinkMode (FbxCluster.ELinkMode.eTotalOne);
-            for (int i = 1; i < 6; i++) {
-                for (int j = 0; j < 4; j++) {
-                    limb1Cluster.AddControlPointIndex (4 * i + j, (i == 1 || i == 5 ? 0.25 : 0.5));
-                }
-            }
-
-            FbxCluster limb2Cluster = FbxCluster.Create (scene, "Limb2Cluster");
-            limb2Cluster.SetLink (limb2);
-            limb2Cluster.SetLinkMode (FbxCluster.ELinkMode.eTotalOne);
-            for (int i = 3; i < 7; i++) {
-                for (int j = 0; j < 4; j++) {
-                    limb2Cluster.AddControlPointIndex (4 * i + j, 0.25 * (i - 2));
-                }
-            }*/
         }
     }
 }
