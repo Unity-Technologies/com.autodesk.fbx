@@ -307,7 +307,7 @@ namespace UseCaseTests
             public PropertyType type;
             public string name;
 
-            Property(string name, PropertyType type){
+            public Property(string name, PropertyType type){
                 this.name = name;
                 this.type = type;
             }
