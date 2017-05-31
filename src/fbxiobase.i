@@ -19,6 +19,21 @@
 /* Also include global constants that should seemingly be a part of FbxIOBase */
 %rename("%s") IOSROOT;
 %rename("%s") EXP_FBX_EMBEDDED;
+%rename("%s") EXP_FBX_PASSWORD;
+%rename("%s") EXP_FBX_PASSWORD_ENABLE;
+%rename("%s") EXP_FBX_MATERIAL;
+%rename("%s") EXP_FBX_TEXTURE;
+%rename("%s") EXP_FBX_ANIMATION;
+%rename("%s") EXP_FBX_GLOBAL_SETTINGS;
+
+%rename("%s") IMP_FBX_PASSWORD;
+%rename("%s") IMP_FBX_PASSWORD_ENABLE;
+%rename("%s") IMP_FBX_MATERIAL;
+%rename("%s") IMP_FBX_TEXTURE;
+%rename("%s") IMP_FBX_ANIMATION;
+%rename("%s") IMP_FBX_GLOBAL_SETTINGS;
+%rename("%s") IMP_FBX_EXTRACT_EMBEDDED_DATA;
+
 %include "fbxsdk/fileio/fbxiosettingspath.h"
 
 %include "fbxsdk/fileio/fbxiobase.h"

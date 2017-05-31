@@ -23,5 +23,9 @@
 %ignore FbxImporter::Initialize(const char* pFileName, int pFileFormat=-1, FbxIOSettings * pIOSettings=NULL);
 
 %ignore SetPassword;
+%rename("%s") FbxImporter::IsFBX;
+%rename("%s") FbxImporter::GetFileVersion;
+%rename("%s") FbxImporter::GetAnimStackCount;
+%rename("%s") FbxImporter::GetActiveAnimStackName;
 
 %include "fbxsdk/fileio/fbximporter.h"
