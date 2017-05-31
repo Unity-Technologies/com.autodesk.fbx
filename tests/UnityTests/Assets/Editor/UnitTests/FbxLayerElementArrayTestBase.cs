@@ -11,7 +11,7 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public abstract class FbxLayerElementArrayTestBase<T> where T : FbxSdk.FbxLayerElementArray
+    public abstract class FbxLayerElementArrayTestBase<T> : TestBase<T> where T : FbxSdk.FbxLayerElementArray
     {
         static System.Reflection.ConstructorInfo s_constructor;
 
@@ -103,11 +103,6 @@ namespace UnitTests
                 elementArray.SetCount (1);
             }, Throws.Exception.TypeOf<System.NullReferenceException> ());
         }
-
-        #if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
-        #endif
     }
 
     public abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTestBase<T> where T : FbxSdk.FbxLayerElementArray {
