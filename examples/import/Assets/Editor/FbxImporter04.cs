@@ -1,7 +1,6 @@
-//#define UNI_18892
 //#define UNI_18844
-//#define UNI_18848
 //#define UNI_18850
+//#define UNI_19014
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -70,7 +69,7 @@ namespace FbxSdk.Examples
                 if (mappingMode == FbxLayerElement.EMappingMode.eByControlPoint) {
 
                     if (fbxElementArray.GetCount () != vertexCount) {
-                        Debug.LogError (string.Format ("UVSet size ({0}) does not match vertex count {1}", 
+                        Debug.LogError (string.Format ("UVSet size ({0}) does not match vertex count {1}",
                                                        fbxElementArray.GetCount (), vertexCount));
                         return null;
                     }
@@ -124,50 +123,46 @@ namespace FbxSdk.Examples
                 FbxLayerElementUV fbxFirstUVSet = null;
                 FbxLayer fbxFirstUVLayer = null;
 
-#if UNI_18850
                 // NOTE: assuming triangles
                 int polygonIndexCount = fbxMesh.GetPolygonVertexCount ();
                 int vertexCount = fbxMesh.GetControlPointsCount ();
 
-                int [] polygonVertexIndices = new int[polygonIndexCount];
+                int [] polygonVertexIndices = new int [polygonIndexCount];
 
-                for (int polyIndex = 0; polyIndex < fbxMesh.GetPolygonCount (); ++polyIndex)
-                {
-                    for (int positionInPolygon = 0; positionInPolygon < fbxMesh.GetPolygonSize (polyIndex); ++positionInPolygon)
-                    {
-                        polygonVertexIndices[j++] = fbxMesh.GetPolygonVertex(polyIndex, positionInPolygon);
+                for (int polyIndex = 0; polyIndex < fbxMesh.GetPolygonCount (); ++polyIndex) {
+                    for (int positionInPolygon = 0; positionInPolygon < fbxMesh.GetPolygonSize (polyIndex); ++positionInPolygon) {
+                        polygonVertexIndices [j++] = fbxMesh.GetPolygonVertex (polyIndex, positionInPolygon);
                     }
                 }
 
-
-                for (int i = 0; i < fbxMesh.GetLayerCount(); i++)
-                {
+                for (int i = 0; i < fbxMesh.GetLayerCount (); i++) {
                     FbxLayer fbxLayer = fbxMesh.GetLayer (i);
-                    if (fbxLayer==null)
-                        continue;
-                    
-                    FbxLayerElementUV fbxUVSet = fbxLayer.GetUVs ();
-                    if (fbxUVSet==null)
+                    if (fbxLayer == null)
                         continue;
 
-                    if (fbxFirstUVSet!=null)
-                    {
+                    FbxLayerElementUV fbxUVSet = null;
+#if UNI_19014
+                    fbxUVSet = fbxLayer.GetUVs ();
+#endif
+                    if (fbxUVSet == null)
+                        continue;
+
+                    if (fbxFirstUVSet != null) {
                         fbxFirstUVSet = fbxUVSet;
                         fbxFirstUVLayer = fbxLayer;
                     }
 
-                    switch (uvsetIndex) 
-                    {
-                        case 0: 
+                    switch (uvsetIndex) {
+                    case 0:
                         unityMesh.uv = ProcessUVSet (fbxUVSet, polygonVertexIndices, vertexCount);
                         break;
-                        case 1: 
+                    case 1:
                         unityMesh.uv2 = ProcessUVSet (fbxUVSet, polygonVertexIndices, vertexCount);
                         break;
-                        case 2: 
+                    case 2:
                         unityMesh.uv3 = ProcessUVSet (fbxUVSet, polygonVertexIndices, vertexCount);
                         break;
-                        case 3: 
+                    case 3:
                         unityMesh.uv4 = ProcessUVSet (fbxUVSet, polygonVertexIndices, vertexCount);
                         break;
 
@@ -176,20 +171,21 @@ namespace FbxSdk.Examples
 
                     if (uvsetIndex == maxUVs)
                         break;
-                    }
-                    // If we have received one UV set, check whether the same layer contains an emissive UV set
-                    // that is different from diffuse UV set.
-                    // 3dsmax FBX exporters doesn't export UV sets as different layers, instead for lightmapping usually
-                    // a material is set up to have lightmap (2nd UV set) as self-illumination slot, and main texture
-                    // (1st UV set) as diffuse slot.
-                    if (uvsetIndex == 1 && fbxFirstUVSet!=null)
-                    {
-                        FbxLayerElementUV fbxSecondaryUVSet = null;
+                }
+                // If we have received one UV set, check whether the same layer contains an emissive UV set
+                // that is different from diffuse UV set.
+                // 3dsmax FBX exporters doesn't export UV sets as different layers, instead for lightmapping usually
+                // a material is set up to have lightmap (2nd UV set) as self-illumination slot, and main texture
+                // (1st UV set) as diffuse slot.
+                if (uvsetIndex == 1 && fbxFirstUVSet != null) {
+                    FbxLayerElementUV fbxSecondaryUVSet = null;
 
-                        // TODO: check if we've already passed eTextureEmissive layer
-                        for (int i = FbxLayerElement.EType.eTextureEmissive; i < FbxLayerElement.EType.eTypeCount; i++)
-                        {
+                    // TODO: check if we've already passed eTextureEmissive layer
+                    for (int i = (int)FbxLayerElement.EType.eTextureEmissive; i < (int)FbxLayerElement.EType.eTypeCount; i++) 
+                    {
+#if UNI_19014
                             fbxSecondaryUVSet = fbxFirstUVLayer.GetUVs ((FbxLayerElement.EType)i);
+#endif
                             if (fbxSecondaryUVSet != null)
                                 break;
                         }
@@ -203,7 +199,6 @@ namespace FbxSdk.Examples
                         }
                     }
                 }
-#endif
             }
 
             /// <summary>
@@ -218,7 +213,7 @@ namespace FbxSdk.Examples
 
                 // create mesh
                 var unityVertices = new List<Vector3> ();
-                var unityTrianglepolygonVertexIndices = new List<int> ();
+                var unityTriangleVertexIndices = new List<int> ();
 
                 // transfer vertices
                 for (int i = 0; i < fbxMesh.GetControlPointsCount (); ++i) 
@@ -231,7 +226,7 @@ namespace FbxSdk.Examples
 
                     unityVertices.Add (new Vector3 ((float)fbxVector4.X, (float)fbxVector4.Y, (float)fbxVector4.Z));
                 }
-#if UNI_18848
+
                 // transfer triangles
                 for (int polyIndex = 0; polyIndex < fbxMesh.GetPolygonCount (); ++polyIndex )
                 {
@@ -244,16 +239,16 @@ namespace FbxSdk.Examples
                     {
                         int vertexIndex = fbxMesh.GetPolygonVertex(polyIndex, polyVertexIndex);
 
-                        unityTrianglepolygonVertexIndices.Add (vertexIndex);
+                        unityTriangleVertexIndices.Add (vertexIndex);
                     }
                 }
-#endif
+
                 unityMesh.vertices = unityVertices.ToArray ();
 
                 // TODO: 
                 // - support Mesh.SetTriangles - multiple materials per mesh
                 // - support Mesh.SetpolygonVertexIndices - other topologies e.g. quads
-                unityMesh.triangles = unityTrianglepolygonVertexIndices.ToArray ();
+                unityMesh.triangles = unityTriangleVertexIndices.ToArray ();
 
                 ProcessUVs (fbxMesh, unityMesh);
 
@@ -466,7 +461,7 @@ namespace FbxSdk.Examples
             /// Import all from scene.
             /// Return the number of objects we imported.
             /// </summary>
-            public int ImportAll (IEnumerable<Object> unitySelectionSet)
+            public int ImportAll ()
             {
                 // Create the FBX manager
                 using (var fbxManager = FbxManager.Create ()) 
@@ -493,10 +488,8 @@ namespace FbxSdk.Examples
 
                     // Get the version number of the FBX file format.
                     int fileMajor = -1, fileMinor = -1, fileRevision = -1;
+                    fbxImporter.GetFileVersion (out fileMajor, out fileMinor, out fileRevision);
 
-#if UNI_18892
-                    fbxImporter.GetFileVersion (fileMajor, fileMinor, fileRevision);
-#endif
                     // Check that initialization of the fbxImporter was successful
                     if (!status) 
                     {
@@ -516,15 +509,11 @@ namespace FbxSdk.Examples
 
                     // Import options. Determine what kind of data is to be imported.
                     // The default is true, but here we set the options explictly.
-#if UNI_18892
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_MATERIAL,         false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_TEXTURE,          false);
-                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_LINK,             false);
-                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_SHAPE,            false);
-                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_GOBO,             false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_ANIMATION,        false);
+                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_EXTRACT_EMBEDDED_DATA, false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_GLOBAL_SETTINGS,  true);
-#endif
 
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, "Scene");
@@ -635,7 +624,7 @@ namespace FbxSdk.Examples
 
                 using (var fbxImporter = Create()) 
                 {
-                    if (fbxImporter.ImportAll(Selection.objects) > 0)
+                    if (fbxImporter.ImportAll() > 0)
                     {
                         Debug.Log (string.Format ("Successfully imported: {0}", filePath));
                     }

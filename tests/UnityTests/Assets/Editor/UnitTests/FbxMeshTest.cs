@@ -19,57 +19,72 @@ namespace UnitTests
             base.TestBasics(CreateObject("mesh"), FbxNodeAttribute.EType.eMesh);
 
             using (FbxMesh mesh = CreateObject ("mesh")) {
+                int polyCount = 0;
+                int polyVertexCount = 0;
+
                 mesh.InitControlPoints(4);
                 mesh.SetControlPointAt(new FbxVector4(0,0,0), 0);
                 mesh.SetControlPointAt(new FbxVector4(1,0,0), 1);
                 mesh.SetControlPointAt(new FbxVector4(1,0,1), 2);
                 mesh.SetControlPointAt(new FbxVector4(0,0,1), 3);
                 mesh.BeginPolygon();
-                mesh.AddPolygon(0);
-                mesh.AddPolygon(1);
-                mesh.AddPolygon(2);
-                mesh.AddPolygon(3);
+                mesh.AddPolygon(0); polyVertexCount++;
+                mesh.AddPolygon(1); polyVertexCount++;
+                mesh.AddPolygon(2); polyVertexCount++;
+                mesh.AddPolygon(3); polyVertexCount++;
                 mesh.EndPolygon();
+                polyCount++;
 
                 // Link a poly to a material (even though we don't have any).
                 mesh.BeginPolygon(0);
-                mesh.AddPolygon(0);
-                mesh.AddPolygon(1);
-                mesh.AddPolygon(2);
-                mesh.AddPolygon(3);
+                mesh.AddPolygon(0); polyVertexCount++;
+                mesh.AddPolygon(1); polyVertexCount++;
+                mesh.AddPolygon(2); polyVertexCount++;
+                mesh.AddPolygon(3); polyVertexCount++;
                 mesh.EndPolygon();
+                polyCount++;
 
                 // Link a poly to a material and texture (even though we don't have any).
                 mesh.BeginPolygon(0, 0);
-                mesh.AddPolygon(0);
-                mesh.AddPolygon(1);
-                mesh.AddPolygon(2);
-                mesh.AddPolygon(3);
+                mesh.AddPolygon(0); polyVertexCount++;
+                mesh.AddPolygon(1); polyVertexCount++;
+                mesh.AddPolygon(2); polyVertexCount++;
+                mesh.AddPolygon(3); polyVertexCount++;
                 mesh.EndPolygon();
+                polyCount++;
 
                 // Create a group.
                 mesh.BeginPolygon(-1, -1, 0);
-                mesh.AddPolygon(0);
-                mesh.AddPolygon(1);
-                mesh.AddPolygon(2);
-                mesh.AddPolygon(3);
+                mesh.AddPolygon(0); polyVertexCount++;
+                mesh.AddPolygon(1); polyVertexCount++;
+                mesh.AddPolygon(2); polyVertexCount++;
+                mesh.AddPolygon(3); polyVertexCount++;
                 mesh.EndPolygon();
+                polyCount++;
 
                 // Create a non-legacy group polygon.
                 mesh.BeginPolygon(-1, -1, 0, false);
-                mesh.AddPolygon(0);
-                mesh.AddPolygon(1);
-                mesh.AddPolygon(2);
-                mesh.AddPolygon(3);
+                mesh.AddPolygon(0); polyVertexCount++;
+                mesh.AddPolygon(1); polyVertexCount++;
+                mesh.AddPolygon(2); polyVertexCount++;
+                mesh.AddPolygon(3); polyVertexCount++;
                 mesh.EndPolygon();
+                polyCount++;
 
                 // Create a polygon with UV indices (even though we don't have any)
                 mesh.BeginPolygon(0);
-                mesh.AddPolygon(0, 0);
-                mesh.AddPolygon(1, 1);
-                mesh.AddPolygon(2, 2);
-                mesh.AddPolygon(3, 3);
+                mesh.AddPolygon(0, 0);  polyVertexCount++;
+                mesh.AddPolygon(1, 1);  polyVertexCount++;
+                mesh.AddPolygon(2, 2);  polyVertexCount++;
+                mesh.AddPolygon(3, 3);  polyVertexCount++;
                 mesh.EndPolygon();
+                polyCount++;
+
+                Assert.AreEqual (mesh.GetPolygonCount (), polyCount);
+                Assert.AreEqual (mesh.GetPolygonSize (polyCount - 1), 4);
+                Assert.AreEqual (mesh.GetPolygonVertex (polyCount - 1, 0), 0);
+                Assert.AreEqual ( mesh.GetPolygonVertexCount (), polyVertexCount);
+                Assert.AreEqual (mesh.GetPolygonCount (), polyCount);
             }
         }
 
