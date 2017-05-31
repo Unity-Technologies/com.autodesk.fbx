@@ -53,11 +53,10 @@ namespace FbxSdk.Examples
             /// Process a single UV dataset and return data for configuring a Mesh UV attribute
             /// </summary>
             private Vector2 [] ProcessUVSet (FbxLayerElementUV element,
-                                            int [] indices,
-                                            int indexCount,
+                                            int [] polygonVertexIndices,
                                             int vertexCount)
             {
-                Vector2 [] result = new Vector2 [indexCount];
+                Vector2 [] result = new Vector2 [polygonVertexIndices.Length];
 
                 FbxLayerElement.EReferenceMode referenceMode = element.GetReferenceMode ();
                 FbxLayerElement.EMappingMode mappingMode = element.GetMappingMode ();
@@ -71,10 +70,12 @@ namespace FbxSdk.Examples
                 if (mappingMode == FbxLayerElement.EMappingMode.eByControlPoint) {
 
                     if (fbxElementArray.GetCount () != vertexCount) {
+                        Debug.LogError (string.Format ("UVSet size ({0}) does not match vertex count {1}", 
+                                                       fbxElementArray.GetCount (), vertexCount));
                         return null;
                     }
 
-                    for (int i = 0; i < indexCount; i++) {
+                    for (int i = 0; i < polygonVertexIndices.Length; i++) {
                         int index = i;
                         if (!isDirect) {
 #if UNI_18850
@@ -83,7 +84,7 @@ namespace FbxSdk.Examples
                         }
 
 #if UNI_18850
-                        fbxElementArray.GetAt (indices [index], out result [i]);
+                        fbxElementArray.GetAt (polygonVertexIndices [index], out result [i]);
 #endif
                         // UVs in FBX can contain NaNs, so we set these vertices to (0,0)
                         if (float.IsNaN (result [i] [0]) || float.IsNaN (result [i] [1])) {
@@ -99,7 +100,7 @@ namespace FbxSdk.Examples
                     if (fbxElementArray.GetAt (0, value)) 
 #endif
                     {
-                        for (int i = 0; i < indexCount; i++) {
+                        for (int i = 0; i < polygonVertexIndices.Length; i++) {
                             result [i] = value;
                         }
                     }
@@ -124,10 +125,21 @@ namespace FbxSdk.Examples
                 FbxLayer fbxFirstUVLayer = null;
 
 #if UNI_18850
-                int [] polygonVertexIndices = fbxMesh.GetPolygonVertices ();
                 // NOTE: assuming triangles
-                int polygonIndexCount = fbxMesh.GetPolygonCount () * 3;
+                int polygonIndexCount = fbxMesh.GetPolygonVertexCount ();
                 int vertexCount = fbxMesh.GetControlPointsCount ();
+
+                int [] polygonVertexIndices = new int[polygonIndexCount];
+
+                for (int polyIndex = 0; polyIndex < fbxMesh.GetPolygonCount (); ++polyIndex)
+                {
+                    for (int positionInPolygon = 0; positionInPolygon < fbxMesh.GetPolygonSize (polyIndex); ++positionInPolygon)
+                    {
+                        polygonVertexIndices[j++] = fbxMesh.GetPolygonVertex(polyIndex, positionInPolygon);
+                    }
+                }
+
+
                 for (int i = 0; i < fbxMesh.GetLayerCount(); i++)
                 {
                     FbxLayer fbxLayer = fbxMesh.GetLayer (i);
@@ -147,16 +159,16 @@ namespace FbxSdk.Examples
                     switch (uvsetIndex) 
                     {
                         case 0: 
-                        unityMesh.uv = ProcessUVSet (fbxUVSet, polygonVertexIndices, polygonIndexCount, vertexCount);
+                        unityMesh.uv = ProcessUVSet (fbxUVSet, polygonVertexIndices, vertexCount);
                         break;
                         case 1: 
-                        unityMesh.uv2 = ProcessUVSet (fbxUVSet, polygonVertexIndices, polygonIndexCount, vertexCount);
+                        unityMesh.uv2 = ProcessUVSet (fbxUVSet, polygonVertexIndices, vertexCount);
                         break;
                         case 2: 
-                        unityMesh.uv3 = ProcessUVSet (fbxUVSet, polygonVertexIndices, polygonIndexCount, vertexCount);
+                        unityMesh.uv3 = ProcessUVSet (fbxUVSet, polygonVertexIndices, vertexCount);
                         break;
                         case 3: 
-                        unityMesh.uv4 = ProcessUVSet (fbxUVSet, polygonVertexIndices, polygonIndexCount, vertexCount);
+                        unityMesh.uv4 = ProcessUVSet (fbxUVSet, polygonVertexIndices, vertexCount);
                         break;
 
                     }
@@ -186,7 +198,6 @@ namespace FbxSdk.Examples
                         {
                             unityMesh.uv2 = ProcessUVSet (fbxSecondaryUVSet,
                                                           polygonVertexIndices,
-                                                          polygonIndexCount,
                                                           vertexCount);
                             uvsetIndex++;
                         }
@@ -207,7 +218,7 @@ namespace FbxSdk.Examples
 
                 // create mesh
                 var unityVertices = new List<Vector3> ();
-                var unityTriangleIndices = new List<int> ();
+                var unityTrianglepolygonVertexIndices = new List<int> ();
 
                 // transfer vertices
                 for (int i = 0; i < fbxMesh.GetControlPointsCount (); ++i) 
@@ -233,7 +244,7 @@ namespace FbxSdk.Examples
                     {
                         int vertexIndex = fbxMesh.GetPolygonVertex(polyIndex, polyVertexIndex);
 
-                        unityTriangleIndices.Add (vertexIndex);
+                        unityTrianglepolygonVertexIndices.Add (vertexIndex);
                     }
                 }
 #endif
@@ -241,8 +252,8 @@ namespace FbxSdk.Examples
 
                 // TODO: 
                 // - support Mesh.SetTriangles - multiple materials per mesh
-                // - support Mesh.SetIndices - other topologies e.g. quads
-                unityMesh.triangles = unityTriangleIndices.ToArray ();
+                // - support Mesh.SetpolygonVertexIndices - other topologies e.g. quads
+                unityMesh.triangles = unityTrianglepolygonVertexIndices.ToArray ();
 
                 ProcessUVs (fbxMesh, unityMesh);
 
