@@ -41,7 +41,7 @@ public class ShowTransformGizmos : MonoBehaviour
         // Draw a black line to the parent.
         var parent = transform.parent;
         if (parent) {
-            Gizmos.color = colorScale * Color.black;
+            Gizmos.color = colorScale * Color.white;
             Gizmos.DrawLine(transform.position, transform.parent.position);
         }
 
