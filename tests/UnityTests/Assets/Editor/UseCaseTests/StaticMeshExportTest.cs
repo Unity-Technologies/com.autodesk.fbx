@@ -301,6 +301,18 @@ namespace UseCaseTests
 
         private string m_materialName = "MaterialTest";
 
+        enum PropertyType { Color, Double3, Double };
+
+        struct Property {
+            public PropertyType type;
+            public string name;
+
+            Property(string name, PropertyType type){
+                this.name = name;
+                this.type = type;
+            }
+        }
+
         protected override FbxScene CreateScene (FbxManager manager)
         {
             FbxScene scene = base.CreateScene (manager);
@@ -416,25 +428,53 @@ namespace UseCaseTests
             var importMaterial = importNode.GetMaterial (importMatIndex);
             Assert.IsNotNull (importMaterial);
 
-            // TODO: Trying to Downcast the material to an FbxSurfacePhong returns a null value,
-            //       need to figure out how to fix this so we can access the material properties.
-            /*Assert.AreEqual (origMaterial.Diffuse.Get (), importMaterial.Diffuse.Get ());
-            Assert.AreEqual (origMaterial.Emissive.Get (), importMaterial.Emissive.Get ());
-            Assert.AreEqual (origMaterial.Ambient.Get (), importMaterial.Ambient.Get ());
-            Assert.AreEqual (origMaterial.BumpFactor.Get (), importMaterial.BumpFactor.Get ());
-            Assert.AreEqual (origMaterial.Specular.Get (), importMaterial.Specular.Get ());*/
+            // TODO: Add ability to Downcast the material to an FbxSurfacePhong.
+            Property[] materialProperties = {
+                new Property (FbxSurfaceMaterial.sDiffuse, PropertyType.Color),
+                new Property (FbxSurfaceMaterial.sEmissive, PropertyType.Color),
+                new Property (FbxSurfaceMaterial.sAmbient, PropertyType.Double3),
+                new Property (FbxSurfaceMaterial.sSpecular, PropertyType.Double3),
+                new Property (FbxSurfaceMaterial.sBumpFactor, PropertyType.Double)
+            };
 
-            var origMaterialProperty = origMaterial.FindProperty (FbxSurfaceMaterial.sDiffuse);
-            Assert.IsNotNull (origMaterialProperty);
-            Assert.IsTrue (origMaterialProperty.IsValid ());
+            FbxProperty origMaterialDiffuseProperty = null;
+            FbxProperty importMaterialDiffuseProperty = null;
 
-            var importMaterialProperty = importMaterial.FindProperty (FbxSurfaceMaterial.sDiffuse);
-            Assert.IsNotNull (importMaterialProperty);
-            Assert.IsTrue (importMaterialProperty.IsValid ());
+            foreach (var prop in materialProperties) {
+                FbxProperty origProp = origMaterial.FindProperty (prop.name);
+                Assert.IsNotNull (origProp);
+                Assert.IsTrue (origProp.IsValid ());
 
-            var origTexture = origMaterialProperty.FindSrcObject (FbxSurfaceMaterial.sDiffuse + "_Texture");
+                FbxProperty importProp = importMaterial.FindProperty (prop.name);
+                Assert.IsNotNull (importProp);
+                Assert.IsTrue (importProp.IsValid ());
+
+                switch (prop.type){
+                case PropertyType.Color:
+                    Assert.AreEqual (origProp.GetFbxColor(), importProp.GetFbxColor());
+                    break;
+                case PropertyType.Double3:
+                    Assert.AreEqual (origProp.GetFbxDouble3(), importProp.GetFbxDouble3());
+                    break;
+                case PropertyType.Double:
+                    Assert.AreEqual (origProp.GetDouble(), importProp.GetDouble());
+                    break;
+                default:
+                    break;
+                }
+
+                if(prop.name.Equals(FbxSurfaceMaterial.sDiffuse)){
+                    origMaterialDiffuseProperty = origProp;
+                    importMaterialDiffuseProperty = importProp;
+                }
+            }
+
+            Assert.IsNotNull (origMaterialDiffuseProperty);
+            Assert.IsNotNull (importMaterialDiffuseProperty);
+
+            var origTexture = origMaterialDiffuseProperty.FindSrcObject (FbxSurfaceMaterial.sDiffuse + "_Texture");
             Assert.IsNotNull (origTexture);
-            var importTexture = importMaterialProperty.FindSrcObject (FbxSurfaceMaterial.sDiffuse + "_Texture");
+            var importTexture = importMaterialDiffuseProperty.FindSrcObject (FbxSurfaceMaterial.sDiffuse + "_Texture");
             Assert.IsNotNull (importTexture);
 
             // TODO: Trying to Downcast the texture to an FbxFileTexture returns a null value,
