@@ -24,6 +24,7 @@
 %rename("%s") FbxCluster::GetControlPointIndexAt;
 %rename("%s") FbxCluster::GetControlPointWeightAt;
 %rename("%s") FbxCluster::GetControlPointIndicesCount;
+%rename("%s") FbxCluster::SetControlPointIWCount;
 
 %extend FbxCluster {
     int GetControlPointIndexAt(int index){

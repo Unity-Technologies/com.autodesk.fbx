@@ -194,6 +194,19 @@ namespace UnitTests
         }
 
         [Test]
+        public void TestEvaluateLocalTransform()
+        {
+            // make sure it doesn't crash
+            using (FbxNode node = CreateObject ("root")) {
+                node.EvaluateLocalTransform ();
+                node.EvaluateLocalTransform (new FbxTime());
+                node.EvaluateLocalTransform (new FbxTime(), FbxNode.EPivotSet.eDestinationPivot); // eSourcePivot is default
+                node.EvaluateLocalTransform (new FbxTime(), FbxNode.EPivotSet.eSourcePivot, true); // false is default
+                node.EvaluateLocalTransform (new FbxTime(), FbxNode.EPivotSet.eSourcePivot, false, true); // false is default
+            }
+        }
+
+        [Test]
         public void TestGetMesh(){
             // make sure it doesn't crash
             using (FbxNode node = CreateObject ("root")) {

@@ -41,6 +41,7 @@
 
 /* Skinned Mesh */
 %rename("%s") FbxNode::EvaluateGlobalTransform;
+%rename("%s") FbxNode::EvaluateLocalTransform;
 %rename("%s") FbxNode::EPivotSet;
 %rename("%s") FbxNode::GetMesh;
 %rename("%s") FbxNode::SetPreRotation;

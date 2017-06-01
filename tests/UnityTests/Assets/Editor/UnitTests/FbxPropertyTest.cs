@@ -132,7 +132,12 @@ namespace UnitTests
             // Test setting the value with the generic float accessor.
             // The value may not round-trip: a bool property will go to 1.0
             property.Set(5.0f);
-            TestGetter(property.GetFloat());
+            TestGetter (property.GetFloat());
+            TestGetter (property.GetBool ());
+            TestGetter (property.GetDouble ());
+            TestGetter (property.GetFbxColor ());
+            TestGetter (property.GetFbxDouble3 ());
+            TestGetter (property.GetString ());
 
             // Test setting the value with color accessor
             property.Set (new FbxColor ());
