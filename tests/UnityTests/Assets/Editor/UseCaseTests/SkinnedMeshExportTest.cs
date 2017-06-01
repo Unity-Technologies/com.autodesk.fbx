@@ -172,23 +172,8 @@ namespace UseCaseTests
             // Check that the mesh is correctly linked to the skeleton
             CheckMeshLinkedToSkeleton(origMeshNode.GetMesh(), importMeshNode.GetMesh());
 
-            /*// Add a skeleton to the cube that we created in StaticMeshExportTest
-            FbxScene scene = base.CreateScene (manager);
-
-            FbxNode meshNode = scene.GetRootNode().GetChild(0);
-            FbxNode skeletonRootNode = CreateSkeleton(scene);
-
-            FbxNode rootNode = scene.GetRootNode ();
-            rootNode.AddChild (skeletonRootNode);
-
-            LinkMeshToSkeleton (scene, meshNode, skeletonRootNode);
-
-            FbxNode limb1 = skeletonRootNode.GetChild (0);
-            FbxNode limb2 = limb1.GetChild (0);
-
-            ExportBindPose (meshNode, scene, new List<FbxNode> (){ skeletonRootNode, limb1, limb2 });
-
-            return scene;*/
+            // Check that bind pose is set correctly
+            CheckExportBindPose(origScene, scene);
         }
 
         struct SkelNodePair {
@@ -229,63 +214,66 @@ namespace UseCaseTests
             }
         }
 
+        struct ClusterPair {
+            public FbxCluster orig;
+            public FbxCluster import;
+
+            public ClusterPair(FbxCluster orig, FbxCluster import){
+                this.orig = orig;
+                this.import = import;
+            }
+        }
+
         protected void CheckMeshLinkedToSkeleton(FbxMesh origMesh, FbxMesh importMesh)
         {
             FbxSkin origSkin = origMesh.GetDeformer (0, new FbxStatus()) as FbxSkin;
             Assert.IsNotNull (origSkin);
 
-            FbxCluster origRootCluster = origSkin.GetCluster (0);
-            FbxCluster origLimb1Cluster = origSkin.GetCluster (1);
-            FbxCluster origLimb2Cluster = origSkin.GetCluster (2);
-            Assert.IsNotNull (origRootCluster);
-            Assert.IsNotNull (origLimb1Cluster);
-            Assert.IsNotNull (origLimb2Cluster);
-
             FbxSkin importSkin = origMesh.GetDeformer (0, new FbxStatus()) as FbxSkin;
             Assert.IsNotNull (importSkin);
 
-            FbxCluster importRootCluster = importSkin.GetCluster (0);
-            FbxCluster importLimb1Cluster = importSkin.GetCluster (1);
-            FbxCluster importLimb2Cluster = importSkin.GetCluster (2);
-            Assert.IsNotNull (importRootCluster);
-            Assert.IsNotNull (importLimb1Cluster);
-            Assert.IsNotNull (importLimb2Cluster);
+            ClusterPair[] clusters = new ClusterPair[3];
 
-            FbxAMatrix origTransformMatrix = null;
-            FbxAMatrix importTransformMatrix = null;
-            Assert.AreEqual (origRootCluster.GetTransformMatrix (origTransformMatrix), importRootCluster.GetTransformMatrix (importTransformMatrix));
-            Assert.AreEqual (origLimb1Cluster.GetTransformMatrix (origTransformMatrix), importLimb1Cluster.GetTransformMatrix (importTransformMatrix));
-            Assert.AreEqual (origLimb2Cluster.GetTransformMatrix (origTransformMatrix), importLimb2Cluster.GetTransformMatrix (importTransformMatrix));
+            for (int i = 0; i < 3; i++) {
+                FbxCluster origCluster = origSkin.GetCluster (i);
+                Assert.IsNotNull (origCluster);
 
-            Assert.AreEqual (origRootCluster.GetTransformLinkMatrix (origTransformMatrix), importRootCluster.GetTransformLinkMatrix (importTransformMatrix));
-            Assert.AreEqual (origLimb1Cluster.GetTransformLinkMatrix (origTransformMatrix), importLimb1Cluster.GetTransformLinkMatrix (importTransformMatrix));
-            Assert.AreEqual (origLimb2Cluster.GetTransformLinkMatrix (origTransformMatrix), importLimb2Cluster.GetTransformLinkMatrix (importTransformMatrix));
+                FbxCluster importCluster = importSkin.GetCluster (i);
+                Assert.IsNotNull (importCluster);
 
-            Assert.AreEqual (origRootCluster.GetLink (), importRootCluster.GetLink ());
-            Assert.AreEqual (origRootCluster.GetLinkMode (), importRootCluster.GetLinkMode ());
-            Assert.AreEqual (origRootCluster.GetControlPointIndicesCount (), importRootCluster.GetControlPointIndicesCount ());
-
-            for (int i = 0; i < origRootCluster.GetControlPointIndicesCount (); i++) {
-                Assert.AreEqual (origRootCluster.GetControlPointIndexAt (i), importRootCluster.GetControlPointIndexAt (i));
-                Assert.AreEqual (origRootCluster.GetControlPointWeightAt (i), importRootCluster.GetControlPointWeightAt (i));
+                clusters [i] = new ClusterPair (origCluster, importCluster);
             }
 
-            Assert.AreEqual (origLimb1Cluster.GetLink (), importLimb1Cluster.GetLink ());
-            Assert.AreEqual (origLimb1Cluster.GetLinkMode (), importLimb1Cluster.GetLinkMode ());
-            Assert.AreEqual (origLimb1Cluster.GetControlPointIndicesCount (), importLimb1Cluster.GetControlPointIndicesCount ());
+            foreach (var c in clusters) {
+                FbxAMatrix origTransformMatrix = null;
+                FbxAMatrix importTransformMatrix = null;
+                Assert.AreEqual (c.orig.GetTransformMatrix (origTransformMatrix), c.import.GetTransformMatrix (importTransformMatrix));
+                Assert.AreEqual (c.orig.GetTransformLinkMatrix (origTransformMatrix), c.import.GetTransformLinkMatrix (importTransformMatrix));
 
-            for (int i = 0; i < origLimb1Cluster.GetControlPointIndicesCount (); i++) {
-                Assert.AreEqual (origLimb1Cluster.GetControlPointIndexAt (i), importLimb1Cluster.GetControlPointIndexAt (i));
-                Assert.AreEqual (origLimb1Cluster.GetControlPointWeightAt (i), importLimb1Cluster.GetControlPointWeightAt (i));
+                Assert.AreEqual (c.orig.GetLink (), c.import.GetLink ());
+                Assert.AreEqual (c.orig.GetLinkMode (), c.import.GetLinkMode ());
+                Assert.AreEqual (c.orig.GetControlPointIndicesCount (), c.import.GetControlPointIndicesCount ());
+
+                for (int i = 0; i < c.orig.GetControlPointIndicesCount (); i++) {
+                    Assert.AreEqual (c.orig.GetControlPointIndexAt (i), c.import.GetControlPointIndexAt (i));
+                    Assert.AreEqual (c.orig.GetControlPointWeightAt (i), c.import.GetControlPointWeightAt (i));
+                }
             }
+        }
 
-            Assert.AreEqual (origLimb2Cluster.GetLink (), importLimb2Cluster.GetLink ());
-            Assert.AreEqual (origLimb2Cluster.GetLinkMode (), importLimb2Cluster.GetLinkMode ());
-            Assert.AreEqual (origLimb2Cluster.GetControlPointIndicesCount (), importLimb2Cluster.GetControlPointIndicesCount ());
+        protected void CheckExportBindPose(FbxScene origScene, FbxScene importScene)
+        {
+            FbxPose origPose = origScene.GetPose (0);
+            FbxPose importPose = importScene.GetPose (0);
 
-            for (int i = 0; i < origLimb2Cluster.GetControlPointIndicesCount (); i++) {
-                Assert.AreEqual (origLimb2Cluster.GetControlPointIndexAt (i), importLimb2Cluster.GetControlPointIndexAt (i));
-                Assert.AreEqual (origLimb2Cluster.GetControlPointWeightAt (i), importLimb2Cluster.GetControlPointWeightAt (i));
+            Assert.IsNotNull (origPose);
+            Assert.IsNotNull (importPose);
+            Assert.AreEqual (origPose.IsBindPose (), importPose.IsBindPose ());
+            Assert.AreEqual (origPose.GetCount (), importPose.GetCount ());
+
+            for (int i = 0; i < origPose.GetCount (); i++) {
+                Assert.AreEqual (origPose.GetNode (i).GetName (), importPose.GetNode (i).GetName ());
+                Assert.AreEqual (origPose.GetMatrix (i), importPose.GetMatrix (i));
             }
         }
     }
