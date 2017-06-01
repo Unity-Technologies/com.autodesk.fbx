@@ -66,5 +66,22 @@ namespace UnitTests
                 Assert.That (() => { newScene.AddPose(fbxPose); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
             }
         }
+
+        [Test]
+        public void TestSetCurrentAnimStack()
+        {
+            using (FbxScene newScene = FbxScene.Create (Manager, "")) {
+                FbxAnimStack animStack = FbxAnimStack.Create (Manager, "");
+                newScene.SetCurrentAnimationStack (animStack);
+                Assert.AreEqual (animStack, newScene.GetCurrentAnimationStack ());
+
+                // test null
+                Assert.That (() => { newScene.SetCurrentAnimationStack(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
+                // test invalid
+                animStack.Destroy();
+                Assert.That (() => { newScene.SetCurrentAnimationStack(animStack); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            }
+        }
     }
 }

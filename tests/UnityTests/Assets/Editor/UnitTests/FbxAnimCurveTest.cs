@@ -58,8 +58,13 @@ namespace UnitTests
                 Assert.That (() => { curve.KeyAdd(null, ref last); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test KeySet
-                curve.KeySet(index, new FbxTime(), 5);
+                FbxTime keyTime = FbxTime.FromSecondDouble(3);
+                curve.KeySet(index, keyTime, 5);
+
+                // test KeyGetValue, KeyGetTime, KeyGetCount
                 Assert.AreEqual (5, curve.KeyGetValue (index));
+                Assert.AreEqual (keyTime, curve.KeyGetTime (index));
+                Assert.AreEqual (1, curve.KeyGetCount ());
 
                 // make sure none of the variations crash
                 curve.KeySet (index, new FbxTime (), 5, FbxAnimCurveDef.EInterpolationType.eInterpolationConstant
