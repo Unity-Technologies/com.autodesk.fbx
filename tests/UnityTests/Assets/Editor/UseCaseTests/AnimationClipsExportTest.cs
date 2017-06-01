@@ -12,6 +12,8 @@ namespace UseCaseTests
 {
     public class AnimationClipsExportTest : RoundTripTestBase
     {
+        private int m_keyCount = 5;
+
         [SetUp]
         public override void Init ()
         {
@@ -56,9 +58,8 @@ namespace UseCaseTests
             fbxAnimStack.SetLocalTimeSpan (new FbxTimeSpan (fbxStartTime, fbxStopTime));
 
             // set up the translation
-            foreach(var fbxProperty in new FbxProperty[]{ animNode.FindProperty ("Lcl Translation", false),
-                animNode.FindProperty ("Lcl Rotation", false),
-                animNode.FindProperty ("Lcl Scaling", false) }){
+            foreach(var propStr in new string[]{ "Lcl Translation", "Lcl Rotation", "Lcl Scaling" }){
+                FbxProperty fbxProperty = animNode.FindProperty (propStr, false);
 
                 Assert.IsNotNull (fbxProperty);
                 Assert.IsTrue (fbxProperty.IsValid ());
@@ -71,7 +72,7 @@ namespace UseCaseTests
                     FbxAnimCurve fbxAnimCurve = fbxProperty.GetCurve (fbxAnimLayer, component, true);
 
                     fbxAnimCurve.KeyModifyBegin ();
-                    for (int keyIndex = 0; keyIndex < 5; ++keyIndex) {
+                    for (int keyIndex = 0; keyIndex < m_keyCount; ++keyIndex) {
                         FbxTime fbxTime = FbxTime.FromSecondDouble(keyIndex * 2);
                         fbxAnimCurve.KeyAdd (fbxTime);
                         fbxAnimCurve.KeySet (keyIndex, fbxTime, keyIndex * 3 - 1);
@@ -79,11 +80,74 @@ namespace UseCaseTests
                     fbxAnimCurve.KeyModifyEnd ();
                 }
             }
+
+            // TODO: avoid needing to this by creating typemaps for
+            //       FbxObject::GetSrcObjectCount and FbxCast.
+            //       Not trivial to do as both fbxobject.i and fbxemitter.i
+            //       have to be moved up before the ignore all statement
+            //       to allow use of templates.
+            scene.SetCurrentAnimationStack (fbxAnimStack);
             scene.GetRootNode().AddChild (animNode);
             return scene;
         }
 
         protected override void CheckScene (FbxScene scene)
-        {}
+        {
+            FbxScene origScene = CreateScene (FbxManager);
+
+            FbxNode origAnimNode = origScene.GetRootNode ().GetChild (0);
+            FbxNode importAnimNode = scene.GetRootNode ().GetChild (0);
+
+            Assert.AreEqual (origScene.GetRootNode ().GetChildCount (), scene.GetRootNode ().GetChildCount ());
+            Assert.IsNotNull (origAnimNode);
+            Assert.IsNotNull (importAnimNode);
+            Assert.AreEqual (origAnimNode.GetName (), importAnimNode.GetName ());
+
+            FbxAnimStack origStack = origScene.GetCurrentAnimationStack ();
+            FbxAnimStack importStack = scene.GetCurrentAnimationStack ();
+
+            Assert.IsNotNull (origStack);
+            Assert.IsNotNull (importStack);
+            Assert.AreEqual (origStack.GetName (), importStack.GetName ());
+            Assert.AreEqual (origStack.Description.Get (), importStack.Description.Get ());
+            Assert.AreEqual (origStack.GetMemberCount (), importStack.GetMemberCount ());
+
+            FbxAnimLayer origLayer = origStack.GetAnimLayerMember ();
+            FbxAnimLayer importLayer = importStack.GetAnimLayerMember ();
+
+            Assert.IsNotNull (origLayer);
+            Assert.IsNotNull (importLayer);
+
+            Assert.AreEqual (FbxTime.EMode.eFrames30, FbxTime.GetGlobalTimeMode ());
+            Assert.AreEqual (origStack.GetLocalTimeSpan (), importStack.GetLocalTimeSpan ());
+
+            foreach (var propStr in new string[]{ "Lcl Translation", "Lcl Rotation", "Lcl Scaling" }) {
+                FbxProperty origProperty = origAnimNode.FindProperty (propStr, false);
+                FbxProperty importProperty = importAnimNode.FindProperty (propStr, false);
+
+                Assert.IsNotNull (origProperty);
+                Assert.IsNotNull (importProperty);
+                Assert.IsTrue (origProperty.IsValid ());
+                Assert.IsTrue (importProperty.IsValid ());
+
+                foreach (var component in new string[]{Globals.FBXSDK_CURVENODE_COMPONENT_X, 
+                    Globals.FBXSDK_CURVENODE_COMPONENT_Y, 
+                    Globals.FBXSDK_CURVENODE_COMPONENT_Z}) {
+
+                    FbxAnimCurve origAnimCurve = origProperty.GetCurve (origLayer, component, true);
+                    FbxAnimCurve importAnimCurve = importProperty.GetCurve (importLayer, component, true);
+
+                    Assert.IsNotNull (origAnimCurve);
+                    Assert.IsNotNull (importAnimCurve);
+
+                    Assert.AreEqual (origAnimCurve.KeyGetCount (), importAnimCurve.KeyGetCount ());
+
+                    for (int i = 0; i < origAnimCurve.KeyGetCount (); i++) {
+                        Assert.AreEqual (origAnimCurve.KeyGetTime (i), importAnimCurve.KeyGetTime (i));
+                        Assert.AreEqual (origAnimCurve.KeyGetValue (i), importAnimCurve.KeyGetValue (i));
+                    }
+                }
+            }
+        }
     }
 }

@@ -10,7 +10,14 @@
 
 %rename("%s") FbxCollection::Clear;
 %rename("%s") FbxCollection::AddMember;
+%rename("%s") FbxCollection::GetAnimLayerMember;
 %rename("%s") FbxCollection::GetMemberCount() const;
+
+%extend FbxCollection{
+    FbxAnimLayer* GetAnimLayerMember(int pIndex = 0) const {
+        return $self->GetMember<FbxAnimLayer>(pIndex);
+    }
+}
 
 #endif
 

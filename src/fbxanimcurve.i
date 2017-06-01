@@ -45,6 +45,7 @@
         float pVelocity1=FbxAnimCurveDef::sDEFAULT_VELOCITY 
     );
 %rename("%s") FbxAnimCurve::KeyGetValue;
+%rename("%s") FbxAnimCurve::KeyGetTime;
 
 // Unignore FbxAnimCurveDef. It's a static class.
 %rename("%s", %$isclass) FbxAnimCurveDef;
