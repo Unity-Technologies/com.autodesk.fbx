@@ -72,6 +72,9 @@ namespace UnitTests
                 TestGetter (fbxCamera.ProjectionType);
                 TestGetter (fbxCamera.FilmAspectRatio);
                 TestGetter (fbxCamera.FocalLength);
+                TestGetter (fbxCamera.AspectHeight);
+                TestGetter (fbxCamera.AspectWidth);
+                TestGetter (fbxCamera.NearPlane);
             }
         }
     }
