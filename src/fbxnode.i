@@ -29,6 +29,7 @@
 %rename("%s") FbxNode::GetMesh;
 %rename("%s") FbxNode::GetGeometry;
 %rename("%s") FbxNode::GetCamera(); /* non-const to avoid warning */
+%rename("%s") FbxNode::GetLight();
 
 /* Materials */
 %rename("%s") FbxNode::AddMaterial;
