@@ -6,12 +6,21 @@
 // ***********************************************************************
 using NUnit.Framework;
 using FbxSdk;
+using System.Collections.Generic;
 
 namespace UnitTests
 {
     public class FbxVector2Test
     {
 #if ENABLE_COVERAGE_TEST
+        static FbxVector2Test()
+        {
+            // The coverage tester doesn't realize that MatchingTests calls
+            // every command (it asserts as much at the end). We need to tell it.
+            var lambdaCaller = typeof(FbxVector2Test).GetMethod("MatchingTests");
+            CppMatchingHelper.RegisterLambdaCalls(lambdaCaller, s_commands);
+        }
+
         [Test]
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxVector2), this.GetType()); }
 #endif
@@ -62,6 +71,54 @@ namespace UnitTests
             Assert.That(() => v[ 2], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             Assert.That(() => v[-1] = 5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             Assert.That(() => v[ 2] = 5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+
+            // Test that we can scale by a scalar.
+            // This isn't covered below because this isn't legal in C++
+            // (at least in FBX SDK 2017.1)
+            u = 5 * v;
+            Assert.AreEqual(5 * v.X, u.X);
+            Assert.AreEqual(5 * v.Y, u.Y);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////
+        // Test that our results match the C++.
+        ///////////////////////////////////////////////////////////////////////////
+
+        static FbxVector2 Vector(double d) { return new FbxVector2(d,d); }
+        static FbxVector2 Vector(double[] d) {
+            return d.Length == 1 ? Vector(d[0]) : new FbxVector2(d[0], d[1]);
+        }
+
+        static Dictionary<string, CppMatchingHelper.TestCommand<FbxVector2>> s_commands = new Dictionary<string, CppMatchingHelper.TestCommand<FbxVector2>> {
+            { "-a", (FbxVector2 a, FbxVector2 b) => { return -a; } },
+            { "a + 2", (FbxVector2 a, FbxVector2 b) => { return a + 2; } },
+            { "a - 2", (FbxVector2 a, FbxVector2 b) => { return a - 2; } },
+            { "a * 2", (FbxVector2 a, FbxVector2 b) => { return a * 2; } },
+            { "a / 2", (FbxVector2 a, FbxVector2 b) => { return a / 2; } },
+            { "a + b", (FbxVector2 a, FbxVector2 b) => { return a + b; } },
+            { "a - b", (FbxVector2 a, FbxVector2 b) => { return a - b; } },
+            { "a * b", (FbxVector2 a, FbxVector2 b) => { return a * b; } },
+            { "a / b", (FbxVector2 a, FbxVector2 b) => { return a / b; } },
+            { "a.Length()", (FbxVector2 a, FbxVector2 b) => { return Vector(a.Length()); } },
+            { "a.SquareLength()", (FbxVector2 a, FbxVector2 b) => { return Vector(a.SquareLength()); } },
+            { "a.DotProduct(b)", (FbxVector2 a, FbxVector2 b) => { return Vector(a.DotProduct(b)); } },
+            { "a.Distance(b)", (FbxVector2 a, FbxVector2 b) => { return Vector(a.Distance(b)); } },
+        };
+
+        static Dictionary<string, CppMatchingHelper.AreSimilar<FbxVector2>> s_custom_compare = new Dictionary<string, CppMatchingHelper.AreSimilar<FbxVector2>> {
+            { "a.Length()", (FbxVector2 a, FbxVector2 b) => { Assert.AreEqual(a.X, b.X, 1e-8); return true; } },
+            { "a.Distance(b)", (FbxVector2 a, FbxVector2 b) => { Assert.AreEqual(a.X, b.X, 1e-8); return true; } },
+        };
+
+        [Test]
+        public void MatchingTests ()
+        {
+            CppMatchingHelper.MatchingTest<FbxVector2>(
+                    "vector_test.txt",
+                    "FbxVector2",
+                    Vector,
+                    s_commands,
+                    s_custom_compare);
         }
     }
 }

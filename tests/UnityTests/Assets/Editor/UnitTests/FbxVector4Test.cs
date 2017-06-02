@@ -6,14 +6,23 @@
 // ***********************************************************************
 using NUnit.Framework;
 using FbxSdk;
+using System.Collections.Generic;
 
 namespace UnitTests
 {
     public class FbxVector4Test
     {
 #if ENABLE_COVERAGE_TEST
+        static FbxVector4Test()
+        {
+            var lambdaCaller = typeof(FbxVector4Test).GetMethod("MatchingTests");
+            CppMatchingHelper.RegisterLambdaCalls(lambdaCaller, s_commands);
+        }
+
         [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxVector4), this.GetType()); }
+        public void TestCoverage() {
+            CoverageTester.TestCoverage(typeof(FbxVector4), this.GetType());
+        }
 #endif
 
         [Test]
@@ -78,6 +87,67 @@ namespace UnitTests
             Assert.AreEqual(4, v.Y);
             Assert.AreEqual(5, v.Z);
             Assert.AreEqual(6, v.W);
+
+            // Test that we can scale by a scalar.
+            // This isn't covered below because this isn't legal in C++
+            // (at least in FBX SDK 2017.1)
+            u = 5 * v;
+            Assert.AreEqual(5 * v.X, u.X);
+            Assert.AreEqual(5 * v.Y, u.Y);
+            Assert.AreEqual(5 * v.Z, u.Z);
+            Assert.AreEqual(5 * v.W, u.W);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////
+        // Test that our results match the C++.
+        ///////////////////////////////////////////////////////////////////////////
+
+        static FbxVector4 Vector(double d) { return new FbxVector4(d,d,d,d); }
+
+        static FbxVector4 Vector(double [] d) {
+            if (d.Length == 1) { return Vector(d[0]); }
+            else {
+                Assert.AreEqual(4, d.Length);
+                return new FbxVector4(d[0],d[1],d[2],d[3]);
+            }
+        }
+
+        static Dictionary<string, CppMatchingHelper.TestCommand<FbxVector4>> s_commands = new Dictionary<string, CppMatchingHelper.TestCommand<FbxVector4>> {
+            { "-a", (FbxVector4 a, FbxVector4 b) => { return -a; } },
+            { "a + 2", (FbxVector4 a, FbxVector4 b) => { return a + 2; } },
+            { "a - 2", (FbxVector4 a, FbxVector4 b) => { return a - 2; } },
+            { "a * 2", (FbxVector4 a, FbxVector4 b) => { return a * 2; } },
+            { "a / 2", (FbxVector4 a, FbxVector4 b) => { return a / 2; } },
+            { "a + b", (FbxVector4 a, FbxVector4 b) => { return a + b; } },
+            { "a - b", (FbxVector4 a, FbxVector4 b) => { return a - b; } },
+            { "a * b", (FbxVector4 a, FbxVector4 b) => { return a * b; } },
+            { "a / b", (FbxVector4 a, FbxVector4 b) => { return a / b; } },
+            { "a.Length()", (FbxVector4 a, FbxVector4 b) => { return Vector(a.Length()); } },
+            { "a.SquareLength()", (FbxVector4 a, FbxVector4 b) => { return Vector(a.SquareLength()); } },
+            { "a.DotProduct(b)", (FbxVector4 a, FbxVector4 b) => { return Vector(a.DotProduct(b)); } },
+            { "a.CrossProduct(b)", (FbxVector4 a, FbxVector4 b) => { return a.CrossProduct(b); } },
+            { "a.Distance(b)", (FbxVector4 a, FbxVector4 b) => { return Vector(a.Distance(b)); } },
+        };
+
+        static bool ApproximatelyEqualX(FbxVector4 expected, FbxVector4 actual) {
+            Assert.AreEqual(expected.X, actual.X, 1e-8);
+            return System.Math.Abs(expected.X - actual.X) < 1e-8;
+        }
+
+        static Dictionary<string, CppMatchingHelper.AreSimilar<FbxVector4>> s_custom_compare = new Dictionary<string, CppMatchingHelper.AreSimilar<FbxVector4>> {
+            { "a.Length()", ApproximatelyEqualX },
+            { "a.Distance(b)", ApproximatelyEqualX }
+        };
+
+        [Test]
+        public void MatchingTests ()
+        {
+            CppMatchingHelper.MatchingTest<FbxVector4>(
+                    "vector_test.txt",
+                    "FbxVector4",
+                    Vector,
+                    s_commands,
+                    s_custom_compare);
         }
     }
 }

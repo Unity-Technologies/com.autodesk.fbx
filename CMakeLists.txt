@@ -158,6 +158,13 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 endif()
 
 ###########################################################################
+# enable a test that the C# and C++ vectors behave the same
+add_executable(vector_test tests/Vectors/Vectors.cpp)
+target_link_libraries(vector_test ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
+add_custom_command(OUTPUT vector_test.txt COMMAND vector_test ARGS ">" vector_test.txt DEPENDS vector_test)
+add_custom_target(vector_test_output ALL DEPENDS vector_test.txt)
+
+###########################################################################
 # build the native C++ unit tests
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
 target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
@@ -173,6 +180,7 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp DESTINATION fbxsdk F
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION fbxsdk/csharp FILES_MATCHING PATTERN "*.cs")
 install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
 install(TARGETS unity_tests DESTINATION fbxsdk)
+install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
 
 enable_testing()
 add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests runEditorTests)
