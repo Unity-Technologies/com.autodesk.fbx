@@ -45,6 +45,9 @@ namespace FbxSdk.Examples
             /// </summary>
             public static FbxImporter03 Create () { return new FbxImporter03 (); }
 
+            /// <summary>
+            /// Process mesh data and setup MeshFilter component
+            /// </summary>
             private void ProcessMesh (FbxNode fbxNode, GameObject unityGo)
             {
                 FbxMesh fbxMesh = fbxNode.GetMesh ();
@@ -104,6 +107,9 @@ namespace FbxSdk.Examples
                 }
             }
 
+            /// <summary>
+            /// Process transformation data and setup Transform component
+            /// </summary>
             private void ProcessTransform (FbxNode fbxNode, GameObject unityGo)
             {
                 FbxVector4 lclTrs = new FbxVector4 ();
