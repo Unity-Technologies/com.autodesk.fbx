@@ -32,6 +32,9 @@
 %fbximmutable(FbxCamera::ProjectionType);
 %fbximmutable(FbxCamera::FilmAspectRatio);
 %fbximmutable(FbxCamera::FocalLength);
+%fbximmutable(FbxCamera::NearPlane);
+%fbximmutable(FbxCamera::AspectWidth);
+%fbximmutable(FbxCamera::AspectHeight);
 
 %include "fbxsdk/scene/geometry/fbxcamera.h"
 

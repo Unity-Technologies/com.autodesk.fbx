@@ -5,7 +5,7 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using System.Collections;
+using System.Collections.Generic;
 using FbxSdk;
 
 namespace UseCaseTests
@@ -59,33 +59,17 @@ namespace UseCaseTests
             FbxAnimStack animStack = scene.GetCurrentAnimationStack ();
             FbxAnimLayer animLayer = animStack.GetAnimLayerMember ();
 
-            foreach(var propStr in new string[]{ "backgroundColor", camera.FocalLength.GetName(), camera.NearPlane.GetName(), "clearFlags" }){
-                FbxProperty fbxProperty = cameraNode.FindProperty (propStr, false);
-                UnityEngine.Debug.Log (fbxProperty.GetName ());
-                Assert.IsNotNull (fbxProperty);
-                Assert.IsTrue (fbxProperty.IsValid ());
-
-                string[] componentList = new string[]{ null };
-                if (propStr.Equals ("backgroundColor")) {
-                    componentList = new string[] {
-                        Globals.FBXSDK_CURVENODE_COLOR_RED, 
-                        Globals.FBXSDK_CURVENODE_COLOR_GREEN, 
-                        Globals.FBXSDK_CURVENODE_COLOR_BLUE, "W"
-                    };
-                }
-                foreach (var component in componentList) {
-                    // Create the AnimCurve on the channel
-                    FbxAnimCurve fbxAnimCurve = fbxProperty.GetCurve (animLayer, component, true);
-
-                    fbxAnimCurve.KeyModifyBegin ();
-                    for (int keyIndex = 0; keyIndex < fbxAnimCurve.KeyGetCount(); ++keyIndex) {
-                        FbxTime fbxTime = FbxTime.FromSecondDouble(keyIndex);
-                        fbxAnimCurve.KeyAdd (fbxTime);
-                        fbxAnimCurve.KeySet (keyIndex, fbxTime, keyIndex / 5.0f);
-                    }
-                    fbxAnimCurve.KeyModifyEnd ();
-                }
-            }
+            // TODO: Figure out why trying to do GetCurve for NearPlane always returns null
+            CreateAnimCurves (cameraNode, animLayer, new List<PropertyComponentPair> () {
+                new PropertyComponentPair("backgroundColor", new string[] {
+                    Globals.FBXSDK_CURVENODE_COLOR_RED, 
+                    Globals.FBXSDK_CURVENODE_COLOR_GREEN, 
+                    Globals.FBXSDK_CURVENODE_COLOR_BLUE, "W"
+                }),
+                new PropertyComponentPair("FocalLength", new string[]{null}),
+                //new PropertyComponentPair("NearPlane", new string[]{null}),
+                new PropertyComponentPair("clearFlags", new string[]{null})
+            }, (index) => { return index; }, (index) => { return index/5.0f; }, camera);
 
             cameraNode.SetNodeAttribute (camera);
 
@@ -115,12 +99,38 @@ namespace UseCaseTests
             Assert.IsNotNull (origCamera);
             Assert.IsNotNull (importCamera);
 
+            CheckCameraSettings (origCamera, importCamera, origCameraNode, importCameraNode);
+
+            // check anim
+            FbxAnimStack origAnimStack = origScene.GetCurrentAnimationStack();
+            FbxAnimLayer origAnimLayer = origAnimStack.GetAnimLayerMember ();
+            Assert.IsNotNull (origAnimStack);
+            Assert.IsNotNull (origAnimLayer);
+
+            FbxAnimStack importAnimStack = scene.GetCurrentAnimationStack();
+            FbxAnimLayer importAnimLayer = importAnimStack.GetAnimLayerMember ();
+            Assert.IsNotNull (importAnimStack);
+            Assert.IsNotNull (importAnimLayer);
+
+            CheckAnimCurve (origCameraNode, importCameraNode, origAnimLayer, importAnimLayer, new List<PropertyComponentPair>(){
+                new PropertyComponentPair("backgroundColor", new string[] {
+                    Globals.FBXSDK_CURVENODE_COLOR_RED, 
+                    Globals.FBXSDK_CURVENODE_COLOR_GREEN, 
+                    Globals.FBXSDK_CURVENODE_COLOR_BLUE, "W"
+                }),
+                new PropertyComponentPair("FocalLength", new string[]{null}),
+                new PropertyComponentPair("clearFlags", new string[]{null})
+            }, origCamera, importCamera);
+        }
+
+        protected void CheckCameraSettings(FbxCamera origCamera, FbxCamera importCamera, FbxNode origCameraNode, FbxNode importCameraNode)
+        {
             Assert.AreEqual (origCamera.ProjectionType.Get (), importCamera.ProjectionType.Get ());
-            //Assert.AreEqual (origCamera.AspectWidth.Get (), importCamera.AspectWidth.Get ());
-            //Assert.AreEqual (origCamera.AspectHeight.Get (), importCamera.AspectHeight.Get ());
+            Assert.AreEqual (origCamera.AspectWidth.Get (), importCamera.AspectWidth.Get ());
+            Assert.AreEqual (origCamera.AspectHeight.Get (), importCamera.AspectHeight.Get ());
             Assert.AreEqual (origCamera.GetAspectRatioMode (), importCamera.GetAspectRatioMode ());
             Assert.AreEqual (origCamera.FilmAspectRatio.Get (), importCamera.FilmAspectRatio.Get ());
-            Assert.AreEqual (origCamera.GetApertureWidth (), importCamera.GetApertureMode ());
+            Assert.AreEqual (origCamera.GetApertureWidth (), importCamera.GetApertureWidth ());
             Assert.AreEqual (origCamera.GetApertureHeight (), importCamera.GetApertureHeight ());
             Assert.AreEqual (origCamera.GetApertureMode (), origCamera.GetApertureMode ());
             Assert.AreEqual (origCamera.FocalLength.Get (), importCamera.FocalLength.Get ());
@@ -147,50 +157,6 @@ namespace UseCaseTests
                     importBgColorProp.GetFlag (FbxPropertyFlags.EFlags.eUserDefined));
                 Assert.AreEqual (property.GetFlag (FbxPropertyFlags.EFlags.eAnimatable),
                     importBgColorProp.GetFlag (FbxPropertyFlags.EFlags.eAnimatable));
-            }
-
-            // check anim
-            FbxAnimStack origAnimStack = origScene.GetCurrentAnimationStack();
-            FbxAnimLayer origAnimLayer = origAnimStack.GetAnimLayerMember ();
-            Assert.IsNotNull (origAnimStack);
-            Assert.IsNotNull (origAnimLayer);
-
-            FbxAnimStack importAnimStack = scene.GetCurrentAnimationStack();
-            FbxAnimLayer importAnimLayer = importAnimStack.GetAnimLayerMember ();
-            Assert.IsNotNull (importAnimStack);
-            Assert.IsNotNull (importAnimLayer);
-
-            foreach (var propStr in new string[]{ "backgroundColor", "FocalLength", "NearPlane", "clearFlags" }) {
-                FbxProperty origProperty = origCameraNode.FindProperty (propStr, false);
-                FbxProperty importProperty = importCameraNode.FindProperty (propStr, false);
-
-                Assert.IsNotNull (origProperty);
-                Assert.IsNotNull (importProperty);
-                Assert.IsTrue (origProperty.IsValid ());
-                Assert.IsTrue (importProperty.IsValid ());
-
-                string[] componentList = new string[]{ null };
-                if (propStr.Equals ("backgroundColor")) {
-                    componentList = new string[] {
-                        Globals.FBXSDK_CURVENODE_COLOR_RED, 
-                        Globals.FBXSDK_CURVENODE_COLOR_GREEN, 
-                        Globals.FBXSDK_CURVENODE_COLOR_BLUE, "W"
-                    };
-                }
-                foreach (var component in componentList) {
-                    FbxAnimCurve origAnimCurve = origProperty.GetCurve (origAnimLayer, component, false);
-                    FbxAnimCurve importAnimCurve = importProperty.GetCurve (importAnimLayer, component, false);
-
-                    Assert.IsNotNull (origAnimCurve);
-                    Assert.IsNotNull (importAnimCurve);
-
-                    Assert.AreEqual (origAnimCurve.KeyGetCount (), importAnimCurve.KeyGetCount ());
-
-                    for (int i = 0; i < origAnimCurve.KeyGetCount (); i++) {
-                        Assert.AreEqual (origAnimCurve.KeyGetTime (i), importAnimCurve.KeyGetTime (i));
-                        Assert.AreEqual (origAnimCurve.KeyGetValue (i), importAnimCurve.KeyGetValue (i));
-                    }
-                }
             }
         }
     }
