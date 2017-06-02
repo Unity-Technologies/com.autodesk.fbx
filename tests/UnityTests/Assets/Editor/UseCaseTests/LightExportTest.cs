@@ -5,12 +5,12 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using System.Collections;
+using System.Collections.Generic;
 using FbxSdk;
 
 namespace UseCaseTests
 {
-    public class LightExportTest : RoundTripTestBase
+    public class LightExportTest : AnimationClipsExportTest
     {
         [SetUp]
         public override void Init ()
@@ -21,8 +21,8 @@ namespace UseCaseTests
 
         protected override FbxScene CreateScene (FbxManager manager)
         {
-            FbxScene scene = FbxScene.Create (manager, "myScene");
-            FbxNode lightNode = FbxNode.Create (scene, "lightNode");
+            FbxScene scene = base.CreateScene (manager);
+            FbxNode lightNode = scene.GetRootNode ().GetChild (0);
 
             FbxLight light = FbxLight.Create (scene, "light");
             light.LightType.Set(FbxLight.EType.eSpot);
@@ -50,6 +50,24 @@ namespace UseCaseTests
             light.FarAttenuationEnd.Set(9.8f);
             light.CastShadows.Set (true);
 
+            FbxAnimStack animStack = scene.GetCurrentAnimationStack ();
+            FbxAnimLayer animLayer = animStack.GetAnimLayerMember ();
+
+            // TODO: figure out why trying to add anim curves to the 3 commented out properties
+            //       below fails
+            // add animation
+            CreateAnimCurves (lightNode, animLayer, new List<PropertyComponentPair> () {
+                /*new PropertyComponentPair (FbxNodeAttribute.sColor, new string[]{
+                    Globals.FBXSDK_CURVENODE_COLOR_RED,
+                    Globals.FBXSDK_CURVENODE_COLOR_GREEN,
+                    Globals.FBXSDK_CURVENODE_COLOR_BLUE
+                }),*/
+                //new PropertyComponentPair ("Intensity", new string[]{null}),
+                //new PropertyComponentPair ("InnerAngle", new string[]{null}),
+                new PropertyComponentPair ("colorTemperature", new string[]{null}),
+                new PropertyComponentPair ("cookieSize", new string[]{null})
+            }, (index) => { return (index + 1)/2.0; }, (index) => { return index%2; });
+
             // set ambient lighting
             scene.GetGlobalSettings ().SetAmbientColor (new FbxColor (0.1, 0.2, 0.3));
 
@@ -74,6 +92,7 @@ namespace UseCaseTests
 
         protected override void CheckScene (FbxScene scene)
         {
+            base.CheckScene (scene);
             FbxScene origScene = CreateScene (FbxManager);
 
             FbxNode origLightNode = origScene.GetRootNode ().GetChild (0);
@@ -94,6 +113,31 @@ namespace UseCaseTests
                 origLight, importLight,
                 new string[]{ "bounceIntensity", "colorTemperature", "cookieSize" }
             );
+
+            // Check anim
+            FbxAnimStack origAnimStack = origScene.GetCurrentAnimationStack();
+            FbxAnimLayer origAnimLayer = origAnimStack.GetAnimLayerMember ();
+            Assert.IsNotNull (origAnimStack);
+            Assert.IsNotNull (origAnimLayer);
+
+            FbxAnimStack importAnimStack = scene.GetCurrentAnimationStack();
+            FbxAnimLayer importAnimLayer = importAnimStack.GetAnimLayerMember ();
+            Assert.IsNotNull (importAnimStack);
+            Assert.IsNotNull (importAnimLayer);
+
+            // TODO: figure out why trying to add anim curves to the 3 commented out properties
+            //       below fails
+            CheckAnimCurve (origLightNode, importLightNode, origAnimLayer, importAnimLayer, new List<PropertyComponentPair>(){
+                /*new PropertyComponentPair (FbxNodeAttribute.sColor, new string[]{
+                    Globals.FBXSDK_CURVENODE_COLOR_RED,
+                    Globals.FBXSDK_CURVENODE_COLOR_GREEN,
+                    Globals.FBXSDK_CURVENODE_COLOR_BLUE
+                }),*/
+                //new PropertyComponentPair ("Intensity", new string[]{null}),
+                //new PropertyComponentPair ("InnerAngle", new string[]{null}),
+                new PropertyComponentPair ("colorTemperature", new string[]{null}),
+                new PropertyComponentPair ("cookieSize", new string[]{null})
+            }, origLight, importLight);
         }
 
         protected void CheckProperties(
