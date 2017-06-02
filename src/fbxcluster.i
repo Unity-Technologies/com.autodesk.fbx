@@ -4,7 +4,7 @@
 // Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
-#ifdef IGNORE_ALL_INCLUDE_SOME
+
 // Unignore class
 %rename("%s", %$isclass) FbxCluster;
 
@@ -21,6 +21,28 @@
 %rename("%s") FbxCluster::SetTransformLinkMatrix;
 %rename("%s") FbxCluster::GetTransformLinkMatrix;
 %rename("%s") FbxCluster::AddControlPointIndex;
-#endif
+%rename("%s") FbxCluster::GetControlPointIndexAt;
+%rename("%s") FbxCluster::GetControlPointWeightAt;
+%rename("%s") FbxCluster::GetControlPointIndicesCount;
+%rename("%s") FbxCluster::SetControlPointIWCount;
+
+%extend FbxCluster {
+    int GetControlPointIndexAt(int index){
+        if(index < 0 || index > $self->GetControlPointIndicesCount()){
+            SWIG_CSharpSetPendingException(SWIG_CSharpIndexOutOfRangeException, "Index $1 out of range");
+            return -1;
+        }
+        return $self->GetControlPointIndices()[index];
+    }
+    
+    double GetControlPointWeightAt(int index){
+        if(index < 0 || index > $self->GetControlPointIndicesCount()){
+            SWIG_CSharpSetPendingException(SWIG_CSharpIndexOutOfRangeException, "Index $1 out of range");
+            return -1;
+        }
+        return $self->GetControlPointWeights()[index];
+    }
+}
 
 %include "fbxsdk/scene/geometry/fbxcluster.h"
+
