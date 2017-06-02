@@ -134,8 +134,8 @@ namespace UseCaseTests
                     Globals.FBXSDK_CURVENODE_COMPONENT_Y, 
                     Globals.FBXSDK_CURVENODE_COMPONENT_Z}) {
 
-                    FbxAnimCurve origAnimCurve = origProperty.GetCurve (origLayer, component, true);
-                    FbxAnimCurve importAnimCurve = importProperty.GetCurve (importLayer, component, true);
+                    FbxAnimCurve origAnimCurve = origProperty.GetCurve (origLayer, component, false);
+                    FbxAnimCurve importAnimCurve = importProperty.GetCurve (importLayer, component, false);
 
                     Assert.IsNotNull (origAnimCurve);
                     Assert.IsNotNull (importAnimCurve);
