@@ -43,9 +43,11 @@ namespace UnitTests
             // make sure nothing crashes
 
             m_fbxLayer.SetNormals (FbxLayerElementNormal.Create (m_fbxMesh, ""));
+            Assert.IsNotNull (m_fbxLayer.GetNormals ());
 
             // test null
             m_fbxLayer.SetNormals(null);
+            Assert.IsNull (m_fbxLayer.GetNormals ());
 
             // test destroyed
             FbxLayerElementNormal normals = FbxLayerElementNormal.Create (m_fbxMesh, "");
@@ -59,9 +61,11 @@ namespace UnitTests
             // make sure nothing crashes
 
             m_fbxLayer.SetBinormals (FbxLayerElementBinormal.Create (m_fbxMesh, ""));
+            Assert.IsNotNull (m_fbxLayer.GetBinormals ());
 
             // test null
             m_fbxLayer.SetBinormals(null);
+            Assert.IsNull (m_fbxLayer.GetBinormals ());
 
             // test destroyed
             FbxLayerElementBinormal binormals = FbxLayerElementBinormal.Create (m_fbxMesh, "");
@@ -75,9 +79,11 @@ namespace UnitTests
             // make sure nothing crashes
 
             m_fbxLayer.SetTangents (FbxLayerElementTangent.Create (m_fbxMesh, ""));
+            Assert.IsNotNull (m_fbxLayer.GetTangents ());
 
             // test null
             m_fbxLayer.SetTangents(null);
+            Assert.IsNull (m_fbxLayer.GetTangents ());
 
             // test destroyed
             FbxLayerElementTangent tangents = FbxLayerElementTangent.Create (m_fbxMesh, "");
@@ -91,9 +97,11 @@ namespace UnitTests
             // make sure nothing crashes
 
             m_fbxLayer.SetVertexColors (FbxLayerElementVertexColor.Create (m_fbxMesh, ""));
+            Assert.IsNotNull (m_fbxLayer.GetVertexColors ());
 
             // test null
             m_fbxLayer.SetVertexColors(null);
+            Assert.IsNull (m_fbxLayer.GetVertexColors ());
 
             // test destroyed
             FbxLayerElementVertexColor vertexColor = FbxLayerElementVertexColor.Create (m_fbxMesh, "");
@@ -107,9 +115,11 @@ namespace UnitTests
             // make sure nothing crashes
 
             m_fbxLayer.SetMaterials(FbxLayerElementMaterial.Create (m_fbxMesh, ""));
+            Assert.IsNotNull (m_fbxLayer.GetMaterials ());
 
             // test null
             m_fbxLayer.SetMaterials(null);
+            Assert.IsNull (m_fbxLayer.GetMaterials ());
 
             // test destroyed
             FbxLayerElementMaterial material = FbxLayerElementMaterial.Create (m_fbxMesh, "");
@@ -126,9 +136,12 @@ namespace UnitTests
 
             // test with type identifier
             m_fbxLayer.SetUVs(FbxLayerElementUV.Create (m_fbxMesh, ""), FbxLayerElement.EType.eEdgeCrease);
+            // TODO: why does this return null?
+            Assert.IsNull(m_fbxLayer.GetUVs(FbxLayerElement.EType.eEdgeCrease));
 
             // test null
             m_fbxLayer.SetUVs(null);
+            Assert.IsNull (m_fbxLayer.GetUVs ());
 
             // test destroyed
             FbxLayerElementUV uvs = FbxLayerElementUV.Create (m_fbxMesh, "");

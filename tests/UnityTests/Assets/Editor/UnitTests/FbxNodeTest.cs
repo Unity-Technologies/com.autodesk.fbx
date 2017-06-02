@@ -103,6 +103,20 @@ namespace UnitTests
             // Add a material.
             var mat = FbxSurfaceMaterial.Create(Manager, "mat");
             Assert.AreEqual(0, fooNode.AddMaterial(mat));
+            Assert.That(() => { fooNode.AddMaterial (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
+            int matIndex = fooNode.GetMaterialIndex ("mat");
+            Assert.GreaterOrEqual (matIndex, 0);
+            Assert.AreEqual (fooNode.GetMaterial (matIndex), mat);
+
+            // test that invalid material index doesnt crash
+            fooNode.GetMaterial(int.MinValue);
+            fooNode.GetMaterial (int.MaxValue);
+
+            Assert.Less (fooNode.GetMaterialIndex ("not a mat"), 0);
+            // TODO: Find a way to do a null arg check without breaking Create function
+            //       (as they both us pName as a param)
+            //Assert.That(() => { fooNode.GetMaterialIndex (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // Test whether it's a skeleton, camera, etc. It isn't.
             Assert.IsNull(fooNode.GetCamera());
@@ -180,6 +194,19 @@ namespace UnitTests
         }
 
         [Test]
+        public void TestEvaluateLocalTransform()
+        {
+            // make sure it doesn't crash
+            using (FbxNode node = CreateObject ("root")) {
+                node.EvaluateLocalTransform ();
+                node.EvaluateLocalTransform (new FbxTime());
+                node.EvaluateLocalTransform (new FbxTime(), FbxNode.EPivotSet.eDestinationPivot); // eSourcePivot is default
+                node.EvaluateLocalTransform (new FbxTime(), FbxNode.EPivotSet.eSourcePivot, true); // false is default
+                node.EvaluateLocalTransform (new FbxTime(), FbxNode.EPivotSet.eSourcePivot, false, true); // false is default
+            }
+        }
+
+        [Test]
         public void TestGetMesh(){
             // make sure it doesn't crash
             using (FbxNode node = CreateObject ("root")) {
@@ -190,12 +217,31 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestSetPreRotation(){
+        public void TestSetRotationScalePivotOffset(){
             using (FbxNode node = CreateObject ("root")) {
                 FbxVector4 rot = new FbxVector4 (1, 2, 3);
                 node.SetPreRotation (FbxNode.EPivotSet.eSourcePivot, rot);
                 Assert.AreEqual(rot, node.GetPreRotation(FbxNode.EPivotSet.eSourcePivot));
                 Assert.AreNotEqual (rot, node.GetPreRotation (FbxNode.EPivotSet.eDestinationPivot));
+
+                node.SetPostRotation (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetPostRotation (FbxNode.EPivotSet.eSourcePivot));
+
+                rot.X = 5;
+                node.SetPostRotation (FbxNode.EPivotSet.eDestinationPivot, rot);
+                Assert.AreEqual (rot, node.GetPostRotation (FbxNode.EPivotSet.eDestinationPivot));
+
+                node.SetRotationPivot (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetRotationPivot (FbxNode.EPivotSet.eSourcePivot));
+
+                node.SetRotationOffset (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetRotationOffset (FbxNode.EPivotSet.eSourcePivot));
+
+                node.SetScalingPivot (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetScalingPivot (FbxNode.EPivotSet.eSourcePivot));
+
+                node.SetScalingOffset (FbxNode.EPivotSet.eSourcePivot, rot);
+                Assert.AreEqual (rot, node.GetScalingOffset (FbxNode.EPivotSet.eSourcePivot));
             }
         }
 

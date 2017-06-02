@@ -32,8 +32,19 @@ namespace UnitTests
 
                 // test add control point index (make sure it doesn't crash)
                 fbxCluster.AddControlPointIndex(0, 0);
-                fbxCluster.AddControlPointIndex(-1, 0);
+                fbxCluster.AddControlPointIndex(-1, 0); // doesn't get added (probably because -1 is not a valid index)
                 fbxCluster.AddControlPointIndex(0, -1.1);
+
+                Assert.AreEqual (2, fbxCluster.GetControlPointIndicesCount ());
+
+                fbxCluster.SetControlPointIWCount(-1); // test that setting invalid doesn't cause crash
+                fbxCluster.SetControlPointIWCount (10);
+                Assert.AreEqual (10, fbxCluster.GetControlPointIndicesCount ());
+
+                Assert.AreEqual (0, fbxCluster.GetControlPointIndexAt (0));
+                Assert.AreEqual (0, fbxCluster.GetControlPointWeightAt (0));
+                Assert.AreEqual (0, fbxCluster.GetControlPointIndexAt (1));
+                Assert.AreEqual (-1.1, fbxCluster.GetControlPointWeightAt (1));
 
                 // test set transform matrix
                 FbxAMatrix matrix = new FbxAMatrix();

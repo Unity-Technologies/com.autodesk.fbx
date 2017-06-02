@@ -1,6 +1,4 @@
-//#define UNI_18892
 //#define UNI_18844
-//#define UNI_18848
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -40,13 +38,16 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"";
 
-            const string MenuItemName = "File/Import FBX/3. Import Static Meshes";
+            const string MenuItemName = "File/Import FBX/03. Import Static Meshes";
 
             /// <summary>
             /// Create instance of example
             /// </summary>
             public static FbxImporter03 Create () { return new FbxImporter03 (); }
 
+            /// <summary>
+            /// Process mesh data and setup MeshFilter component
+            /// </summary>
             private void ProcessMesh (FbxNode fbxNode, GameObject unityGo)
             {
                 FbxMesh fbxMesh = fbxNode.GetMesh ();
@@ -68,7 +69,6 @@ namespace FbxSdk.Examples
                     unityVertices.Add (new Vector3 ((float)fbxVector4.X, (float)fbxVector4.Y, (float)fbxVector4.Z));
                 }
 
-#if UNI_18848
                 // transfer triangles
                 for (int polyIndex = 0; polyIndex < fbxMesh.GetPolygonCount (); ++polyIndex )
                 {
@@ -84,7 +84,7 @@ namespace FbxSdk.Examples
                         unityTriangleIndices.Add (vertexIndex);
                     }
                 }
-#endif
+
                 unityMesh.vertices = unityVertices.ToArray ();
 
                 // TODO: 
@@ -107,6 +107,9 @@ namespace FbxSdk.Examples
                 }
             }
 
+            /// <summary>
+            /// Process transformation data and setup Transform component
+            /// </summary>
             private void ProcessTransform (FbxNode fbxNode, GameObject unityGo)
             {
                 FbxVector4 lclTrs = new FbxVector4 ();
@@ -327,9 +330,8 @@ namespace FbxSdk.Examples
 
                     // Get the version number of the FBX file format.
                     int fileMajor = -1, fileMinor = -1, fileRevision = -1;
-#if UNI_18892
                     fbxImporter.GetFileVersion (out fileMajor, out fileMinor, out fileRevision);
-#endif
+
                     // Check that initialization of the fbxImporter was successful
                     if (!status) 
                     {
@@ -349,12 +351,11 @@ namespace FbxSdk.Examples
 
                     // Import options. Determine what kind of data is to be imported.
                     // The default is true, but here we set the options explictly.
-#if UNI_18892
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_MATERIAL,         false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_TEXTURE,          false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_ANIMATION,        false);
+                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_EXTRACT_EMBEDDED_DATA, false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_GLOBAL_SETTINGS,  true);
-#endif
 
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, "Scene");

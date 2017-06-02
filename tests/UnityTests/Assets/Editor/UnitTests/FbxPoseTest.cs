@@ -29,16 +29,23 @@ namespace UnitTests
                 using(var fbxNode = FbxNode.Create (Manager, "node"))
                 using(var fbxMatrix = new FbxMatrix ()){
 
+                    Assert.AreEqual (0, fbxPose.GetCount ());
+
                     // test basic use
                     int index = fbxPose.Add (fbxNode, fbxMatrix); // returns -1 if it fails
                     Assert.Greater(index, -1);
                     Assert.AreEqual (fbxPose.GetNode (index), fbxNode);
                     Assert.AreEqual (fbxPose.GetMatrix (index), fbxMatrix);
 
+                    Assert.AreEqual (1, fbxPose.GetCount ());
+
                     // test adding null
                     Assert.That (() => {
                         fbxPose.Add (null, null);
                     }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+
+                    fbxPose.Add (FbxNode.Create(Manager,"node1"), fbxMatrix);
+                    Assert.AreEqual (2, fbxPose.GetCount ());
                 }
 
                 var node = FbxNode.Create (Manager, "node1");
