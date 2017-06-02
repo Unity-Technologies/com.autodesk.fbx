@@ -110,6 +110,7 @@ namespace UnitTests
             Assert.IsNull(fooNode.GetMesh());
             Assert.IsNull(fooNode.GetNodeAttribute());
             Assert.IsNull(fooNode.GetSkeleton());
+            Assert.IsNull (fooNode.GetLight ());
         }
 
         [Test]
@@ -186,6 +187,16 @@ namespace UnitTests
                 FbxMesh mesh = FbxMesh.Create (Manager, "mesh");
                 node.SetNodeAttribute (mesh);
                 Assert.AreEqual (mesh, node.GetMesh ());
+            }
+        }
+
+        [Test]
+        public void TestGetLight(){
+            // make sure it doesn't crash
+            using (FbxNode node = CreateObject ("root")) {
+                FbxLight light = FbxLight.Create (Manager, "light");
+                node.SetNodeAttribute (light);
+                Assert.AreEqual (light, node.GetLight ());
             }
         }
 
