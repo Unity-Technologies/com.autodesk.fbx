@@ -37,7 +37,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"";
 
-            const string MenuItemName = "File/Import FBX/2. Import Node Hierachy";
+            const string MenuItemName = "File/Import FBX/02. Import Node Hierachy";
 
             /// <summary>
             /// Create instance of example

@@ -40,7 +40,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"";
 
-            const string MenuItemName = "File/Import FBX/04. Import UVs";
+            const string MenuItemName = "File/Import FBX/WIP 04. Import UVs";
 
             /// <summary>
             /// Create instance of example
