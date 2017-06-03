@@ -38,7 +38,7 @@ namespace FbxSdk.Examples
             const string Comments =
                  @"";
 
-            const string MenuItemName = "File/Import FBX/03. Import Static Meshes";
+            const string MenuItemName = "File/Import FBX/WIP 03. Import Static Meshes";
 
             /// <summary>
             /// Create instance of example
