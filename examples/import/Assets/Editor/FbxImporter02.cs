@@ -1,4 +1,3 @@
-//#define UNI_18892
 //#define UNI_18844
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
@@ -50,7 +49,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// Process fbx scene by doing nothing
             /// </summary>
-            public void ProcessNode (FbxNode fbxNode, GameObject unityParentObj = null)
+            public void ProcessNode (FbxNode fbxNode, GameObject unityParentObj = null, bool constructTransform = false)
             {
                 string name = fbxNode.GetName ();
 
@@ -61,68 +60,80 @@ namespace FbxSdk.Examples
                     unityGo.transform.parent = unityParentObj.transform;
                 }
 
-                FbxVector4 lclTrs = new FbxVector4();
-                FbxQuaternion lclRot = new FbxQuaternion();
-                FbxVector4 lclScl = new FbxVector4(1.0f, 1.0f, 1.0f);
+                FbxAMatrix fbxTransform = null;
 
+                if (constructTransform) {
 #if UNI_18844
-                // Construct rotation matrices
-                FbxVector4 fbxRotation = new FbxVector4 (fbxNode.LclRotation.Get ());
-                FbxAMatrix fbxRotationM = new FbxAMatrix ();
-                fbxRotationM.SetR(fbxRotation);
+                    // Construct rotation matrices
+                    FbxVector4 fbxRotation = new FbxVector4 (fbxNode.LclRotation.Get ());
+                    FbxAMatrix fbxRotationM = new FbxAMatrix ();
+                    fbxRotationM.SetR(fbxRotation);
 
-                FbxVector4 fbxPreRotation = new FbxVector4 (fbxNode.PreRotation.Get ());
-                FbxAMatrix fbxPreRotationM = new FbxAMatrix ();
-                fbxPreRotationM.SetR(fbxPreRotation);
+                    FbxVector4 fbxPreRotation = new FbxVector4 (fbxNode.PreRotation.Get ());
+                    FbxAMatrix fbxPreRotationM = new FbxAMatrix ();
+                    fbxPreRotationM.SetR(fbxPreRotation);
 
-                FbxVector4 fbxPostRotation = new FbxVector4 (fbxNode.PostRotation.Get ());
-                FbxAMatrix fbxPostRotationM = new FbxAMatrix ();
-                fbxPostRotationM.SetR(fbxPostRotation);
+                    FbxVector4 fbxPostRotation = new FbxVector4 (fbxNode.PostRotation.Get ());
+                    FbxAMatrix fbxPostRotationM = new FbxAMatrix ();
+                    fbxPostRotationM.SetR(fbxPostRotation);
 
-                // Construct translation matrix
-                FbxAMatrix fbxTranslationM = new FbxAMatrix ();
-                FbxVector4 fbxTranslation = new FbxVector4 (fbxNode.LclTranslation.Get ());
-                fbxTranslationM.SetT(fbxTranslation);
+                    // Construct translation matrix
+                    FbxAMatrix fbxTranslationM = new FbxAMatrix ();
+                    FbxVector4 fbxTranslation = new FbxVector4 (fbxNode.LclTranslation.Get ());
+                    fbxTranslationM.SetT(fbxTranslation);
 
-                // Construct scaling matrix
-                FbxAMatrix fbxScalingM = new FbxAMatrix ();
-                FbxVector4 fbxScaling = new FbxVector4 (fbxNode.LclScaling.Get ());
-                fbxScalingM.SetS(fbxScaling);
+                    // Construct scaling matrix
+                    FbxAMatrix fbxScalingM = new FbxAMatrix ();
+                    FbxVector4 fbxScaling = new FbxVector4 (fbxNode.LclScaling.Get ());
+                    fbxScalingM.SetS(fbxScaling);
 
-                // Construct offset and pivot matrices
-                FbxAMatrix fbxRotationOffsetM = new FbxAMatrix ();
-                FbxVector4 fbxRotationOffset = fbxNode.RotationOffset.Get ();
-                fbxRotationOffsetM.SetT(fbxRotationOffset);
+                    // Construct offset and pivot matrices
+                    FbxAMatrix fbxRotationOffsetM = new FbxAMatrix ();
+                    FbxVector4 fbxRotationOffset = fbxNode.RotationOffset.Get();
+                    fbxRotationOffsetM.SetT(fbxRotationOffset);
 
-                FbxAMatrix fbxRotationPivotM = new FbxAMatrix ();
-                FbxVector4 fbxRotationPivot = fbxNode.RotationPivot.Get ();
-                fbxRotationPivotM.SetT(fbxRotationPivot);
+                    FbxAMatrix fbxRotationPivotM = new FbxAMatrix ();
+                    FbxVector4 fbxRotationPivot = fbxNode.RotationPivot.Get();
+                    fbxRotationPivotM.SetT(fbxRotationPivot);
 
-                FbxAMatrix fbxScalingOffsetM = new FbxAMatrix ();
-                FbxVector4 fbxScalingOffset = fbxNode.ScalingOffset.Get ();
-                fbxScalingOffsetM.SetT(fbxScalingOffset);
+                    FbxAMatrix fbxScalingOffsetM = new FbxAMatrix ();
+                    FbxVector4 fbxScalingOffset = fbxNode.ScalingOffset.Get ();
+                    fbxScalingOffsetM.SetT(fbxScalingOffset);
 
-                FbxAMatrix fbxScalingPivotM = new FbxAMatrix ();
-                FbxVector4 fbxScalingPivot = fbxNode.ScalingPivot.Get ();
-                fbxScalingPivotM.SetT(fbxScalingPivot);
+                    FbxAMatrix fbxScalingPivotM = new FbxAMatrix ();
+                    FbxVector4 fbxScalingPivot = fbxNode.ScalingPivot.Get ();
+                    fbxScalingPivotM.SetT(fbxScalingPivot);
 
-                FbxAMatrix fbxTransform = 
-                    fbxTranslationM * 
-                    fbxRotationOffsetM * 
-                    fbxRotationPivotM * 
-                    fbxPreRotationM * 
-                    fbxRotationM * 
-                    fbxPostRotationM *
-                    fbxRotationPivotM.Inverse () *
-                    fbxScalingOffsetM * 
-                    fbxScalingPivotM * 
-                    fbxScalingM *
-                    fbxScalingPivotM.Inverse ();
-                
+                    fbxTransform = 
+                        fbxTranslationM * 
+                        fbxRotationOffsetM * 
+                        fbxRotationPivotM * 
+                        fbxPreRotationM * 
+                        fbxRotationM * 
+                        fbxPostRotationM *
+                        fbxRotationPivotM.Inverse () *
+                        fbxScalingOffsetM * 
+                        fbxScalingPivotM * 
+                        fbxScalingM *
+                        fbxScalingPivotM.Inverse ();
+                    
+                    lclTrs = fbxTransform.GetT ();
+                    lclRot = fbxTransform.GetQ ();
+                    lclScl = fbxTransform.GetS ();
+#endif
+                } else {
+                    fbxTransform = fbxNode.EvaluateLocalTransform ();
+                }
+
+                if (fbxTransform == null)
+                {
+                    Debug.LogError (string.Format ("failed to retrieve transform for node : {0}", fbxNode.GetName()));
+                    return;
+                }
+
                 FbxVector4 lclTrs = fbxTransform.GetT ();
                 FbxQuaternion lclRot = fbxTransform.GetQ ();
                 FbxVector4 lclScl = fbxTransform.GetS ();
-#endif
 
                 Debug.Log (string.Format ("processing {3} Lcl : T({0}) R({1}) S({2})",
                                          lclTrs.ToString (), 
@@ -255,10 +266,8 @@ namespace FbxSdk.Examples
 
                     // Get the version number of the FBX file format.
                     int fileMajor = -1, fileMinor = -1, fileRevision = -1;
+                    fbxImporter.GetFileVersion (out fileMajor, out fileMinor, out fileRevision);
 
-#if UNI_18892
-                    fbxImporter.GetFileVersion (fileMajor, fileMinor, fileRevision);
-#endif
                     // Check that initialization of the fbxImporter was successful
                     if (!status) 
                     {
@@ -278,15 +287,10 @@ namespace FbxSdk.Examples
 
                     // Import options. Determine what kind of data is to be imported.
                     // The default is true, but here we set the options explictly.
-#if UNI_18892
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_MATERIAL,         false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_TEXTURE,          false);
-                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_LINK,             false);
-                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_SHAPE,            false);
-                    fbxIOSettings.SetBoolProp(Globals.IMP_FBX_GOBO,             false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_ANIMATION,        false);
                     fbxIOSettings.SetBoolProp(Globals.IMP_FBX_GLOBAL_SETTINGS,  true);
-#endif
 
                     // Create a scene
                     var fbxScene = FbxScene.Create (fbxManager, "Scene");

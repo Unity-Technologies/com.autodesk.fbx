@@ -103,6 +103,27 @@ namespace UnitTests
             Assert.AreEqual(c, v.Y);
             Assert.AreEqual(b, v.Z);
             Assert.AreEqual(a, v.W);
+
+            // set by TQRS
+            var t = new FbxVector4 (1, 2, 3, 0/*not returned if 1*/);
+            v.SetT(t);
+            Assert.AreEqual (t, v.GetT ());
+            
+            var s = new FbxVector4 (1, 6, 7, 0/*not returned if 1*/);
+            v.SetS(s);
+            Assert.AreEqual (s.X, v.GetS ().X);
+            Assert.AreEqual (s.Y, v.GetS ().Y);
+            Assert.AreEqual (s.Z, v.GetS ().Z, 0.000001);
+            Assert.AreEqual (s.W, v.GetS ().W);
+
+            var r = new FbxVector4 (0, 90, 0, 0/*not returned if 1*/);
+            v.SetR(r);
+            Assert.AreEqual (r, v.GetR ());
+            
+            var q = new FbxQuaternion();
+            q.ComposeSphericalXYZ(r);
+            v.SetQ(q);
+            Assert.AreEqual (q, v.GetQ ());
         }
     }
 }
