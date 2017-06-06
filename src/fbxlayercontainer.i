@@ -12,6 +12,7 @@
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxLayerContainer::CreateLayer;
 %rename("%s") FbxLayerContainer::GetLayer(int pIndex);
+%rename("%s") FbxLayerContainer::GetLayerCount;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxlayercontainer.h"

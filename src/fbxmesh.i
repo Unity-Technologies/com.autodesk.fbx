@@ -9,6 +9,12 @@
 %rename("%s", %$isclass) FbxMesh;
 
 %rename("%s") FbxMesh::Create;
+
+%rename("%s") FbxMesh::GetPolygonVertex;
+%rename("%s") FbxMesh::GetPolygonCount;
+%rename("%s") FbxMesh::GetPolygonSize;
+%rename("%s") FbxMesh::GetPolygonVertexCount;
+
 #endif
 
 /*
