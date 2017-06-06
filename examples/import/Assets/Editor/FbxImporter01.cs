@@ -98,18 +98,12 @@ namespace FbxSdk.Examples
                         return 0;
                     }
 
-                    string msgLine = "";
+                    MsgLine.Add( "Import Scene Report" );
+                    MsgLine.Add( kBorderLine );
 
-                    msgLine += kBorderLine;
-                    msgLine += "File";
-                    msgLine += kNewLine;
-                    msgLine += kBorderLine;
-
-                    msgLine += kPadding + string.Format ("FilePath: {0}", LastFilePath);
-                    msgLine += kNewLine;
-                    msgLine += kPadding + string.Format ("SDK version: {0}.{1}.{2}", 
-                                              sdkMajor, sdkMinor, sdkRevision);
-                    msgLine += kNewLine;
+                    MsgLine.Add( kPadding + string.Format ("FilePath: {0}", LastFilePath));
+                    MsgLine.Add( kPadding + string.Format ("SDK version: {0}.{1}.{2}", 
+                                                           sdkMajor, sdkMinor, sdkRevision));
 
                     if (!fbxImporter.IsFBX ()) 
                     {
@@ -117,40 +111,28 @@ namespace FbxSdk.Examples
                         return 0;   
                     }
 
-                    msgLine += kPadding + string.Format ("File version: {0}.{1}.{2}",
-                                              fileMajor, fileMinor, fileRevision);
-                    msgLine += kNewLine;
-                    Debug.Log (msgLine);
+                    MsgLine.Add( kPadding + string.Format ("File version: {0}.{1}.{2}",
+                                                           fileMajor, fileMinor, fileRevision));
 
-                    msgLine = kBorderLine;
-                    msgLine += "Animation";
-                    msgLine += kNewLine;
-                    msgLine += kBorderLine;
+                    MsgLine.Add( kBorderLine );
+                    MsgLine.Add( "Animation" );
+                    MsgLine.Add( kBorderLine );
 
                     int numAnimStack = fbxImporter.GetAnimStackCount ();
 
-                    msgLine += kPadding + string.Format ("number of stacks: {0}", numAnimStack);
-                    msgLine += kNewLine;
-                    msgLine += kPadding + string.Format ("active animation stack: \"{0}\"\n", fbxImporter.GetActiveAnimStackName());
+                    MsgLine.Add( kPadding + string.Format ("number of stacks: {0}", numAnimStack));
+                    MsgLine.Add( kPadding + string.Format ("active animation stack: \"{0}\"\n", fbxImporter.GetActiveAnimStackName()));
 
                     for (int i = 0; i < numAnimStack; i++) {
 #if UNI_18972
                         FbxTakeInfo fbxTakeInfo = fbxImporter.GetTakeInfo (i);
-#endif
-                        msgLine += kPadding + string.Format ("Animation Stack ({0})", i);
-                        msgLine += kNewLine;
-#if UNI_18972
-                        msgLine += kPadding +string.Format ("name: \"{0}\"", fbxTakeInfo.mName) + string.kNewLine;
-                        msgLine += kNewLine;
-                        msgLine += kPadding +string.Format ("description: \"{0}\"", fbxTakeInfo.mDescription);
-                        msgLine += kNewLine;
-                        msgLine += kPadding +string.Format ("import name: \"{0}\"", fbxTakeInfo.mImportName);
-                        msgLine += kNewLine;
-                        msgLine += kPadding +string.Format ("import state: \"{0}\"", fbxTakeInfo.mSelect);
-                        msgLine += kNewLine;
+                        MsgLine.Add( kPadding + string.Format ("Animation Stack ({0})", i));
+                        MsgLine.Add( kPadding +string.Format ("name: \"{0}\"", fbxTakeInfo.mName) + string.kNewLine);
+                        MsgLine.Add( kPadding +string.Format ("description: \"{0}\"", fbxTakeInfo.mDescription));
+                        MsgLine.Add( kPadding +string.Format ("import name: \"{0}\"", fbxTakeInfo.mImportName));
+                        MsgLine.Add( kPadding +string.Format ("import state: \"{0}\"", fbxTakeInfo.mSelect));
 #endif
                     }
-                    Debug.Log (msgLine);
 
                     // Import options. Determine what kind of data is to be imported.
                     // The default is true, but here we set the options explictly.
@@ -201,30 +183,24 @@ namespace FbxSdk.Examples
 
                 if (sceneInfo != null) 
                 {
-                    string msgLine = "";
+                    MsgLine.Add( kBorderLine );
+                    MsgLine.Add( "Scene Meta-Data" );
+                    MsgLine.Add( kBorderLine );
 
-                    msgLine += kBorderLine;
-                    msgLine += "Scene Meta-Data";
-                    msgLine += kNewLine;
-                    msgLine += kBorderLine;
-
-                    msgLine += kPadding + string.Format ("Title: \"{0}\"", sceneInfo.mTitle);
-                    msgLine += kNewLine;
-                    msgLine += kPadding + string.Format ("Subject: \"{0}\"", sceneInfo.mSubject);
-                    msgLine += kNewLine;
-                    msgLine += kPadding + string.Format ("Author: \"{0}\"", sceneInfo.mAuthor);
-                    msgLine += kNewLine;
-                    msgLine += kPadding + string.Format ("Keywords: \"{0}\"", sceneInfo.mKeywords);
-                    msgLine += kNewLine;
-                    msgLine += kPadding + string.Format ("Revision: \"{0}\"", sceneInfo.mRevision);
-                    msgLine += kNewLine;
-                    msgLine += kPadding + string.Format ("Comment: \"{0}\"", sceneInfo.mComment);
-                    msgLine += kNewLine;
-
-                    Debug.Log (msgLine);
+                    MsgLine.Add( kPadding + string.Format ("Title: \"{0}\"", sceneInfo.mTitle));
+                    MsgLine.Add( kPadding + string.Format ("Subject: \"{0}\"", sceneInfo.mSubject));
+                    MsgLine.Add( kPadding + string.Format ("Author: \"{0}\"", sceneInfo.mAuthor));
+                    MsgLine.Add( kPadding + string.Format ("Keywords: \"{0}\"", sceneInfo.mKeywords));
+                    MsgLine.Add( kPadding + string.Format ("Revision: \"{0}\"", sceneInfo.mRevision));
+                    MsgLine.Add( kPadding + string.Format ("Comment: \"{0}\"", sceneInfo.mComment));
                 }
 
                 var fbxSettings = fbxScene.GetGlobalSettings ();
+
+                MsgLine.Add( kBorderLine );
+                MsgLine.Add( "Global Settings" );
+                MsgLine.Add( kBorderLine );
+
                 FbxSystemUnit fbxSystemUnit = fbxSettings.GetSystemUnit ();
 
                 if (fbxSystemUnit != UnitySystemUnit) 
@@ -233,8 +209,9 @@ namespace FbxSdk.Examples
                                              UnitySystemUnit.ToString(), fbxSystemUnit.ToString()));
                 }
 
-                // The Unity axis system has Y up, Z forward, X to the right.
+                MsgLine.Add (kPadding + string.Format ("SystemUnits: {0}", fbxSystemUnit.ToString()));
 
+                // The Unity axis system has Y up, Z forward, X to the right.
                 FbxAxisSystem fbxAxisSystem = fbxSettings.GetAxisSystem();
 
                 if (fbxAxisSystem != UnityAxisSystem)
@@ -247,6 +224,10 @@ namespace FbxSdk.Examples
                                                      fbxAxisSystem.GetFrontVector().ToString (),
                                                      fbxAxisSystem.GetCoorSystem().ToString ()));
                 }
+                MsgLine.Add (kPadding + string.Format ("AxisSystem: {0}", AxisSystemToString(fbxAxisSystem)));
+
+                // print report 
+                Debug.Log(string.Join (kNewLine, MsgLine.ToArray ()));
 
                 return;
             }
@@ -290,14 +271,11 @@ namespace FbxSdk.Examples
             /// </summary>
             static string LastFilePath { get; set; }
             const string kExtension = "fbx";
-            const string kBorderLine = "--------------------\n";
+            const string kBorderLine = "--------------------";
             const string kNewLine = "\n";
             const string kPadding = "    ";
 
-            private static string MakeFileName(string basename = "test", string extension = "fbx")
-            {
-                return basename + "." + extension;
-            }
+            List<string> MsgLine = new List<string> ();
 
             private FbxSystemUnit UnitySystemUnit { get { return FbxSystemUnit.m; } }
 
@@ -307,6 +285,14 @@ namespace FbxSdk.Examples
                                                 FbxAxisSystem.ECoordSystem.eLeftHanded); }
             }
 
+            private static string AxisSystemToString (FbxAxisSystem fbxAxisSystem)
+            {
+            	return string.Format ("[{0}, {1}, {2}]",
+            						  fbxAxisSystem.GetUpVector ().ToString (),
+            						  fbxAxisSystem.GetFrontVector ().ToString (),
+            						  fbxAxisSystem.GetCoorSystem ().ToString ());
+            }
+                             
             // use the SaveFile panel to allow user to enter a file name
             private static void OnImport()
             {

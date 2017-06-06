@@ -34,6 +34,14 @@
 %rename("%s") FbxAMatrix;
 %rename("%s") FbxAMatrix::~FbxAMatrix();
 %rename("%s") FbxAMatrix::Get;
+%rename("%s") FbxAMatrix::SetT;
+%rename("%s") FbxAMatrix::GetT;
+%rename("%s") FbxAMatrix::GetS;
+%rename("%s") FbxAMatrix::SetS;
+%rename("%s") FbxAMatrix::GetQ;
+%rename("%s") FbxAMatrix::SetQ;
+%rename("%s") FbxAMatrix::GetR;
+%rename("%s") FbxAMatrix::SetR;
 #endif
 
 %include "fbxsdk_csharp-fixed-headers/fbxaffinematrix.h"

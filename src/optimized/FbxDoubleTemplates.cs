@@ -331,7 +331,63 @@ namespace FbxSdk
         public override string ToString() {
             return string.Format("FbxVector2({0},{1})", X, Y);
         }
-    }
+
+        // Add/sub a scalar. We add/sub each coordinate.
+        public static FbxVector2 operator + (FbxVector2 a, double b) {
+            return new FbxVector2(a.X + b, a.Y + b);
+        }
+        public static FbxVector2 operator - (FbxVector2 a, double b) {
+            return new FbxVector2(a.X - b, a.Y - b);
+        }
+
+        // Scale.
+        public static FbxVector2 operator * (FbxVector2 a, double b) {
+            return new FbxVector2(a.X * b, a.Y * b);
+        }
+        public static FbxVector2 operator * (double a, FbxVector2 b) {
+            return new FbxVector2(a * b.X, a * b.Y);
+        }
+        public static FbxVector2 operator / (FbxVector2 a, double b) {
+            return new FbxVector2(a.X / b, a.Y / b);
+        }
+
+        // Negate.
+        public static FbxVector2 operator - (FbxVector2 a) {
+            return new FbxVector2(-a.X, -a.Y);
+        }
+
+        // Add/sub vector.
+        public static FbxVector2 operator + (FbxVector2 a, FbxVector2 b) {
+            return new FbxVector2(a.X + b.X, a.Y + b.Y);
+        }
+        public static FbxVector2 operator - (FbxVector2 a, FbxVector2 b) {
+            return new FbxVector2(a.X - b.X, a.Y - b.Y);
+        }
+
+        // Memberwise multiplication -- NOT dotproduct
+        public static FbxVector2 operator * (FbxVector2 a, FbxVector2 b) {
+            return new FbxVector2(a.X * b.X, a.Y * b.Y);
+        }
+        public static FbxVector2 operator / (FbxVector2 a, FbxVector2 b) {
+            return new FbxVector2(a.X / b.X, a.Y / b.Y);
+        }
+
+        public double DotProduct(FbxVector2 other) {
+            return this.X * other.X + this.Y * other.Y;
+        }
+
+        public double SquareLength() {
+            return X * X + Y * Y;
+        }
+
+        public double Length() {
+            return System.Math.Sqrt(SquareLength());
+        }
+
+        public double Distance(FbxVector2 other) {
+            return (this - other).Length();
+        }
+   }
 
     public struct FbxVector4 {
         public double X;
@@ -397,6 +453,74 @@ namespace FbxSdk
 
         public override string ToString() {
             return string.Format("FbxVector4({0},{1},{2},{3})", X, Y, Z, W);
+        }
+
+        // Add/sub a scalar. We add/sub each coordinate.
+        public static FbxVector4 operator + (FbxVector4 a, double b) {
+            return new FbxVector4(a.X + b, a.Y + b, a.Z + b, a.W + b);
+        }
+        public static FbxVector4 operator - (FbxVector4 a, double b) {
+            return new FbxVector4(a.X - b, a.Y - b, a.Z - b, a.W - b);
+        }
+
+        // Scale.
+        public static FbxVector4 operator * (FbxVector4 a, double b) {
+            return new FbxVector4(a.X * b, a.Y * b, a.Z * b, a.W * b);
+        }
+        public static FbxVector4 operator * (double a, FbxVector4 b) {
+            // Note: this operator is not provided in C++ FBX SDK.
+            // But it's how any mathematician would write it.
+            return new FbxVector4(a * b.X, a * b.Y, a * b.Z, a * b.W);
+        }
+        public static FbxVector4 operator / (FbxVector4 a, double b) {
+            return new FbxVector4(a.X / b, a.Y / b, a.Z / b, a.W / b);
+        }
+
+        // Negate.
+        public static FbxVector4 operator - (FbxVector4 a) {
+            return new FbxVector4(-a.X, -a.Y, -a.Z, -a.W);
+        }
+
+        // Add/sub vector.
+        public static FbxVector4 operator + (FbxVector4 a, FbxVector4 b) {
+            return new FbxVector4(a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W);
+        }
+        public static FbxVector4 operator - (FbxVector4 a, FbxVector4 b) {
+            return new FbxVector4(a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W);
+        }
+
+        // Memberwise multiplication -- NOT dotproduct
+        public static FbxVector4 operator * (FbxVector4 a, FbxVector4 b) {
+            return new FbxVector4(a.X * b.X, a.Y * b.Y, a.Z * b.Z, a.W * b.W);
+        }
+        public static FbxVector4 operator / (FbxVector4 a, FbxVector4 b) {
+            return new FbxVector4(a.X / b.X, a.Y / b.Y, a.Z / b.Z, a.W / b.W);
+        }
+
+        // Dot product of the 3d vector, ignoring W.
+        public double DotProduct(FbxVector4 other) {
+            return X * other.X + Y * other.Y + Z * other.Z;
+        }
+
+        // Cross product of the two 3d vectors, ignoring W.
+        public FbxVector4 CrossProduct(FbxVector4 other) {
+            return new FbxVector4(
+                    Y * other.Z - Z * other.Y,
+                    Z * other.X - X * other.Z,
+                    X * other.Y - Y * other.X);
+        }
+
+        // Length of the 3d vector, ignoring W.
+        public double SquareLength() {
+            return X * X + Y * Y + Z * Z;
+        }
+
+        public double Length() {
+            return System.Math.Sqrt(SquareLength());
+        }
+
+        public double Distance(FbxVector4 other) {
+            return (this - other).Length();
         }
     }
 }

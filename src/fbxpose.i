@@ -16,6 +16,7 @@
 %rename("%s") FbxPose::Add;
 %rename("%s") FbxPose::GetNode;
 %rename("%s") FbxPose::GetMatrix;
+%rename("%s") FbxPose::GetCount;
 #endif
 
 %include "fbxsdk/scene/fbxpose.h"
