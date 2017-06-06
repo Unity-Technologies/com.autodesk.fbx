@@ -13,6 +13,7 @@ namespace UseCaseTests
     public class InstancesExportTest : TransformExportTest
     {
         protected string m_meshName = "shared mesh";
+        protected string m_materialName = "shared material";
 
         protected override FbxScene CreateScene (FbxManager manager)
         {
@@ -20,6 +21,7 @@ namespace UseCaseTests
 
             // mesh shared by all instances
             FbxMesh sharedMesh = FbxMesh.Create (scene, m_meshName);
+            FbxSurfaceMaterial material = FbxSurfacePhong.Create (scene, m_materialName);
 
             // add mesh to all nodes
             Queue<FbxNode> nodes = new Queue<FbxNode>();
@@ -30,6 +32,7 @@ namespace UseCaseTests
             while (nodes.Count > 0) {
                 FbxNode node = nodes.Dequeue ();
                 node.SetNodeAttribute (sharedMesh);
+                node.AddMaterial(material);
                 for (int i = 0; i < node.GetChildCount (); i++) {
                     nodes.Enqueue (node.GetChild (i));
                 }
@@ -46,15 +49,19 @@ namespace UseCaseTests
             Assert.IsNotNull (rootNode);
 
             FbxMesh sharedMesh = rootNode.GetMesh ();
-
             Assert.IsNotNull (sharedMesh);
             Assert.AreEqual (m_meshName, sharedMesh.GetName ());
 
+            int matIndex = rootNode.GetMaterialIndex (m_materialName);
+            Assert.GreaterOrEqual (matIndex, 0);
+            FbxSurfaceMaterial sharedMat = rootNode.GetMaterial(matIndex);
+            Assert.IsNotNull (sharedMat);
+
             // check that the mesh is the same for all children
-            CheckSceneHelper (rootNode, sharedMesh);
+            CheckSceneHelper (rootNode, sharedMesh, sharedMat);
         }
 
-        private void CheckSceneHelper(FbxNode node, FbxMesh mesh)
+        private void CheckSceneHelper(FbxNode node, FbxMesh mesh, FbxSurfaceMaterial material)
         {
             if (node == null) {
                 return;
@@ -62,9 +69,13 @@ namespace UseCaseTests
 
             Assert.AreEqual (mesh, node.GetMesh ());
 
+            int matIndex = node.GetMaterialIndex (m_materialName);
+            Assert.GreaterOrEqual (matIndex, 0);
+            Assert.AreEqual (material, node.GetMaterial (matIndex));
+
             for (int i = 0; i < node.GetChildCount (); i++) {
                 // recurse through the hierarchy
-                CheckSceneHelper (node.GetChild (i), mesh);
+                CheckSceneHelper (node.GetChild (i), mesh, material);
             }
         }
     }
