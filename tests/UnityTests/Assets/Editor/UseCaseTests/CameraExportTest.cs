@@ -45,6 +45,9 @@ namespace UseCaseTests
             bgColorProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
             bgColorProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
 
+            Assert.IsTrue (bgColorProperty.GetFlag (FbxPropertyFlags.EFlags.eUserDefined));
+            Assert.IsTrue (bgColorProperty.GetFlag (FbxPropertyFlags.EFlags.eAnimatable));
+
             // set clear flags
             var clearFlagsProperty = FbxProperty.Create (cameraNode, Globals.FbxIntDT, "clearFlags");
             Assert.IsTrue (clearFlagsProperty.IsValid ());
@@ -54,6 +57,9 @@ namespace UseCaseTests
             // Must be marked user-defined or it won't be shown in most DCCs
             clearFlagsProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
             clearFlagsProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
+
+            Assert.IsTrue (clearFlagsProperty.GetFlag (FbxPropertyFlags.EFlags.eUserDefined));
+            Assert.IsTrue (clearFlagsProperty.GetFlag (FbxPropertyFlags.EFlags.eAnimatable));
 
             // Add camera properties to animation clip
             FbxAnimStack animStack = scene.GetCurrentAnimationStack ();
@@ -67,7 +73,6 @@ namespace UseCaseTests
                     Globals.FBXSDK_CURVENODE_COLOR_BLUE, "W"
                 }),
                 new PropertyComponentPair("FocalLength", new string[]{null}),
-                //new PropertyComponentPair("NearPlane", new string[]{null}),
                 new PropertyComponentPair("clearFlags", new string[]{null})
             }, (index) => { return index; }, (index) => { return index/5.0f; }, camera);
 
