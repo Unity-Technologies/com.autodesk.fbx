@@ -65,7 +65,7 @@ namespace UseCaseTests
             FbxAnimStack animStack = scene.GetCurrentAnimationStack ();
             FbxAnimLayer animLayer = animStack.GetAnimLayerMember ();
 
-            // TODO: Figure out why trying to do GetCurve for NearPlane always returns null
+            // TODO: (UNI-19438) Figure out why trying to do GetCurve for NearPlane always returns null
             CreateAnimCurves (cameraNode, animLayer, new List<PropertyComponentPair> () {
                 new PropertyComponentPair("backgroundColor", new string[] {
                     Globals.FBXSDK_CURVENODE_COLOR_RED, 
@@ -152,10 +152,10 @@ namespace UseCaseTests
                 Assert.IsTrue (importBgColorProp.IsValid ());
 
                 if (property.GetPropertyDataType ().Equals(Globals.FbxColor4DT)) {
-                    //Assert.AreEqual(property.GetFbxColor(), property.GetFbxColor());
+                    Assert.AreEqual(property.GetFbxColor(), property.GetFbxColor());
                 }
                 else if (property.GetPropertyDataType().Equals(Globals.FbxIntDT)){
-                    //Assert.AreEqual(property.GetInt(), property.GetInt());
+                    Assert.AreEqual(property.GetInt(), property.GetInt());
                 }
 
                 Assert.AreEqual (property.GetFlag (FbxPropertyFlags.EFlags.eUserDefined),
