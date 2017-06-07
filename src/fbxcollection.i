@@ -14,6 +14,11 @@
 %rename("%s") FbxCollection::GetMemberCount() const;
 
 %extend FbxCollection{
+    /*
+     * GetMember returns an FbxObject, but we need to get an object of
+     * class FbxAnimLayer so that we can call methods on it.
+     * TODO: Make it possible to downcast from FbxObject.
+     */
     FbxAnimLayer* GetAnimLayerMember(int pIndex = 0) const {
         return $self->GetMember<FbxAnimLayer>(pIndex);
     }
