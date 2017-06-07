@@ -48,6 +48,59 @@ namespace FbxSdk.Examples
             /// </summary>
             Dictionary<GameObject, FbxNode> MapUnityObjectToFbxNode = new Dictionary<GameObject, FbxNode> ();
 
+            /// <summary>
+            /// Exports the blend shapes.
+            /// </summary>
+            protected void ExportBlendShapes (SkinnedMeshRenderer unitySkin, FbxMesh fbxMesh, FbxScene fbxScene)
+            {
+#if UNI_19454
+                Mesh unityMesh = unitySkin.sharedMesh;
+                for (int i = 0; i < unityMesh.blendShapeCount; i++) {
+                    if(Verbose)
+                        Debug.Log ("Adding blend shape: " + unityMesh.GetBlendShapeName (i));
+
+                    FbxBlendShape fbxBlendShape = FbxBlendShape.Create(fbxScene, unityMesh.GetBlendShapeName(i));
+                    FbxBlendShapeChannel fbxBlendShapeChannel = FbxBlendShapeChannel.Create(fbxScene, unityMesh.GetBlendShapeName(i) + "_channel");
+
+                    for (int j = 0; j < unityMesh.GetBlendShapeFrameCount (i); j++) {
+                        Vector3[] deltaVertices = new Vector3[unityMesh.vertexCount];
+                        Vector3[] deltaNormals = new Vector3[unityMesh.vertexCount];
+                        Vector3[] deltaTangents = new Vector3[unityMesh.vertexCount];
+
+                        unityMesh.GetBlendShapeFrameVertices (i, j, deltaVertices, deltaNormals, deltaTangents);
+
+                        FbxShape fbxShape = FbxShape.Create(fbxScene, unityMesh.GetBlendShapeName(i) + "_" + j);
+                        fbxShape.InitControlPoints(deltaVertices.Length);
+                        for (int v = 0; v < deltaVertices.Length; v++)
+                        {
+                            fbxShape.SetControlPointAt(new FbxVector4 (deltaVertices [v].x, deltaVertices [v].y, deltaVertices [v].z), v);
+                        }
+                        
+                        FbxGeometryElementNormal fbxElementNormal = fbxShape.CreateElementNormal();
+                        fbxElementNormal.SetMappingMode(FbxGeometryElement.EMappingMode.eByControlPoint);
+                        fbxElementNormal.SetReferenceMode(FbxGeometryElement.EReferenceMode.eDirect);
+
+                        var fbxElementArray = fbxELementNormal.GetDirectArray();
+                        for(int n = 0; n < deltaNormals.Length; n++){
+                            fbxElementArray.Add(new FbxVector4(deltaNormals[n].x, deltaNormals[n].y, deltaNormals[n].z));
+                        }
+
+                        FbxGeometryElementTangent fbxElementTangent = fbxShape.CreateElementTangent();
+                        fbxElementTangent.SetMappingMode(FbxGeometryElement.EMappingMode.eByControlPoint);
+                        fbxElementTangent.SetReferenceMode(FbxGeometryElement.EReferenceMode.eDirect);
+
+                        fbxElementArray = fbxELementTangent.GetDirectArray();
+                        for(int t = 0; t < deltaTangents.Length; t++){
+                            fbxElementArray.Add(new FbxVector4(deltaTangents[t].x, deltaTangents[t].y, deltaTangents[t].z));
+                        }
+                        fbxBlendShapeChannel.AddTargetShape(fbxShape, unityMesh.GetBlendShapeFrameWeight(i,j));
+                    }
+
+                    fbxBlendShape.AddBlendShapeChannel(fbxBlendShapeChannel);
+                    fbxMesh.AddDeformer(fbxBlendShape);
+                }
+#endif
+            }
 
             /// <summary>
             /// Export GameObject as a skinned mesh with material, bones, a skin and, a bind pose.
@@ -113,6 +166,7 @@ namespace FbxSdk.Examples
                 // add bind pose
                 ExportBindPose (fbxRootNode, fbxMeshNode, fbxScene);
 
+                ExportBlendShapes (unitySkin, fbxMesh, fbxScene);
 
                 fbxParentNode.AddChild (fbxRootNode);
                 NumNodes++;
