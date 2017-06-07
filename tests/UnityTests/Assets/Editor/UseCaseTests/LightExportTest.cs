@@ -53,17 +53,10 @@ namespace UseCaseTests
             FbxAnimStack animStack = scene.GetCurrentAnimationStack ();
             FbxAnimLayer animLayer = animStack.GetAnimLayerMember ();
 
-            // TODO: figure out why trying to add anim curves to the 3 commented out properties
-            //       below fails
+            // TODO: (UNI-19438) figure out why trying to add anim curves to FbxNodeAttribute.sColor,
+            //          Intensity and InnerAngle fails
             // add animation
             CreateAnimCurves (lightNode, animLayer, new List<PropertyComponentPair> () {
-                /*new PropertyComponentPair (FbxNodeAttribute.sColor, new string[]{
-                    Globals.FBXSDK_CURVENODE_COLOR_RED,
-                    Globals.FBXSDK_CURVENODE_COLOR_GREEN,
-                    Globals.FBXSDK_CURVENODE_COLOR_BLUE
-                }),*/
-                //new PropertyComponentPair ("Intensity", new string[]{null}),
-                //new PropertyComponentPair ("InnerAngle", new string[]{null}),
                 new PropertyComponentPair ("colorTemperature", new string[]{null}),
                 new PropertyComponentPair ("cookieSize", new string[]{null})
             }, (index) => { return (index + 1)/2.0; }, (index) => { return index%2; });
@@ -125,16 +118,9 @@ namespace UseCaseTests
             Assert.IsNotNull (importAnimStack);
             Assert.IsNotNull (importAnimLayer);
 
-            // TODO: figure out why trying to add anim curves to the 3 commented out properties
-            //       below fails
+            // TODO: (UNI-19438) figure out why trying to add anim curves to FbxNodeAttribute.sColor,
+            //                  Intensity and InnerAngle fails
             CheckAnimCurve (origLightNode, importLightNode, origAnimLayer, importAnimLayer, new List<PropertyComponentPair>(){
-                /*new PropertyComponentPair (FbxNodeAttribute.sColor, new string[]{
-                    Globals.FBXSDK_CURVENODE_COLOR_RED,
-                    Globals.FBXSDK_CURVENODE_COLOR_GREEN,
-                    Globals.FBXSDK_CURVENODE_COLOR_BLUE
-                }),*/
-                //new PropertyComponentPair ("Intensity", new string[]{null}),
-                //new PropertyComponentPair ("InnerAngle", new string[]{null}),
                 new PropertyComponentPair ("colorTemperature", new string[]{null}),
                 new PropertyComponentPair ("cookieSize", new string[]{null})
             }, origLight, importLight);
