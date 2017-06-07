@@ -128,12 +128,20 @@ namespace UnitTests
         [Test]
         public void TestGetAt()
         {
-            var layerElementArrayTemplate = CreateObject ();
+            var layerElementArrayTemplate = CreateObject (EFbxType.eFbxDouble2);
+
+            layerElementArrayTemplate.SetCount (1);
 
             // make sure doesn't crash
             GetAt (layerElementArrayTemplate, 0);
-            GetAt (layerElementArrayTemplate, int.MinValue);
-            GetAt (layerElementArrayTemplate, int.MaxValue);
+
+            Assert.That (() => {
+                GetAt (layerElementArrayTemplate, int.MinValue);
+            }, Throws.Exception.TypeOf<System.IndexOutOfRangeException> ());
+
+            Assert.That (() => {
+                GetAt (layerElementArrayTemplate, int.MaxValue);
+            }, Throws.Exception.TypeOf<System.IndexOutOfRangeException> ());
         }
     }
 
@@ -145,14 +153,12 @@ namespace UnitTests
     public class FbxLayerElementArrayTemplateFbxSurfaceMaterialTest :
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {}
 
-    [Ignore("Calling GetAt() causes a crash")]
     public class FbxLayerElementArrayTemplateFbxVector2Test : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector2,FbxVector2> {}
 
     public class FbxLayerElementArrayTemplateFbxVector4Test : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector4,FbxVector4> {}
 
-    [Ignore("Calling GetAt() causes a crash")]
     public class FbxLayerElementArrayTemplateIntTest : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateInt,int> {}
 }
