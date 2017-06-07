@@ -717,6 +717,18 @@ namespace FbxSdk.Examples
                         prop = new PropertyChannel ("Lcl Translation", Globals.FBXSDK_CURVENODE_COMPONENT_Z);
                         return true;
                     }
+                    if (unityName.StartsWith ("m_LocalScale.x", ct) || unityName.EndsWith ("S.x", ct)) {
+                        prop = new PropertyChannel ("Lcl Scaling", Globals.FBXSDK_CURVENODE_COMPONENT_X);
+                        return true;
+                    }
+                    if (unityName.StartsWith ("m_LocalScale.y", ct) || unityName.EndsWith ("S.y", ct)) {
+                        prop = new PropertyChannel ("Lcl Scaling", Globals.FBXSDK_CURVENODE_COMPONENT_Y);
+                        return true;
+                    }
+                    if (unityName.StartsWith ("m_LocalScale.z", ct) || unityName.EndsWith ("S.z", ct)) {
+                        prop = new PropertyChannel ("Lcl Scaling", Globals.FBXSDK_CURVENODE_COMPONENT_Z);
+                        return true;
+                    }
 
                     prop = new PropertyChannel ();
                     return false;
@@ -873,10 +885,8 @@ namespace FbxSdk.Examples
                 FbxAnimLayer fbxAnimLayer)
             {
                 PropertyChannel fbxName;
-                if (!PropertyChannel.TryGetValue(unityPropertyName, out fbxName)) {
-                    Debug.LogError (string.Format("no mapping from unity '{0}' to fbx property", unityPropertyName));
-                    return;
-                }
+                // if we don't find the property it might be because it is a blend shape (which can have any name)
+                bool foundProperty = PropertyChannel.TryGetValue (unityPropertyName, out fbxName);
 
                 GameObject unityGo = GetGameObject(unityObj);
                 if (unityGo == null) {
@@ -891,10 +901,41 @@ namespace FbxSdk.Examples
                 }
 
                 // map unity property name to fbx property
-                var fbxProperty = fbxNode.FindProperty (fbxName.Property, false);
-                if (!fbxProperty.IsValid()) {
-                    Debug.LogError (string.Format("no fbx property {0} found on {1} ", fbxName.Property, fbxNode.GetName()));
-                    return;
+                FbxProperty fbxProperty = null;
+                if (foundProperty) {
+                    fbxProperty = fbxNode.FindProperty (fbxName.Property, false);
+                    if (!fbxProperty.IsValid ()) {
+                        Debug.LogError (string.Format ("no fbx property {0} found on {1} ", fbxName.Property, fbxNode.GetName ()));
+                        return;
+                    }
+                } else {
+                    // check if the property is in a blend shape
+                    FbxMesh fbxMesh = fbxNode.GetMesh();
+                    if (fbxMesh == null) {
+                        Debug.LogError (string.Format ("no mesh or blend shape found on {0}, could not find proeprty {1}",
+                            fbxNode.GetName (), unityPropertyName));
+                        return;
+                    }
+#if UNI_19454
+                    // find an FbxDeformer with the same name as the property
+                    for(int i = 0; i < fbxMesh.GetDeformerCount(FbxDeformer.EDeformerType.eBlendShape); i++){
+                        FbxDeformer fbxDeformer = fbxMesh.GetDeformer(i, FbxDeformer.EDeformerType.eBlendShape);
+                        if(fbxDeformer == null){
+                            continue;
+                        }
+                        if(fbxDeformer.GetName().Equals(unityPropertyName)){
+                            fbxProperty = fbxDeformer.FindProperty("DeformPercent", false);
+                            if(fbxProperty.IsValid()){
+                                break;
+                            }
+                        }
+                      }
+#endif
+                    if (fbxProperty == null || !fbxProperty.IsValid ()) {
+                        Debug.LogError (string.Format ("no blend shape found on {0}, could not find mapping for unity property {1}",
+                            fbxNode.GetName (), unityPropertyName));
+                        return;
+                    }
                 }
 
                 if (Verbose) {
@@ -902,7 +943,7 @@ namespace FbxSdk.Examples
                 }
 
                 // Create the AnimCurve on the channel
-                FbxAnimCurve fbxAnimCurve = fbxProperty.GetCurve (fbxAnimLayer, fbxName.Channel, true);
+                FbxAnimCurve fbxAnimCurve = fbxProperty.GetCurve (fbxAnimLayer, foundProperty? fbxName.Channel : null, true);
 
                 // copy Unity AnimCurve to FBX AnimCurve.
                 fbxAnimCurve.KeyModifyBegin();
@@ -1298,6 +1339,11 @@ namespace FbxSdk.Examples
                 {
                     var mono = obj as MonoBehaviour;
                     return mono.gameObject;
+                }
+                else if (obj is SkinnedMeshRenderer)
+                {
+                    var skinnedMesh = obj as SkinnedMeshRenderer;
+                    return skinnedMesh.gameObject;   
                 }
 
                 return null;
