@@ -135,6 +135,7 @@
 %rename("%s") FbxProperty::GetFbxDouble3;
 %rename("%s") FbxProperty::GetString;
 %rename("%s") FbxProperty::GetFbxColor;
+%rename("%s") FbxProperty::GetInt;
 %rename("%s") FbxProperty::GetCurve;
 %rename("%s") FbxProperty::GetCurveNode;
 
@@ -145,6 +146,7 @@
     FbxDouble3 GetFbxDouble3 () const { return $self->Get<FbxDouble3>(); }
     FbxString GetString () const { return $self->Get<FbxString>(); }
     FbxColor GetFbxColor () const { return $self->Get<FbxColor>(); }
+    int GetInt() const { return $self->Get<int>(); }
 }
 
 %rename("%s") FbxPropertyT::Get;
