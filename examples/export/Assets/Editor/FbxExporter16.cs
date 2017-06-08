@@ -53,14 +53,13 @@ namespace FbxSdk.Examples
             /// </summary>
             protected void ExportBlendShapes (SkinnedMeshRenderer unitySkin, FbxMesh fbxMesh, FbxScene fbxScene)
             {
-#if UNI_19454
                 Mesh unityMesh = unitySkin.sharedMesh;
                 for (int i = 0; i < unityMesh.blendShapeCount; i++) {
                     if(Verbose)
                         Debug.Log ("Adding blend shape: " + unityMesh.GetBlendShapeName (i));
 
                     FbxBlendShape fbxBlendShape = FbxBlendShape.Create(fbxScene, unityMesh.GetBlendShapeName(i));
-                    FbxBlendShapeChannel fbxBlendShapeChannel = FbxBlendShapeChannel.Create(fbxScene, unityMesh.GetBlendShapeName(i) + "_channel");
+                    FbxBlendShapeChannel fbxBlendShapeChannel = FbxBlendShapeChannel.Create(fbxScene, unityMesh.GetBlendShapeName(i));
 
                     for (int j = 0; j < unityMesh.GetBlendShapeFrameCount (i); j++) {
                         Vector3[] deltaVertices = new Vector3[unityMesh.vertexCount];
@@ -76,20 +75,20 @@ namespace FbxSdk.Examples
                             fbxShape.SetControlPointAt(new FbxVector4 (deltaVertices [v].x, deltaVertices [v].y, deltaVertices [v].z), v);
                         }
                         
-                        FbxGeometryElementNormal fbxElementNormal = fbxShape.CreateElementNormal();
-                        fbxElementNormal.SetMappingMode(FbxGeometryElement.EMappingMode.eByControlPoint);
-                        fbxElementNormal.SetReferenceMode(FbxGeometryElement.EReferenceMode.eDirect);
+                        FbxLayerElementNormal fbxElementNormal = fbxShape.CreateElementNormal();
+                        fbxElementNormal.SetMappingMode(FbxLayerElement.EMappingMode.eByControlPoint);
+                        fbxElementNormal.SetReferenceMode(FbxLayerElement.EReferenceMode.eDirect);
 
-                        var fbxElementArray = fbxELementNormal.GetDirectArray();
+                        var fbxElementArray = fbxElementNormal.GetDirectArray();
                         for(int n = 0; n < deltaNormals.Length; n++){
                             fbxElementArray.Add(new FbxVector4(deltaNormals[n].x, deltaNormals[n].y, deltaNormals[n].z));
                         }
 
-                        FbxGeometryElementTangent fbxElementTangent = fbxShape.CreateElementTangent();
-                        fbxElementTangent.SetMappingMode(FbxGeometryElement.EMappingMode.eByControlPoint);
-                        fbxElementTangent.SetReferenceMode(FbxGeometryElement.EReferenceMode.eDirect);
+                        FbxLayerElementTangent fbxElementTangent = fbxShape.CreateElementTangent();
+                        fbxElementTangent.SetMappingMode(FbxLayerElement.EMappingMode.eByControlPoint);
+                        fbxElementTangent.SetReferenceMode(FbxLayerElement.EReferenceMode.eDirect);
 
-                        fbxElementArray = fbxELementTangent.GetDirectArray();
+                        fbxElementArray = fbxElementTangent.GetDirectArray();
                         for(int t = 0; t < deltaTangents.Length; t++){
                             fbxElementArray.Add(new FbxVector4(deltaTangents[t].x, deltaTangents[t].y, deltaTangents[t].z));
                         }
@@ -99,7 +98,6 @@ namespace FbxSdk.Examples
                     fbxBlendShape.AddBlendShapeChannel(fbxBlendShapeChannel);
                     fbxMesh.AddDeformer(fbxBlendShape);
                 }
-#endif
             }
 
             /// <summary>
@@ -916,7 +914,7 @@ namespace FbxSdk.Examples
                             fbxNode.GetName (), unityPropertyName));
                         return;
                     }
-#if UNI_19454
+
                     // find an FbxDeformer with the same name as the property
                     for(int i = 0; i < fbxMesh.GetDeformerCount(FbxDeformer.EDeformerType.eBlendShape); i++){
                         FbxDeformer fbxDeformer = fbxMesh.GetDeformer(i, FbxDeformer.EDeformerType.eBlendShape);
@@ -930,7 +928,7 @@ namespace FbxSdk.Examples
                             }
                         }
                       }
-#endif
+
                     if (fbxProperty == null || !fbxProperty.IsValid ()) {
                         Debug.LogError (string.Format ("no blend shape found on {0}, could not find mapping for unity property {1}",
                             fbxNode.GetName (), unityPropertyName));
