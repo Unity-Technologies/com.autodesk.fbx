@@ -72,7 +72,11 @@ namespace FbxSdk.Examples
                         fbxShape.InitControlPoints(deltaVertices.Length);
                         for (int v = 0; v < deltaVertices.Length; v++)
                         {
-                            fbxShape.SetControlPointAt(new FbxVector4 (deltaVertices [v].x, deltaVertices [v].y, deltaVertices [v].z), v);
+                            fbxShape.SetControlPointAt(new FbxVector4 (
+                                unityMesh.vertices[v].x + deltaVertices [v].x,
+                                unityMesh.vertices[v].y + deltaVertices [v].y,
+                                unityMesh.vertices[v].z + deltaVertices [v].z
+                            ), v);
                         }
                         
                         FbxLayerElementNormal fbxElementNormal = fbxShape.CreateElementNormal();
@@ -81,7 +85,11 @@ namespace FbxSdk.Examples
 
                         var fbxElementArray = fbxElementNormal.GetDirectArray();
                         for(int n = 0; n < deltaNormals.Length; n++){
-                            fbxElementArray.Add(new FbxVector4(deltaNormals[n].x, deltaNormals[n].y, deltaNormals[n].z));
+                            fbxElementArray.Add(new FbxVector4(
+                                unityMesh.normals[n].x + deltaNormals[n].x,
+                                unityMesh.normals[n].y + deltaNormals[n].y,
+                                unityMesh.normals[n].z + deltaNormals[n].z
+                            ));
                         }
 
                         FbxLayerElementTangent fbxElementTangent = fbxShape.CreateElementTangent();
@@ -90,7 +98,11 @@ namespace FbxSdk.Examples
 
                         fbxElementArray = fbxElementTangent.GetDirectArray();
                         for(int t = 0; t < deltaTangents.Length; t++){
-                            fbxElementArray.Add(new FbxVector4(deltaTangents[t].x, deltaTangents[t].y, deltaTangents[t].z));
+                            fbxElementArray.Add(new FbxVector4(
+                                unityMesh.tangents[t].x + deltaTangents[t].x,
+                                unityMesh.tangents[t].y + deltaTangents[t].y,
+                                unityMesh.tangents[t].z + deltaTangents[t].z
+                            ));
                         }
                         fbxBlendShapeChannel.AddTargetShape(fbxShape, unityMesh.GetBlendShapeFrameWeight(i,j));
                     }
