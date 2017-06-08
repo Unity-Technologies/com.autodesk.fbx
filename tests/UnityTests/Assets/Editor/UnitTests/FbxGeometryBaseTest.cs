@@ -40,6 +40,12 @@ namespace UnitTests
             // seems to be (0,0,0,epsilon).
             geometryBase.GetControlPointAt(-1);
             geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
+
+            var elementNormal = geometryBase.CreateElementNormal ();
+            Assert.IsInstanceOf<FbxLayerElementNormal> (elementNormal);
+
+            var elementTangent = geometryBase.CreateElementTangent ();
+            Assert.IsInstanceOf<FbxLayerElementTangent> (elementTangent);
         }
     }
 
