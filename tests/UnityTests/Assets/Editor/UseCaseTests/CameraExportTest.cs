@@ -35,7 +35,7 @@ namespace UseCaseTests
             camera.SetNearPlane (1);
             camera.SetFarPlane (100);
 
-            // set background color
+            // create custom property (background color)
             var bgColorProperty = FbxProperty.Create (cameraNode, Globals.FbxColor4DT, "backgroundColor");
             Assert.IsTrue (bgColorProperty.IsValid ());
 
@@ -48,7 +48,7 @@ namespace UseCaseTests
             Assert.IsTrue (bgColorProperty.GetFlag (FbxPropertyFlags.EFlags.eUserDefined));
             Assert.IsTrue (bgColorProperty.GetFlag (FbxPropertyFlags.EFlags.eAnimatable));
 
-            // set clear flags
+            // create custom property (clear flags)
             var clearFlagsProperty = FbxProperty.Create (cameraNode, Globals.FbxIntDT, "clearFlags");
             Assert.IsTrue (clearFlagsProperty.IsValid ());
 
