@@ -917,13 +917,13 @@ namespace FbxSdk.Examples
 
                     // find an FbxDeformer with the same name as the property
                     for(int i = 0; i < fbxMesh.GetDeformerCount(FbxDeformer.EDeformerType.eBlendShape); i++){
-                        FbxDeformer fbxDeformer = fbxMesh.GetDeformer(i, FbxDeformer.EDeformerType.eBlendShape);
+                        FbxBlendShape fbxDeformer = fbxMesh.GetBlendShapeDeformer(i);
                         if(fbxDeformer == null){
                             continue;
                         }
-                        if(fbxDeformer.GetName().Equals(unityPropertyName)){
-                            fbxProperty = fbxDeformer.FindProperty("DeformPercent", false);
-                            if(fbxProperty.IsValid()){
+                        if (fbxDeformer.GetName ().Equals (unityPropertyName.Replace ("blendShape.", ""))) {
+                            fbxProperty = fbxDeformer.GetBlendShapeChannel(0).FindProperty ("DeformPercent", false);
+                            if (fbxProperty.IsValid ()) {
                                 break;
                             }
                         }
