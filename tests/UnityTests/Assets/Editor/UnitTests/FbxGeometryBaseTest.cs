@@ -99,4 +99,13 @@ namespace UnitTests
             base.TestBasics(CreateObject ("geometry"), FbxNodeAttribute.EType.eUnknown);
         }
     }
+
+    public class FbxShapeTest : FbxGeometryBaseTestBase<FbxShape>
+    {
+        [Test]
+        public void TestBasics()
+        {
+            base.TestBasics(CreateObject ("shape"), FbxNodeAttribute.EType.eShape);
+        }
+    }
 }
