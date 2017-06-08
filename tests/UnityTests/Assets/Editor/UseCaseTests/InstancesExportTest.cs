@@ -21,7 +21,7 @@ namespace UseCaseTests
 
             // mesh shared by all instances
             FbxMesh sharedMesh = FbxMesh.Create (scene, m_meshName);
-            FbxSurfaceMaterial material = FbxSurfacePhong.Create (scene, m_materialName);
+            FbxSurfaceMaterial sharedMaterial = FbxSurfacePhong.Create (scene, m_materialName);
 
             // add mesh to all nodes
             Queue<FbxNode> nodes = new Queue<FbxNode>();
@@ -32,7 +32,7 @@ namespace UseCaseTests
             while (nodes.Count > 0) {
                 FbxNode node = nodes.Dequeue ();
                 node.SetNodeAttribute (sharedMesh);
-                node.AddMaterial(material);
+                node.AddMaterial(sharedMaterial);
                 for (int i = 0; i < node.GetChildCount (); i++) {
                     nodes.Enqueue (node.GetChild (i));
                 }
