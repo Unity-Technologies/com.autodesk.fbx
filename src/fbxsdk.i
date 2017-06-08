@@ -217,3 +217,6 @@
 %include "fbxconnectionpoint.i"
 %include "fbxmarker.i"    
 %include "fbxlight.i"
+%include "fbxblendshape.i"
+%include "fbxblendshapechannel.i"
+%include "fbxshape.i"

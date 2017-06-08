@@ -4,14 +4,14 @@
 // Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
-#ifdef IGNORE_ALL_INCLUDE_SOME
+
 // Unignore class
-%rename("%s", %$isclass) FbxDeformer;
+%rename("%s", %$isclass) FbxBlendShapeChannel;
 
-// As the ignore everything will include the constructor, destructor, methods etc
-// in the class, these have to be explicitly unignored too:
-%rename("%s") FbxDeformer::EDeformerType;
+%rename("%s") FbxBlendShapeChannel::AddTargetShape;
+%rename("%s") FbxBlendShapeChannel::GetTargetShapeCount;
+%rename("%s") FbxBlendShapeChannel::GetTargetShape(int pIndex) const;
 
-#endif
+%fbximmutable(FbxBlendShapeChannel::DeformPercent);
 
-%include "fbxsdk/scene/geometry/fbxdeformer.h"
+%include "fbxsdk/scene/geometry/fbxblendshapechannel.h"
