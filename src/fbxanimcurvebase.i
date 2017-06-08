@@ -21,4 +21,7 @@
   }
 %} }
 
+%rename("%s") FbxAnimCurveBase::KeyGetTime;
+%rename("%s") FbxAnimCurveBase::KeyGetCount;
+
 %include "fbxsdk/scene/animation/fbxanimcurvebase.h"
