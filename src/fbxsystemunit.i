@@ -22,6 +22,9 @@
 %rename("%s") FbxSystemUnit::GetMultiplier;
 %rename("%s") FbxSystemUnit::GetScaleFactorAsString;
 %rename("%s") FbxSystemUnit::GetHashCode;
+%rename("%s") FbxSystemUnit::GetConversionFactorTo;
+%rename("%s") FbxSystemUnit::GetConversionFactorFrom;
+%rename("%s") FbxSystemUnit::ConvertScene;
 #endif
 
 /* Define equality and hash code. */

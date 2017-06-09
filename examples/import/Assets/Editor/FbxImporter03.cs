@@ -216,9 +216,7 @@ namespace FbxSdk.Examples
                 // Get scale factor.
                 float scaleFactor = 1.0f;
 
-#if UNI_18844
-                scaleFactor = fbxScene.GetGlobalSettings ().GetSystemUnit ().GetConversionFactorTo (toUnits);
-#endif
+                scaleFactor = (float)fbxScene.GetGlobalSettings ().GetSystemUnit ().GetConversionFactorTo (toUnits);
 
                 if (scaleFactor.Equals (1.0f))
                     return;
