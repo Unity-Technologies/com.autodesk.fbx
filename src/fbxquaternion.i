@@ -39,7 +39,12 @@
       if (index < 0 || index >= 4) { throw new System.IndexOutOfRangeException(); }
       SetAtUnchecked(index, value);
     }
-  } %} }
+  }
+  public double X { get { return GetAtUnchecked(0); } set { SetAtUnchecked(0, value); } }
+  public double Y { get { return GetAtUnchecked(1); } set { SetAtUnchecked(1, value); } }
+  public double Z { get { return GetAtUnchecked(2); } set { SetAtUnchecked(2, value); } }
+  public double W { get { return GetAtUnchecked(3); } set { SetAtUnchecked(3, value); } }
+  %} }
 
 
 /* Binary operators: scaling. */
@@ -75,6 +80,12 @@
     return int32_t(hash) ^ int32_t(hash >> 32);
   }
 }
+
+/* ToString and element access */
+%extend FbxQuaternion { %proxycode %{
+  public override string ToString() {
+    return string.Format("<{0},{1},{2},{3}>", X, Y, Z, W);
+  }%} }
 
 /* Hide the direct access to double* since we can't use it in C# anyway */
 %ignore FbxQuaternion::operator double* ();

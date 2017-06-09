@@ -17,6 +17,41 @@ namespace UnitTests
         public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxQuaternion), this.GetType()); }
 #endif
 
+        /// <summary>
+        /// Check that two quaternions represent a similar rotation.
+        ///
+        /// Either they're equal (within tolerance) or they're exactly opposite.
+        /// Note that a slerp will go opposite directions if they're opposite.
+        ///
+        /// If you want to use the boolean result, pass in 'nothrow' as true.
+        /// Otherwise a failed comparision will throw an exception.
+        /// </summary>
+        public static bool AssertSimilar(FbxQuaternion expected, FbxQuaternion actual,
+                double tolerance = 1e-10, bool nothrow = false)
+        {
+            // Are they bitwise equal?
+            if (expected == actual) {
+                return true;
+            }
+
+            // Compute the dot product. It'll be +1 or -1 if they're the same rotation.
+            if (System.Math.Abs(expected.DotProduct(actual)) >= 1 - tolerance) {
+                return true;
+            }
+
+            // Fail. Print it out nicely.
+            if (!nothrow) { Assert.AreEqual(expected, actual); }
+            return false;
+        }
+
+        public static bool AssertSimilar(FbxVector4 euler, FbxQuaternion actual,
+                double tolerance = 1e-10, bool nothrow = false)
+        {
+            var expected = new FbxQuaternion();
+            expected.ComposeSphericalXYZ(euler);
+            return AssertSimilar(expected, actual, tolerance, nothrow);
+        }
+
         [Test]
         public void TestEquality()
         {
@@ -101,6 +136,16 @@ namespace UnitTests
             Assert.That(() => v.SetAt(-1, 0.5), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
             Assert.That(() => v.SetAt( 4, 0.5), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
 
+            // Test W/X/Y/Z
+            v.X = 0.1;
+            Assert.AreEqual(0.1, v.X);
+            v.Y = 0.2;
+            Assert.AreEqual(0.2, v.Y);
+            v.Z = 0.3;
+            Assert.AreEqual(0.3, v.Z);
+            v.W = 0.4;
+            Assert.AreEqual(0.4, v.W);
+
             // call the multiply/divide/add/sub operators, make sure they're vaguely sane
             u = new FbxQuaternion(v);
             v = v * v;
@@ -116,16 +161,17 @@ namespace UnitTests
             Assert.AreEqual(0, u.Compare(v)); // u and v are the same up to rounding
             Assert.AreEqual(u * u, u.Product(u));
 
-            // unary negate
+            // unary negate and dot product
             Assert.AreEqual(0, (-u).Compare(-v));
+            Assert.AreEqual(-0.3, v.DotProduct(-v), 1e-6);
+            Assert.AreEqual(System.Math.Sqrt(0.3), v.Length(), 1e-6);
+            v.Normalize();
+            Assert.AreEqual(1, v.DotProduct(v), 1e-6);
 
             // various others where we assume that FBX works, just test that they don't crash
-            v.Normalize();
             v.Conjugate();
-            v.Length();
             v.Inverse();
             v.Slerp(u, 0.5);
-            v.DotProduct(u);
         }
     }
 }

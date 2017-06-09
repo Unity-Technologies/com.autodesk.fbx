@@ -39,13 +39,15 @@
 %ignore FbxMatrix::operator/=;
 
 %define_unary_operator(FbxMatrix, -, Negate);
-// Strangely, you can't scale a matrix in FBX SDK.
+// Strangely, you can't scale a matrix in FBX SDK (not with public API -- it's hidden)
 //%define_commutative_binary_operator(FbxMatrix, *, Scale, double);
 //%define_binary_operator(FbxMatrix, /, InvScale, double);
 %define_binary_operator(FbxMatrix, +, Add, FbxMatrix);
 %define_binary_operator(FbxMatrix, -, Sub, FbxMatrix);
 %define_binary_operator(FbxMatrix, *, Mul, FbxMatrix);
 %define_equality_from_operator(FbxMatrix);
+// This case is handled by the Double4x4 operator==.
+%ignore FbxMatrix::operator==(const FbxAMatrix&) const;
 %extend FbxMatrix {
   %csmethodmodifiers GetHashCode "public override";
   int GetHashCode() { return GetHashCode(*$self, 16); }
@@ -71,6 +73,8 @@
 %define_binary_operator(FbxAMatrix, /, InvScale, double);
 %define_binary_operator(FbxAMatrix, *, Mul, FbxAMatrix);
 %define_equality_from_operator(FbxAMatrix);
+// This case is handled by the Double4x4 operator==.
+%ignore FbxAMatrix::operator==(const FbxMatrix&) const;
 %extend FbxAMatrix {
   %csmethodmodifiers GetHashCode "public override";
   int GetHashCode() { return GetHashCode(*$self, 16); }
