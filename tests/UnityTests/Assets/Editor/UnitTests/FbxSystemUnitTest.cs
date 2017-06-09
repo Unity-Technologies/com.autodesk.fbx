@@ -59,6 +59,10 @@ namespace UnitTests
             Assert.AreEqual(FbxSystemUnit.cm.GetConversionFactorTo(FbxSystemUnit.Foot),
                 FbxSystemUnit.Foot.GetConversionFactorFrom(FbxSystemUnit.cm));
 
+            // test ConversionOptions.Dispose()
+            FbxSystemUnit.ConversionOptions options = new FbxSystemUnit.ConversionOptions();
+            options.Dispose ();
+
             using (var manager = FbxManager.Create ()) {
                 FbxScene scene = FbxScene.Create (manager, "scene");
 

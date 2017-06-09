@@ -27,6 +27,7 @@
 %rename("%s") FbxSystemUnit::ConvertScene(FbxScene* pScene, const ConversionOptions& pOptions=DefaultConversionOptions) const;
 %rename("%s") FbxSystemUnit::ConversionOptions;
 %rename("%s") FbxSystemUnit::ConversionOptions::ConversionOptions;
+%rename("%s") FbxSystemUnit::ConversionOptions::~ConversionOptions;
 #endif
 
 /* Define equality and hash code. */
