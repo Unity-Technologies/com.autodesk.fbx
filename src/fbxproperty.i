@@ -129,7 +129,13 @@
  * Get/set. See also the %template after the %include.
  ***************************************************************************/
 %rename("Set") FbxProperty::Set; // Actually just for Set<float>
-%rename("GetFloat") FbxProperty::Get; // Actually just for Get<float>
+%rename("%s") FbxProperty::GetFloat; // Actually just for Get<float>
+%rename("%s") FbxProperty::GetBool;
+%rename("%s") FbxProperty::GetDouble;
+%rename("%s") FbxProperty::GetFbxDouble3;
+%rename("%s") FbxProperty::GetString;
+%rename("%s") FbxProperty::GetFbxColor;
+%rename("%s") FbxProperty::GetInt;
 %rename("%s") FbxProperty::GetCurve;
 %rename("%s") FbxProperty::GetCurveNode;
 %rename("%s") FbxProperty::GetInt;
@@ -142,6 +148,16 @@
     FbxColor GetFbxColor(){
         return $self->Get<FbxColor>();
     }
+}
+
+%extend FbxProperty {
+    float GetFloat () const { return $self->Get<float>(); }
+    FbxBool GetBool () const { return $self->Get<FbxBool>(); }
+    FbxDouble GetDouble () const { return $self->Get<FbxDouble>(); }
+    FbxDouble3 GetFbxDouble3 () const { return $self->Get<FbxDouble3>(); }
+    FbxString GetString () const { return $self->Get<FbxString>(); }
+    FbxColor GetFbxColor () const { return $self->Get<FbxColor>(); }
+    int GetInt() const { return $self->Get<int>(); }
 }
 
 %rename("%s") FbxPropertyT::Get;
@@ -165,7 +181,6 @@
 
 %template(Set) FbxProperty::Set<FbxColor>;
 %template(Set) FbxProperty::Set<float>;
-%template(GetFloat) FbxProperty::Get<float>;
 %template(EvaluateValue) FbxProperty::EvaluateValue<float>;
 
 /* Generic properties */

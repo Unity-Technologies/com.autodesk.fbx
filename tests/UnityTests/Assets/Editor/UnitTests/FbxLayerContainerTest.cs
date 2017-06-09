@@ -24,6 +24,10 @@ namespace UnitTests
             Assert.IsNotNull (layerContainer.GetLayer (index));
             Assert.IsNull (layerContainer.GetLayer (int.MinValue));
             Assert.IsNull (layerContainer.GetLayer (int.MaxValue));
+            Assert.AreEqual (layerContainer.GetLayerCount (), 1);
+            Assert.AreEqual (layerContainer.GetLayerCount (FbxLayerElement.EType.eUnknown), 0);
+            Assert.AreEqual (layerContainer.GetLayerCount (FbxLayerElement.EType.eUnknown, true), 0);
+
         }
     }
 

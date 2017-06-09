@@ -33,6 +33,8 @@
 
 /* Materials */
 %rename("%s") FbxNode::AddMaterial;
+%rename("%s") FbxNode::GetMaterial;
+%rename("%s") FbxNode::GetMaterialIndex;
 
 /* Visibility */
 %rename("%s") FbxNode::SetVisibility;
@@ -40,6 +42,7 @@
 
 /* Skinned Mesh */
 %rename("%s") FbxNode::EvaluateGlobalTransform;
+%rename("%s") FbxNode::EvaluateLocalTransform;
 %rename("%s") FbxNode::EPivotSet;
 %rename("%s") FbxNode::GetMesh;
 %rename("%s") FbxNode::SetPreRotation;
@@ -48,6 +51,16 @@
 %rename("%s") FbxNode::SetPivotState;
 %rename("%s") FbxNode::SetRotationActive;
 %rename("%s") FbxNode::GetRotationActive;
+%rename("%s") FbxNode::GetPostRotation;
+%rename("%s") FbxNode::SetPostRotation;
+%rename("%s") FbxNode::GetRotationPivot;
+%rename("%s") FbxNode::SetRotationPivot;
+%rename("%s") FbxNode::GetRotationOffset;
+%rename("%s") FbxNode::SetRotationOffset;
+%rename("%s") FbxNode::GetScalingOffset;
+%rename("%s") FbxNode::SetScalingOffset;
+%rename("%s") FbxNode::GetScalingPivot;
+%rename("%s") FbxNode::SetScalingPivot;
 #endif
 
 /* The properties need to be marked immutable. */

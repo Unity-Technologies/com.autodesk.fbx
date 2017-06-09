@@ -73,6 +73,12 @@
 %rename("%s") FbxLayer::SetUVs;
 %rename("%s") FbxLayer::SetTangents;
 %rename("%s") FbxLayer::SetMaterials;
+%rename("%s") FbxLayer::GetNormals() const;
+%rename("%s") FbxLayer::GetBinormals() const;
+%rename("%s") FbxLayer::GetVertexColors() const;
+%rename("%s") FbxLayer::GetUVs(FbxLayerElement::EType pTypeIdentifier=FbxLayerElement::eTextureDiffuse) const;
+%rename("%s") FbxLayer::GetTangents() const;
+%rename("%s") FbxLayer::GetMaterials() const;
 
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTemplate::.*";
 %rename("%s") FbxLayerElementTemplate::GetDirectArray() const;
@@ -134,7 +140,18 @@
 %ignore FbxLayerElementArray::ConvertDataType;
 %ignore FbxLayerElementArray::mDataType;
 
-%rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
+%rename("$ignore", "not" %$isconstructor, regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
+
+%rename("%sUnchecked") FbxLayerElementArrayTemplate::GetAt;
+%csmethodmodifiers FbxLayerElementArrayTemplate::GetAt "private";
+%extend FbxLayerElementArrayTemplate { %proxycode %{
+   public $typemap(cstype, T) GetAt(int pIndex) { 
+      if (pIndex < 0 || pIndex >= GetCount()) { 
+        throw new System.IndexOutOfRangeException();
+      }
+      return GetAtUnchecked(pIndex);
+    }
+%} }
 
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
 
