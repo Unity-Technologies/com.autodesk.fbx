@@ -24,7 +24,7 @@
 %rename("%s") FbxSystemUnit::GetHashCode;
 %rename("%s") FbxSystemUnit::GetConversionFactorTo;
 %rename("%s") FbxSystemUnit::GetConversionFactorFrom;
-%rename("%s") FbxSystemUnit::ConvertScene;
+%rename("%s") FbxSystemUnit::ConvertScene(FbxScene* pScene, const ConversionOptions& pOptions=DefaultConversionOptions) const;
 %rename("%s") FbxSystemUnit::ConversionOptions;
 %rename("%s") FbxSystemUnit::ConversionOptions::ConversionOptions;
 #endif
