@@ -136,11 +136,8 @@ namespace FbxSdk.Examples
                     return;
                 }
 
-                // create an FbxNode and add it as a child of fbxParentNode
-                FbxNode fbxRootNode = FbxNode.Create (fbxScene, unityAnimator.name);
-
                 // create node hierarchy
-                ExportNodeHierarchy (unityGo, fbxRootNode);
+                ExportNodeHierarchy (unityGo, fbxParentNode);
 
                 bool result = ExportSkeleton (unitySkin.gameObject, fbxScene);
 
@@ -168,21 +165,18 @@ namespace FbxSdk.Examples
                 fbxMeshNode.SetNodeAttribute (fbxMesh);
                 fbxMeshNode.SetShadingMode (FbxNode.EShadingMode.eWireFrame);
 
-                fbxRootNode.AddChild (fbxMeshNode);
-
                 // bind mesh to skeleton
                 ExportSkin (meshInfo, fbxScene, fbxMesh, fbxMeshNode);
 
                 // add bind pose
-                ExportBindPose (fbxRootNode, fbxMeshNode, fbxScene);
+                ExportBindPose (fbxParentNode, fbxMeshNode, fbxScene);
 
                 ExportBlendShapes (unitySkin, fbxMesh, fbxScene);
 
-                fbxParentNode.AddChild (fbxRootNode);
                 NumNodes++;
 
                 if (Verbose)
-                    Debug.Log (string.Format ("exporting {0} {1}", "Skin", fbxRootNode.GetName ()));
+                    Debug.Log (string.Format ("exporting {0} {1}", "Skin", fbxMeshNode.GetName ()));
             }
 
             /// <summary>
