@@ -25,6 +25,8 @@
 %rename("%s") FbxSystemUnit::GetConversionFactorTo;
 %rename("%s") FbxSystemUnit::GetConversionFactorFrom;
 %rename("%s") FbxSystemUnit::ConvertScene;
+%rename("%s") FbxSystemUnit::ConversionOptions;
+%rename("%s") FbxSystemUnit::ConversionOptions::ConversionOptions;
 #endif
 
 /* Define equality and hash code. */

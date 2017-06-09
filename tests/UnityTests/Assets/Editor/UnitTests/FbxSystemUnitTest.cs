@@ -14,14 +14,8 @@ namespace UnitTests
     /// If you add tests here, you probably want to add them to the other
     /// FbxDouble* test classes.
     /// </summary>
-    public class FbxSystemUnitTest
+    public class FbxSystemUnitTest : TestBase<FbxSystemUnit>
     {
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxSystemUnit), this.GetType()); }
-#endif
-
         [Test]
         public void TestEquality()
         {
@@ -60,6 +54,25 @@ namespace UnitTests
             units.ToString();
             Assert.AreEqual("custom unit", units.GetScaleFactorAsString(pAbbreviated: false));
             Assert.AreNotEqual(units, FbxSystemUnit.mm);
+
+            // test GetGetConversionFactor
+            Assert.AreEqual(FbxSystemUnit.cm.GetConversionFactorTo(FbxSystemUnit.Foot),
+                FbxSystemUnit.Foot.GetConversionFactorFrom(FbxSystemUnit.cm));
+
+            using (var manager = FbxManager.Create ()) {
+                FbxScene scene = FbxScene.Create (manager, "scene");
+
+                // test ConvertScene (make sure it doesn't crash)
+                FbxSystemUnit.cm.ConvertScene (scene);
+                FbxSystemUnit.m.ConvertScene(scene, new FbxSystemUnit.ConversionOptions());
+
+                // test null
+                Assert.That (() => { FbxSystemUnit.dm.ConvertScene(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
+                // test destroyed
+                scene.Destroy();
+                Assert.That (() => { FbxSystemUnit.dm.ConvertScene(scene); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            }
         }
     }
 }
