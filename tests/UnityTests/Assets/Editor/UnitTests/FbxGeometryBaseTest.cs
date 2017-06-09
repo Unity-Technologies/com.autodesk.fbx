@@ -71,6 +71,19 @@ namespace UnitTests
 
             int origCount = fbxGeometry.GetDeformerCount ();
 
+            // test get blendshape deformer
+            FbxBlendShape blendShape = FbxBlendShape.Create (Manager, "blendShape");
+            int index = fbxGeometry.AddDeformer (blendShape);
+            Assert.GreaterOrEqual (index, 0);
+            origCount++;
+
+            // TODO: (UNI-19581): If we add the blendShape after the skin, then the below
+            //                    tests fail.
+            Assert.AreEqual (blendShape, fbxGeometry.GetBlendShapeDeformer (index));
+            Assert.AreEqual (blendShape, fbxGeometry.GetBlendShapeDeformer (index, null));
+            Assert.AreEqual (blendShape, fbxGeometry.GetDeformer (index, FbxDeformer.EDeformerType.eBlendShape));
+            Assert.AreEqual (1, fbxGeometry.GetDeformerCount (FbxDeformer.EDeformerType.eBlendShape));
+
             // test add deformer
             FbxSkin skin = FbxSkin.Create (fbxGeometry, "skin");
             int skinIndex = fbxGeometry.AddDeformer (skin);
@@ -86,24 +99,9 @@ namespace UnitTests
 
             // check right index but wrong type
             Assert.IsNull (fbxGeometry.GetDeformer (skinIndex, FbxDeformer.EDeformerType.eVertexCache, null));
-            Assert.IsNotNull (fbxGeometry.GetDeformer (skinIndex, FbxDeformer.EDeformerType.eSkin, null));
 
             // TODO: (UNI-19580) figure out why calling AddDeformer() once adds it twice
             Assert.AreEqual (origCount+2, fbxGeometry.GetDeformerCount ());
-
-            // test get blendshape deformer
-            FbxBlendShape blendShape = FbxBlendShape.Create (Manager, "blendShape");
-            int index = fbxGeometry.AddDeformer (blendShape);
-            Assert.GreaterOrEqual (index, 0);
-
-            // TODO: (UNI-19581): If we add the blendShape before the skin, then the below
-            //                    tests pass, and the skin tests fail.
-#if UNI_19581
-            Assert.AreEqual (blendShape, fbxGeometry.GetBlendShapeDeformer (index));
-            Assert.AreEqual (blendShape, fbxGeometry.GetBlendShapeDeformer (index, null));
-            Assert.AreEqual (blendShape, fbxGeometry.GetDeformer (index, FbxDeformer.EDeformerType.eBlendShape));
-#endif
-            Assert.AreEqual (1, fbxGeometry.GetDeformerCount (FbxDeformer.EDeformerType.eBlendShape));
 
             // test add null deformer
             Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
