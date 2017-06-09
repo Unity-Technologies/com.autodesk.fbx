@@ -69,18 +69,13 @@ namespace UnitTests
         {
             base.TestBasics(fbxGeometry, typ);
 
+            int origCount = fbxGeometry.GetDeformerCount ();
+
             // test add deformer
-            FbxDeformer deformer = FbxDeformer.Create (fbxGeometry, "deformer");
-            int index = fbxGeometry.AddDeformer (deformer);
-            Assert.GreaterOrEqual (index, 0);
-            Assert.AreEqual(deformer, fbxGeometry.GetDeformer(index, new FbxStatus()));
-
-            // test add null deformer
-            Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
-
-            // test add invalid deformer
-            deformer.Destroy();
-            Assert.That (() => fbxGeometry.AddDeformer(deformer), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            FbxSkin skin = FbxSkin.Create (fbxGeometry, "skin");
+            int skinIndex = fbxGeometry.AddDeformer (skin);
+            Assert.GreaterOrEqual (skinIndex, 0);
+            Assert.AreEqual(skin, fbxGeometry.GetDeformer(skinIndex));
 
             // test get invalid deformer index doesn't crash
             fbxGeometry.GetDeformer(-1, new FbxStatus());
@@ -88,6 +83,34 @@ namespace UnitTests
 
             // test get deformer null FbxStatus
             fbxGeometry.GetDeformer(0, null);
+
+            // check right index but wrong type
+            Assert.IsNull (fbxGeometry.GetDeformer (skinIndex, FbxDeformer.EDeformerType.eVertexCache, null));
+            Assert.IsNotNull (fbxGeometry.GetDeformer (skinIndex, FbxDeformer.EDeformerType.eSkin, null));
+
+            // TODO: (UNI-19580) figure out why calling AddDeformer() once adds it twice
+            Assert.AreEqual (origCount+2, fbxGeometry.GetDeformerCount ());
+
+            // test get blendshape deformer
+            FbxBlendShape blendShape = FbxBlendShape.Create (Manager, "blendShape");
+            int index = fbxGeometry.AddDeformer (blendShape);
+            Assert.GreaterOrEqual (index, 0);
+
+            // TODO: (UNI-19581): If we add the blendShape before the skin, then the below
+            //                    tests pass, and the skin tests fail.
+#if UNI_19581
+            Assert.AreEqual (blendShape, fbxGeometry.GetBlendShapeDeformer (index));
+            Assert.AreEqual (blendShape, fbxGeometry.GetBlendShapeDeformer (index, null));
+            Assert.AreEqual (blendShape, fbxGeometry.GetDeformer (index, FbxDeformer.EDeformerType.eBlendShape));
+#endif
+            Assert.AreEqual (1, fbxGeometry.GetDeformerCount (FbxDeformer.EDeformerType.eBlendShape));
+
+            // test add null deformer
+            Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+
+            // test add invalid deformer
+            skin.Destroy();
+            Assert.That (() => fbxGeometry.AddDeformer(skin), Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
     }
 
