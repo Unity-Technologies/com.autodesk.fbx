@@ -11,8 +11,14 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxSkinTest : Base<FbxSkin>
+    public class FbxSkinTest : FbxDeformerTestBase<FbxSkin>
     {
+        [Test]
+        public void TestDeformerBasics()
+        {
+            // test FbxDeformer functions
+            TestBasics(CreateObject(), FbxDeformer.EDeformerType.eSkin);
+        }
 
         [Test]
         public void TestAddCluster ()

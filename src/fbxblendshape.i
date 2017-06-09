@@ -9,7 +9,10 @@
 %rename("%s", %$isclass) FbxBlendShape;
 
 %rename("%s") FbxBlendShape::AddBlendShapeChannel;
+%rename("%s") FbxBlendShape::RemoveBlendShapeChannel;
 %rename("%s") FbxBlendShape::GetBlendShapeChannel(int pIndex) const;
 %rename("%s") FbxBlendShape::GetBlendShapeChannelCount;
+%rename("%s") FbxBlendShape::GetGeometry;
+%rename("%s") FbxBlendShape::SetGeometry;
 
 %include "fbxsdk/scene/geometry/fbxblendshape.h"

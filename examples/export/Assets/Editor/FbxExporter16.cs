@@ -118,20 +118,20 @@ namespace FbxSdk.Examples
             protected void ExportSkinnedMesh (GameObject unityGo, FbxScene fbxScene, FbxNode fbxParentNode)
             {
                 Animator unityAnimator = unityGo.GetComponent<Animator> ();
-                if (unityAnimator == null)
+                if (!unityAnimator)
                     return;
 
                 SkinnedMeshRenderer unitySkin
                 = unityGo.GetComponentInChildren<SkinnedMeshRenderer> ();
 
-                if (unitySkin == null) {
+                if (!unitySkin) {
                     Debug.LogError ("could not find skinned mesh");
                     return;
                 }
 
                 var meshInfo = GetSkinnedMeshInfo (unityGo);
 
-                if (meshInfo.renderer == null) {
+                if (!meshInfo.renderer) {
                     Debug.LogError ("mesh has no renderer");
                     return;
                 }
