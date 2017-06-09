@@ -85,7 +85,7 @@ namespace UnitTests
             Assert.AreEqual (1, fbxGeometry.GetDeformerCount (FbxDeformer.EDeformerType.eBlendShape));
 
             // test add deformer
-            FbxSkin skin = FbxSkin.Create (fbxGeometry, "skin");
+            FbxSkin skin = FbxSkin.Create (Manager, "skin");
             int skinIndex = fbxGeometry.AddDeformer (skin);
             Assert.GreaterOrEqual (skinIndex, 0);
             Assert.AreEqual(skin, fbxGeometry.GetDeformer(skinIndex));
@@ -100,8 +100,7 @@ namespace UnitTests
             // check right index but wrong type
             Assert.IsNull (fbxGeometry.GetDeformer (skinIndex, FbxDeformer.EDeformerType.eVertexCache, null));
 
-            // TODO: (UNI-19580) figure out why calling AddDeformer() once adds it twice
-            Assert.AreEqual (origCount+2, fbxGeometry.GetDeformerCount ());
+            Assert.AreEqual (origCount+1, fbxGeometry.GetDeformerCount ());
 
             // test add null deformer
             Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
