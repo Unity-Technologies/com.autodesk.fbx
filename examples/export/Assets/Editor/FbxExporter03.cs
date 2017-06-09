@@ -174,6 +174,20 @@ namespace FbxSdk.Examples
 
                         if ( unityGo ) 
                         {
+                            var unityGoIOSettings = unityGo.GetComponent<FbxSharp.IOSettings> ();
+                            if (unityGoIOSettings)
+                            {
+                                if (unityGoIOSettings.SystemUnit == FbxSharp.SystemUnitType.m)
+                                {
+                                    fbxSettings.SetSystemUnit(FbxSystemUnit.m);
+                                }
+                                if (unityGoIOSettings.AxisSystem == FbxSharp.AxisSystemType.Unity)
+                                {
+                                    Debug.Log ("setting unity axis system");
+                                    fbxSettings.SetAxisSystem(UnityAxisSystem);
+                                }
+                            }
+
                             this.ExportComponents ( unityGo, fbxScene, fbxRootNode);
                         }
                     }
@@ -226,6 +240,14 @@ namespace FbxSdk.Examples
             /// </summary>
             static string   LastFilePath { get; set; }
             const string    Extension = "fbx";
+
+            FbxAxisSystem UnityAxisSystem 
+            {
+                get { return new FbxAxisSystem (FbxAxisSystem.EUpVector.eYAxis,
+                                                FbxAxisSystem.EFrontVector.eParityOdd,
+                                                FbxAxisSystem.ECoordSystem.eLeftHanded);
+                }
+            }
 
             /// <summary>
             /// Get the GameObject

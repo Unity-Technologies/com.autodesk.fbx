@@ -27,6 +27,19 @@ namespace UnitTests
             // test Clear
             fbxCollection.Clear ();
             Assert.AreEqual (initialMemberCount, fbxCollection.GetMemberCount());
+
+            // test GetAnimLayerMember()
+            fbxCollection.AddMember(FbxAnimLayer.Create(manager, "animLayer"));
+            var animLayer = fbxCollection.GetAnimLayerMember ();
+            Assert.IsInstanceOf<FbxAnimLayer> (animLayer);
+
+            var animLayer2 = fbxCollection.GetAnimLayerMember (0);
+
+            Assert.AreEqual (animLayer, animLayer2);
+
+            // check invalid
+            Assert.IsNull(fbxCollection.GetAnimLayerMember (1));
+            Assert.IsNull(fbxCollection.GetAnimLayerMember (-1));
         }
 
         [Test]

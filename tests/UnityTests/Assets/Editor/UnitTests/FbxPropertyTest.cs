@@ -138,6 +138,7 @@ namespace UnitTests
             TestGetter (property.GetFbxColor ());
             TestGetter (property.GetFbxDouble3 ());
             TestGetter (property.GetString ());
+            TestGetter (property.GetInt ());
 
             // Test setting the value with color accessor
             property.Set (new FbxColor ());

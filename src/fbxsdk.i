@@ -128,6 +128,20 @@
   }
 %}
 %enddef  
+
+/* In C++ chars are stored as a single byte, whereas in C#
+ * chars are stored as 2 bytes (16-bit unicode). To ensure that the
+ * char is correct in C#, we return it as a byte and then convert it back to
+ * a char in C#.
+ * In C# a byte is an 8-bit unsigned int.
+ */
+%typemap(imtype,
+         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.U8)]") 
+         char "byte";
+%typemap(csout, excode=SWIGEXCODE) char {
+    byte ret = $imcall;$excode
+    return System.Convert.ToChar(ret);
+  }
   
 /*
  * How to handle strings. Must be before the includes that actually include code.

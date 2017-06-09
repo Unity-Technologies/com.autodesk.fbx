@@ -155,6 +155,7 @@ namespace UnitTests
             var m1 = new FbxAMatrix(); m1.SetQ(q1);
             var m2 = new FbxAMatrix(); m2.SetQ(q2);
 
+
             var m12 = m1.Slerp(m2, 0.25);
             var q12 = new FbxQuaternion(); q12.ComposeSphericalXYZ(new FbxVector4(0, -45, 0));
             FbxQuaternionTest.AssertSimilar(q12, m12.GetQ());
