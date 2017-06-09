@@ -1,4 +1,5 @@
 #include <fbxsdk.h>
+#include <cstdint>
 
 using namespace fbxsdk;
 

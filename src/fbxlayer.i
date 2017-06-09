@@ -141,7 +141,17 @@
 %ignore FbxLayerElementArray::mDataType;
 
 %rename("$ignore", "not" %$isconstructor, regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
-%rename("%s") FbxLayerElementArrayTemplate::GetAt;
+
+%rename("%sUnchecked") FbxLayerElementArrayTemplate::GetAt;
+%csmethodmodifiers FbxLayerElementArrayTemplate::GetAt "private";
+%extend FbxLayerElementArrayTemplate { %proxycode %{
+   public $typemap(cstype, T) GetAt(int pIndex) { 
+      if (pIndex < 0 || pIndex >= GetCount()) { 
+        throw new System.IndexOutOfRangeException();
+      }
+      return GetAtUnchecked(pIndex);
+    }
+%} }
 
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
 
