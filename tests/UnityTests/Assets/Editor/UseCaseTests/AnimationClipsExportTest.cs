@@ -12,13 +12,13 @@ namespace UseCaseTests
 {
     public class AnimationClipsExportTest : RoundTripTestBase
     {
-        protected int m_keyCount = 5;
-
-        protected string[] m_transformComponents = new string[] {
+        protected static string[] s_transformComponents = new string[] {
             Globals.FBXSDK_CURVENODE_COMPONENT_X, 
             Globals.FBXSDK_CURVENODE_COMPONENT_Y, 
             Globals.FBXSDK_CURVENODE_COMPONENT_Z
         };
+
+        public static string[] TransformComponents { get { return s_transformComponents; } }
 
         [SetUp]
         public override void Init ()
@@ -65,9 +65,9 @@ namespace UseCaseTests
 
             // set up the translation
             CreateAnimCurves (animNode, fbxAnimLayer, new List<PropertyComponentPair> () {
-                new PropertyComponentPair ("Lcl Translation", m_transformComponents),
-                new PropertyComponentPair ("Lcl Rotation", m_transformComponents),
-                new PropertyComponentPair ("Lcl Scaling", m_transformComponents)
+                new PropertyComponentPair ("Lcl Translation", TransformComponents),
+                new PropertyComponentPair ("Lcl Rotation", TransformComponents),
+                new PropertyComponentPair ("Lcl Scaling", TransformComponents)
             }, (index) => { return index*2.0; }, (index) => { return index*3.0f - 1; });
 
             // TODO: avoid needing to this by creating typemaps for
@@ -80,7 +80,7 @@ namespace UseCaseTests
             return scene;
         }
 
-        protected struct PropertyComponentPair{
+        public struct PropertyComponentPair{
             public string propertyName;
             public string[] componentList;
 
@@ -90,12 +90,13 @@ namespace UseCaseTests
             }
         }
 
-        protected void CreateAnimCurves(
+        public static void CreateAnimCurves(
             FbxNode animNode, FbxAnimLayer animLayer,
             List<PropertyComponentPair> properties,
             System.Func<int,double> calcTime, // lambda function for calculating time based on index
             System.Func<int,float> calcValue, // lambda function for calculating value based on index
-            FbxNodeAttribute animNodeAttr=null)
+            FbxNodeAttribute animNodeAttr=null,
+            int keyCount=5)
         {
             foreach(var pair in properties){
                 FbxProperty fbxProperty = animNode.FindProperty (pair.propertyName, false);
@@ -114,7 +115,7 @@ namespace UseCaseTests
                     Assert.IsNotNull (fbxAnimCurve);
 
                     fbxAnimCurve.KeyModifyBegin ();
-                    for (int keyIndex = 0; keyIndex < m_keyCount; ++keyIndex) {
+                    for (int keyIndex = 0; keyIndex < keyCount; ++keyIndex) {
                         FbxTime fbxTime = FbxTime.FromSecondDouble(calcTime(keyIndex));
                         fbxAnimCurve.KeyAdd (fbxTime);
                         fbxAnimCurve.KeySet (keyIndex, fbxTime, calcValue(keyIndex));
@@ -155,13 +156,13 @@ namespace UseCaseTests
             Assert.AreEqual (origStack.GetLocalTimeSpan (), importStack.GetLocalTimeSpan ());
 
             CheckAnimCurve (origAnimNode, importAnimNode, origLayer, importLayer, new List<PropertyComponentPair>(){
-                new PropertyComponentPair("Lcl Translation", m_transformComponents),
-                new PropertyComponentPair("Lcl Rotation", m_transformComponents),
-                new PropertyComponentPair("Lcl Scaling", m_transformComponents)
+                new PropertyComponentPair("Lcl Translation", TransformComponents),
+                new PropertyComponentPair("Lcl Rotation", TransformComponents),
+                new PropertyComponentPair("Lcl Scaling", TransformComponents)
             });
         }
 
-        protected void CheckAnimCurve(
+        public static void CheckAnimCurve(
             FbxNode origAnimNode, FbxNode importAnimNode,
             FbxAnimLayer origLayer, FbxAnimLayer importLayer,
             List<PropertyComponentPair> propCompPairs,
