@@ -40,6 +40,12 @@ namespace UnitTests
             // seems to be (0,0,0,epsilon).
             geometryBase.GetControlPointAt(-1);
             geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
+
+            var elementNormal = geometryBase.CreateElementNormal ();
+            Assert.IsInstanceOf<FbxLayerElementNormal> (elementNormal);
+
+            var elementTangent = geometryBase.CreateElementTangent ();
+            Assert.IsInstanceOf<FbxLayerElementTangent> (elementTangent);
         }
     }
 
@@ -63,18 +69,26 @@ namespace UnitTests
         {
             base.TestBasics(fbxGeometry, typ);
 
-            // test add deformer
-            FbxDeformer deformer = FbxDeformer.Create (fbxGeometry, "deformer");
-            int index = fbxGeometry.AddDeformer (deformer);
+            int origCount = fbxGeometry.GetDeformerCount ();
+
+            // test get blendshape deformer
+            FbxBlendShape blendShape = FbxBlendShape.Create (Manager, "blendShape");
+            int index = fbxGeometry.AddDeformer (blendShape);
             Assert.GreaterOrEqual (index, 0);
-            Assert.AreEqual(deformer, fbxGeometry.GetDeformer(index, new FbxStatus()));
+            origCount++;
 
-            // test add null deformer
-            Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+            // TODO: (UNI-19581): If we add the blendShape after the skin, then the below
+            //                    tests fail.
+            Assert.AreEqual (blendShape, fbxGeometry.GetBlendShapeDeformer (index));
+            Assert.AreEqual (blendShape, fbxGeometry.GetBlendShapeDeformer (index, null));
+            Assert.AreEqual (blendShape, fbxGeometry.GetDeformer (index, FbxDeformer.EDeformerType.eBlendShape));
+            Assert.AreEqual (1, fbxGeometry.GetDeformerCount (FbxDeformer.EDeformerType.eBlendShape));
 
-            // test add invalid deformer
-            deformer.Destroy();
-            Assert.That (() => fbxGeometry.AddDeformer(deformer), Throws.Exception.TypeOf<System.ArgumentNullException>());
+            // test add deformer
+            FbxSkin skin = FbxSkin.Create (Manager, "skin");
+            int skinIndex = fbxGeometry.AddDeformer (skin);
+            Assert.GreaterOrEqual (skinIndex, 0);
+            Assert.AreEqual(skin, fbxGeometry.GetDeformer(skinIndex));
 
             // test get invalid deformer index doesn't crash
             fbxGeometry.GetDeformer(-1, new FbxStatus());
@@ -82,6 +96,18 @@ namespace UnitTests
 
             // test get deformer null FbxStatus
             fbxGeometry.GetDeformer(0, null);
+
+            // check right index but wrong type
+            Assert.IsNull (fbxGeometry.GetDeformer (skinIndex, FbxDeformer.EDeformerType.eVertexCache, null));
+
+            Assert.AreEqual (origCount+1, fbxGeometry.GetDeformerCount ());
+
+            // test add null deformer
+            Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+
+            // test add invalid deformer
+            skin.Destroy();
+            Assert.That (() => fbxGeometry.AddDeformer(skin), Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
     }
 
@@ -91,6 +117,15 @@ namespace UnitTests
         public void TestBasics()
         {
             base.TestBasics(CreateObject ("geometry"), FbxNodeAttribute.EType.eUnknown);
+        }
+    }
+
+    public class FbxShapeTest : FbxGeometryBaseTestBase<FbxShape>
+    {
+        [Test]
+        public void TestBasics()
+        {
+            base.TestBasics(CreateObject ("shape"), FbxNodeAttribute.EType.eShape);
         }
     }
 }

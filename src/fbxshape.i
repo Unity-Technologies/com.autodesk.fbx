@@ -6,11 +6,6 @@
 // ***********************************************************************
 
 // Unignore class
-%rename("%s", %$isclass) FbxDeformer;
+%rename("%s", %$isclass) FbxShape;
 
-// As the ignore everything will include the constructor, destructor, methods etc
-// in the class, these have to be explicitly unignored too:
-%rename("%s") FbxDeformer::EDeformerType;
-%rename("%s") FbxDeformer::GetDeformerType;
-
-%include "fbxsdk/scene/geometry/fbxdeformer.h"
+%include "fbxsdk/scene/geometry/fbxshape.h"
