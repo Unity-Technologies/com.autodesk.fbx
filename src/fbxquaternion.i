@@ -14,8 +14,12 @@
  */
 %reveal_all_start;
 
-/* Hide the assignment operator, doesn't make sense in C#. */
+/* Hide the assignment operators, don't make sense in C#. */
 %ignore FbxQuaternion::operator=;
+%ignore FbxQuaternion::operator*=;
+%ignore FbxQuaternion::operator/=;
+%ignore FbxQuaternion::operator+=;
+%ignore FbxQuaternion::operator-=;
 
 /* Accessing elements. The C++ doesn't bounds-test, so we do. */
 %ignore FbxQuaternion::operator[];
@@ -35,57 +39,13 @@
       if (index < 0 || index >= 4) { throw new System.IndexOutOfRangeException(); }
       SetAtUnchecked(index, value);
     }
-  } %} }
-
-/*
- * We create a bunch of C# operators because swig can't do it on its own.
- *
- * We rename the C++ to an ugly name and mark it private, then we provide
- * pretty C# operators.
- *
- * Unfortunately the in-place operator can't be overloaded in C#.
- */
-%define %define_unary_operator(THETYPE, OPERATOR, CSNAME)
-%csmethodmodifiers THETYPE::operator OPERATOR () const "private";
-%rename("operator_"##"CSNAME") THETYPE::operator OPERATOR () const;
-%extend THETYPE { %proxycode %{
-  public static THETYPE operator OPERATOR (THETYPE a) {
-    return a.operator_##CSNAME();
   }
-%} }
-%enddef
+  public double X { get { return GetAtUnchecked(0); } set { SetAtUnchecked(0, value); } }
+  public double Y { get { return GetAtUnchecked(1); } set { SetAtUnchecked(1, value); } }
+  public double Z { get { return GetAtUnchecked(2); } set { SetAtUnchecked(2, value); } }
+  public double W { get { return GetAtUnchecked(3); } set { SetAtUnchecked(3, value); } }
+  %} }
 
-%define %define_binary_operator(THETYPE, OPERATOR, CSNAME, OPERANDTYPE)
-%csmethodmodifiers THETYPE::operator OPERATOR (OPERANDTYPE) const "private";
-%csmethodmodifiers THETYPE::operator OPERATOR (const OPERANDTYPE &) const "private";
-%rename("operator_"##"CSNAME") THETYPE::operator OPERATOR (OPERANDTYPE) const;
-%rename("operator_"##"CSNAME") THETYPE::operator OPERATOR (const OPERANDTYPE &) const;
-%extend THETYPE { %proxycode %{
-  public static THETYPE operator OPERATOR (THETYPE a, OPERANDTYPE b) {
-    return a.operator_##CSNAME(b);
-  }
-%} }
-%enddef
-
-%define %define_commutative_binary_operator(THETYPE, OPERATOR, CSNAME, OPERANDTYPE)
-%csmethodmodifiers THETYPE::operator OPERATOR (OPERANDTYPE) const "private";
-%csmethodmodifiers THETYPE::operator OPERATOR (const OPERANDTYPE &) const "private";
-%rename("operator_"##"CSNAME") THETYPE::operator OPERATOR (OPERANDTYPE) const;
-%rename("operator_"##"CSNAME") THETYPE::operator OPERATOR (const OPERANDTYPE &) const;
-%extend THETYPE { %proxycode %{
-  public static THETYPE operator OPERATOR (THETYPE a, OPERANDTYPE b) {
-    return a.operator_##CSNAME(b);
-  }
-  public static THETYPE operator OPERATOR (OPERANDTYPE a, THETYPE b) {
-    return b.operator_##CSNAME(a);
-  }
-%} }
-%enddef
-
-%ignore FbxQuaternion::operator*=;
-%ignore FbxQuaternion::operator/=;
-%ignore FbxQuaternion::operator+=;
-%ignore FbxQuaternion::operator-=;
 
 /* Binary operators: scaling. */
 %define_binary_operator(FbxQuaternion, *, Mul, FbxQuaternion);
@@ -121,9 +81,15 @@
   }
 }
 
+/* ToString. */
+%extend FbxQuaternion { %proxycode %{
+  public override string ToString() {
+    return string.Format("<{0},{1},{2},{3}>", X, Y, Z, W);
+  }%} }
+
 /* Hide the direct access to double* since we can't use it in C# anyway */
-%ignore operator double* ();
-%ignore operator const double* () const;
+%ignore FbxQuaternion::operator double* ();
+%ignore FbxQuaternion::operator const double* () const;
 
 %include "fbxsdk/core/math/fbxquaternion.h"
 

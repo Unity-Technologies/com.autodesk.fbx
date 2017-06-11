@@ -34,6 +34,79 @@ namespace UnitTests
                     new FbxVector4(0, 1, 2, 3));
         }
 
+        /// <summary>
+        /// Check that two vectors are similar, interpreting them as 4-tuples
+        /// of doubles.
+        ///
+        /// Pass 'nothrow' as true if you want a bool yes/no. By default we
+        /// throw an NUnit exception if the vectors don't match.
+        /// </summary>
+        public static bool AssertSimilarXYZW(FbxVector4 expected, FbxVector4 actual,
+                double tolerance = 1e-10, bool nothrow = false)
+        {
+            if (System.Math.Abs(expected.X - actual.X) <= tolerance &&
+                    System.Math.Abs(expected.Y - actual.Y) <= tolerance &&
+                    System.Math.Abs(expected.Z - actual.Z) <= tolerance &&
+                    System.Math.Abs(expected.Z - actual.Z) <= tolerance) {
+                return true;
+            }
+
+            if (!nothrow) {
+                Assert.AreEqual(expected, actual);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check that two vectors are similar, interpreting them as XYZ
+        /// vectors (ignoring W).
+        ///
+        /// Pass 'nothrow' as true if you want a bool yes/no. By default we
+        /// throw an NUnit exception if the vectors don't match.
+        /// </summary>
+        public static bool AssertSimilarXYZ(FbxVector4 expected, FbxVector4 actual,
+                double tolerance = 1e-10, bool nothrow = false)
+        {
+            if (System.Math.Abs(expected.X - actual.X) <= tolerance &&
+                    System.Math.Abs(expected.Y - actual.Y) <= tolerance &&
+                    System.Math.Abs(expected.Z - actual.Z) <= tolerance) {
+                return true;
+            }
+
+            if (!nothrow) {
+                Assert.AreEqual(expected, actual);
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Check that two vectors are similar, interpreting them as XYZ euler angles,
+        /// ignoring W.
+        ///
+        /// Pass 'nothrow' as true if you want a bool yes/no. By default we
+        /// throw an NUnit exception if the vectors don't match.
+        /// </summary>
+        public static bool AssertSimilarEuler(FbxVector4 expected, FbxVector4 actual,
+                double tolerance = 1e-10, bool nothrow = false)
+        {
+            if (expected == actual) {
+                return true;
+            }
+
+            var q1 = new FbxQuaternion(); q1.ComposeSphericalXYZ(expected);
+            var q2 = new FbxQuaternion(); q2.ComposeSphericalXYZ(actual);
+
+            // Check if the quaternions match.
+            if (FbxQuaternionTest.AssertSimilar(q1, q2, System.Math.Sqrt(tolerance), nothrow: true)) {
+                return true;
+            }
+
+            if (!nothrow) {
+                Assert.AreEqual(expected, actual, "Quaternions don't match: " + q1 + " versus " + q2);
+            }
+            return false;
+        }
+
         [Test]
         public void BasicTests ()
         {
