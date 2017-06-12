@@ -9,13 +9,8 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxAMatrixTest
+    public class FbxAMatrixTest : FbxDouble4x4TestBase<FbxAMatrix>
     {
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxAMatrix), this.GetType()); }
-#endif
-
         [Test]
         public void TestEquality()
         {
@@ -27,103 +22,143 @@ namespace UnitTests
             EqualityTester<FbxAMatrix>.TestEquality(mx1, mx2, mx1copy);
         }
 
+        // Helper for the scaling operators.
+        //
+        // If scale is a power of two, tolerance can be zero.
+        //
+        // Scaling an FbxAMatrix scales the 3x3 matrix for scale and rotation,
+        // and zeroes out the translation.
+        static void AssertScaled(FbxAMatrix expected, FbxAMatrix scaled,
+                double scale, double tolerance = 0)
+        {
+            for(int y = 0; y < 3; ++y) {
+                for (int x = 0; x < 3; ++x) {
+                    Assert.AreEqual(scale * expected.Get(x, y), scaled.Get(x, y),
+                            tolerance, string.Format("Index ({0} {1})", x, y));
+                }
+            }
+            Assert.AreEqual(new FbxVector4(0,0,0,1), scaled.GetRow(3));
+            Assert.AreEqual(new FbxVector4(0,0,0,1), scaled.GetColumn(3));
+        }
+
         [Test]
         public void BasicTests ()
         {
+            base.TestElementAccessAndDispose(new FbxAMatrix());
+
             // make sure the constructors compile and don't crash
             new FbxAMatrix();
             new FbxAMatrix(new FbxAMatrix());
             var mx = new FbxAMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
 
-            // check that the matrix is the id matrix */
+            // check that the matrix is the id matrix
+            Assert.IsTrue(mx.IsIdentity());
             for(int y = 0; y < 4; ++y) {
                 for(int x = 0; x < 4; ++x) {
                     Assert.AreEqual(x == y ? 1 : 0, mx.Get(y, x));
                 }
             }
 
-            //////
-            // Tests for the inherited Double4x4
+            // Test that all the operations work.
+            // In particular, test that they don't return the default element
+            // when they aren't supposed to.
 
-            // make sure the no-arg constructor doesn't crash
-            new FbxAMatrix();
+            var translate = new FbxVector4(5, 3, 1);
+            var euler = new FbxVector4(-135, -90, 0);
+            var scale = new FbxVector4(1, 2, .5);
+            var quat = new FbxQuaternion();
+            quat.ComposeSphericalXYZ(euler);
 
-            // make sure we can dispose
-            using (new FbxAMatrix()) { }
-            DisposeTester.TestDispose(new FbxAMatrix());
+            mx = new FbxAMatrix(translate, euler, scale);
+            Assert.IsFalse(mx.IsIdentity());
+            Assert.IsTrue(mx.IsIdentity(10)); // squint very, very, very hard
 
-            // make sure equality works.
-            Assert.IsTrue(new FbxAMatrix().Equals(new FbxAMatrix()));
+            FbxVector4Test.AssertSimilarXYZ(translate, mx.GetT());
+            FbxVector4Test.AssertSimilarEuler(euler, mx.GetR());
+            FbxQuaternionTest.AssertSimilar(quat, mx.GetQ());
+            FbxVector4Test.AssertSimilarXYZ(scale, mx.GetS());
+            FbxVector4Test.AssertSimilarXYZ(new FbxVector4(0.354, 0.354, 0), mx.GetRow(2), 1e-2);
+            FbxVector4Test.AssertSimilarXYZ(new FbxVector4(1, 0, 0), mx.GetColumn(2));
 
-            Assert.IsTrue(new FbxAMatrix() == new FbxAMatrix());
-            Assert.IsFalse(new FbxAMatrix() != new FbxAMatrix());
+            mx.SetT(translate * 2);
+            FbxVector4Test.AssertSimilarXYZ(2 * translate, mx.GetT());
 
-            Assert.IsFalse(new FbxAMatrix() == (FbxAMatrix)null);
-            Assert.IsTrue(new FbxAMatrix() != (FbxAMatrix)null);
+            mx.SetR(euler * 2);
+            FbxVector4Test.AssertSimilarEuler(2 * euler, mx.GetR());
 
-            Assert.IsFalse((FbxAMatrix)null == new FbxAMatrix());
-            Assert.IsTrue((FbxAMatrix)null != new FbxAMatrix());
+            mx.SetQ(quat * 2);
+            FbxQuaternionTest.AssertSimilar(2 * quat, mx.GetQ());
 
-            Assert.IsTrue((FbxAMatrix)null == (FbxAMatrix)null);
-            Assert.IsFalse((FbxAMatrix)null != (FbxAMatrix)null);
+            mx.SetS(scale * 2);
+            FbxVector4Test.AssertSimilarXYZ(2 * scale, mx.GetS());
 
-            // Test operator[]
-            var v = new FbxAMatrix();
-            var a = new FbxDouble4(1,2,3,4);
-            var b = new FbxDouble4(5,6,7,8);
-            var c = new FbxDouble4(9,8,7,6);
-            var d = new FbxDouble4(5,4,3,2);
-            v[0] = a;
-            Assert.AreEqual(a.X, v[0].X);
-            Assert.AreEqual(a.Y, v[0].Y);
-            Assert.AreEqual(a.Z, v[0].Z);
-            Assert.AreEqual(a.W, v[0].W);
-            Assert.AreEqual(a, v[0]);
-            v[1] = b;
-            Assert.AreEqual(b, v[1]);
-            v[2] = c;
-            Assert.AreEqual(c, v[2]);
-            v[3] = d;
-            Assert.AreEqual(d, v[3]);
-            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[-1] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            mx.SetTRS(translate, euler, scale);
+            FbxVector4Test.AssertSimilarXYZ(translate, mx.GetT());
 
-            // Test members W/X/Y/Z
-            Assert.AreEqual(a, v.X);
-            Assert.AreEqual(b, v.Y);
-            Assert.AreEqual(c, v.Z);
-            Assert.AreEqual(d, v.W);
-            v.X = d;
-            v.Y = c;
-            v.Z = b;
-            v.W = a;
-            Assert.AreEqual(d, v.X);
-            Assert.AreEqual(c, v.Y);
-            Assert.AreEqual(b, v.Z);
-            Assert.AreEqual(a, v.W);
+            mx.SetTQS(2 * translate, 2 * quat, 2 * scale);
+            FbxVector4Test.AssertSimilarXYZ(2 * translate, mx.GetT());
 
-            // set by TQRS
-            var t = new FbxVector4 (1, 2, 3, 0/*not returned if 1*/);
-            v.SetT(t);
-            Assert.AreEqual (t, v.GetT ());
-            
-            var s = new FbxVector4 (1, 6, 7, 0/*not returned if 1*/);
-            v.SetS(s);
-            Assert.AreEqual (s.X, v.GetS ().X);
-            Assert.AreEqual (s.Y, v.GetS ().Y);
-            Assert.AreEqual (s.Z, v.GetS ().Z, 0.000001);
-            Assert.AreEqual (s.W, v.GetS ().W);
+            // Test Inverse.
+            var mxInv = mx.Inverse();
+            Assert.AreNotEqual(mx.GetT(), mxInv.GetT());
+            Assert.IsTrue((mx * mxInv).IsIdentity());
 
-            var r = new FbxVector4 (0, 90, 0, 0/*not returned if 1*/);
-            v.SetR(r);
-            Assert.AreEqual (r, v.GetR ());
-            
-            var q = new FbxQuaternion();
-            q.ComposeSphericalXYZ(r);
-            v.SetQ(q);
-            Assert.AreEqual (q, v.GetQ ());
+            // Test multiplying by a translation. Really we just want to make sure we got a result
+            // different than doing nothing.
+            FbxVector4Test.AssertSimilarXYZ(new FbxVector4(17.778175, 2.464466, 4), mx.MultT(new FbxVector4(1,2,3)), 1e-5);
+
+            // Test multiplying by a rotation.
+            FbxVector4Test.AssertSimilarEuler(new FbxVector4(-180, 0, 45), mx.MultR(new FbxVector4(0, -90, 0)));
+            quat.ComposeSphericalXYZ(new FbxVector4(0, -90, 0));
+            quat = mx.MultQ(quat);
+            var quatExpected = new FbxQuaternion();
+            quatExpected.ComposeSphericalXYZ(new FbxVector4(-180, 0, 45));
+            FbxQuaternionTest.AssertSimilar(quatExpected, quat);
+
+            // Test multiplying a scale.
+            FbxVector4Test.AssertSimilarXYZ(new FbxVector4(4, 6, .5), mx.MultS(new FbxVector4(2, 1.5, .5)));
+
+            // Test scaling. Multiply/divide by powers of two so there's no roundoff.
+            // The scale/rotate is scaled, the translation is cleared to (0,0,0,1).
+            AssertScaled(mx, mx * 2, 2);
+            AssertScaled(mx, 2 * mx, 2);
+            AssertScaled(mx, mx / 2, 0.5);
+
+            // Test negating. This is different from scaling by -1.
+            using (var mxNegated = -mx) {
+                for(int y = 0; y < 4; ++y) {
+                    for(int x = 0; x < 4; ++x) {
+                        Assert.AreEqual(-mx.Get(x, y), mxNegated.Get(x, y),
+                                string.Format("Index {0} {1}", x, y));
+                    }
+                }
+            }
+
+            // Test transpose.
+            using (var mxTranspose = mx.Transpose()) {
+                for(int y = 0; y < 4; ++y) {
+                    for(int x = 0; x < 4; ++x) {
+                        Assert.AreEqual(mx.Get(y, x), mxTranspose.Get(x, y),
+                                string.Format("Index {0} {1}", x, y));
+                    }
+                }
+            }
+
+            // Test setting to identity.
+            mx.SetIdentity();
+            Assert.IsTrue(mx.IsIdentity());
+
+            // Slerp between two rotation matrices.
+            var q1 = new FbxQuaternion(); q1.ComposeSphericalXYZ(new FbxVector4(0, -90, 0));
+            var q2 = new FbxQuaternion(); q2.ComposeSphericalXYZ(new FbxVector4(0,  90, 0));
+
+            var m1 = new FbxAMatrix(); m1.SetQ(q1);
+            var m2 = new FbxAMatrix(); m2.SetQ(q2);
+
+
+            var m12 = m1.Slerp(m2, 0.25);
+            var q12 = new FbxQuaternion(); q12.ComposeSphericalXYZ(new FbxVector4(0, -45, 0));
+            FbxQuaternionTest.AssertSimilar(q12, m12.GetQ());
         }
     }
 }

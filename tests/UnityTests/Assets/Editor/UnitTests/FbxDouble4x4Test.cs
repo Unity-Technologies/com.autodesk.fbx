@@ -9,19 +9,47 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    /// <summary>
-    /// Run some tests that any vector type should be able to pass.
-    /// If you add tests here, you probably want to add them to the other
-    /// FbxDouble* test classes.
-    /// </summary>
-    public class FbxDouble4x4Test
+    public class FbxDouble4x4TestBase<T> : TestBase<T> where T: FbxDouble4x4
     {
+        /// <summary>
+        /// Test element access and Dispose().
+        /// The 'mx' matrix is invalid after this.
+        /// </summary>
+        protected void TestElementAccessAndDispose(T mx)
+        {
+            var a = new FbxDouble4(1,2,3,4);
+            var b = new FbxDouble4(5,6,7,8);
+            var c = new FbxDouble4(9,8,7,6);
+            var d = new FbxDouble4(5,4,3,2);
 
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDouble4x4), this.GetType()); }
-#endif
+            mx.X = d;
+            mx.Y = c;
+            mx.Z = b;
+            mx.W = a;
+            Assert.AreEqual(d, mx.X);
+            Assert.AreEqual(c, mx.Y);
+            Assert.AreEqual(b, mx.Z);
+            Assert.AreEqual(a, mx.W);
 
+            mx[0] = a;
+            mx[1] = b;
+            mx[2] = c;
+            mx[3] = d;
+            Assert.AreEqual(a, mx[0]);
+            Assert.AreEqual(b, mx[1]);
+            Assert.AreEqual(c, mx[2]);
+            Assert.AreEqual(d, mx[3]);
+            Assert.That(() => mx[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => mx[ 4], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => mx[-1] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => mx[ 4] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+
+            mx.Dispose();
+        }
+    }
+
+    public class FbxDouble4x4Test : FbxDouble4x4TestBase<FbxDouble4x4>
+    {
         [Test]
         public void TestEquality()
         {
@@ -57,52 +85,24 @@ namespace UnitTests
             using (new FbxDouble4x4()) { }
             new FbxDouble4x4().Dispose();
 
-            // Test other constructors
-            v = new FbxDouble4x4(a, b, c, d);
+            // Test that we can get elements and we can dispose.
+            // Also tests the 4-arg constructor.
+            base.TestElementAccessAndDispose(new FbxDouble4x4());
+
+            // Test copy constructor
+            v = new FbxDouble4x4(a,b,c,d);
             var u = new FbxDouble4x4(v);
             Assert.AreEqual(v, u);
             u[0] = c;
             Assert.AreEqual(c, u[0]);
             Assert.AreEqual(a, v[0]); // check that setting u doesn't set v
-            var w = new FbxDouble4x4(c);
-            Assert.AreEqual(c, w[0]);
-            Assert.AreEqual(c, w[1]);
-            Assert.AreEqual(c, w[2]);
-            Assert.AreEqual(c, w[3]);
 
-            // Test operator[]
-            v = new FbxDouble4x4();
-            v[0] = a;
-            Assert.AreEqual(a.X, v[0].X);
-            Assert.AreEqual(a.Y, v[0].Y);
-            Assert.AreEqual(a.Z, v[0].Z);
-            Assert.AreEqual(a.W, v[0].W);
-            Assert.AreEqual(a, v[0]);
-            v[1] = b;
-            Assert.AreEqual(b, v[1]);
-            v[2] = c;
+            // Test one-element constructor.
+            v = new FbxDouble4x4(c);
+            Assert.AreEqual(c, v[0]);
+            Assert.AreEqual(c, v[1]);
             Assert.AreEqual(c, v[2]);
-            v[3] = d;
-            Assert.AreEqual(d, v[3]);
-            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[-1] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-
-            // Test 4-argument constructor and members W/X/Y/Z
-            v = new FbxDouble4x4(a, b, c, d);
-            Assert.AreEqual(a, v.X);
-            Assert.AreEqual(b, v.Y);
-            Assert.AreEqual(c, v.Z);
-            Assert.AreEqual(d, v.W);
-            v.X = d;
-            v.Y = c;
-            v.Z = b;
-            v.W = a;
-            Assert.AreEqual(d, v.X);
-            Assert.AreEqual(c, v.Y);
-            Assert.AreEqual(b, v.Z);
-            Assert.AreEqual(a, v.W);
+            Assert.AreEqual(c, v[3]);
         }
     }
 }

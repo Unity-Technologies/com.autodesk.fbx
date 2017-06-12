@@ -173,6 +173,8 @@ namespace UseCaseTests
             //       to FbxSkin, or so that it just returns the correct type.
             // Check that the mesh is correctly linked to the skeleton
             //CheckMeshLinkedToSkeleton(origMeshNode.GetMesh(), importMeshNode.GetMesh());
+            origMeshNode.GetMesh();
+            importMeshNode.GetMesh ();
 
             // Check that bind pose is set correctly
             CheckExportBindPose(origScene, scene);

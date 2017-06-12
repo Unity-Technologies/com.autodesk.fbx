@@ -11,7 +11,16 @@
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxGeometry::AddDeformer;
-%rename("%s") FbxGeometry::GetDeformer(int pIndex, FbxStatus *pStatus) const;
+%rename("%s") FbxGeometry::GetDeformer;
+%rename("%s") FbxGeometry::GetDeformerCount;
+%rename("%s") FbxGeometry::GetBlendShapeDeformer;
 #endif
 
+%extend FbxGeometry {
+    FbxBlendShape* GetBlendShapeDeformer(int pIndex, FbxStatus* pStatus=NULL) const
+    {
+        FbxDeformer* deformer = $self->GetDeformer(pIndex, FbxDeformer::eBlendShape, pStatus);
+        return FbxCast<FbxBlendShape>(deformer);
+    }
+}
 %include "fbxsdk/scene/geometry/fbxgeometry.h"

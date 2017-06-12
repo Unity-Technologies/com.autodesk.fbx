@@ -1,6 +1,3 @@
-//#define UNI_18844
-//#define UNI_18850
-//#define UNI_19014
 // ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.  
 //
@@ -62,8 +59,8 @@ namespace FbxSdk.Examples
                 // direct or via-index
                 bool isDirect = referenceMode == FbxLayerElement.EReferenceMode.eDirect;
 
-                FbxLayerElementArray fbxElementArray = element.GetDirectArray ();
-                FbxLayerElementArray fbxIndexArray = isDirect ? null : element.GetIndexArray ();
+                var fbxElementArray = element.GetDirectArray ();
+                var fbxIndexArray = isDirect ? null : element.GetIndexArray ();
 
                 if (mappingMode == FbxLayerElement.EMappingMode.eByControlPoint) {
 
@@ -76,14 +73,15 @@ namespace FbxSdk.Examples
                     for (int i = 0; i < polygonVertexIndices.Length; i++) {
                         int index = i;
                         if (!isDirect) {
-#if UNI_18850
-                            fbxIndexArray.GetAt (i, out index);
-#endif
+                            index = fbxIndexArray.GetAt (i);
                         }
 
-#if UNI_18850
-                        fbxElementArray.GetAt (polygonVertexIndices [index], out result [i]);
-#endif
+                        FbxVector2 fbxVector2 = fbxElementArray.GetAt (polygonVertexIndices [index]);
+                        Debug.Assert (fbxVector2.X >= float.MinValue && fbxVector2.X <= float.MaxValue);
+                        Debug.Assert (fbxVector2.Y >= float.MinValue && fbxVector2.Y <= float.MaxValue);
+
+                        result [i] = new Vector2 ((float)fbxVector2.X, (float)fbxVector2.Y);
+
                         // UVs in FBX can contain NaNs, so we set these vertices to (0,0)
                         if (float.IsNaN (result [i] [0]) || float.IsNaN (result [i] [1])) {
                             Debug.LogWarning (string.Format ("invalid UV detected at {0}", i));
@@ -92,15 +90,13 @@ namespace FbxSdk.Examples
                     }
 
                 } else if (mappingMode == FbxLayerElement.EMappingMode.eAllSame) {
-                    Vector2 value = new Vector2 ();
+                    FbxVector2 fbxVector2 = fbxElementArray.GetAt (0);
+                    Debug.Assert (fbxVector2.X >= float.MinValue && fbxVector2.X <= float.MaxValue);
+                    Debug.Assert (fbxVector2.Y >= float.MinValue && fbxVector2.Y <= float.MaxValue);
 
-#if UNI_18850
-                    if (fbxElementArray.GetAt (0, value)) 
-#endif
-                    {
-                        for (int i = 0; i < polygonVertexIndices.Length; i++) {
-                            result [i] = value;
-                        }
+                    Vector2 value = new Vector2((float)fbxVector2.X, (float)fbxVector2.Y);
+                    for (int i = 0; i < polygonVertexIndices.Length; i++) {
+                        result [i] = value;
                     }
                 } else {
                     Debug.LogError ("unsupported UV-to-Component mapping mode");
@@ -141,10 +137,8 @@ namespace FbxSdk.Examples
                     if (fbxLayer == null)
                         continue;
 
-                    FbxLayerElementUV fbxUVSet = null;
-#if UNI_19014
-                    fbxUVSet = fbxLayer.GetUVs ();
-#endif
+                    FbxLayerElementUV fbxUVSet = fbxLayer.GetUVs ();
+
                     if (fbxUVSet == null)
                         continue;
 
@@ -184,10 +178,9 @@ namespace FbxSdk.Examples
                     // TODO: check if we've already passed eTextureEmissive layer
                     for (int i = (int)FbxLayerElement.EType.eTextureEmissive; i < (int)FbxLayerElement.EType.eTypeCount; i++) 
                     {
-#if UNI_19014
-                            fbxSecondaryUVSet = fbxFirstUVLayer.GetUVs ((FbxLayerElement.EType)i);
-#endif
-                            if (fbxSecondaryUVSet != null)
+                        fbxSecondaryUVSet = fbxFirstUVLayer.GetUVs ((FbxLayerElement.EType)i);
+
+                        if (fbxSecondaryUVSet != null)
                                 break;
 
                         if (fbxSecondaryUVSet!=null)
@@ -271,21 +264,16 @@ namespace FbxSdk.Examples
             /// </summary>
             private void ProcessTransform (FbxNode fbxNode, GameObject unityGo)
             {
-                FbxVector4 lclTrs = new FbxVector4 ();
-                FbxQuaternion lclRot = new FbxQuaternion ();
-                FbxVector4 lclScl = new FbxVector4 (1.0f, 1.0f, 1.0f);
-
-#if UNI_18844
                 // Construct rotation matrices
                 FbxVector4 fbxRotation = new FbxVector4 (fbxNode.LclRotation.Get ());
                 FbxAMatrix fbxRotationM = new FbxAMatrix ();
                 fbxRotationM.SetR(fbxRotation);
 
-                FbxVector4 fbxPreRotation = new FbxVector4 (fbxNode.PreRotation.Get ());
+                FbxVector4 fbxPreRotation = new FbxVector4 (fbxNode.GetPreRotation(FbxNode.EPivotSet.eSourcePivot));
                 FbxAMatrix fbxPreRotationM = new FbxAMatrix ();
                 fbxPreRotationM.SetR(fbxPreRotation);
 
-                FbxVector4 fbxPostRotation = new FbxVector4 (fbxNode.PostRotation.Get ());
+                FbxVector4 fbxPostRotation = new FbxVector4 (fbxNode.GetPostRotation (FbxNode.EPivotSet.eSourcePivot));
                 FbxAMatrix fbxPostRotationM = new FbxAMatrix ();
                 fbxPostRotationM.SetR(fbxPostRotation);
 
@@ -301,19 +289,19 @@ namespace FbxSdk.Examples
 
                 // Construct offset and pivot matrices
                 FbxAMatrix fbxRotationOffsetM = new FbxAMatrix ();
-                FbxVector4 fbxRotationOffset = fbxNode.RotationOffset.Get ();
+                FbxVector4 fbxRotationOffset = fbxNode.GetRotationOffset(FbxNode.EPivotSet.eSourcePivot);
                 fbxRotationOffsetM.SetT(fbxRotationOffset);
 
                 FbxAMatrix fbxRotationPivotM = new FbxAMatrix ();
-                FbxVector4 fbxRotationPivot = fbxNode.RotationPivot.Get ();
+                FbxVector4 fbxRotationPivot = fbxNode.GetRotationPivot(FbxNode.EPivotSet.eSourcePivot);
                 fbxRotationPivotM.SetT(fbxRotationPivot);
 
                 FbxAMatrix fbxScalingOffsetM = new FbxAMatrix ();
-                FbxVector4 fbxScalingOffset = fbxNode.ScalingOffset.Get ();
+                FbxVector4 fbxScalingOffset = fbxNode.GetScalingOffset (FbxNode.EPivotSet.eSourcePivot);
                 fbxScalingOffsetM.SetT(fbxScalingOffset);
 
                 FbxAMatrix fbxScalingPivotM = new FbxAMatrix ();
-                FbxVector4 fbxScalingPivot = fbxNode.ScalingPivot.Get ();
+                FbxVector4 fbxScalingPivot = fbxNode.GetScalingPivot (FbxNode.EPivotSet.eSourcePivot);
                 fbxScalingPivotM.SetT(fbxScalingPivot);
 
                 FbxAMatrix fbxTransform = 
@@ -332,7 +320,6 @@ namespace FbxSdk.Examples
                 FbxVector4 lclTrs = fbxTransform.GetT ();
                 FbxQuaternion lclRot = fbxTransform.GetQ ();
                 FbxVector4 lclScl = fbxTransform.GetS ();
-#endif
 
                 Debug.Log (string.Format ("processing {3} Lcl : T({0}) R({1}) S({2})",
                                          lclTrs.ToString (),
@@ -373,11 +360,7 @@ namespace FbxSdk.Examples
             public void ConvertScene (FbxScene fbxScene, FbxSystemUnit toUnits)
             {
                 // Get scale factor.
-                float scaleFactor = 1.0f;
-
-#if UNI_18844
-                scaleFactor = fbxScene.GetGlobalSettings ().GetSystemUnit ().GetConversionFactorTo (toUnits);
-#endif
+                double scaleFactor = (float)fbxScene.GetGlobalSettings ().GetSystemUnit ().GetConversionFactorTo (toUnits);
 
                 if (scaleFactor.Equals (1.0f))
                     return;
@@ -396,11 +379,10 @@ namespace FbxSdk.Examples
                     // Convert node's translation.
                     FbxDouble3 lclTrs = fbxNode.LclTranslation.Get ();
 
-#if UNI_18844
-                    lclTrs *= scaleFactor;
-                    lclTrs *= scaleFactor;
-                    lclTrs *= scaleFactor;
-#endif
+                    lclTrs.X *= scaleFactor;
+                    lclTrs.Y *= scaleFactor;
+                    lclTrs.Z *= scaleFactor;
+
                     fbxNode.LclTranslation.Set (lclTrs);
 
                     FbxMesh fbxMesh = fbxNode.GetMesh ();
@@ -408,9 +390,9 @@ namespace FbxSdk.Examples
                     if (fbxMesh != null) {
                         for (int i = 0; i < fbxMesh.GetControlPointsCount (); ++i) {
                             FbxVector4 fbxVector4 = fbxMesh.GetControlPointAt (i);
-#if UNI_18844
+
                             fbxVector4 *= scaleFactor;
-#endif
+
                             fbxMesh.SetControlPointAt (fbxVector4, i);
                         }
                     }

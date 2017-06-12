@@ -13,6 +13,8 @@
 %rename("%s") FbxGeometryBase::InitControlPoints;
 %rename("%s") FbxGeometryBase::GetControlPointsCount;
 %rename("%s") FbxGeometryBase::GetControlPointAt;
+%rename("%s") FbxGeometryBase::CreateElementNormal;
+%rename("%s") FbxGeometryBase::CreateElementTangent;
 
 #endif
 

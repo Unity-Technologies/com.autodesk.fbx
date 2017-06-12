@@ -11,8 +11,19 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxDeformerTest : Base<FbxDeformer>
+    public class FbxDeformerTestBase<T> : Base<T> where T : FbxDeformer
     {
+        virtual public void TestBasics(T deformer, FbxDeformer.EDeformerType type)
+        {
+            Assert.AreEqual (type, deformer.GetDeformerType ());
+        }
+    }
 
+    public class FbxDeformerTest : FbxDeformerTestBase<FbxDeformer> {
+        [Test]
+        public void TestBasics()
+        {
+            TestBasics (CreateObject (), FbxDeformer.EDeformerType.eUnknown);
+        }
     }
 }

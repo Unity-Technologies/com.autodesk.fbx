@@ -9,12 +9,32 @@ using FbxSdk;
 
 namespace UnitTests
 {
-    public class FbxMatrixTest
+    public class FbxMatrixTest : FbxDouble4x4TestBase<FbxMatrix>
     {
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxMatrix), this.GetType()); }
-#endif
+
+        public static bool AssertIsIdentity(FbxMatrix mx,
+                double tolerance = 1e-10, bool nothrow = false)
+        {
+            using (var id = new FbxMatrix()) {
+                return AssertSimilar(id, mx, tolerance, nothrow);
+            }
+        }
+
+        public static bool AssertSimilar(FbxMatrix expected, FbxMatrix actual,
+                double tolerance = 1e-10, bool nothrow = false)
+        {
+            for(int y = 0; y < 4; ++y) {
+                for(int x = 0; x < 4; ++x) {
+                    if (System.Math.Abs(expected.Get(x, y) - actual.Get(x, y)) >= tolerance) {
+                        if (!nothrow) {
+                            Assert.AreEqual(expected, actual, string.Format("Index {0} {1}", x, y));
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
 
         [Test]
         public void TestEquality()
@@ -23,13 +43,21 @@ namespace UnitTests
             var one = new FbxVector4(1,1,1);
             var mx1 = new FbxMatrix(zero, zero, one);
             var mx2 = new FbxMatrix(one, zero, one);
+            // Check that equality is value equality, not reference equality.
             var mx1copy = new FbxMatrix(zero, zero, one);
             EqualityTester<FbxMatrix>.TestEquality(mx1, mx2, mx1copy);
+
+            // Check that we can compare with an affine matrix.
+            mx1 = new FbxMatrix(new FbxVector4(1, 2, 3), new FbxVector4(0, -90, 0), one);
+            var affine = new FbxAMatrix(new FbxVector4(1, 2, 3), new FbxVector4(0, -90, 0), one);
+            Assert.IsTrue(mx1 == affine);
         }
 
         [Test]
         public void BasicTests ()
         {
+            base.TestElementAccessAndDispose(new FbxMatrix());
+
             FbxMatrix mx;
 
             // make sure the constructors compile and don't crash
@@ -37,6 +65,7 @@ namespace UnitTests
             mx = new FbxMatrix(new FbxMatrix());
             mx = new FbxMatrix(new FbxAMatrix());
             mx = new FbxMatrix(new FbxVector4(), new FbxVector4(), new FbxVector4(1,1,1));
+            mx = new FbxMatrix(new FbxVector4(), new FbxQuaternion(), new FbxVector4(1,1,1));
             mx = new FbxMatrix(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
 
             /* Check the values we typed in match up. */
@@ -45,6 +74,8 @@ namespace UnitTests
                     Assert.AreEqual(x + 4 * y, mx.Get(y, x));
                 }
             }
+            Assert.AreEqual(new FbxVector4(4, 5, 6, 7), mx.GetRow(1));
+            Assert.AreEqual(new FbxVector4(1, 5, 9, 13), mx.GetColumn(1));
 
             /* Check that set and get work (silly transpose operation). */
             FbxMatrix mx2 = new FbxMatrix();
@@ -55,77 +86,77 @@ namespace UnitTests
                 }
             }
 
-            //////
-            // Tests for the inherited Double4x4
+            /* normal transpose operation */
+            Assert.AreEqual(mx, mx2.Transpose());
 
-            // make sure the no-arg constructor doesn't crash
-            new FbxMatrix();
-
-            // make sure we can dispose
-            using (new FbxMatrix()) { }
-            DisposeTester.TestDispose(new FbxMatrix());
-
-            // make sure equality works.
-            Assert.IsTrue(new FbxMatrix().Equals(new FbxMatrix()));
-
-            Assert.IsTrue(new FbxMatrix() == new FbxMatrix());
-            Assert.IsFalse(new FbxMatrix() != new FbxMatrix());
-
-            Assert.IsFalse(new FbxMatrix() == (FbxMatrix)null);
-            Assert.IsTrue(new FbxMatrix() != (FbxMatrix)null);
-
-            Assert.IsFalse((FbxMatrix)null == new FbxMatrix());
-            Assert.IsTrue((FbxMatrix)null != new FbxMatrix());
-
-            Assert.IsTrue((FbxMatrix)null == (FbxMatrix)null);
-            Assert.IsFalse((FbxMatrix)null != (FbxMatrix)null);
-
-            // Test operator[]
-            var v = new FbxMatrix();
-            var a = new FbxDouble4(1,2,3,4);
-            var b = new FbxDouble4(5,6,7,8);
-            var c = new FbxDouble4(9,8,7,6);
-            var d = new FbxDouble4(5,4,3,2);
-            v[0] = a;
-            Assert.AreEqual(a.X, v[0].X);
-            Assert.AreEqual(a.Y, v[0].Y);
-            Assert.AreEqual(a.Z, v[0].Z);
-            Assert.AreEqual(a.W, v[0].W);
-            Assert.AreEqual(a, v[0]);
-            v[1] = b;
-            Assert.AreEqual(b, v[1]);
-            v[2] = c;
-            Assert.AreEqual(c, v[2]);
-            v[3] = d;
-            Assert.AreEqual(d, v[3]);
-            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[-1] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-
-            // Test 4-argument constructor and members W/X/Y/Z
-            Assert.AreEqual(a, v.X);
-            Assert.AreEqual(b, v.Y);
-            Assert.AreEqual(c, v.Z);
-            Assert.AreEqual(d, v.W);
-            v.X = d;
-            v.Y = c;
-            v.Z = b;
-            v.W = a;
-            Assert.AreEqual(d, v.X);
-            Assert.AreEqual(c, v.Y);
-            Assert.AreEqual(b, v.Z);
-            Assert.AreEqual(a, v.W);
+            // Test SetIdentity
+            Assert.IsFalse(AssertIsIdentity(mx, nothrow: true));
+            AssertIsIdentity(mx, 15); // squint very, very, very hard
+            mx.SetIdentity();
+            AssertIsIdentity(mx);
 
             // Test getting the elements from a matrix built by TRS
-            mx = new FbxMatrix(new FbxVector4(1,2,3), new FbxVector4(0,90,0), new FbxVector4(1,1,1));
+            var translate = new FbxVector4(1, 2, 3);
+            var rotate = new FbxVector4(0, 90, 0);
+            var scale = new FbxVector4(1, 2, .5);
+            mx = new FbxMatrix(translate, rotate, scale);
             FbxVector4 t,r,s, shear;
             double sign;
             mx.GetElements(out t, out r, out shear, out s, out sign);
             Assert.AreEqual(1, sign);
-            Assert.AreEqual(new FbxVector4(1,2,3, 1), t);
-            Assert.AreEqual(new FbxVector4(0,90,0, 0), r); /* for some reason w is zero for rotation */
-            Assert.AreEqual(new FbxVector4(1,1,1, 0), s); /* and similarly for scaling */
+            FbxVector4Test.AssertSimilarXYZ(translate, t);
+            FbxVector4Test.AssertSimilarEuler(rotate, r);
+            FbxVector4Test.AssertSimilarXYZ(new FbxVector4(), shear);
+            FbxVector4Test.AssertSimilarXYZ(scale, s);
+
+            FbxQuaternion q = new FbxQuaternion();
+            mx.GetElements(out r, q, out shear, out s, out sign);
+            Assert.AreEqual(1, sign);
+            FbxVector4Test.AssertSimilarXYZ(translate, t);
+            FbxQuaternionTest.AssertSimilar(rotate, q);
+            FbxVector4Test.AssertSimilarXYZ(new FbxVector4(), shear);
+            FbxVector4Test.AssertSimilarXYZ(scale, s);
+
+            // Try SetTRS and SetTQS with the same arguments.
+            using (var X = new FbxMatrix()) {
+                X.SetTRS(translate, rotate, scale);
+                X.GetElements(out r, q, out shear, out s, out sign);
+                Assert.AreEqual(1, sign);
+                FbxVector4Test.AssertSimilarXYZ(translate, t);
+                FbxQuaternionTest.AssertSimilar(rotate, q);
+                FbxVector4Test.AssertSimilarXYZ(new FbxVector4(), shear);
+                FbxVector4Test.AssertSimilarXYZ(scale, s);
+            }
+
+            using (var X = new FbxMatrix()) {
+                FbxQuaternion qRotate = new FbxQuaternion();
+                qRotate.ComposeSphericalXYZ(rotate);
+                X.SetTQS(translate, q, scale);
+                X.GetElements(out r, q, out shear, out s, out sign);
+                Assert.AreEqual(1, sign);
+                FbxVector4Test.AssertSimilarXYZ(translate, t);
+                FbxQuaternionTest.AssertSimilar(rotate, q);
+                FbxVector4Test.AssertSimilarXYZ(new FbxVector4(), shear);
+                FbxVector4Test.AssertSimilarXYZ(scale, s);
+
+                // While we're at it, transform a vertex.
+                // Verify also that w turns out normalized.
+                var v = new FbxVector4(1, 2, 3, 4);
+                var v2 = X.MultNormalize(v);
+                FbxVector4Test.AssertSimilarXYZW(new FbxVector4(2.5,6,2,1), v2);
+
+                // While we're at it, test that we can invert the matrix.
+                // This matrix is invertible (since it's an affine transformation),
+                // and the inversion turns out to be exact.
+                AssertIsIdentity(X.Inverse() * X);
+                using (var inv = new FbxMatrix(
+                            0, 0, 2, 0,
+                            0, 0.5, 0, 0,
+                            -1, 0, 0, 0,
+                            3, -1, -2, 1)) {
+                    Assert.AreEqual(inv, X.Inverse());
+                }
+            }
 
             // Test set column + set row
             mx = new FbxMatrix();
@@ -138,6 +169,82 @@ namespace UnitTests
             Assert.AreEqual (4, mx.Get (3, 1));
             // check that the row is what we expect
             Assert.AreEqual (new FbxDouble4 (5, 6, 7, 8), mx [2]);
+
+            // Test operators on two matrices.
+            using (var a = new FbxMatrix(
+                        0,1,2,3,
+                        4,5,6,7,
+                        8,9,10,11,
+                        12,13,14,15)) {
+                using (var b = new FbxMatrix(
+                            15,14,13,12,
+                            11,10,9,8,
+                            7,6,5,4,
+                            3,2,1,0)) {
+                    using (var sum = new FbxMatrix(
+                                15,15,15,15,
+                                15,15,15,15,
+                                15,15,15,15,
+                                15,15,15,15)) {
+                        Assert.AreEqual(sum, a + b);
+                    }
+                    using (var diff = new FbxMatrix(
+                                -15,-13,-11,-9,
+                                -7,-5,-3,-1,
+                                1,3,5,7,
+                                9,11,13,15)) {
+                        Assert.AreEqual(diff, a - b);
+                    }
+                    using (var prod = new FbxMatrix(
+                                304,358,412,466,
+                                208,246,284,322,
+                                112,134,156,178,
+                                16,22,28,34)) {
+                        Assert.AreEqual(prod, a * b);
+                    }
+                    using (var neg = new FbxMatrix(
+                        0,-1,-2,-3,
+                        -4,-5,-6,-7,
+                        -8,-9,-10,-11,
+                        -12,-13,-14,-15)) {
+                        Assert.AreEqual(neg, -a);
+                    }
+                }
+            }
+
+            var eyePosition = new FbxVector4(1, 2, 3);
+            var eyeDirection = new FbxVector4(-1, -1, -1);
+            var eyeUp = new FbxVector4(0, 1, 0);
+
+            using (mx = new FbxMatrix()) {
+                mx.SetLookToRH(eyePosition, eyeDirection, eyeUp);
+                AssertSimilar(new FbxMatrix(
+                            0.707 , -0.408, 0.577, 0,
+                            0     ,  0.816, 0.577, 0,
+                            -0.707, -0.408, 0.577, 0,
+                            1.414 ,  0    ,-3.464, 1), mx, 1e-2);
+
+                mx.SetLookToLH(eyePosition, eyeDirection, eyeUp);
+                AssertSimilar(new FbxMatrix(
+                            -0.707, -0.408,-0.577, 0,
+                            0     ,  0.816,-0.577, 0,
+                            0.707 , -0.408,-0.577, 0,
+                            -1.414,  0    , 3.464, 1), mx, 1e-2);
+
+                mx.SetLookAtRH(eyePosition, eyeDirection, eyeUp);
+                AssertSimilar(new FbxMatrix(
+                            0.894 , -0.249, 0.371, 0,
+                            0     ,  0.834, 0.557, 0,
+                            -0.447, -0.498, 0.742, 0,
+                            0.447 ,  0.083,-3.713, 1), mx, 1e-2);
+
+                mx.SetLookAtLH(eyePosition, eyeDirection, eyeUp);
+                AssertSimilar(new FbxMatrix(
+                            -0.894, -0.249,-0.371, 0,
+                            0     ,  0.834,-0.557, 0,
+                            0.447 , -0.498,-0.742, 0,
+                            -0.447,  0.083, 3.713, 1), mx, 1e-2);
+            }
         }
     }
 }

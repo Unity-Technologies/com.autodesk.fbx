@@ -35,7 +35,7 @@ namespace UseCaseTests
             camera.SetNearPlane (1);
             camera.SetFarPlane (100);
 
-            // set background color
+            // create custom property (background color)
             var bgColorProperty = FbxProperty.Create (cameraNode, Globals.FbxColor4DT, "backgroundColor");
             Assert.IsTrue (bgColorProperty.IsValid ());
 
@@ -45,7 +45,10 @@ namespace UseCaseTests
             bgColorProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
             bgColorProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
 
-            // set clear flags
+            Assert.IsTrue (bgColorProperty.GetFlag (FbxPropertyFlags.EFlags.eUserDefined));
+            Assert.IsTrue (bgColorProperty.GetFlag (FbxPropertyFlags.EFlags.eAnimatable));
+
+            // create custom property (clear flags)
             var clearFlagsProperty = FbxProperty.Create (cameraNode, Globals.FbxIntDT, "clearFlags");
             Assert.IsTrue (clearFlagsProperty.IsValid ());
 
@@ -55,11 +58,14 @@ namespace UseCaseTests
             clearFlagsProperty.ModifyFlag (FbxPropertyFlags.EFlags.eUserDefined, true);
             clearFlagsProperty.ModifyFlag (FbxPropertyFlags.EFlags.eAnimatable, true);
 
+            Assert.IsTrue (clearFlagsProperty.GetFlag (FbxPropertyFlags.EFlags.eUserDefined));
+            Assert.IsTrue (clearFlagsProperty.GetFlag (FbxPropertyFlags.EFlags.eAnimatable));
+
             // Add camera properties to animation clip
             FbxAnimStack animStack = scene.GetCurrentAnimationStack ();
             FbxAnimLayer animLayer = animStack.GetAnimLayerMember ();
 
-            // TODO: Figure out why trying to do GetCurve for NearPlane always returns null
+            // TODO: (UNI-19438) Figure out why trying to do GetCurve for NearPlane always returns null
             CreateAnimCurves (cameraNode, animLayer, new List<PropertyComponentPair> () {
                 new PropertyComponentPair("backgroundColor", new string[] {
                     Globals.FBXSDK_CURVENODE_COLOR_RED, 
@@ -67,7 +73,6 @@ namespace UseCaseTests
                     Globals.FBXSDK_CURVENODE_COLOR_BLUE, "W"
                 }),
                 new PropertyComponentPair("FocalLength", new string[]{null}),
-                //new PropertyComponentPair("NearPlane", new string[]{null}),
                 new PropertyComponentPair("clearFlags", new string[]{null})
             }, (index) => { return index; }, (index) => { return index/5.0f; }, camera);
 
@@ -147,10 +152,10 @@ namespace UseCaseTests
                 Assert.IsTrue (importBgColorProp.IsValid ());
 
                 if (property.GetPropertyDataType ().Equals(Globals.FbxColor4DT)) {
-                    //Assert.AreEqual(property.GetFbxColor(), property.GetFbxColor());
+                    Assert.AreEqual(property.GetFbxColor(), property.GetFbxColor());
                 }
                 else if (property.GetPropertyDataType().Equals(Globals.FbxIntDT)){
-                    //Assert.AreEqual(property.GetInt(), property.GetInt());
+                    Assert.AreEqual(property.GetInt(), property.GetInt());
                 }
 
                 Assert.AreEqual (property.GetFlag (FbxPropertyFlags.EFlags.eUserDefined),

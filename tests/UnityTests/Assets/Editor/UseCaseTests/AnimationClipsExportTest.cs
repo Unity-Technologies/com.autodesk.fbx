@@ -111,6 +111,8 @@ namespace UseCaseTests
                     // Create the AnimCurve on the channel
                     FbxAnimCurve fbxAnimCurve = fbxProperty.GetCurve (animLayer, component, true);
 
+                    Assert.IsNotNull (fbxAnimCurve);
+
                     fbxAnimCurve.KeyModifyBegin ();
                     for (int keyIndex = 0; keyIndex < m_keyCount; ++keyIndex) {
                         FbxTime fbxTime = FbxTime.FromSecondDouble(calcTime(keyIndex));

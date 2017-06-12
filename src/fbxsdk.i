@@ -14,6 +14,9 @@
 /* helpers for defining equality correctly */
 %include "equality.i"
 
+/* helpers for defining arithmetic operators correctly */
+%include "operators.i"
+
 /* Helper for defining static classes correctly */
 %include "staticclass.i"
 
@@ -231,3 +234,6 @@
 %include "fbxconnectionpoint.i"
 %include "fbxmarker.i"    
 %include "fbxlight.i"
+%include "fbxblendshape.i"
+%include "fbxblendshapechannel.i"
+%include "fbxshape.i"

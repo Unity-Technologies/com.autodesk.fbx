@@ -66,8 +66,8 @@
     eZAxis = 3, eZAxisDown = -3,
   };
   public enum EFrontVector {
-    eParityOdd = 1, eParityOddNegative = -1,
-    eParityEven = 2, eParityEvenNegative = -2,
+    eParityEven = 1, eParityEvenNegative = -1,
+    eParityOdd = 2, eParityOddNegative = -2,
   };
   %}
   EUpVector GetUpVector() {
