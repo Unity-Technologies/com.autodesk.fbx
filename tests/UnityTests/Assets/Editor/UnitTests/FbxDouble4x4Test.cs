@@ -7,7 +7,7 @@
 using NUnit.Framework;
 using FbxSdk;
 
-namespace UnitTests
+namespace FbxSdk.UnitTests
 {
     public class FbxDouble4x4TestBase<T> : TestBase<T> where T: FbxDouble4x4
     {
