@@ -212,6 +212,7 @@ namespace FbxSdk.UnitTests
             { "a.Distance(b)", ApproximatelyEqualX }
         };
 
+        [Ignore("Fails if imported from a package because of Vector.cpp dependency")]
         [Test]
         public void MatchingTests ()
         {
