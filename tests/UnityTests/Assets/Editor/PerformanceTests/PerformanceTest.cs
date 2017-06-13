@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System;
 using UnityEditorInternal;
 
-namespace PerformanceTests
+namespace FbxSdk.PerformanceTests
 {
 
     public class PerformanceTest
