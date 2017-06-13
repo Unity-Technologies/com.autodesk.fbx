@@ -138,6 +138,17 @@
 %rename("%s") FbxProperty::GetInt;
 %rename("%s") FbxProperty::GetCurve;
 %rename("%s") FbxProperty::GetCurveNode;
+%rename("%s") FbxProperty::GetInt;
+%rename("%s") FbxProperty::GetFbxColor;
+
+%extend FbxProperty{
+    int GetInt(){
+        return $self->Get<int>();
+    }
+    FbxColor GetFbxColor(){
+        return $self->Get<FbxColor>();
+    }
+}
 
 %extend FbxProperty {
     float GetFloat () const { return $self->Get<float>(); }
