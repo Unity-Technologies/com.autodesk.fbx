@@ -126,9 +126,14 @@ namespace FbxSdk.UnitTests
         }
 
         [Test]
-        public void TestGetAt()
+        public virtual void TestGetAt()
         {
-            var layerElementArrayTemplate = CreateObject (EFbxType.eFbxDouble2);
+            TestGetAt (CreateObject ());
+        }
+
+        public void TestGetAt(T layerElementArrayTemplate)
+        {
+            Assert.IsNotNull (layerElementArrayTemplate);
 
             layerElementArrayTemplate.SetCount (1);
 
@@ -148,17 +153,46 @@ namespace FbxSdk.UnitTests
     public class FbxLayerElementArrayTest : FbxLayerElementArrayTestBase<FbxLayerElementArray> {}
 
     public class FbxLayerElementArrayTemplateFbxColorTest : 
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxColor,FbxColor> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxColor,FbxColor> {
+
+        [Test]
+        public override void TestGetAt()
+        {
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxColor ())));
+        }
+    }
 
     public class FbxLayerElementArrayTemplateFbxSurfaceMaterialTest :
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {
+    }
 
     public class FbxLayerElementArrayTemplateFbxVector2Test : 
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector2,FbxVector2> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector2,FbxVector2> {
+        
+        [Test]
+        public override void TestGetAt()
+        {
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxVector2 ())));
+        }
+    }
 
     public class FbxLayerElementArrayTemplateFbxVector4Test : 
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector4,FbxVector4> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector4,FbxVector4> {
+
+        [Test]
+        public override void TestGetAt()
+        {
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxVector4 ())));
+        }
+    }
 
     public class FbxLayerElementArrayTemplateIntTest : 
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateInt,int> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateInt,int> {
+
+        [Test]
+        public override void TestGetAt()
+        {
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new int ())));
+        }
+    }
 }
