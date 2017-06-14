@@ -9,7 +9,7 @@ using NUnit.Framework;
 using System.Collections;
 using FbxSdk;
 
-namespace UnitTests
+namespace FbxSdk.UnitTests
 {
     public class FbxGeometryBaseTestBase<T> : FbxLayerContainerBase<T> where T : FbxGeometryBase
     {

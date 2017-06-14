@@ -8,7 +8,7 @@ using NUnit.Framework;
 using System.Collections;
 using FbxSdk;
 
-namespace UseCaseTests
+namespace FbxSdk.UseCaseTests
 {
     public class HierarchyExportTest : RoundTripTestBase
     {

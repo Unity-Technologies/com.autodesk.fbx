@@ -7,7 +7,7 @@
 using NUnit.Framework;
 using FbxSdk;
 
-namespace UnitTests
+namespace FbxSdk.UnitTests
 {
     /// <summary>
     /// Run some tests that any vector type should be able to pass.

@@ -8,7 +8,7 @@ using NUnit.Framework;
 using FbxSdk;
 using System.Collections.Generic;
 
-namespace UnitTests
+namespace FbxSdk.UnitTests
 {
     public class FbxVector2Test
     {
@@ -110,6 +110,7 @@ namespace UnitTests
             { "a.Distance(b)", (FbxVector2 a, FbxVector2 b) => { Assert.AreEqual(a.X, b.X, 1e-8); return true; } },
         };
 
+        [Ignore("Fails if imported from a package because of Vector.cpp dependency")]
         [Test]
         public void MatchingTests ()
         {

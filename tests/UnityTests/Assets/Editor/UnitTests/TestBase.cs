@@ -9,7 +9,7 @@ using FbxSdk;
 
 using System.Collections.Generic;
 
-namespace UnitTests
+namespace FbxSdk.UnitTests
 {
     public abstract class TestBase<T>
     {

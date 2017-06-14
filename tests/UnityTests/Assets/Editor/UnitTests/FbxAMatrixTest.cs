@@ -7,7 +7,7 @@
 using NUnit.Framework;
 using FbxSdk;
 
-namespace UnitTests
+namespace FbxSdk.UnitTests
 {
     public class FbxAMatrixTest : FbxDouble4x4TestBase<FbxAMatrix>
     {

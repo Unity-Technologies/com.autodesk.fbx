@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FbxSdk;
 
-namespace UseCaseTests
+namespace FbxSdk.UseCaseTests
 {
     public class StaticMeshExportTest : RoundTripTestBase
     {

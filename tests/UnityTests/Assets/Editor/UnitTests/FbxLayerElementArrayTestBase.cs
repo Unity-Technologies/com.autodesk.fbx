@@ -9,7 +9,7 @@ using NUnit.Framework;
 using System.Collections;
 using FbxSdk;
 
-namespace UnitTests
+namespace FbxSdk.UnitTests
 {
     public abstract class FbxLayerElementArrayTestBase<T> : TestBase<T> where T : FbxSdk.FbxLayerElementArray
     {
@@ -28,14 +28,14 @@ namespace UnitTests
             #endif
         }
 
-        public T CreateObject (EFbxType type = EFbxType.eFbxBlob) {
+        public T CreateObject (EFbxType type) {
             return Invoker.InvokeConstructor<T>(s_constructor, type);
         }
 
         [Test]
         public virtual void TestBasics()
         {
-            T layerElementArray = CreateObject ();
+            T layerElementArray = CreateObject (EFbxType.eFbxBlob);
 
             // Test SetCount()
             layerElementArray.SetCount (1);
@@ -126,9 +126,11 @@ namespace UnitTests
         }
 
         [Test]
-        public void TestGetAt()
+        public abstract void TestGetAt ();
+
+        public void TestGetAt(T layerElementArrayTemplate)
         {
-            var layerElementArrayTemplate = CreateObject (EFbxType.eFbxDouble2);
+            Assert.IsNotNull (layerElementArrayTemplate);
 
             layerElementArrayTemplate.SetCount (1);
 
@@ -148,17 +150,54 @@ namespace UnitTests
     public class FbxLayerElementArrayTest : FbxLayerElementArrayTestBase<FbxLayerElementArray> {}
 
     public class FbxLayerElementArrayTemplateFbxColorTest : 
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxColor,FbxColor> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxColor,FbxColor> {
+
+        [Test]
+        public override void TestGetAt()
+        {
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxColor ())));
+        }
+    }
 
     public class FbxLayerElementArrayTemplateFbxSurfaceMaterialTest :
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {
+
+        [Test]
+        public override void TestGetAt()
+        {
+            FbxManager tempManager = FbxManager.Create ();
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (FbxSurfaceMaterial.Create(tempManager, ""))));
+            tempManager.Destroy ();
+        }
+    }
 
     public class FbxLayerElementArrayTemplateFbxVector2Test : 
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector2,FbxVector2> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector2,FbxVector2> {
+        
+        [Test]
+        public override void TestGetAt()
+        {
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxVector2 ())));
+        }
+    }
 
     public class FbxLayerElementArrayTemplateFbxVector4Test : 
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector4,FbxVector4> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector4,FbxVector4> {
+
+        [Test]
+        public override void TestGetAt()
+        {
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxVector4 ())));
+        }
+    }
 
     public class FbxLayerElementArrayTemplateIntTest : 
-        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateInt,int> {}
+        FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateInt,int> {
+
+        [Test]
+        public override void TestGetAt()
+        {
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new int ())));
+        }
+    }
 }

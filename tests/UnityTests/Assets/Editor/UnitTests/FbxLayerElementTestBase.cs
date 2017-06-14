@@ -17,7 +17,7 @@ using FbxSdk;
  * FbxLayerElement itself has no public constructor or Create function, so we can
  * only test its functions from its derived classes (which do have Create functions).
  */
-namespace UnitTests
+namespace FbxSdk.UnitTests
 {
     public abstract class FbxLayerElementTestBase<T> where T: FbxSdk.FbxLayerElement
     {

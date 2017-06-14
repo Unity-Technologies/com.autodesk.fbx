@@ -24,4 +24,10 @@ bool IsValidColor(const FbxColor& c) {
 %csmethodmodifiers IsValidColor "internal";
 bool IsValidColor(const FbxColor& c);
 
+%rename("%s") FbxTypeOf(const FbxColor&);
+%rename("%s") FbxTypeOf(const FbxVector2&);
+%rename("%s") FbxTypeOf(const FbxVector4&);
+%rename("%s") FbxTypeOf(const FbxInt&);
+%rename("%s") FbxTypeOf(const FbxReference&);
+
 %include "fbxsdk_csharp-fixed-headers/fbxpropertytypes.h"
