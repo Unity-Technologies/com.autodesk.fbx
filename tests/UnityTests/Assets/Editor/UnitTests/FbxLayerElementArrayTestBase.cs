@@ -28,14 +28,14 @@ namespace FbxSdk.UnitTests
             #endif
         }
 
-        public T CreateObject (EFbxType type = EFbxType.eFbxBlob) {
+        public T CreateObject (EFbxType type) {
             return Invoker.InvokeConstructor<T>(s_constructor, type);
         }
 
         [Test]
         public virtual void TestBasics()
         {
-            T layerElementArray = CreateObject ();
+            T layerElementArray = CreateObject (EFbxType.eFbxBlob);
 
             // Test SetCount()
             layerElementArray.SetCount (1);
@@ -128,7 +128,7 @@ namespace FbxSdk.UnitTests
         [Test]
         public virtual void TestGetAt()
         {
-            TestGetAt (CreateObject ());
+            TestGetAt (CreateObject (EFbxType.eFbxUndefined));
         }
 
         public void TestGetAt(T layerElementArrayTemplate)
