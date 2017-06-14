@@ -126,10 +126,7 @@ namespace FbxSdk.UnitTests
         }
 
         [Test]
-        public virtual void TestGetAt()
-        {
-            TestGetAt (CreateObject (EFbxType.eFbxUndefined));
-        }
+        public abstract void TestGetAt ();
 
         public void TestGetAt(T layerElementArrayTemplate)
         {
