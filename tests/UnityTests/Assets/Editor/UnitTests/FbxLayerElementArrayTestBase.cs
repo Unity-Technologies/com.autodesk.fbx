@@ -164,6 +164,14 @@ namespace FbxSdk.UnitTests
 
     public class FbxLayerElementArrayTemplateFbxSurfaceMaterialTest :
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {
+
+        [Test]
+        public override void TestGetAt()
+        {
+            FbxManager tempManager = FbxManager.Create ();
+            base.TestGetAt (CreateObject (Globals.FbxTypeOf (FbxSurfaceMaterial.Create(tempManager, ""))));
+            tempManager.Destroy ();
+        }
     }
 
     public class FbxLayerElementArrayTemplateFbxVector2Test : 
