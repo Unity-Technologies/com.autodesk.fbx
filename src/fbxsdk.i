@@ -129,6 +129,18 @@
 %}
 %enddef  
 
+/*
+ * Add a new constructor to a template class, that calls the original constructor
+ * with a default value.
+ */
+%define %add_default_template_constructor(THECLASS, DEFAULTVALUE)
+%extend THECLASS {
+  THECLASS(){
+        return new THECLASS(DEFAULTVALUE);
+    }
+}
+%enddef
+
 /* In C++ chars are stored as a single byte, whereas in C#
  * chars are stored as 2 bytes (16-bit unicode). To ensure that the
  * char is correct in C#, we return it as a byte and then convert it back to
