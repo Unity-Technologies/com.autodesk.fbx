@@ -140,7 +140,9 @@
 %ignore FbxLayerElementArray::ConvertDataType;
 %ignore FbxLayerElementArray::mDataType;
 
-%rename("$ignore", "not" %$isconstructor, regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
+%rename("$ignore", "not" %$isconstructor, "not" %$isdestructor, regextarget=1, fullname=1) "FbxLayerElementArrayTemplate::.*";
+%ignore FbxLayerElementArrayTemplate::FbxLayerElementArrayTemplate(EFbxType pDataType);
+%rename("%s") FbxLayerElementArrayTemplate::~FbxLayerElementArrayTemplate;
 
 %rename("%sUnchecked") FbxLayerElementArrayTemplate::GetAt;
 %csmethodmodifiers FbxLayerElementArrayTemplate::GetAt "private";
@@ -152,6 +154,15 @@
       return GetAtUnchecked(pIndex);
     }
 %} }
+
+// add some default constructors to help avoid making mistakes
+// with setting the wrong FbxType
+%add_default_template_constructor(FbxLayerElementArrayTemplate<int>, eFbxInt);
+%add_default_template_constructor(FbxLayerElementArrayTemplate<FbxColor>, eFbxDouble4);
+%add_default_template_constructor(FbxLayerElementArrayTemplate<FbxVector2>, eFbxDouble2);
+%add_default_template_constructor(FbxLayerElementArrayTemplate<FbxVector4>, eFbxDouble4);
+%add_default_template_constructor(FbxLayerElementArrayTemplate<FbxSurfaceMaterial*>, eFbxReference);
+
 
 %include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
 

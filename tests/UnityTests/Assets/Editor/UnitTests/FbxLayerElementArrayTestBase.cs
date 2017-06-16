@@ -13,30 +13,8 @@ namespace FbxSdk.UnitTests
 {
     public abstract class FbxLayerElementArrayTestBase<T> : TestBase<T> where T : FbxSdk.FbxLayerElementArray
     {
-        static System.Reflection.ConstructorInfo s_constructor;
-
-        static FbxLayerElementArrayTestBase() {
-            s_constructor = typeof(T).GetConstructor (new[] { typeof(EFbxType) });
-
-            #if ENABLE_COVERAGE_TEST
-            // Register the calls we make through reflection.
-
-            if (s_constructor != null) {
-                var constructor = typeof(FbxLayerElementArrayTestBase<T>).GetMethod("CreateObject", new System.Type[] { typeof(EFbxType) });
-                CoverageTester.RegisterReflectionCall(constructor, s_constructor);
-            }
-            #endif
-        }
-
-        public T CreateObject (EFbxType type) {
-            return Invoker.InvokeConstructor<T>(s_constructor, type);
-        }
-
-        [Test]
-        public virtual void TestBasics()
+        public void TestBasics(T layerElementArray)
         {
-            T layerElementArray = CreateObject (EFbxType.eFbxBlob);
-
             // Test SetCount()
             layerElementArray.SetCount (1);
             Assert.AreEqual (layerElementArray.GetCount (), 1);
@@ -86,31 +64,26 @@ namespace FbxSdk.UnitTests
 
             // test invalid index
             layerElementArray.SetAt (-1, new FbxVector4 ());
-        }
 
-        [Test]
-        public void TestDispose()
-        {
-            var layerElementArray = new FbxLayerElementArray (EFbxType.eFbxBlob);
+            // test dispose
             layerElementArray.Dispose ();
             Assert.That (() => {
                 layerElementArray.SetCount (1);
             }, Throws.Exception.TypeOf<System.NullReferenceException> ());
-
-            FbxLayerElementArray elementArray;
-            using (elementArray = new FbxLayerElementArray (EFbxType.eFbxBlob)) {}
-            Assert.That (() => {
-                elementArray.SetCount (1);
-            }, Throws.Exception.TypeOf<System.NullReferenceException> ());
         }
+
+        [Test]
+        public abstract void TestBasics();
     }
 
     public abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTestBase<T> where T : FbxSdk.FbxLayerElementArray {
 
         static System.Reflection.MethodInfo s_getAt;
+        static System.Reflection.ConstructorInfo s_constructor;
 
         static FbxLayerElementArrayTemplateTestBase() {
             s_getAt = typeof(T).GetMethod("GetAt", new System.Type[] { typeof(int) });
+            s_constructor = typeof(T).GetConstructor (System.Type.EmptyTypes);
 
             #if ENABLE_COVERAGE_TEST
             // Register the calls we make through reflection.
@@ -118,7 +91,16 @@ namespace FbxSdk.UnitTests
                 var getAt = typeof(FbxLayerElementArrayTemplateTestBase<T,U>).GetMethod("GetAt");
                 CoverageTester.RegisterReflectionCall(getAt, s_getAt);
             }
+            if(s_constructor != null){
+                var constructor = typeof(FbxLayerElementArrayTemplateTestBase<T,U>).GetMethod("CreateObject");
+                CoverageTester.RegisterReflectionCall(constructor, s_constructor);
+            }
             #endif
+        }
+
+        public T CreateObject()
+        {
+            return Invoker.InvokeConstructor<T> (s_constructor);
         }
 
         public U GetAt(T layerElementArray, int index){
@@ -126,10 +108,16 @@ namespace FbxSdk.UnitTests
         }
 
         [Test]
-        public abstract void TestGetAt ();
-
-        public void TestGetAt(T layerElementArrayTemplate)
+        public override void TestBasics ()
         {
+            base.TestBasics (CreateObject());
+        }
+
+        [Test]
+        public void TestGetAt ()
+        {
+            T layerElementArrayTemplate = CreateObject();
+
             Assert.IsNotNull (layerElementArrayTemplate);
 
             layerElementArrayTemplate.SetCount (1);
@@ -147,57 +135,31 @@ namespace FbxSdk.UnitTests
         }
     }
 
-    public class FbxLayerElementArrayTest : FbxLayerElementArrayTestBase<FbxLayerElementArray> {}
+    public class FbxLayerElementArrayTest : FbxLayerElementArrayTestBase<FbxLayerElementArray> {
+        [Test]
+        public override void TestBasics()
+        {
+            TestBasics(new FbxLayerElementArray (EFbxType.eFbxBlob));
+        }
+    }
 
     public class FbxLayerElementArrayTemplateFbxColorTest : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxColor,FbxColor> {
-
-        [Test]
-        public override void TestGetAt()
-        {
-            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxColor ())));
-        }
     }
 
     public class FbxLayerElementArrayTemplateFbxSurfaceMaterialTest :
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {
-
-        [Test]
-        public override void TestGetAt()
-        {
-            FbxManager tempManager = FbxManager.Create ();
-            base.TestGetAt (CreateObject (Globals.FbxTypeOf (FbxSurfaceMaterial.Create(tempManager, ""))));
-            tempManager.Destroy ();
-        }
     }
 
     public class FbxLayerElementArrayTemplateFbxVector2Test : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector2,FbxVector2> {
-        
-        [Test]
-        public override void TestGetAt()
-        {
-            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxVector2 ())));
-        }
     }
 
     public class FbxLayerElementArrayTemplateFbxVector4Test : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector4,FbxVector4> {
-
-        [Test]
-        public override void TestGetAt()
-        {
-            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new FbxVector4 ())));
-        }
     }
 
     public class FbxLayerElementArrayTemplateIntTest : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateInt,int> {
-
-        [Test]
-        public override void TestGetAt()
-        {
-            base.TestGetAt (CreateObject (Globals.FbxTypeOf (new int ())));
-        }
     }
 }
