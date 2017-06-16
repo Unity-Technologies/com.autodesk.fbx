@@ -146,7 +146,7 @@
   
 %pragma(csharp) imclasscode=%{
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
-  private const string LIBRARY_NAME = "Assets/FbxSdk/Plugins/x64/MacOS/libfbxsdk_csharp.so";
+  private const string LIBRARY_NAME = "Assets/Plugins/fbxsdk/libfbxsdk_csharp.so";
 #else
   private const string LIBRARY_NAME = "fbxsdk_csharp";
 #endif
