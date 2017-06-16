@@ -177,8 +177,8 @@ set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 # so that loading the DLL in Unity on Mac just works.
 # LIBRARY_NAME is defined in fbxsdk.i
 swig_file_search_replace(fbxsdk_csharp "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
-        "DllImport\\\\\(\\\\\"fbxsdk_csharp\\\\\"" # In cmake have to use 4 backslashes to get escape the backslash char
-        "DllImport\\\\\(LIBRARY_NAME"
+        "\\\\\"fbxsdk_csharp\\\\\"," # In cmake have to use 4 backslashes to get escape the backslash char
+        "LIBRARY_NAME,"
 )
 
 ###########################################################################
