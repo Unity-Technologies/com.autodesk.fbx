@@ -49,6 +49,7 @@ find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Lin
 include(${SWIG_USE_FILE})
 
 include(deps/cmake/UseFixHeaders.cmake)
+include(deps/cmake/UseFileSearchReplace.cmake)
 
 find_package(FBXSDK REQUIRED)
 set(Python_ADDITIONAL_VERSIONS 2.7)
@@ -170,6 +171,16 @@ add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
 target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
 set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
+
+###########################################################################
+
+# Replace "fbsdsk_csharp" with variable LIBRARY_NAME in GlobalsPINVOKE.cs
+# so that loading the DLL in Unity on Mac just works.
+# LIBRARY_NAME is defined in fbxsdk.i
+swig_file_search_replace("${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
+        "DllImport(\\\\\"fbxsdk_csharp\\\\\"" # In cmake have to use 4 backslashes to get escape the backslash char
+        "DllImport(LIBRARY_NAME"
+)
 
 ###########################################################################
 include(deps/cmake/InstallMonoReflection.cmake)
