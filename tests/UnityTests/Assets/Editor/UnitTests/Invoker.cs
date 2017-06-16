@@ -8,6 +8,17 @@
 public static class Invoker
 {
     /**
+     * Invoke a constructor taking zero arguments.
+     */
+    public static U InvokeConstructor<U>(System.Reflection.ConstructorInfo constructor) {
+        try {
+            return (U)(constructor.Invoke(new object[]{}));
+        } catch(System.Reflection.TargetInvocationException xcp) {
+            throw xcp.GetBaseException();
+        }
+    }
+
+    /**
      * Invoke a constructor taking a single arguments.
      */
     public static U InvokeConstructor<U>(System.Reflection.ConstructorInfo constructor, object arg) {
