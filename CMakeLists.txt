@@ -196,6 +196,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION CSharp FILES_MA
 install(TARGETS fbxsdk_csharp DESTINATION Plugins/x64/Windows)
 install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
+install(FILES ${CMAKE_SOURCE_DIR}/docs/README.md ${CMAKE_SOURCE_DIR}/docs/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 enable_testing()
 add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests runEditorTests)
