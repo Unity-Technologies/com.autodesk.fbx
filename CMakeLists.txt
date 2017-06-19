@@ -8,7 +8,7 @@
 cmake_minimum_required (VERSION 2.6)
 
 # has to be done before project is set, or else CMAKE_INSTALL_PREFIX will already by set to a default value
-SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins" CACHE PATH "Install path prefix")
+SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/FbxSdk" CACHE PATH "Install path prefix")
 MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
 project (fbxsdk_csharp)
@@ -183,13 +183,18 @@ swig_file_search_replace(fbxsdk_csharp "${CMAKE_BINARY_DIR}/swig/generated/cshar
 
 ###########################################################################
 include(deps/cmake/InstallMonoReflection.cmake)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests DESTINATION ${CMAKE_BINARY_DIR}/tests)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
+        DESTINATION ${CMAKE_BINARY_DIR}/tests
+        PATTERN "Editor/UnitTests" EXCLUDE
+        PATTERN "Editor/UseCaseTests" EXCLUDE)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UseCaseTests DESTINATION Editor)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/import/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp DESTINATION fbxsdk FILES_MATCHING PATTERN "*.cs")
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION fbxsdk/csharp FILES_MATCHING PATTERN "*.cs")
-install(TARGETS fbxsdk_csharp DESTINATION fbxsdk)
-install(TARGETS unity_tests DESTINATION fbxsdk)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
+install(TARGETS fbxsdk_csharp DESTINATION Plugins/x64/Windows)
+install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
 
 enable_testing()
