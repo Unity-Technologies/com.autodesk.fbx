@@ -125,7 +125,7 @@ Note: For out of source builds the entire Unity project at test/UnityTests will 
 
 ### Packaging the Bindings
 
-## On Windows
+#### On Windows
 ```
 REM Win10
 mkdir FbxSharpBuild
@@ -139,7 +139,7 @@ cmake --build . --target INSTALL --config Release
 cmake --build . --target create_package
 ```
 
-## On OSX and Linux
+#### On OSX and Linux
 ```
 export FBXSDK_CSHARP_PATH=~/Development/FbxSharp
 mkdir FbxSharpBuild
