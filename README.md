@@ -123,6 +123,37 @@ cmake --build . --target INSTALL --config Release
 
 Note: For out of source builds the entire Unity project at test/UnityTests will be copied over.
 
+### Packaging the Bindings
+
+## On Windows
+```
+REM Win10
+mkdir FbxSharpBuild
+cd FbxSharpBuild
+
+# add -DCREATE_PACKAGE=ON to automatically create package after install
+cmake %FBXSDK_CSHARP_PATH -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCREATE_PACKAGE=ON
+cmake --build . --target INSTALL --config Release
+
+# alternatively run create_package target
+cmake --build . --target create_package
+```
+
+## On OSX and Linux
+```
+export FBXSDK_CSHARP_PATH=~/Development/FbxSharp
+mkdir FbxSharpBuild
+cd FbxSharpBuild
+
+# add -DCREATE_PACKAGE=ON to automatically create package after install
+cmake $FBXSDK_CSHARP_PATH -DCREATE_PACKAGE=ON
+make 
+make install
+
+# alternatively run create_package target
+make create_package
+```
+
 ### Running UnitTests
 
 **Requires** [Unity 5.6+](https://store.unity.com/)
