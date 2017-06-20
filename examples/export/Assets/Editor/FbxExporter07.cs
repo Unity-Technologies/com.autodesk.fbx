@@ -172,6 +172,8 @@ namespace FbxSdk.Examples
                     double sign;
                     matrix.GetElements (out translation, out rotation, out shear, out scale, out sign);
 
+                    // Negating the x value of the translation, and the y and z values of the prerotation
+                    // to convert from Unity to Maya coordinates (left to righthanded)
                     t.Value.LclTranslation.Set (new FbxDouble3(-translation.X, translation.Y, translation.Z));
                     t.Value.LclRotation.Set (new FbxDouble3(0,0,0));
                     t.Value.LclScaling.Set (new FbxDouble3 (scale.X, scale.Y, scale.Z));
