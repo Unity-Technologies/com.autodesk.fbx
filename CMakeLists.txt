@@ -13,7 +13,7 @@ MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
 option(CREATE_PACKAGE "Create Package" OFF)
 set(PACKAGE_VERSION "0.0.1")
-set(PACKAGE_PATH "${CMAKE_SOURCE_DIR}/FbxSdk.unitypackage")
+set(PACKAGE_PATH "${CMAKE_SOURCE_DIR}/FbxSdk_${PACKAGE_VERSION}.unitypackage")
 
 project (fbxsdk_csharp)
 
