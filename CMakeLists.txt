@@ -11,6 +11,10 @@ cmake_minimum_required (VERSION 2.6)
 SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/FbxSdk" CACHE PATH "Install path prefix")
 MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
+option(CREATE_PACKAGE "Create Package" OFF)
+set(PACKAGE_VERSION "0.0.1")
+set(PACKAGE_PATH "${CMAKE_SOURCE_DIR}/FbxSdk.unitypackage")
+
 project (fbxsdk_csharp)
 
 # Default is a debug build.
@@ -182,6 +186,18 @@ swig_file_search_replace(fbxsdk_csharp "${CMAKE_BINARY_DIR}/swig/generated/cshar
 )
 
 ###########################################################################
+
+# Add target for creating a package
+set(PACKAGE_TARGET create_package)
+add_custom_target(
+        ${PACKAGE_TARGET}
+        COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -exportPackage Assets/FbxSdk ${PACKAGE_PATH} -quit
+        DEPENDS fbsdsk_csharp
+        COMMENT "Creating FbxSdk Package"
+    )
+
+###########################################################################
+
 include(deps/cmake/InstallMonoReflection.cmake)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
         DESTINATION ${CMAKE_BINARY_DIR}/tests
@@ -197,6 +213,11 @@ install(TARGETS fbxsdk_csharp DESTINATION Plugins/x64/Windows)
 install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
 install(FILES ${CMAKE_SOURCE_DIR}/docs/README.md ${CMAKE_SOURCE_DIR}/docs/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+# Create the package after all the installs complete if CREATE_PACKAGE set to ON
+if(CREATE_PACKAGE)
+    install(CODE "execute_process(COMMAND cmake --build . --target ${PACKAGE_TARGET})")
+endif()
 
 enable_testing()
 add_test(NAME run-all COMMAND ${UNITY_EDITOR_PATH} -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests runEditorTests)
