@@ -96,8 +96,10 @@ namespace FbxSdk.Examples
                 UnityEngine.Vector3 unityScale      =  unityTransform.localScale;
 
                 // transfer transform data from Unity to Fbx
-                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
-                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                // Negating the x value of the translation, and the y and z values of the rotation
+                // to convert from Unity to Maya coordinates (left to righthanded)
+                var fbxTranslate = new FbxDouble3 (-unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, -unityRotate.y, -unityRotate.z);
                 var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
 
                 // set the local position of fbxNode
@@ -200,8 +202,9 @@ namespace FbxSdk.Examples
                     var fbxSettings = fbxScene.GetGlobalSettings();
                     fbxSettings.SetSystemUnit(FbxSystemUnit.m); // Unity unit is meters
 
-                    // The Unity axis system has Y up, Z forward, X to the right:
-                    var axisSystem = new FbxAxisSystem(FbxAxisSystem.EUpVector.eYAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eLeftHanded);
+                    // The Unity axis system has Y up, Z forward, X to the right.
+                    // Export as Maya axis system.
+                    var axisSystem = new FbxAxisSystem(FbxAxisSystem.MayaYUp);
                     fbxSettings.SetAxisSystem(axisSystem);
 
                     FbxNode fbxRootNode = fbxScene.GetRootNode ();

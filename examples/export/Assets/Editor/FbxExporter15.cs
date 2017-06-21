@@ -76,8 +76,10 @@ namespace FbxSdk.Examples
                 UnityEngine.Vector3 unityScale      =  unityTransform.localScale;
 
                 // transfer transform data from Unity to Fbx
-                var fbxTranslate = new FbxDouble3 (unityTranslate.x, unityTranslate.y, unityTranslate.z);
-                var fbxRotate = new FbxDouble3 (unityRotate.x, unityRotate.y, unityRotate.z);
+                // Negating the x value of the translation, and the y and z values of the rotation
+                // to convert from Unity to Maya coordinates (left to righthanded)
+                var fbxTranslate = new FbxDouble3 (-unityTranslate.x, unityTranslate.y, unityTranslate.z);
+                var fbxRotate = new FbxDouble3 (unityRotate.x, -unityRotate.y, -unityRotate.z);
                 var fbxScale = new FbxDouble3 (unityScale.x, unityScale.y, unityScale.z);
 
                 // set the local position of fbxNode

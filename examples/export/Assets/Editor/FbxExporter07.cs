@@ -172,13 +172,15 @@ namespace FbxSdk.Examples
                     double sign;
                     matrix.GetElements (out translation, out rotation, out shear, out scale, out sign);
 
-                    t.Value.LclTranslation.Set (new FbxDouble3(translation.X, translation.Y, translation.Z));
+                    // Negating the x value of the translation, and the y and z values of the prerotation
+                    // to convert from Unity to Maya coordinates (left to righthanded)
+                    t.Value.LclTranslation.Set (new FbxDouble3(-translation.X, translation.Y, translation.Z));
                     t.Value.LclRotation.Set (new FbxDouble3(0,0,0));
                     t.Value.LclScaling.Set (new FbxDouble3 (scale.X, scale.Y, scale.Z));
 
                     t.Value.SetRotationActive (true);
                     t.Value.SetPivotState (FbxNode.EPivotSet.eSourcePivot, FbxNode.EPivotState.ePivotReference);
-                    t.Value.SetPreRotation (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (rotation.X, rotation.Y, rotation.Z));
+                    t.Value.SetPreRotation (FbxNode.EPivotSet.eSourcePivot, new FbxVector4 (rotation.X, -rotation.Y, -rotation.Z));
                 }
 
                 return true;
