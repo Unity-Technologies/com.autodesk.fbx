@@ -197,7 +197,6 @@ add_custom_target(
         ${PACKAGE_TARGET}
         COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -exportPackage Assets/FbxSdk ${PACKAGE_PATH} -quit
         COMMENT "Creating Unity Package ${PACKAGE_PATH}"
-        DEPENDS fbxsdk_csharp
     )
 
 ###########################################################################
