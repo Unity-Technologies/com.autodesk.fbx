@@ -68,12 +68,16 @@ namespace FbxSdk.Examples
                 // copy control point data from Unity to FBX
                 for (int v = 0; v < NumControlPoints; v++)
                 {
+                    // convert from left to right-handed by negating x (Unity negates x again on import)
                     fbxMesh.SetControlPointAt(new FbxVector4(-mesh.Vertices[v].x, mesh.Vertices[v].y, mesh.Vertices[v].z), v);
                 }
 
                 /* 
                  * Create polygons after FbxGeometryElementMaterial are created. 
                  * TODO: Assign material indices.
+                 * Triangles have to be added in reverse order, 
+                 * or else they will be inverted on import 
+                 * (due to the conversion from left to right handed coords)
                  */
                 for (int f = 0; f < mesh.Triangles.Length / 3; f++) {
                     fbxMesh.BeginPolygon ();
