@@ -192,7 +192,7 @@ swig_file_search_replace(fbxsdk_csharp "${CMAKE_BINARY_DIR}/swig/generated/cshar
 
 ###########################################################################
 # Add target for creating a package
-set(PACKAGE_TARGET create_package)
+set(PACKAGE_TARGET unitypackage)
 add_custom_target(
         ${PACKAGE_TARGET}
         COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -exportPackage Assets/FbxSdk ${PACKAGE_PATH} -quit
