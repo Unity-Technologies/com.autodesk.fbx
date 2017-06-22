@@ -232,4 +232,4 @@ if(CREATE_PACKAGE)
 endif()
 
 enable_testing()
-add_test(NAME run-all COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests runEditorTests)
+add_test(NAME run-all COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests runEditorTests -quit)
