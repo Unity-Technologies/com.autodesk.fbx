@@ -367,7 +367,7 @@ namespace FbxSdk.Examples
                 // copy control point data from Unity to FBX
                 for (int v = 0; v < NumControlPoints; v++) 
                 {
-                    fbxMesh.SetControlPointAt (new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
+                    fbxMesh.SetControlPointAt (new FbxVector4 (-meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
                 }
 
                 ExportNormalsEtc (meshInfo, fbxMesh);
@@ -379,12 +379,11 @@ namespace FbxSdk.Examples
                 /* 
                  * Create polygons after FbxLayerElementMaterial have been created. 
                  */
-                int vId = 0;
                 for (int f = 0; f < meshInfo.Triangles.Length / 3; f++) {
                     fbxMesh.BeginPolygon ();
-                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
-                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
-                    fbxMesh.AddPolygon (meshInfo.Triangles [vId++]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3*f + 2]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3*f + 1]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3*f]);
                     fbxMesh.EndPolygon ();
                 }
 
