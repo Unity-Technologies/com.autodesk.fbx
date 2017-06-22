@@ -19,8 +19,11 @@ if (NOT DEFINED UNITY_EDITOR_PATH)
     endif()
 
     find_program(UNITY_EDITOR_PATH Unity PATHS ${UNITY_EXECUTABLE_PATHS})
+
+    # Standard code to report whether we found the package or not.
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(Unity DEFAULT_MSG UNITY_EDITOR_PATH)
+else()
+    message("Using ${UNITY_EDITOR_PATH}")
 endif()
 
-# Standard code to report whether we found the package or not.
-#include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(UNITY DEFAULT_MSG UNITY_EDITOR_PATH)
+
