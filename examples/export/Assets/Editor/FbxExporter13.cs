@@ -37,7 +37,7 @@ namespace FbxSdk.Examples
                  @"";
 
             const string MenuItemName = "File/Export FBX/13. Scene with mesh instances";
-            const string MenuItemName1 = "File/Export FBX/Create Example Scene/Scene with lots of mesh instances (select model prefab)";
+            const string MenuItemName1 = "File/Export FBX/Example Scene/1000 instances of selected Model Prefab(s)";
 
             const string FileBaseName = "example_mesh_instances";
 
@@ -555,7 +555,7 @@ namespace FbxSdk.Examples
             /// <summary>
             /// create menu item in the File menu
             /// </summary>
-            [MenuItem (MenuItemName1, false)]
+            [MenuItem (MenuItemName1, false, -100)] 
             public static void OnMenuItem1 ()
             {
                 OnCreateScene ();
