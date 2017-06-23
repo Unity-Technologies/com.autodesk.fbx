@@ -212,7 +212,8 @@ namespace FbxSdk.Examples
                 // copy control point data from Unity to FBX
                 for (int v = 0; v < NumControlPoints; v++)
                 {
-                    fbxMesh.SetControlPointAt(new FbxVector4 (meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
+                    // convert from left to right-handed by negating x (Unity negates x again on import)
+                    fbxMesh.SetControlPointAt(new FbxVector4 (-meshInfo.Vertices [v].x, meshInfo.Vertices [v].y, meshInfo.Vertices [v].z), v);
                 }
 
                 ExportUVs (meshInfo, fbxMesh);
@@ -220,12 +221,16 @@ namespace FbxSdk.Examples
                 var fbxMaterial = ExportMaterial (meshInfo.Material, fbxScene);
                 fbxNode.AddMaterial (fbxMaterial);
 
+                /* Triangles have to be added in reverse order, 
+                 * or else they will be inverted on import 
+                 * (due to the conversion from left to right handed coords)
+                 */
                 for (int f = 0; f < meshInfo.Triangles.Length / 3; f++)
                 {
                     fbxMesh.BeginPolygon ();
-                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f]);
-                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 1]);
                     fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 2]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f + 1]);
+                    fbxMesh.AddPolygon (meshInfo.Triangles [3 * f]);
                     fbxMesh.EndPolygon ();
                 }
 
