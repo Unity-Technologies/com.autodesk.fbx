@@ -21,6 +21,7 @@
 %rename("%s") FbxNode::SetShadingMode;
 %rename("%s") FbxNode::GetShadingMode;
 %rename("%s") FbxNode::EShadingMode;
+%rename("%s") FbxNode::SetRotationOrder;
 
 /* Attributes */
 %rename("%s") FbxNode::SetNodeAttribute;

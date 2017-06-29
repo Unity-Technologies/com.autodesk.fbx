@@ -86,3 +86,8 @@
  * End of file. Turn reveal back off.
  ******************************/
 %reveal_all_end;
+
+%rename("%s", %$isclass) FbxEuler;
+%rename("%s") FbxEuler::EOrder;
+
+%include "fbxsdk/core/math/fbxmath.h"
