@@ -5,7 +5,7 @@ Copyright (c) 2017 Unity Technologies. All rights reserved.
 Licensed under the ##LICENSENAME##.
 See LICENSE.txt file in the project root for full license information.
 
-Version: 0.0.2a
+**Version**: 0.0.3a
 
 This package contains only a subset of the FbxSdk.
 
