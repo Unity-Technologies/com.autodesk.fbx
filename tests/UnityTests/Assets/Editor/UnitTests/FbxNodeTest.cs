@@ -271,5 +271,22 @@ namespace FbxSdk.UnitTests
                 Assert.AreEqual(true, node.GetRotationActive());
             }
         }
+
+        [Test]
+        public void TestSetRotationOrder(){
+            using (FbxNode node = CreateObject ("root")) {
+                // test that it works
+                node.SetRotationOrder (FbxNode.EPivotSet.eSourcePivot, FbxEuler.EOrder.eOrderXZY);
+                int output = 0;
+                node.GetRotationOrder (FbxNode.EPivotSet.eSourcePivot, out output);
+                Assert.AreEqual (FbxEuler.EOrder.eOrderXZY, (FbxEuler.EOrder)output);
+
+                // same with destination pivot
+                node.SetRotationOrder (FbxNode.EPivotSet.eDestinationPivot, FbxEuler.EOrder.eOrderZXY);
+                output = 0;
+                node.GetRotationOrder (FbxNode.EPivotSet.eDestinationPivot, out output);
+                Assert.AreEqual (FbxEuler.EOrder.eOrderZXY, (FbxEuler.EOrder)output);
+            }
+        }
     }
 }
