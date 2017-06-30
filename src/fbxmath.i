@@ -88,6 +88,7 @@
 %reveal_all_end;
 
 %rename("%s", %$isclass) FbxEuler;
+%declare_static_class(FbxEuler);
 %rename("%s") FbxEuler::EOrder;
 
 %include "fbxsdk/core/math/fbxmath.h"
