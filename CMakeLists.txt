@@ -52,6 +52,9 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
+# update the version number in VERSION.txt
+FILE(WRITE ${CMAKE_SOURCE_DIR}/docs/VERSION.txt ${PACKAGE_VERSION})
+
 ###########################################################################
 # Find packages that we need.
 find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Linux
@@ -224,7 +227,7 @@ endif()
 # copy C++ performance tests
 install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
-install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt ${CMAKE_SOURCE_DIR}/docs/LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt ${CMAKE_SOURCE_DIR}/docs/LICENSE.txt ${CMAKE_SOURCE_DIR}/docs/VERSION.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Create the package after all the installs complete if CREATE_PACKAGE set to ON
 if(CREATE_PACKAGE)
