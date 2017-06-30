@@ -134,6 +134,8 @@ mkdir FbxSharpBuild
 cd FbxSharpBuild
 
 # add -DCREATE_PACKAGE=ON to automatically create package after install
+# add -DPACKAGE_VERSION=0.0.2 to change the package version to 0.0.2
+# add -DUNITY_EDITOR_PATH="Path/to/Unity.exe" to set which version of Unity is used
 cmake %FBXSDK_CSHARP_PATH -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release -DCREATE_PACKAGE=ON
 cmake --build . --target INSTALL --config Release
 
@@ -148,6 +150,8 @@ mkdir FbxSharpBuild
 cd FbxSharpBuild
 
 # add -DCREATE_PACKAGE=ON to automatically create package after install
+# add -DPACKAGE_VERSION=0.0.2 to change the package version to 0.0.2
+# add -DUNITY_EDITOR_PATH="/path/to/Unity.app/Contents/MacOS/Unity" to set which version of Unity is used
 export UNITY_EDITOR_PATH=/Applications/Unity\ 5.6.1f1/Unity.app/Contents/MacOS/Unity
 cmake $FBXSDK_CSHARP_PATH -DCREATE_PACKAGE=ON -DPACKAGE_VERSION=0.0.2 -DUNITY_EDITOR_PATH="$UNITY_EDITOR_PATH"
 make 
