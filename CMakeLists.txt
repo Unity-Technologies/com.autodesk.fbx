@@ -224,7 +224,7 @@ endif()
 # copy C++ performance tests
 install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
-install(FILES ${CMAKE_SOURCE_DIR}/docs/README.md ${CMAKE_SOURCE_DIR}/docs/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt ${CMAKE_SOURCE_DIR}/docs/LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Create the package after all the installs complete if CREATE_PACKAGE set to ON
 if(CREATE_PACKAGE)
