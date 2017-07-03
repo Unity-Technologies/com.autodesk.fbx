@@ -52,9 +52,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
-# update the version number in VERSION.txt
-FILE(WRITE ${CMAKE_SOURCE_DIR}/docs/VERSION.txt ${PACKAGE_VERSION})
-
 ###########################################################################
 # Find packages that we need.
 find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Linux
@@ -185,10 +182,11 @@ set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks"
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
 ###########################################################################
+
 # Replace "fbsdsk_csharp" with variable LIBRARY_NAME in GlobalsPINVOKE.cs
 # so that loading the DLL in Unity on Mac just works.
 # LIBRARY_NAME is defined in fbxsdk.i
-swig_file_search_replace(fbxsdk_csharp "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
+swig_file_search_replace(fbxsdk_csharp globals_replace "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
         "\\\\\"fbxsdk_csharp\\\\\"," # In cmake have to use 4 backslashes to get escape the backslash char
         "LIBRARY_NAME,"
 )
@@ -202,6 +200,19 @@ add_custom_target(
         COMMENT "Creating Unity Package ${PACKAGE_PATH}"
     )
 
+# Add target to replace the version number in README.txt
+set(README_TARGET readme_replace)
+add_custom_target(
+    ${README_TARGET}
+    COMMAND ${PYTHON_EXECUTABLE} 
+            "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
+            "${CMAKE_INSTALL_PREFIX}/README.txt" 
+            "**Version**:" 
+            "**Version**: ${PACKAGE_VERSION}"
+    DEPENDS "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
+    COMMENT "Replacing version number in README.txt"
+)
+    
 ###########################################################################
 # Install Unit Tests and Mono Reflection for test converage
 include(deps/cmake/InstallMonoReflection.cmake)
@@ -227,7 +238,9 @@ endif()
 # copy C++ performance tests
 install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
-install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt ${CMAKE_SOURCE_DIR}/docs/LICENSE.txt ${CMAKE_SOURCE_DIR}/docs/VERSION.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt ${CMAKE_SOURCE_DIR}/docs/LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})")
 
 # Create the package after all the installs complete if CREATE_PACKAGE set to ON
 if(CREATE_PACKAGE)
