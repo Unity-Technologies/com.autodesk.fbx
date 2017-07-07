@@ -17,7 +17,7 @@ if (NOT DEFINED PACKAGE_VERSION)
 endif()
 
 if (NOT DEFINED PACKAGE_PATH)
-    set(PACKAGE_PATH "${CMAKE_SOURCE_DIR}/FbxSdk_${PACKAGE_VERSION}.unitypackage")
+    set(PACKAGE_PATH "${CMAKE_BINARY_DIR}/FbxSdk_${PACKAGE_VERSION}.unitypackage")
 endif()
 
 project (fbxsdk_csharp)
