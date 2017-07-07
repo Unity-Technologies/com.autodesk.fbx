@@ -72,7 +72,10 @@ You can add some options to the cmake line:
 * To build a debug version, omit the `-DCMAKE_BUILD_TYPE=Release` flag.
 * To specify the path to Unity (e.g. to use a version other than the default), use the `-DUNITY_EDITOR_PATH="Path/to/Unity.exe"` flag.
 * * On OSX, this needs to specify the executable, not the app bundle: `-DUNITY_EDITOR_PATH="/path/to/Unity.app/Contents/MacOS/Unity"`
+* By default the version number is specified in the CMakeLists.txt but can be overriden with `-DPACKAGE_VERSION=x.y.z` flag.
+* By default the unity package drops in the FbxSharpBuild directory, but this can be overriden with `-DPACKAGE_PATH=/path/to/package` flag.
 * To save time and avoid building the package, omit the line that mentions 'unitypackage'
+* Conversely, to build the package in the `all` target, add the `-DCREATE_PACKAGE=on` flag.
 
 This project uses git submodules. In order to update the submodules to the latest, issue this command:
 ```
