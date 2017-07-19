@@ -131,3 +131,41 @@ ${UNITY_PATH}/Unity.exe -projectpath ${BUILD_PATH}/tests/UnityTests
 ```
 
 OR ```cmake --build . --target RUN_TESTS```
+
+### Creating Documentation with Doxygen
+
+**Requires** [Doxygen 1.8.13+](http://www.stack.nl/~dimitri/doxygen/download.html)
+
+**Note:** Doxygen looks for the README.md in ```../FbxSharp/docs/README.md```. Therefore, the build has to
+be in a directory that is a sibling of FbxSharp to find the README. Alternatively, locally modify the USE_MDFILE_AS_MAINPAGE in Doxyfile
+
+**OSX**
+
+```
+# build the project
+mkdir FbxSharpBuild
+cd FbxSharpBuild
+cmake ../FbxSharp -DCMAKE_BUILD_TYPE=Release
+make
+make install
+make unitypackage
+
+# run doxygen
+doxygen ../FbxSharp/Doxyfile
+```
+
+**Windows**
+
+```
+# build the project
+mkdir FbxSharpBuild
+cd FbxSharpBuild
+cmake ../FbxSharp -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
+cmake --build . --target INSTALL --config Release
+cmake --build . --target unitypackage
+
+# run doxygen
+doxygen ../FbxSharp/Doxyfile
+```
+
+Doxygen documentation can be found in FbxSharpBuild/docs/html/index.html
