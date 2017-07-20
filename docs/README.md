@@ -1,4 +1,5 @@
-#FBX SDK C# Bindings
+FBX SDK C# Bindings
+===================
 
 Copyright (c) 2017 Unity Technologies. All rights reserved.
 
