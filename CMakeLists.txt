@@ -191,6 +191,11 @@ swig_file_search_replace(fbxsdk_csharp globals_replace "${CMAKE_BINARY_DIR}/swig
         "LIBRARY_NAME,"
 )
 
+swig_file_search_replace(fbxsdk_csharp doxygen_readme_replace "${CMAKE_SOURCE_DIR}/docs/README.md"
+        "**Version**:"
+        "**Version**: ${PACKAGE_VERSION}"
+)
+
 ###########################################################################
 # Add target for creating a package
 set(PACKAGE_TARGET unitypackage)
@@ -212,6 +217,20 @@ add_custom_target(
     DEPENDS "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
     COMMENT "Replacing version number in README.txt"
 )
+
+###########################################################################
+
+# Doxygen documentation
+# add a target to generate API documentation with Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+add_custom_target(doc
+${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+COMMENT "Generating API documentation with Doxygen" VERBATIM
+)
+endif(DOXYGEN_FOUND)
     
 ###########################################################################
 # Install Unit Tests and Mono Reflection for test converage

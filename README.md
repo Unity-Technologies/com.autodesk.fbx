@@ -131,3 +131,38 @@ ${UNITY_PATH}/Unity.exe -projectpath ${BUILD_PATH}/tests/UnityTests
 ```
 
 OR ```cmake --build . --target RUN_TESTS```
+
+### Creating Documentation with Doxygen
+
+**Requires** [Doxygen 1.8.13+](http://www.stack.nl/~dimitri/doxygen/download.html)
+
+**OSX**
+
+```
+# build the project
+mkdir FbxSharpBuild
+cd FbxSharpBuild
+cmake ../FbxSharp -DCMAKE_BUILD_TYPE=Release
+make
+make install
+
+# run doxygen
+make doc
+open ./docs/html/index.html
+```
+
+**Windows**
+
+```
+# build the project
+mkdir FbxSharpBuild
+cd FbxSharpBuild
+cmake ../FbxSharp -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
+cmake --build . --target INSTALL --config Release
+
+# run doxygen
+cmake --build . --target doc
+start ./docs/html/index.html
+```
+
+Doxygen documentation can be found in FbxSharpBuild/docs/html/index.html
