@@ -148,7 +148,6 @@ cd FbxSharpBuild
 cmake ../FbxSharp -DCMAKE_BUILD_TYPE=Release
 make
 make install
-make unitypackage
 
 # run doxygen
 doxygen ../FbxSharp/Doxyfile
@@ -162,7 +161,6 @@ mkdir FbxSharpBuild
 cd FbxSharpBuild
 cmake ../FbxSharp -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
 cmake --build . --target INSTALL --config Release
-cmake --build . --target unitypackage
 
 # run doxygen
 doxygen ../FbxSharp/Doxyfile
