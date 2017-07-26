@@ -160,7 +160,7 @@ namespace FbxSdk.PerformanceTests
             DefaultTest (
                 "FbxObjectCreate",
                 N,
-                4,
+                10,
                 () => {
                     for (int i = 0; i < N; i++) {
                         FbxObject.Create (m_fbxManager, "");
@@ -176,7 +176,7 @@ namespace FbxSdk.PerformanceTests
             DefaultTest (
                 "SetControlPointAt",
                 N,
-                4,
+                40,
                 () => {
                     FbxGeometryBase geometryBase = FbxGeometryBase.Create(m_fbxManager, "");
                     geometryBase.InitControlPoints(1);
