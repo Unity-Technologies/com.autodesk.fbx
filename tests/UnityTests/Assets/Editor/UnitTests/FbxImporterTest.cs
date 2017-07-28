@@ -59,6 +59,7 @@ namespace FbxSdk.UnitTests
 
                     // test GetFileHeaderInfo()
                     TestGetter(importer.GetFileHeaderInfo());
+                    Assert.IsNotNull(importer.GetFileHeaderInfo());
                 }
                 // we actually don't care about the scene itself!
             } finally {

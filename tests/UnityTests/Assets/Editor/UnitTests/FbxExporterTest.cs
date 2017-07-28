@@ -95,6 +95,7 @@ namespace FbxSdk.UnitTests
 
             // test GetFileHeaderInfo()
             TestGetter(m_exporter.GetFileHeaderInfo());
+            Assert.IsNotNull (m_exporter.GetFileHeaderInfo ());
         }
 
         [Test]

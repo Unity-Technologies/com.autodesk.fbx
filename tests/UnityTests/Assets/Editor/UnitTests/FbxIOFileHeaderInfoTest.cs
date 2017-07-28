@@ -15,6 +15,7 @@ namespace FbxSdk.UnitTests
         {
             var fileHeaderInfo = new FbxIOFileHeaderInfo ();
             TestGetter (fileHeaderInfo.mCreator);
+            TestGetter (fileHeaderInfo.mFileVersion);
             fileHeaderInfo.Dispose ();
         }
     }
