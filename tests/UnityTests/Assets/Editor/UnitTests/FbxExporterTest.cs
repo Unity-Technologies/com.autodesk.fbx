@@ -92,6 +92,10 @@ namespace FbxSdk.UnitTests
             m_exporter.SetProgressCallback(null);
             m_exporter.SetProgressCallback((float a, string b) => true);
             m_exporter.SetProgressCallback(null);
+
+            // test GetFileHeaderInfo()
+            TestGetter(m_exporter.GetFileHeaderInfo());
+            Assert.IsNotNull (m_exporter.GetFileHeaderInfo ());
         }
 
         [Test]

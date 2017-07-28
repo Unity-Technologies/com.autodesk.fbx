@@ -260,3 +260,4 @@
 %include "fbxblendshape.i"
 %include "fbxblendshapechannel.i"
 %include "fbxshape.i"
+%include "fbxio.i"

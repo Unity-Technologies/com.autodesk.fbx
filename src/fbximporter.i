@@ -27,5 +27,6 @@
 %rename("%s") FbxImporter::GetFileVersion;
 %rename("%s") FbxImporter::GetAnimStackCount;
 %rename("%s") FbxImporter::GetActiveAnimStackName;
+%rename("%s") FbxImporter::GetFileHeaderInfo;
 
 %include "fbxsdk/fileio/fbximporter.h"

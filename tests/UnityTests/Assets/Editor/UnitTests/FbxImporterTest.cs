@@ -56,6 +56,10 @@ namespace FbxSdk.UnitTests
 
                     Assert.IsEmpty(importer.GetActiveAnimStackName());
                     Assert.AreEqual(importer.GetAnimStackCount(), 0);
+
+                    // test GetFileHeaderInfo()
+                    TestGetter(importer.GetFileHeaderInfo());
+                    Assert.IsNotNull(importer.GetFileHeaderInfo());
                 }
                 // we actually don't care about the scene itself!
             } finally {
