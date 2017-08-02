@@ -272,14 +272,18 @@ endif(DOXYGEN_FOUND)
 ###########################################################################
 # Install Unit Tests and Mono Reflection for test converage
 include(deps/cmake/InstallMonoReflection.cmake)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
+        
+if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    install(FILES ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME} DESTINATION Plugins)
+    # install all the unit tests outside the package folder
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
+        DESTINATION ${CMAKE_BINARY_DIR}/tests)
+else() # Debug Build
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
         DESTINATION ${CMAKE_BINARY_DIR}/tests
         PATTERN "Editor/UnitTests" EXCLUDE
         PATTERN "Editor/UseCaseTests" EXCLUDE)
         
-if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
-    install(FILES ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME} DESTINATION Plugins)
-else() # Debug Build
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UseCaseTests DESTINATION Editor)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
