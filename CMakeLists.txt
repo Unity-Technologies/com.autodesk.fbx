@@ -218,6 +218,39 @@ add_custom_target(
     COMMENT "Replacing version number in README.txt"
 )
 
+# Build the generated csharp files into a multi-platform DLL
+# TODO: Make this work on Mac as well
+set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/Release")
+set(CLASS_LIBRARY_NAME "FbxSharp.dll")
+if(CMAKE_BUILD_TYPE MATCHES RELEASE)
+    add_custom_target(
+        class_library ALL
+        COMMAND "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\Csc.exe"
+                /noconfig
+                /nowarn:1701,1702,2008
+                /langversion:4
+                /nostdlib+
+                /errorreport:prompt
+                /warn:4
+                /errorendlocation
+                /preferreduilang:en-US
+                /highentropyva-
+                /reference:C:\\Windows\\Microsoft.NET\\Framework\\v2.0.50727\\mscorlib.dll
+                /reference:\"C:\\Program Files \(x86\)\\Reference Assemblies\\Microsoft\\Framework\\v3.5\\System.Core.dll\"
+                /reference:C:\\Windows\\Microsoft.NET\\Framework\\v2.0.50727\\System.dll
+                /optimize+
+                /out:FbxSharp.dll
+                /target:library
+                /utf8output
+                ${CMAKE_SOURCE_DIR}\\scripts\\Properties\\AssemblyInfo.cs
+                ${CMAKE_BINARY_DIR}\\swig\\generated\\csharp\\*.cs
+                ${CMAKE_SOURCE_DIR}\\src\\optimized\\*.cs
+        DEPENDS fbxsdk_csharp globals_replace
+        WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+        COMMENT "Building DLL"
+    )
+endif()
+
 ###########################################################################
 
 # Doxygen documentation
@@ -239,12 +272,18 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests
         DESTINATION ${CMAKE_BINARY_DIR}/tests
         PATTERN "Editor/UnitTests" EXCLUDE
         PATTERN "Editor/UseCaseTests" EXCLUDE)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UseCaseTests DESTINATION Editor)
+        
+if(CMAKE_BUILD_TYPE MATCHES RELEASE)
+    install(FILES ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME} DESTINATION Plugins)
+else() # Debug Build
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UseCaseTests DESTINATION Editor)
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
+endif()
+
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/import/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     install(TARGETS fbxsdk_csharp DESTINATION Plugins/x64/MacOS)
