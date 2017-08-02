@@ -304,7 +304,13 @@ endif()
 # copy C++ performance tests
 install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
-install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt ${CMAKE_SOURCE_DIR}/docs/LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
+if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    install(FILES ${CMAKE_SOURCE_DIR}/docs/RELEASE_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
+else()
+    install(FILES ${CMAKE_SOURCE_DIR}/docs/DEBUG_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
+endif()
 
 install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})")
 
