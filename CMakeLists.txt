@@ -222,9 +222,13 @@ add_custom_target(
 # TODO: Make this work on Mac as well
 set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/Release")
 set(CLASS_LIBRARY_NAME "FbxSharp.dll")
-if(CMAKE_BUILD_TYPE MATCHES RELEASE)
-    add_custom_target(
-        class_library ALL
+
+# make match case insensitive
+string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
+if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    add_custom_command(
+        TARGET fbxsdk_csharp
+        POST_BUILD
         COMMAND "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\Csc.exe"
                 /noconfig
                 /nowarn:1701,1702,2008
@@ -273,7 +277,7 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests
         PATTERN "Editor/UnitTests" EXCLUDE
         PATTERN "Editor/UseCaseTests" EXCLUDE)
         
-if(CMAKE_BUILD_TYPE MATCHES RELEASE)
+if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
     install(FILES ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME} DESTINATION Plugins)
 else() # Debug Build
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
