@@ -164,7 +164,9 @@ swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
 # hide FBX symbols in case the target application also has a copy of FBX
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  set_target_properties(fbxsdk_csharp PROPERTIES LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt")
+  set_target_properties(fbxsdk_csharp PROPERTIES
+  LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt"
+  BUNDLE TRUE)
 endif()
 
 ###########################################################################
