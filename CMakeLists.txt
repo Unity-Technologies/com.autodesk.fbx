@@ -191,11 +191,6 @@ swig_file_search_replace(fbxsdk_csharp globals_replace "${CMAKE_BINARY_DIR}/swig
         "LIBRARY_NAME,"
 )
 
-swig_file_search_replace(fbxsdk_csharp doxygen_readme_replace "${CMAKE_SOURCE_DIR}/docs/README.md"
-        "**Version**:"
-        "**Version**: ${PACKAGE_VERSION}"
-)
-
 ###########################################################################
 # Add target for creating a package
 set(PACKAGE_TARGET unitypackage)
