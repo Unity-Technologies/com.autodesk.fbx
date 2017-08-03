@@ -70,6 +70,8 @@ include(deps/cmake/RunPythonScript.cmake)
 # (e.g. has to be FindUNITY.cmake and UNITY or FindUnity.cmake and Unity)
 find_package(Unity)
 
+find_package(CSharpAssemblies)
+
 # Set up the include directories
 include_directories(src)
 include_directories(${FBXSDK_INCLUDE_DIR})
@@ -226,26 +228,22 @@ set(CLASS_LIBRARY_NAME "FbxSharp.dll")
 # make match case insensitive
 string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
 if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
     add_custom_command(
         TARGET fbxsdk_csharp
         POST_BUILD
-        COMMAND "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\Csc.exe"
+        COMMAND ${CS_COMPILE_CMD}
                 /noconfig
                 /nowarn:1701,1702,2008
                 /langversion:4
                 /nostdlib+
-                /errorreport:prompt
                 /warn:4
-                /errorendlocation
-                /preferreduilang:en-US
-                /highentropyva-
-                /reference:C:\\Windows\\Microsoft.NET\\Framework\\v2.0.50727\\mscorlib.dll
-                /reference:\"C:\\Program Files \(x86\)\\Reference Assemblies\\Microsoft\\Framework\\v3.5\\System.Core.dll\"
-                /reference:C:\\Windows\\Microsoft.NET\\Framework\\v2.0.50727\\System.dll
+                /reference:${MSCORLIB_LIBRARY}
+                /reference:\"${SYSTEM_CORE_LIBRARY}\"
+                /reference:${SYSTEM_LIBRARY}
                 /optimize+
                 /out:FbxSharp.dll
                 /target:library
-                /utf8output
                 ${CMAKE_SOURCE_DIR}\\scripts\\Properties\\AssemblyInfo.cs
                 ${CMAKE_BINARY_DIR}\\swig\\generated\\csharp\\*.cs
                 ${CMAKE_SOURCE_DIR}\\src\\optimized\\*.cs
