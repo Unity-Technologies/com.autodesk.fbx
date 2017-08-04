@@ -231,22 +231,23 @@ string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
 if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
     string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
     
-    if(PLATFORM_ID MATCHES "Darwin")
+    # Quoting/Slashes are different depending on the platform
+    if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         set(PLATFORM_DIFFERING_ARGS 
-        "/reference:"\"${MSCORLIB_LIBRARY}\"" \
-         /reference:"\"${SYSTEM_CORE_LIBRARY}\"" \
-         /reference:"\"${SYSTEM_LIBRARY}\"" \
-         ${CMAKE_SOURCE_DIR}/scripts/Properties/AssemblyInfo.cs \
-         ${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs \
-         ${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
-    else()
-        set(PLATFORM_DIFFERING_ARGS 
-        "/reference:\"${MSCORLIB_LIBRARY}\" \
-         /reference:\"${SYSTEM_CORE_LIBRARY}\" \
-         /reference:\"${SYSTEM_LIBRARY}\" \
+        "/reference:\"${CSHARP_MSCORLIB_LIBRARY}\" \
+         /reference:\"${CSHARP_SYSTEM_CORE_LIBRARY}\" \
+         /reference:\"${CSHARP_SYSTEM_LIBRARY}\" \
          ${CMAKE_SOURCE_DIR}/scripts/Properties\\AssemblyInfo.cs \
          ${CMAKE_BINARY_DIR}/swig/generated/csharp\\*.cs \
          ${CMAKE_SOURCE_DIR}/src/optimized\\*.cs")
+    else()
+         set(PLATFORM_DIFFERING_ARGS 
+        "/reference:"\"${CSHARP_MSCORLIB_LIBRARY}\"" \
+         /reference:"\"${CSHARP_SYSTEM_CORE_LIBRARY}\"" \
+         /reference:"\"${CSHARP_SYSTEM_LIBRARY}\"" \
+         ${CMAKE_SOURCE_DIR}/scripts/Properties/AssemblyInfo.cs \
+         ${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs \
+         ${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
     endif()
     
     add_custom_target(
