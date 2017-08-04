@@ -16,7 +16,6 @@ message("Using .Net versions ${NET_COMPILER_VERSIONS}")
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
 
-  # Platform-specific code.
   if(NOT DEFINED MONODEVELOP_PATH)
       set(MONODEVELOP_PATH "/Applications/Unity/MonoDevelop.app")
   endif()
@@ -44,11 +43,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   find_program(MONO_COMPILER mono PATH ${MONO_COMPILER_PATH})
   message("Found: ${MONO_COMPILER}\n")
   
-  message("Looking for mcs in ${CSHARP_COMPILER_PATHS}")
-  find_program(CSHARP_COMPILER mcs PATHS ${CSHARP_COMPILER_PATHS} NO_DEFAULT_PATH)
-  find_program(CSHARP_COMPILER mcs PATHS ${CSHARP_COMPILER_PATHS})
-  message("Found: ${CSHARP_COMPILER}\n")
-  
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
 
@@ -67,15 +61,14 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     list(APPEND CSHARP_DLL_PATHS "${DOT_NET_PATH}/v${VERSION}")
   endforeach()
   
-  message("Looking for Csc.exe in ${CSHARP_COMPILER_PATHS}")
-  find_program(CSHARP_COMPILER csc PATHS ${CSHARP_COMPILER_PATHS} NO_DEFAULT_PATH)
-  find_program(CSHARP_COMPILER csc PATHS ${CSHARP_COMPILER_PATHS})
-  message("Found: ${CSHARP_COMPILER}\n")
-  
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   message(WARNING "Linux: Not Implemented")
 endif()
 
+message("Looking for C# compiler in ${CSHARP_COMPILER_PATHS}")
+find_program(CSHARP_COMPILER mcs csc PATHS ${CSHARP_COMPILER_PATHS} NO_DEFAULT_PATH)
+find_program(CSHARP_COMPILER mcs csc PATHS ${CSHARP_COMPILER_PATHS})
+message("Found: ${CSHARP_COMPILER}\n")
 
 message("Looking for mscorlib.dll in ${CSHARP_DLL_PATHS}")
 find_library(CSHARP_MSCORLIB_LIBRARY mscorlib.dll PATHS ${CSHARP_DLL_PATHS} NO_DEFAULT_PATH)
