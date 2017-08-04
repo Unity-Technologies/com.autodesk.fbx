@@ -254,13 +254,13 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
 
         FILE(GLOB CSHARP_SOURCES_optimized "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
         SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_optimized})
-        MESSAGE(STATUS "CSHARP_SOURCES is: " "${CSHARP_SOURCES}")
 
         set(CSHARP_GENERATED_SOURCES "\"${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs\"")
-        MESSAGE(STATUS "CSHARP_GENERATED_SOURCES is: " "${CSHARP_GENERATED_SOURCES}")
         
         SET(CSHARP_UNITYEDITOR_LIBRARY "/Applications/Unity 2017.1.0f3/Unity.app/Contents/Managed/UnityEditor.dll")
 
+        set(CSHARP_REFERENCES /reference:"\"${CSHARP_MSCORLIB_LIBRARY}\"";/reference:"\"${CSHARP_SYSTEM_CORE_LIBRARY}\"";/reference:"\"${CSHARP_SYSTEM_LIBRARY}\"";/reference:"\"${CSHARP_UNITYEDITOR_LIBRARY}\"")
+        
         add_custom_target(
             class_library ALL
             COMMAND "${CS_COMPILE_CMD}"
@@ -272,10 +272,7 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
                     /optimize+
                     /out:${CLASS_LIBRARY_NAME}
                     /target:library
-                    /reference:"\"${CSHARP_MSCORLIB_LIBRARY}\""
-                    /reference:"\"${CSHARP_SYSTEM_CORE_LIBRARY}\""
-                    /reference:"\"${CSHARP_SYSTEM_LIBRARY}\""
-                    /reference:"\"${CSHARP_UNITYEDITOR_LIBRARY}\""
+                    ${CSHARP_REFERENCES}
                     ${CSHARP_SOURCES}
                     ${CSHARP_GENERATED_SOURCES}
             DEPENDS fbxsdk_csharp globals_replace
