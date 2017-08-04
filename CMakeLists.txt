@@ -241,6 +241,7 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
                     /reference:\"${CSHARP_MSCORLIB_LIBRARY}\"
                     /reference:\"${CSHARP_SYSTEM_CORE_LIBRARY}\"
                     /reference:\"${CSHARP_SYSTEM_LIBRARY}\"
+                    /reference:\"${CSHARP_UNITYEDITOR_LIBRARY}\"
                     ${CMAKE_SOURCE_DIR}/scripts/Properties\\AssemblyInfo.cs
                     ${CMAKE_SOURCE_DIR}/src/optimized\\*.cs
                     ${CMAKE_BINARY_DIR}/swig/generated/csharp\\*.cs
