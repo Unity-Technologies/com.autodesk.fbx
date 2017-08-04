@@ -226,34 +226,59 @@ string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
 if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
     string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
 
-    FILE(GLOB CSHARP_SOURCES_properties "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
-    SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_properties})
+    if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        add_custom_target(
+            class_library ALL
+            COMMAND "${CS_COMPILE_CMD}"
+                    /noconfig
+                    /nowarn:1701,1702,2008
+                    /langversion:4
+                    /nostdlib+
+                    /warn:4
+                    /optimize+
+                    /out:${CLASS_LIBRARY_NAME}
+                    /target:library
+                    /reference:\"${CSHARP_MSCORLIB_LIBRARY}\"
+                    /reference:\"${CSHARP_SYSTEM_CORE_LIBRARY}\"
+                    /reference:\"${CSHARP_SYSTEM_LIBRARY}\"
+                    ${CMAKE_SOURCE_DIR}/scripts/Properties\\AssemblyInfo.cs
+                    ${CMAKE_SOURCE_DIR}/src/optimized\\*.cs
+                    ${CMAKE_BINARY_DIR}/swig/generated/csharp\\*.cs
+            DEPENDS fbxsdk_csharp globals_replace
+            COMMENT "Building FbxSharp assembly"
+            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+        )
+    else()
+        FILE(GLOB CSHARP_SOURCES_properties "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
+        SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_properties})
 
-    FILE(GLOB CSHARP_SOURCES_optimized "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
-    SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_optimized})
+        FILE(GLOB CSHARP_SOURCES_optimized "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
+        SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_optimized})
 
-    FILE(GLOB CSHARP_SOURCES_generated "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs")
-    SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_generated})
+        FILE(GLOB CSHARP_SOURCES_generated "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs")
+        SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_generated})
 
-    add_custom_target(
-        class_library ALL
-        COMMAND "${CS_COMPILE_CMD}"
-                /noconfig
-                /nowarn:1701,1702,2008
-                /langversion:4
-                /nostdlib+
-                /warn:4
-                /optimize+
-                /out:${CLASS_LIBRARY_NAME}
-                /target:library
-                /reference:"\"${CSHARP_MSCORLIB_LIBRARY}\""
-                /reference:"\"${CSHARP_SYSTEM_CORE_LIBRARY}\""
-                /reference:"\"${CSHARP_SYSTEM_LIBRARY}\""
-                ${CSHARP_SOURCES}
-        DEPENDS fbxsdk_csharp globals_replace
-        COMMENT "Building FbxSharp assembly"
-        WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
-    )
+        add_custom_target(
+            class_library ALL
+            COMMAND "${CS_COMPILE_CMD}"
+                    /noconfig
+                    /nowarn:1701,1702,2008
+                    /langversion:4
+                    /nostdlib+
+                    /warn:4
+                    /optimize+
+                    /out:${CLASS_LIBRARY_NAME}
+                    /target:library
+                    /reference:"\"${CSHARP_MSCORLIB_LIBRARY}\""
+                    /reference:"\"${CSHARP_SYSTEM_CORE_LIBRARY}\""
+                    /reference:"\"${CSHARP_SYSTEM_LIBRARY}\""
+                    ${CSHARP_SOURCES}
+            DEPENDS fbxsdk_csharp globals_replace
+            COMMENT "Building FbxSharp assembly"
+            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+        )
+    endif()
+    
     add_custom_target(
         class_library_dir
         COMMAND         ${CMAKE_COMMAND} -E make_directory ${CLASS_LIBRARY_DEST}
