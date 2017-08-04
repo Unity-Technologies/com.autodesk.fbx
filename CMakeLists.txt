@@ -70,6 +70,8 @@ include(deps/cmake/RunPythonScript.cmake)
 # (e.g. has to be FindUNITY.cmake and UNITY or FindUnity.cmake and Unity)
 find_package(Unity)
 
+find_package(CSharpAssemblies)
+
 # Set up the include directories
 include_directories(src)
 include_directories(${FBXSDK_INCLUDE_DIR})
@@ -184,9 +186,7 @@ set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks"
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
 ###########################################################################
-
 # Replace "fbsdsk_csharp" with variable LIBRARY_NAME in GlobalsPINVOKE.cs
-# so that loading the DLL in Unity on Mac just works.
 # LIBRARY_NAME is defined in fbxsdk.i
 swig_file_search_replace(fbxsdk_csharp globals_replace "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
         "\\\\\"fbxsdk_csharp\\\\\"," # In cmake have to use 4 backslashes to get escape the backslash char
@@ -202,6 +202,7 @@ add_custom_target(
         COMMENT "Creating Unity Package ${PACKAGE_PATH}"
     )
 
+###########################################################################
 # Add target to replace the version number in README.txt
 set(README_TARGET readme_replace)
 add_custom_target(
@@ -214,6 +215,45 @@ add_custom_target(
     DEPENDS "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
     COMMENT "Replacing version number in README.txt"
 )
+
+###########################################################################
+# Add custom command to build the generated csharp files into a multi-platform DLL
+set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/Release")
+set(CLASS_LIBRARY_NAME "FbxSharp.dll")
+
+# make match case insensitive
+string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
+if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
+    
+    add_custom_target(
+        class_library ALL
+        COMMAND "${CS_COMPILE_CMD}"
+                /noconfig
+                /nowarn:1701,1702,2008
+                /langversion:4
+                /nostdlib+
+                /warn:4
+                /optimize+
+                /out:${CLASS_LIBRARY_NAME}
+                /target:library
+                /reference:"\"${CSHARP_MSCORLIB_LIBRARY}\""
+                /reference:"\"${CSHARP_SYSTEM_CORE_LIBRARY}\""
+                /reference:"\"${CSHARP_SYSTEM_LIBRARY}\""
+                ${CMAKE_SOURCE_DIR}/scripts/Properties/AssemblyInfo.cs
+                ${CMAKE_SOURCE_DIR}/src/optimized/*.cs
+                ${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs
+        DEPENDS fbxsdk_csharp globals_replace
+        COMMENT "Building FbxSharp assembly"
+        WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+    )
+    add_custom_target(
+        class_library_dir
+        COMMAND         ${CMAKE_COMMAND} -E make_directory ${CLASS_LIBRARY_DEST}
+    )    
+    add_dependencies(class_library class_library_dir)
+    
+endif()
 
 ###########################################################################
 
@@ -232,16 +272,26 @@ endif(DOXYGEN_FOUND)
 ###########################################################################
 # Install Unit Tests and Mono Reflection for test converage
 include(deps/cmake/InstallMonoReflection.cmake)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
+        
+if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    install(FILES ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME} DESTINATION Plugins)
+    # install all the unit tests outside the package folder
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
+        DESTINATION ${CMAKE_BINARY_DIR}/tests)
+else() # Debug Build
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
         DESTINATION ${CMAKE_BINARY_DIR}/tests
         PATTERN "Editor/UnitTests" EXCLUDE
         PATTERN "Editor/UseCaseTests" EXCLUDE)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UseCaseTests DESTINATION Editor)
+        
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UseCaseTests DESTINATION Editor)
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
+endif()
+
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/import/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     install(TARGETS fbxsdk_csharp DESTINATION Plugins/x64/MacOS)
@@ -254,7 +304,13 @@ endif()
 # copy C++ performance tests
 install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
-install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt ${CMAKE_SOURCE_DIR}/docs/LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
+if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    install(FILES ${CMAKE_SOURCE_DIR}/docs/RELEASE_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
+else()
+    install(FILES ${CMAKE_SOURCE_DIR}/docs/DEBUG_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
+endif()
 
 install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})")
 
