@@ -226,9 +226,31 @@ string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
 if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
     string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
 
-    if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        add_custom_target(
+            class_library ALL
+            COMMAND "${CS_COMPILE_CMD}"
+                    /noconfig
+                    /nowarn:1701,1702,2008
+                    /langversion:4
+                    /nostdlib+
+                    /warn:4
+                    /optimize+
+                    /out:${CLASS_LIBRARY_NAME}
+                    /target:library
+                    /reference:\"${CSHARP_MSCORLIB_LIBRARY}\"
+                    /reference:\"${CSHARP_SYSTEM_CORE_LIBRARY}\"
+                    /reference:\"${CSHARP_SYSTEM_LIBRARY}\"
+                    ${CMAKE_SOURCE_DIR}/scripts/Properties\\AssemblyInfo.cs
+                    ${CMAKE_SOURCE_DIR}/src/optimized\\*.cs
+                    ${CMAKE_BINARY_DIR}/swig/generated/csharp\\*.cs
+            DEPENDS fbxsdk_csharp globals_replace
+            COMMENT "Building FbxSharp assembly"
+            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+        )
+    else()
         FILE(GLOB CSHARP_SOURCES_properties "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
-        SET(CSHARP_SOURCES ${CSHARP_SOURCES_properties})
+        SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_properties})
 
         FILE(GLOB CSHARP_SOURCES_optimized "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
         SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_optimized})
@@ -241,7 +263,7 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
 
         add_custom_target(
             class_library ALL
-            COMMAND echo "${CS_COMPILE_CMD}"
+            COMMAND "${CS_COMPILE_CMD}"
                     /noconfig
                     /nowarn:1701,1702,2008
                     /langversion:4
@@ -256,36 +278,6 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
                     /reference:"\"${CSHARP_UNITYEDITOR_LIBRARY}\""
                     ${CSHARP_SOURCES}
                     ${CSHARP_GENERATED_SOURCES}
-            DEPENDS fbxsdk_csharp globals_replace
-            COMMENT "Building FbxSharp assembly"
-            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
-        )
-        
-    else()
-        set(CSHARP_REFERENCES 
-        "/reference:\"${MSCORLIB_LIBRARY}\" \
-         /reference:\"${SYSTEM_CORE_LIBRARY}\" \
-         /reference:\"${SYSTEM_LIBRARY}\"")
-         
-        set(CSHARP_SOURCES 
-         "${CMAKE_SOURCE_DIR}/scripts/Properties\\AssemblyInfo.cs \
-         ${CMAKE_SOURCE_DIR}/src/optimized\\*.cs")
-         
-        set(CSHARP_GENERATED_SOURCES 
-            "${CMAKE_BINARY_DIR}/swig/generated/csharp\\*.cs")
-        
-        add_custom_target(
-            class_library ALL
-            COMMAND echo "${CS_COMPILE_CMD}"
-                    /noconfig
-                    /nowarn:1701,1702,2008
-                    /langversion:4
-                    /nostdlib+
-                    /warn:4
-                    /optimize+
-                    /out:${CLASS_LIBRARY_NAME}
-                    /target:library
-                    ${CSHARP_REFERENCES} ${CSHARP_SOURCES} ${CSHARP_GENERATED_SOURCES}
             DEPENDS fbxsdk_csharp globals_replace
             COMMENT "Building FbxSharp assembly"
             WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
