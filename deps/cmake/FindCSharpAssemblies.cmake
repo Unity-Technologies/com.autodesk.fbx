@@ -14,9 +14,15 @@ message("Using .Net versions ${NET_COMPILER_VERSIONS}")
 
 # Platform-specific code.
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+  SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
 
-  set(NET_PATH "/Applications/Unity/MonoDevelop.app/Contents/Frameworks/Mono.framework/Versions/Current/lib/mono")
-  set(MONO_COMPILER_PATH "/Applications/Unity/MonoDevelop.app/Contents/Frameworks/Mono.framework/Versions/Current/bin")
+  # Platform-specific code.
+  if(NOT DEFINED MONODEVELOP_PATH)
+      set(MONODEVELOP_PATH "/Applications/Unity/MonoDevelop.app")
+  endif()
+
+  set(MONO_COMPILER_PATH "${MONODEVELOP_PATH}/Contents/Frameworks/Mono.framework/Versions/Current/bin")
+  set(NET_PATH "${MONODEVELOP_PATH}/Contents/Frameworks/Mono.framework/Versions/Current/lib/mono")
   
   foreach(VERSION ${NET_COMPILER_VERSIONS})
     message("Looking for mcs.exe in ${NET_PATH}/${VERSION}")

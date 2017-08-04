@@ -184,15 +184,15 @@ set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks"
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
 ###########################################################################
-
 # Replace "fbsdsk_csharp" with variable LIBRARY_NAME in GlobalsPINVOKE.cs
-# so that loading the DLL in Unity on Mac just works.
 # LIBRARY_NAME is defined in fbxsdk.i
 swig_file_search_replace(fbxsdk_csharp globals_replace "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
         "\\\\\"fbxsdk_csharp\\\\\"," # In cmake have to use 4 backslashes to get escape the backslash char
         "LIBRARY_NAME,"
 )
 
+###########################################################################
+# Replace version tag with version number
 swig_file_search_replace(fbxsdk_csharp doxygen_readme_replace "${CMAKE_SOURCE_DIR}/docs/README.md"
         "**Version**:"
         "**Version**: ${PACKAGE_VERSION}"
@@ -207,6 +207,7 @@ add_custom_target(
         COMMENT "Creating Unity Package ${PACKAGE_PATH}"
     )
 
+###########################################################################
 # Add target to replace the version number in README.txt
 set(README_TARGET readme_replace)
 add_custom_target(
@@ -220,8 +221,8 @@ add_custom_target(
     COMMENT "Replacing version number in README.txt"
 )
 
-# Build the generated csharp files into a multi-platform DLL
-# TODO: Make this work on Mac as well
+###########################################################################
+# Add custom command to build the generated csharp files into a multi-platform DLL
 set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/Release")
 set(CLASS_LIBRARY_NAME "FbxSharp.dll")
 
@@ -230,26 +231,28 @@ string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
 if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
     string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
     add_custom_command(
-        TARGET fbxsdk_csharp
+        TARGET globals_replace
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CLASS_LIBRARY_DEST}
         POST_BUILD
-        COMMAND ${CS_COMPILE_CMD}
+        COMMAND "${CS_COMPILE_CMD}"
                 /noconfig
                 /nowarn:1701,1702,2008
                 /langversion:4
                 /nostdlib+
                 /warn:4
-                /reference:${MSCORLIB_LIBRARY}
-                /reference:\"${SYSTEM_CORE_LIBRARY}\"
-                /reference:${SYSTEM_LIBRARY}
+                /reference:"\"${MSCORLIB_LIBRARY}\""
+                /reference:"\"${SYSTEM_CORE_LIBRARY}\""
+                /reference:"\"${SYSTEM_LIBRARY}\""
                 /optimize+
-                /out:FbxSharp.dll
+                /out:${CLASS_LIBRARY_NAME}
                 /target:library
-                ${CMAKE_SOURCE_DIR}\\scripts\\Properties\\AssemblyInfo.cs
-                ${CMAKE_BINARY_DIR}\\swig\\generated\\csharp\\*.cs
-                ${CMAKE_SOURCE_DIR}\\src\\optimized\\*.cs
+                ${CMAKE_SOURCE_DIR}/scripts/Properties/AssemblyInfo.cs
+                ${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs
+                ${CMAKE_SOURCE_DIR}/src/optimized/*.cs
         DEPENDS fbxsdk_csharp globals_replace
-        WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
         COMMENT "Building DLL"
+        WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
     )
 endif()
 
