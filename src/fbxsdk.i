@@ -155,18 +155,7 @@
     return System.Convert.ToChar(ret);
   }
   
-%pragma(csharp) imclasscode=%{
-    private static bool c35f7de766d344b5882e24bf9e9e08c4c()
-    {
-        UnityEditor.EditorApplication.LockReloadAssemblies();
-        UnityEditor.EditorApplication.UnlockReloadAssemblies();
-
-        return true;
-    }
-
-    private static bool Checked = c35f7de766d344b5882e24bf9e9e08c4c();
-%}
-
+  
 %pragma(csharp) imclasscode=%{
 #if UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX
   private const string LIBRARY_NAME = "Assets/FbxSdk/Plugins/x64/MacOS/libfbxsdk_csharp.so";
@@ -176,8 +165,7 @@
   private const string LIBRARY_NAME = "fbxsdk_csharp";
 #endif
 %}
-
-
+  
 /*
  * How to handle strings. Must be before the includes that actually include code.
  */
