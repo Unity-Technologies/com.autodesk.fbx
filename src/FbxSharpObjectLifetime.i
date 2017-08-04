@@ -65,7 +65,17 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
 %pragma(csharp) imclasscode=%{
   // Set up the FBX allocators at static init time.
   [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="CSharp_$module_InitFbxAllocators")]
-  private static extern int InitFbxAllocators();
+  private static extern int _InitFbxAllocators();
+
+  private static int InitFbxAllocators()
+  {
+      int result = -1;
+      UnityEditor.EditorApplication.LockReloadAssemblies();
+      result = _InitFbxAllocators();
+      UnityEditor.EditorApplication.UnlockReloadAssemblies();
+      return result;
+  }
+    
   protected static int initFbx = InitFbxAllocators(); /* protected to quiet a warning */
 
   [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="CSharp_$module_Release_WeakPointerHandle")]
