@@ -166,7 +166,9 @@ swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
 
 # hide FBX symbols in case the target application also has a copy of FBX
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  set_target_properties(fbxsdk_csharp PROPERTIES LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt")
+  set_target_properties(fbxsdk_csharp PROPERTIES
+  LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt"
+  BUNDLE TRUE)
 endif()
 
 ###########################################################################
@@ -189,13 +191,6 @@ set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 swig_file_search_replace(fbxsdk_csharp globals_replace "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
         "\\\\\"fbxsdk_csharp\\\\\"," # In cmake have to use 4 backslashes to get escape the backslash char
         "LIBRARY_NAME,"
-)
-
-###########################################################################
-# Replace version tag with version number
-swig_file_search_replace(fbxsdk_csharp doxygen_readme_replace "${CMAKE_SOURCE_DIR}/docs/README.md"
-        "**Version**:"
-        "**Version**: ${PACKAGE_VERSION}"
 )
 
 ###########################################################################
