@@ -61,7 +61,7 @@ if (NOT DEFINED UNITY_EDITOR_DLL_PATH)
     message("Found: ${CSHARP_UNITYEDITOR_LIBRARY}")
     
     # Standard code to report whether we found the package or not.
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(Unity DEFAULT_MSG CSHARP_UNITYEDITOR_LIBRARY)
+    FIND_PACKAGE_HANDLE_STANDARD_ARGS(UnityEditor DEFAULT_MSG CSHARP_UNITYEDITOR_LIBRARY)
 else()
     message("Using ${UNITY_EDITOR_DLL_PATH}")
 endif()
