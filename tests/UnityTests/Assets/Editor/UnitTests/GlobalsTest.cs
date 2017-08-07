@@ -5,7 +5,7 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using FbxSdk;
+using Unity.FbxSdk;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -28,9 +28,9 @@ namespace FbxSdk.UnitTests
                 CoverageTester.CollectTestMethods(t, unitTestMethods);
             }
 
-            /* Search the assembly that FbxSdk.Globals is in to find classes in
+            /* Search the assembly that Unity.FbxSdk.Globals is in to find classes in
              * the FbxSdk namespace to test. */
-            alltypes = typeof(FbxSdk.Globals).Assembly.GetTypes();
+            alltypes = typeof(Unity.FbxSdk.Globals).Assembly.GetTypes();
             var methodsToCover = new List<MethodBase>();
             foreach(var t in alltypes) {
                 if (t.Namespace != "FbxSdk") {
@@ -69,7 +69,7 @@ namespace FbxSdk.UnitTests
         {
             /* We test the PINVOKE class by reflection since it's private to
              * its assembly. */
-            var alltypes = typeof(FbxSdk.Globals).Assembly.GetTypes();
+            var alltypes = typeof(Unity.FbxSdk.Globals).Assembly.GetTypes();
             foreach(var t in alltypes) {
                 if (t.Namespace == "FbxSdk" && t.Name == kPINVOKE) {
                     s_PINVOKEtype = t;

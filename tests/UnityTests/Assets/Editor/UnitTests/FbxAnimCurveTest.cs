@@ -7,7 +7,7 @@
 
 using NUnit.Framework;
 using System.Collections.Generic;
-using FbxSdk;
+using Unity.FbxSdk;
 
 namespace FbxSdk.UnitTests
 {

@@ -9,7 +9,7 @@
 
 using NUnit.Framework;
 using System.Collections;
-using FbxSdk;
+using Unity.FbxSdk;
 
 /*
  * Convenience class for testing all derived classes of FbxLayerElement.
@@ -19,7 +19,7 @@ using FbxSdk;
  */
 namespace FbxSdk.UnitTests
 {
-    public abstract class FbxLayerElementTestBase<T> where T: FbxSdk.FbxLayerElement
+    public abstract class FbxLayerElementTestBase<T> where T: Unity.FbxSdk.FbxLayerElement
     {
         // Note: Create function is only present in derived classes (those which are actually used).
         //       Included it here so that we can test FbxLayerElement functions, and because they

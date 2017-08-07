@@ -6,7 +6,7 @@
 // ***********************************************************************
 
 using NUnit.Framework;
-using FbxSdk;
+using Unity.FbxSdk;
 using System.IO;
 using System.Collections.Generic;
 
