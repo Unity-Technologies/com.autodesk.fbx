@@ -11,9 +11,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-using FbxSdk;
 
-namespace FbxSdk.Examples
+namespace Unity.FbxSdk.Examples
 {
     namespace Editor
     {
@@ -324,7 +323,7 @@ namespace FbxSdk.Examples
             protected void SetDefaultCamera (FbxScene fbxScene)
             {
                 if (DefaultCamera == "")
-                    DefaultCamera = FbxSdk.Globals.FBXSDK_CAMERA_PERSPECTIVE;
+                    DefaultCamera = Globals.FBXSDK_CAMERA_PERSPECTIVE;
 
                 fbxScene.GetGlobalSettings ().SetDefaultCamera (DefaultCamera);
             }

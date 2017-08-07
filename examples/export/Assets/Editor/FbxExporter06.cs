@@ -13,7 +13,7 @@ using UnityEngine.SceneManagement;
 using UnityEditor;
 
 
-namespace FbxSdk.Examples
+namespace Unity.FbxSdk.Examples
 {
     namespace Editor
     {
