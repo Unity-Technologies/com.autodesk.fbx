@@ -1,5 +1,13 @@
 #RELEASE NOTES
 
+**Version**: 0.0.8a
+
+Updated LICENCSE.txt to include Autodesk license
+
+Use .bundle on Mac instead of .so for shared libraries
+
+Ship bindings as binaries without source
+
 **Version**: 0.0.7a
 Note: skipping version 0.0.6a so that FbxSdk package version matches FbxExporter package version
 
