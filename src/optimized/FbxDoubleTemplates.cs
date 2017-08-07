@@ -5,7 +5,7 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 
-namespace FbxSdk
+namespace Unity.FbxSdk
 {
     /**
      * The structs in this file are for optimized transfer. Their layout must
