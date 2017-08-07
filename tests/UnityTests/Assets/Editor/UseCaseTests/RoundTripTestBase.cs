@@ -10,7 +10,7 @@ using System.IO;
 using System.Collections.Generic;
 using Unity.FbxSdk;
 
-namespace FbxSdk.UseCaseTests
+namespace Unity.FbxSdk.UseCaseTests
 {
     public abstract class RoundTripTestBase
     {

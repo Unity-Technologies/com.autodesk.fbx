@@ -9,7 +9,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.FbxSdk;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
     public class FbxAnimCurveTest : Base<FbxAnimCurve>
     {

@@ -8,7 +8,7 @@ using NUnit.Framework;
 using System.Collections;
 using Unity.FbxSdk;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
 
     public class FbxIOBaseTest<T> : Base<T> where T: FbxIOBase

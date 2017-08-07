@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Unity.FbxSdk;
 using System.Collections.Generic;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
     public class FbxVector2Test
     {

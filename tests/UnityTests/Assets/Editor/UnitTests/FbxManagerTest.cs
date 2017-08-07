@@ -7,7 +7,7 @@
 using NUnit.Framework;
 using Unity.FbxSdk;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
 
     public class FbxManagerTest

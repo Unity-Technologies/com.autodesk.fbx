@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Unity.FbxSdk;
 using System.IO;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
     public class FbxExporterTest : FbxIOBaseTest<FbxExporter>
     {

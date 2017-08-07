@@ -8,7 +8,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.FbxSdk;
 
-namespace FbxSdk.UseCaseTests
+namespace Unity.FbxSdk.UseCaseTests
 {
     public class AnimationClipsExportTest : RoundTripTestBase
     {

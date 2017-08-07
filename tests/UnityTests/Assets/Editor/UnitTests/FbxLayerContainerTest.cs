@@ -9,7 +9,7 @@ using NUnit.Framework;
 using System.Collections;
 using Unity.FbxSdk;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
     public class FbxLayerContainerBase<T> : FbxNodeAttributeBase<T> where T:FbxLayerContainer
     {

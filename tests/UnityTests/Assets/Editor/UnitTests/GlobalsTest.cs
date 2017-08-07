@@ -9,7 +9,7 @@ using Unity.FbxSdk;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
     public class GlobalsTest
     {
