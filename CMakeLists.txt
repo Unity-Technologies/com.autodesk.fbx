@@ -295,13 +295,23 @@ endif()
 # Doxygen documentation
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
+set(DOXYGEN_TARGET doc)
+set(DOXYGEN_ZIP_TARGET create_doc_zip)
+set(DOC_ZIP_NAME "docs.zip")
 if(DOXYGEN_FOUND)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-add_custom_target(doc
-${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-COMMENT "Generating API documentation with Doxygen" VERBATIM
-)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+    add_custom_target(${DOXYGEN_TARGET}
+        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "Generating API documentation with Doxygen" VERBATIM
+        DEPENDS fbsdsk_csharp
+    )
+
+    add_custom_target(${DOXYGEN_ZIP_TARGET}
+        COMMAND ${CMAKE_COMMAND} -E tar "cfv" ${DOC_ZIP_NAME} --format=zip
+           "${CMAKE_CURRENT_BINARY_DIR}/docs"
+        DEPENDS doc
+    )
 endif(DOXYGEN_FOUND)
     
 ###########################################################################
@@ -348,6 +358,13 @@ else()
 endif()
 
 install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})")
+
+if(DOXYGEN_FOUND AND LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    # generate and copy docs. This has to happen after the README.txt has been copied into the build dir
+    install(CODE "execute_process(COMMAND cmake --build . --target ${DOXYGEN_TARGET})")
+    install(CODE "execute_process(COMMAND cmake --build . --target ${DOXYGEN_ZIP_TARGET})")
+    install(FILES ${CMAKE_BINARY_DIR}/${DOC_ZIP_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+endif()
 
 # Create the package after all the installs complete if CREATE_PACKAGE set to ON
 if(CREATE_PACKAGE)

@@ -29,3 +29,9 @@ How to Run the Unit Tests
 2. Make sure the EditMode tab is selected
 3. Two categories of tests should show up (UnitTests, UseCaseTests).
    Select the tests to run, and click Run Selected, or Run All to run all the tests.
+
+   
+How to Access Documentation for Bindings
+----------------------------------------
+1. Unzip Assets/FbxSdk/docs.zip
+2. Open docs/html/index.html
