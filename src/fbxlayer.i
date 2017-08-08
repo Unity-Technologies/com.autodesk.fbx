@@ -164,7 +164,7 @@
 %add_default_template_constructor(FbxLayerElementArrayTemplate<FbxSurfaceMaterial*>, eFbxReference);
 
 
-%include "fbxsdk_csharp-fixed-headers/fbxlayer.h"
+%include "UnityFbxSdkNative-fixed-headers/fbxlayer.h"
 
 %template(Add) FbxLayerElementArray::Add<int>;
 %template(Add) FbxLayerElementArray::Add<FbxColor>;
