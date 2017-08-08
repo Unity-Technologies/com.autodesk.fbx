@@ -6,9 +6,9 @@
 // ***********************************************************************
 using NUnit.Framework;
 using System.Collections;
-using FbxSdk;
+using Unity.FbxSdk;
 
-namespace FbxSdk.UseCaseTests
+namespace Unity.FbxSdk.UseCaseTests
 {
     public class CustomPropertiesExportTest : HierarchyExportTest
     {

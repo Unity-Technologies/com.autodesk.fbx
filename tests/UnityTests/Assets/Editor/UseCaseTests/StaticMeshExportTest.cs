@@ -7,9 +7,9 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
-using FbxSdk;
+using Unity.FbxSdk;
 
-namespace FbxSdk.UseCaseTests
+namespace Unity.FbxSdk.UseCaseTests
 {
     public class StaticMeshExportTest : RoundTripTestBase
     {

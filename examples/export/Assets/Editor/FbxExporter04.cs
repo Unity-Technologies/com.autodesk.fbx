@@ -10,9 +10,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-using FbxSdk;
+using Unity.FbxSdk;
 
-namespace FbxSdk.Examples
+namespace Unity.FbxSdk.Examples
 {
     namespace Editor
     {

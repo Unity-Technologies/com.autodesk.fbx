@@ -5,10 +5,10 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using FbxSdk;
+using Unity.FbxSdk;
 using System.Collections.Generic;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
     public class FbxDocumentTest : Base<FbxDocument>
     {

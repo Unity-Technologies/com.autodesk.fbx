@@ -8,9 +8,9 @@ using NUnit.Framework;
 using System.Collections;
 using System.IO;
 using System.Collections.Generic;
-using FbxSdk;
+using Unity.FbxSdk;
 
-namespace FbxSdk.UseCaseTests
+namespace Unity.FbxSdk.UseCaseTests
 {
     public abstract class RoundTripTestBase
     {

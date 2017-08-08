@@ -5,13 +5,13 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using FbxSdk;
+using Unity.FbxSdk;
 
 using System.Collections.Generic;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
-    public abstract class Base<T> : TestBase<T> where T: FbxSdk.FbxObject
+    public abstract class Base<T> : TestBase<T> where T: Unity.FbxSdk.FbxObject
     {
         // T.Create(FbxManager, string)
         static System.Reflection.MethodInfo s_createFromMgrAndName;

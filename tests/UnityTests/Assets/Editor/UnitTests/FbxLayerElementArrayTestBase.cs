@@ -7,11 +7,11 @@
 
 using NUnit.Framework;
 using System.Collections;
-using FbxSdk;
+using Unity.FbxSdk;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
-    public abstract class FbxLayerElementArrayTestBase<T> : TestBase<T> where T : FbxSdk.FbxLayerElementArray
+    public abstract class FbxLayerElementArrayTestBase<T> : TestBase<T> where T : Unity.FbxSdk.FbxLayerElementArray
     {
         public void TestBasics(T layerElementArray)
         {
@@ -76,7 +76,7 @@ namespace FbxSdk.UnitTests
         public abstract void TestBasics();
     }
 
-    public abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTestBase<T> where T : FbxSdk.FbxLayerElementArray {
+    public abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTestBase<T> where T : Unity.FbxSdk.FbxLayerElementArray {
 
         static System.Reflection.MethodInfo s_getAt;
         static System.Reflection.ConstructorInfo s_constructor;

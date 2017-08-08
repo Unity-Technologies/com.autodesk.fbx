@@ -5,9 +5,9 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using FbxSdk;
+using Unity.FbxSdk;
 
-namespace FbxSdk.UnitTests
+namespace Unity.FbxSdk.UnitTests
 {
     /// <summary>
     /// Run some tests that any vector type should be able to pass.
