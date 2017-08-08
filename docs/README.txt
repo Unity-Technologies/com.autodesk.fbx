@@ -8,7 +8,7 @@ See LICENSE.txt file in the project root for full license information.
 
 **Version**:
 
-This package contains only a subset of the FbxSdk.
+This package contains only a subset of the FbxSdk, and is designed to work in the Editor only.
 
 How to Access Bindings in Code
 -------------------------------
@@ -22,16 +22,9 @@ How to Access Global Variables and Functions
 All global variables and functions are in Globals.cs, in the Globals class under the FbxSdk namespace.
 e.g. if we want to access the IOSROOT variable, we would do FbxSdk.Globals.IOSROOT
 
-
-How to Run the Unit Tests
--------------------------
-1. Open the Test Runner window at Window->Test Runner
-2. Make sure the EditMode tab is selected
-3. Two categories of tests should show up (UnitTests, UseCaseTests).
-   Select the tests to run, and click Run Selected, or Run All to run all the tests.
-
    
 How to Access Documentation for Bindings
 ----------------------------------------
-1. Unzip Assets/FbxSdk/docs.zip
-2. Open docs/html/index.html
+1. Copy Assets/FbxSdk/docs.zip outside of the Assets folder
+2. Unzip docs.zip
+3. Open docs/html/index.html
