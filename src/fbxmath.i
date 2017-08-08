@@ -53,7 +53,7 @@
   int GetHashCode() { return GetHashCode(*$self, 16); }
 }
 
-%include "fbxsdk_csharp-fixed-headers/fbxmatrix.h"
+%include "UnityFbxSdkNative-fixed-headers/fbxmatrix.h"
 
 /******************************
  * FbxAMatrix (guaranteed affine)
@@ -80,7 +80,7 @@
   int GetHashCode() { return GetHashCode(*$self, 16); }
 }
 
-%include "fbxsdk_csharp-fixed-headers/fbxaffinematrix.h"
+%include "UnityFbxSdkNative-fixed-headers/fbxaffinematrix.h"
 
 /******************************
  * End of file. Turn reveal back off.

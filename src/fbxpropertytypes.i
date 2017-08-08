@@ -24,4 +24,4 @@ bool IsValidColor(const FbxColor& c) {
 %csmethodmodifiers IsValidColor "internal";
 bool IsValidColor(const FbxColor& c);
 
-%include "fbxsdk_csharp-fixed-headers/fbxpropertytypes.h"
+%include "UnityFbxSdkNative-fixed-headers/fbxpropertytypes.h"

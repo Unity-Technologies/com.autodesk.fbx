@@ -157,7 +157,7 @@
   
   
 %pragma(csharp) imclasscode=%{
-  private const string LIBRARY_NAME = "fbxsdk_csharp";
+  private const string LIBRARY_NAME = "UnityFbxSdkNative";
 %}
   
 /*
