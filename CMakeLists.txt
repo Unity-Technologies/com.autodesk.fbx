@@ -20,7 +20,7 @@ if (NOT DEFINED PACKAGE_PATH)
     set(PACKAGE_PATH "${CMAKE_BINARY_DIR}/FbxSdk_${PACKAGE_VERSION}.unitypackage")
 endif()
 
-project (fbxsdk_csharp)
+project (UnityFbxSdkNative)
 
 # Default is a debug build.
 if (CMAKE_BUILD_TYPE STREQUAL "")
@@ -82,29 +82,29 @@ set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
 set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;Unity.FbxSdk;-Werror")
 
 # Set up extra swig dependencies. Must be before building the typemaps.
-file(GLOB SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
+file(GLOB SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
 
 # Fix the header files we need to fix. Must be before building the typemaps.
-swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxpropertytypes.h")
-swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/math/fbxmatrix.h")
-swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/math/fbxaffinematrix.h")
-swig_fix_header(fbxsdk_csharp "${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxlayer.h")
+swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxpropertytypes.h")
+swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/math/fbxmatrix.h")
+swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/math/fbxaffinematrix.h")
+swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxlayer.h")
 
 # Find the constants for FbxDataType.
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxdatatypeconstants.i
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
         HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxdatatypes.h
 )
 
 # Find the properties for FbxDocumentInfo.
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxdocumentinfoimmutables.i
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
         HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/fbxdocumentinfo.h
 )
 
 # Find the constants and properties for FbxSurfaceMaterial, Lambert and Phong
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxsurfaceimmutables.i
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
         HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxsurfacematerial.h
                 ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxsurfacelambert.h
                 ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxsurfacephong.h
@@ -112,19 +112,19 @@ fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxsurfaceimmutables.i
 
 # Find the constants and properties for FbxTexture and FbxFileTexture.
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxtextureimmutables.i
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
         HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxtexture.h ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/shading/fbxfiletexture.h
 )
 
 # Find the constants and properties for FbxMarker
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxmarkerimmutables.i
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
         HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxmarker.h
 )
 
 # Find the constants and properties for FbxLight.
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxlightimmutables.i
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
         HEADERS ${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxlight.h
 )
 
@@ -146,27 +146,27 @@ add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         ">" "${CMAKE_BINARY_DIR}/fbxsdk.typedefs"
         BYPRODUCTS "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
         MAIN_DEPENDENCY ${FBXSDK_SWIG_I_FILE}
-        DEPENDS ${SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS}
+        DEPENDS ${SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS}
 )
 
 # Find all the types that need weak-pointer handling. Add the top of each hierarchy as arguments.
 fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         SCRIPT ${CMAKE_SOURCE_DIR}/scripts/discover-weakpointerhandles.py
         DEPENDS ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
-        TARGETDEPS SWIG_MODULE_fbxsdk_csharp_EXTRA_DEPS
+        TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
         ARGS ${CMAKE_BINARY_DIR}/weakpointerhandles.i ${CMAKE_BINARY_DIR}/fbxsdk.typedefs "FbxEmitter" "FbxManager")
 
 
 # Finalize the swig output.
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 
-swig_add_module(fbxsdk_csharp csharp src/fbxsdk.i)
+swig_add_module(UnityFbxSdkNative csharp src/fbxsdk.i)
 
-swig_link_libraries(fbxsdk_csharp ${FBXSDK_LIBRARY})
+swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 
 # hide FBX symbols in case the target application also has a copy of FBX
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  set_target_properties(fbxsdk_csharp PROPERTIES
+  set_target_properties(UnityFbxSdkNative PROPERTIES
   LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt"
   BUNDLE TRUE)
 endif()
@@ -188,8 +188,8 @@ set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 ###########################################################################
 # Replace "fbsdsk_csharp" with variable LIBRARY_NAME in GlobalsPINVOKE.cs
 # LIBRARY_NAME is defined in fbxsdk.i
-swig_file_search_replace(fbxsdk_csharp globals_replace "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
-        "\\\\\"fbxsdk_csharp\\\\\"," # In cmake have to use 4 backslashes to get escape the backslash char
+swig_file_search_replace(UnityFbxSdkNative globals_replace "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
+        "\\\\\"UnityFbxSdkNative\\\\\"," # In cmake have to use 4 backslashes to get escape the backslash char
         "LIBRARY_NAME,"
 )
 
@@ -219,7 +219,7 @@ add_custom_target(
 ###########################################################################
 # Add custom command to build the generated csharp files into a multi-platform DLL
 set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/Release")
-set(CLASS_LIBRARY_NAME "FbxSharp.dll")
+set(CLASS_LIBRARY_NAME "UnityFbxSdk.dll")
 
 # make match case insensitive
 string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
@@ -245,7 +245,7 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
                     ${CMAKE_SOURCE_DIR}/scripts/Properties\\AssemblyInfo.cs
                     ${CMAKE_SOURCE_DIR}/src/optimized\\*.cs
                     ${CMAKE_BINARY_DIR}/swig/generated/csharp\\*.cs
-            DEPENDS fbxsdk_csharp globals_replace
+            DEPENDS UnityFbxSdkNative globals_replace
             COMMENT "Building FbxSharp assembly"
             WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
         )
@@ -276,7 +276,7 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
                     ${CSHARP_REFERENCES}
                     ${CSHARP_SOURCES}
                     ${CSHARP_GENERATED_SOURCES}
-            DEPENDS fbxsdk_csharp globals_replace
+            DEPENDS UnityFbxSdkNative globals_replace
             COMMENT "Building FbxSharp assembly"
             WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
         )
@@ -329,11 +329,11 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/ DESTINATION ${CMAK
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/import/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    install(TARGETS fbxsdk_csharp DESTINATION Plugins/x64/MacOS)
+    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/MacOS)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    install(TARGETS fbxsdk_csharp DESTINATION Plugins/x64/Linux)
+    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/Linux)
 else()
-    install(TARGETS fbxsdk_csharp DESTINATION Plugins/x64/Windows)
+    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/Windows)
 endif()
 
 # copy C++ performance tests
