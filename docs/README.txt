@@ -8,7 +8,7 @@ See LICENSE.txt file in the project root for full license information.
 
 **Version**:
 
-This package contains only a subset of the FbxSdk, and is designed to work in the Editor only.
+This package contains only a subset of the FbxSdk, and is designed to work in the Unity Editor only.
 
 How to Access Bindings in Code
 -------------------------------
@@ -25,6 +25,5 @@ e.g. if we want to access the IOSROOT variable, we would do FbxSdk.Globals.IOSRO
    
 How to Access Documentation for Bindings
 ----------------------------------------
-1. Copy Assets/FbxSdk/docs.zip outside of the Assets folder
-2. Unzip docs.zip
-3. Open docs/html/index.html
+1. Unzip docs.zip outside of the Assets folder
+2. Open docs/html/index.html
