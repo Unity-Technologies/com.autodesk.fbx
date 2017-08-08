@@ -304,13 +304,12 @@ if(DOXYGEN_FOUND)
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM
-        DEPENDS fbsdsk_csharp
     )
 
     add_custom_target(${DOXYGEN_ZIP_TARGET}
         COMMAND ${CMAKE_COMMAND} -E tar "cfv" ${DOC_ZIP_NAME} --format=zip
            "${CMAKE_CURRENT_BINARY_DIR}/docs"
-        DEPENDS doc
+        DEPENDS ${DOXYGEN_TARGET}
     )
 endif(DOXYGEN_FOUND)
     
