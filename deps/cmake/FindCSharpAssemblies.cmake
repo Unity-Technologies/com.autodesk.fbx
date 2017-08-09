@@ -5,54 +5,40 @@
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
 
+# We need to have Unity available to compile against it.
+find_package(Unity REQUIRED)
+
 # The list of .NET versions to look for.
 # The first of these is the most-preferred.
 set(NET_COMPILER_VERSIONS "4.5" "4.0.30319" "4.0")
 set(NET_REFERENCE_ASSEMBLIES_VERSIONS "3.5" "2.0")
 set(NET_LIB_VERSIONS "2.0.50727" "2.0")
-message("Using .Net versions ${NET_COMPILER_VERSIONS}")
 
 # Platform-specific code.
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
 
-  if(NOT DEFINED MONODEVELOP_PATH)
-      set(MONODEVELOP_PATH "/Applications/Unity/MonoDevelop.app")
-  endif()
-
-  set(MONO_COMPILER_PATH "${MONODEVELOP_PATH}/Contents/Frameworks/Mono.framework/Versions/Current/bin")
-  set(DOT_NET_PATH "${MONODEVELOP_PATH}/Contents/Frameworks/Mono.framework/Versions/Current/lib/mono")
-  
-  foreach(VERSION ${NET_COMPILER_VERSIONS})
-    message("Looking for mcs in ${DOT_NET_PATH}/${VERSION}")
-    list(APPEND CSHARP_COMPILER_PATHS "${DOT_NET_PATH}/${VERSION}")
-  endforeach()
-  
+  # MONO_ROOT_PATH is from FindUnity (on Darwin)
+  list(APPEND CSHARP_COMPILER_PATHS "${MONO_ROOT_PATH}/bin")
   foreach(VERSION ${NET_REFERENCE_ASSEMBLIES_VERSIONS})
-    message("Looking for System.Core.dll in ${DOT_NET_PATH}/${VERSION}")
-    list(APPEND REFERENCE_ASSEMBLIES_PATHS "${DOT_NET_PATH}/${VERSION}")
+      list(APPEND CSHARP_DLL_PATHS "${MONO_ROOT_PATH}/lib/mono/${VERSION}")
+      list(APPEND REFERENCE_ASSEMBLIES_PATHS "${MONO_ROOT_PATH}/lib/mono/${VERSION}")
   endforeach()
 
-  foreach(VERSION ${NET_LIB_VERSIONS})
-    message("Looking for System.dll and mscorlib.dll in ${DOT_NET_PATH}/${VERSION}")
-    list(APPEND CSHARP_DLL_PATHS "${DOT_NET_PATH}/${VERSION}")
-  endforeach()
-  
-  message("Looking for mono in ${MONO_COMPILER_PATH}")
-  find_program(MONO_COMPILER mono PATH ${MONO_COMPILER_PATH} NO_DEFAULT_PATH)
-  find_program(MONO_COMPILER mono PATH ${MONO_COMPILER_PATH})
-  message("Found: ${MONO_COMPILER}\n")
-  
+  find_program(MONO_COMPILER mono PATH ${CSHARP_COMPILER_PATH} NO_DEFAULT_PATH)
+  find_program(MONO_COMPILER mono PATH ${CSHARP_COMPILER_PATH})
+
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  message("Using .Net versions ${NET_COMPILER_VERSIONS}")
   SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
 
   set(DOT_NET_PATH "C:/Windows/Microsoft.NET/Framework")
   set(REFERENCE_ASSEMBLIES_PATH "C:/Program Files \(x86\)/Reference Assemblies/Microsoft/Framework")
-  
+
   foreach(VERSION ${NET_COMPILER_VERSIONS})
     list(APPEND CSHARP_COMPILER_PATHS "${DOT_NET_PATH}/v${VERSION}")
   endforeach()
-  
+
   foreach(VERSION ${NET_REFERENCE_ASSEMBLIES_VERSIONS})
     list(APPEND REFERENCE_ASSEMBLIES_PATHS "${REFERENCE_ASSEMBLIES_PATH}/v${VERSION}")
   endforeach()
@@ -60,7 +46,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   foreach(VERSION ${NET_LIB_VERSIONS})
     list(APPEND CSHARP_DLL_PATHS "${DOT_NET_PATH}/v${VERSION}")
   endforeach()
-  
+
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   message(WARNING "Linux: Not Implemented")
 endif()

@@ -24,7 +24,8 @@ project (UnityFbxSdkNative)
 
 # Default is a debug build.
 if (CMAKE_BUILD_TYPE STREQUAL "")
-  set(CMAKE_BUILD_TYPE "Debug")
+  set(CMAKE_BUILD_TYPE "Release")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
 endif()
 
@@ -61,16 +62,13 @@ include(deps/cmake/UseFixHeaders.cmake)
 include(deps/cmake/UseFileSearchReplace.cmake)
 
 find_package(FBXSDK REQUIRED)
+find_package(Unity REQUIRED)
+find_package(CSharpAssemblies REQUIRED)
+find_package(Doxygen)
+
 set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(PythonInterp REQUIRED)
 include(deps/cmake/RunPythonScript.cmake)
-
-# Unity is not required, but we can't run the tests without it.
-# Note: In Linux the package name and Find{package}.cmake file are case sensitive
-# (e.g. has to be FindUNITY.cmake and UNITY or FindUnity.cmake and Unity)
-find_package(Unity)
-
-find_package(CSharpAssemblies)
 
 # Set up the include directories
 include_directories(src)
@@ -195,22 +193,27 @@ swig_file_search_replace(UnityFbxSdkNative globals_replace "${CMAKE_BINARY_DIR}/
 
 ###########################################################################
 # Add target for creating a package
-set(PACKAGE_TARGET unitypackage)
-add_custom_target(
+# TODO: synthesize the right project depending on configuration.
+# Make install does the right thing in all cases but it's overkill in release.
+add_custom_command(
+    OUTPUT ${PACKAGE_PATH}
         ${PACKAGE_TARGET}
+        COMMAND "${CMAKE_COMMAND}" --build . --target install
         COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -exportPackage Assets/FbxSdk ${PACKAGE_PATH} -quit
         COMMENT "Creating Unity Package ${PACKAGE_PATH}"
+        DEPENDS UnityFbxSdkNative
     )
+add_custom_target(unitypackage DEPENDS ${PACKAGE_PATH})
 
 ###########################################################################
 # Add target to replace the version number in README.txt
 set(README_TARGET readme_replace)
 add_custom_target(
     ${README_TARGET}
-    COMMAND ${PYTHON_EXECUTABLE} 
+    COMMAND ${PYTHON_EXECUTABLE}
             "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
-            "${CMAKE_INSTALL_PREFIX}/README.txt" 
-            "**Version**:" 
+            "${CMAKE_INSTALL_PREFIX}/README.txt"
+            "**Version**:"
             "**Version**: ${PACKAGE_VERSION}"
     DEPENDS "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
     COMMENT "Replacing version number in README.txt"
@@ -218,116 +221,89 @@ add_custom_target(
 
 ###########################################################################
 # Add custom command to build the generated csharp files into a multi-platform DLL
-set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/Release")
+set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
 set(CLASS_LIBRARY_NAME "UnityFbxSdk.dll")
 
-# make match case insensitive
 string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
 if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
     string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
 
-    if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-        add_custom_target(
-            class_library ALL
-            COMMAND "${CS_COMPILE_CMD}"
-                    /noconfig
-                    /nowarn:1701,1702,2008
-                    /langversion:4
-                    /nostdlib+
-                    /warn:4
-                    /optimize+
-                    /out:${CLASS_LIBRARY_NAME}
-                    /target:library
-                    /reference:\"${CSHARP_MSCORLIB_LIBRARY}\"
-                    /reference:\"${CSHARP_SYSTEM_CORE_LIBRARY}\"
-                    /reference:\"${CSHARP_SYSTEM_LIBRARY}\"
-                    /reference:\"${CSHARP_UNITYEDITOR_LIBRARY}\"
-                    ${CMAKE_SOURCE_DIR}/scripts/Properties\\AssemblyInfo.cs
-                    ${CMAKE_SOURCE_DIR}/src/optimized\\*.cs
-                    ${CMAKE_BINARY_DIR}/swig/generated/csharp\\*.cs
-            DEPENDS UnityFbxSdkNative globals_replace
-            COMMENT "Building FbxSharp assembly"
-            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
-        )
-    else()
-        FILE(GLOB CSHARP_SOURCES_properties "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
-        SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_properties})
+    # glob at cmake-time, so devs might get surprised
+    FILE(GLOB CSHARP_SOURCES_properties "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
+    list(APPEND CSHARP_SOURCES "${CSHARP_SOURCES_properties}")
 
-        FILE(GLOB CSHARP_SOURCES_optimized "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
-        SET(CSHARP_SOURCES ${CSHARP_SOURCES} ${CSHARP_SOURCES_optimized})
+    # glob at cmake-time, so devs might get surprised
+    FILE(GLOB CSHARP_SOURCES_optimized "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
+    list(APPEND CSHARP_SOURCES "${CSHARP_SOURCES_optimized}")
 
-        set(CSHARP_GENERATED_SOURCES "\"${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs\"")
-        
-        SET(CSHARP_UNITYEDITOR_LIBRARY "/Applications/Unity 2017.1.0f3/Unity.app/Contents/Managed/UnityEditor.dll")
+    # these are generated so we can't glob at cmake-time
+    list(APPEND CSHARP_GENERATED_SOURCES "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs")
 
-        set(CSHARP_REFERENCES /reference:"\"${CSHARP_MSCORLIB_LIBRARY}\"";/reference:"\"${CSHARP_SYSTEM_CORE_LIBRARY}\"";/reference:"\"${CSHARP_SYSTEM_LIBRARY}\"";/reference:"\"${CSHARP_UNITYEDITOR_LIBRARY}\"")
-        
-        add_custom_target(
-            class_library ALL
-            COMMAND "${CS_COMPILE_CMD}"
-                    /noconfig
-                    /nowarn:1701,1702,2008
-                    /langversion:4
-                    /nostdlib+
-                    /warn:4
-                    /optimize+
-                    /out:${CLASS_LIBRARY_NAME}
-                    /target:library
-                    ${CSHARP_REFERENCES}
-                    ${CSHARP_SOURCES}
-                    ${CSHARP_GENERATED_SOURCES}
-            DEPENDS UnityFbxSdkNative globals_replace
-            COMMENT "Building FbxSharp assembly"
-            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
-        )
-    endif()
-    
-    add_custom_target(
-        class_library_dir
-        COMMAND         ${CMAKE_COMMAND} -E make_directory ${CLASS_LIBRARY_DEST}
-    )    
-    add_dependencies(class_library class_library_dir)
-    
+    list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_MSCORLIB_LIBRARY}")
+    list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_SYSTEM_CORE_LIBRARY}")
+    list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_SYSTEM_LIBRARY}")
+    list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_UNITYEDITOR_LIBRARY}")
+
+    add_custom_command(OUTPUT ${CLASS_LIBRARY_DEST}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CLASS_LIBRARY_DEST}
+    )
+    add_custom_command(OUTPUT ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}
+        COMMAND "${CS_COMPILE_CMD}"
+                /noconfig
+                /nowarn:1701,1702,2008
+                /langversion:4
+                /nostdlib+
+                /warn:4
+                /optimize+
+                /out:${CLASS_LIBRARY_NAME}
+                /target:library
+                ${CSHARP_REFERENCES}
+                ${CSHARP_SOURCES}
+                ${CSHARP_GENERATED_SOURCES}
+        DEPENDS UnityFbxSdkNative globals_replace ${CSHARP_SOURCES} ${CLASS_LIBRARY_DEST}
+        COMMENT "Building FbxSharp assembly"
+        WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+    )
+    add_custom_target(class_library ALL DEPENDS ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME})
 endif()
 
 ###########################################################################
-
 # Doxygen documentation
 # add a target to generate API documentation with Doxygen
-find_package(Doxygen)
 set(DOXYGEN_TARGET doc)
-set(DOXYGEN_ZIP_TARGET create_doc_zip)
 set(DOC_ZIP_NAME "docs.zip")
 if(DOXYGEN_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-    add_custom_target(${DOXYGEN_TARGET}
-        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/doxygen.stamp
+        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+        COMMAND cmake -E touch ${CMAKE_BINARY_DIR}/doxygen.stamp
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
-
-    add_custom_target(${DOXYGEN_ZIP_TARGET}
-        COMMAND ${CMAKE_COMMAND} -E tar "cfv" ${DOC_ZIP_NAME} --format=zip
+    add_custom_command(OUTPUT ${DOC_ZIP_NAME}
+        COMMAND ${CMAKE_COMMAND} -E tar "cfv" ${CMAKE_BINARY_DIR}/${DOC_ZIP_NAME} --format=zip
            "${CMAKE_CURRENT_BINARY_DIR}/docs"
-        DEPENDS ${DOXYGEN_TARGET}
+        DEPENDS ${CMAKE_BINARY_DIR}/doxygen.stamp
     )
+    add_custom_target(${DOXYGEN_TARGET} DEPENDS ${DOC_ZIP_NAME})
 endif(DOXYGEN_FOUND)
-    
+
 ###########################################################################
 # Install Unit Tests and Mono Reflection for test converage
 include(deps/cmake/InstallMonoReflection.cmake)
-        
+
 if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
     install(FILES ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME} DESTINATION Plugins)
     # install all the unit tests outside the package folder
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests
         DESTINATION ${CMAKE_BINARY_DIR}/tests)
 else() # Debug Build
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests 
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests
         DESTINATION ${CMAKE_BINARY_DIR}/tests
         PATTERN "Editor/UnitTests" EXCLUDE
         PATTERN "Editor/UseCaseTests" EXCLUDE)
-        
+
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UseCaseTests DESTINATION Editor)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
@@ -361,7 +337,6 @@ install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})
 if(DOXYGEN_FOUND AND LOWER_CMAKE_BUILD_TYPE MATCHES release)
     # generate and copy docs. This has to happen after the README.txt has been copied into the build dir
     install(CODE "execute_process(COMMAND cmake --build . --target ${DOXYGEN_TARGET})")
-    install(CODE "execute_process(COMMAND cmake --build . --target ${DOXYGEN_ZIP_TARGET})")
     install(FILES ${CMAKE_BINARY_DIR}/${DOC_ZIP_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
 endif()
 

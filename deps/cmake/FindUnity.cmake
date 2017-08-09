@@ -5,63 +5,70 @@
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
 
-# Look for the executable to find the Unity editor executable.
-# If UNITY_EDITOR_PATH we use it, otherwise we set it.
+# Find Unity and set things up to be able to compile Unity.
 
-# Platform-specific code.
-if (NOT DEFINED UNITY_EDITOR_PATH)
+# If UNITY is set to the root of the Unity install, we use it, otherwise we set
+# it to the default install location.
+
+if (NOT DEFINED UNITY)
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-      set(UNITY_PATH "/Applications/Unity")
-      set(MONODEVELOP_PATH "${UNITY_PATH}/MonoDevelop.app")
-      list(APPEND UNITY_EXECUTABLE_PATHS "${UNITY_PATH}/Unity.app/Contents/MacOS/")
-      
+      set(UNITY "/Applications/Unity")
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-      SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
-      
-      set(UNITY_PATH "c:/Program Files/Unity2017.1.0f3")
-      set(MONODEVELOP_PATH "${UNITY_PATH}/MonoDevelop")
-      list(APPEND UNITY_EXECUTABLE_PATHS "${UNITY_PATH}/Editor/")
-      
+      set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
+      set(UNITY "c:/Program Files/Unity")
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    
-      set(UNITY_PATH "/opt/Unity")
-      set(MONODEVELOP_PATH "${UNITY_PATH}/MonoDevelop")
-      list(APPEND UNITY_EXECUTABLE_PATHS "${UNITY_PATH}/Editor/")
-      
+      set(UNITY "/opt/Unity")
     endif()
-
-    find_program(UNITY_EDITOR_PATH Unity PATHS ${UNITY_EXECUTABLE_PATHS})
-
-    # Standard code to report whether we found the package or not.
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(Unity DEFAULT_MSG UNITY_EDITOR_PATH)
-else()
-    message("Using ${UNITY_EDITOR_PATH}")
 endif()
 
-if (NOT DEFINED UNITY_EDITOR_DLL_PATH)
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
-    
+# Be generous about how to interpret UNITY:
+# it can be the directory that includes the Unity executable,
+# or the root of the Unity installation. On mac it can be the app bundle.
+list(APPEND UNITY_EXECUTABLE_PATHS "${UNITY}")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+  list(APPEND UNITY_EXECUTABLE_PATHS "${UNITY}/Contents/MacOS")
+  list(APPEND UNITY_EXECUTABLE_PATHS "${UNITY}/Unity.app/Contents/MacOS")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  list(APPEND UNITY_EXECUTABLE_PATHS "${UNITY}/Editor")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  list(APPEND UNITY_EXECUTABLE_PATHS "${UNITY}/Editor")
+endif()
+
+find_program(UNITY_EDITOR_PATH Unity PATHS ${UNITY_EXECUTABLE_PATHS})
+
+if (DEFINED UNITY_EDITOR_DLL_PATH)
+    message("Using ${UNITY_EDITOR_DLL_PATH}")
+else()
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+        # The editor is   Unity.app/Contents/MacOS/Unity
+        # The dlls are in Unity.app/Contents/Managed/*.dll
+        # Monodevelop is  Monodevelop.app/Contents/
         get_filename_component(UNITY_EDITOR_DLL_PATH "${UNITY_EDITOR_PATH}" PATH)
         get_filename_component(UNITY_EDITOR_DLL_PATH "${UNITY_EDITOR_DLL_PATH}" DIRECTORY)
-
         set(UNITY_EDITOR_DLL_PATH "${UNITY_EDITOR_DLL_PATH}/Managed")
 
+        list(APPEND MONO_ROOT_PATH "${UNITY_EDITOR_DLL_PATH}/../../../Monodevelop.app/Contents/Frameworks/Mono.framework/Versions/Current")
+
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        # The editor is   .../Unity.exe
+        # The dlls are in .../Data/Managed/*.dll
         get_filename_component(UNITY_EDITOR_DLL_PATH "${UNITY_EDITOR_PATH}" PATH)
         set(UNITY_EDITOR_DLL_PATH "${UNITY_EDITOR_DLL_PATH}/Data/Managed")
 
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        # The editor is   .../Unity
+        # The dlls are in .../Data/Managed/*.dll
         get_filename_component(UNITY_EDITOR_DLL_PATH "${UNITY_EDITOR_PATH}" PATH)
         set(UNITY_EDITOR_DLL_PATH "${UNITY_EDITOR_DLL_PATH}/Data/Managed")
     endif()
-
-    message("Looking for UnityEditor.dll in ${UNITY_EDITOR_DLL_PATH}")
-    find_library(CSHARP_UNITYEDITOR_LIBRARY UnityEditor.dll PATH ${UNITY_EDITOR_DLL_PATH})
-    message("Found: ${CSHARP_UNITYEDITOR_LIBRARY}")
-    
-    # Standard code to report whether we found the package or not.
-    FIND_PACKAGE_HANDLE_STANDARD_ARGS(UnityEditor DEFAULT_MSG CSHARP_UNITYEDITOR_LIBRARY)
-else()
-    message("Using ${UNITY_EDITOR_DLL_PATH}")
 endif()
+
+# Look for a dll on all platforms.
+message("Looking for UnityEditor.dll in ${UNITY_EDITOR_DLL_PATH}")
+set(_platformLibrarySuffix ${CMAKE_FIND_LIBRARY_SUFFIXES})
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
+find_library(CSHARP_UNITYEDITOR_LIBRARY UnityEditor.dll PATH ${UNITY_EDITOR_DLL_PATH})
+set(CMAKE_FIND_LIBRARY_SUFFIXES ${_platformLibrarySuffix})
+
+# Check whether we found everything we needed.
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Unity DEFAULT_MSG UNITY_EDITOR_PATH CSHARP_UNITYEDITOR_LIBRARY)
