@@ -1,9 +1,9 @@
 FBX SDK C# Bindings
 ===================
 
-Copyright (c) 2017 Unity Technologies. All rights reserved.
-
-See LICENSE.txt file in the package root for full license information.
+Autodesk FBX SDK. Copyright (c) 2016 Autodesk, Inc. All rights reserved.<br/>
+Use of the FBX SDK requires agreeing to and complying with the FBX SDK License and Service Agreement terms 
+accessed at https://damassets.autodesk.net/content/dam/autodesk/www/Company/docs/pdf/legal-notices-&-trademarks/Autodesk_FBX_SDK_2015_License_and_Services_Agreement.pdf"
 
 **Version**:
 
