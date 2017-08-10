@@ -1,5 +1,7 @@
 #RELEASE NOTES
 
+**Version**: 0.0.9a
+
 **Version**: 0.0.8a
 
 Updated LICENCSE.txt to include Autodesk license
