@@ -49,17 +49,27 @@ namespace Unity.FbxSdk.UseCaseTests{
             consoleApp.StartInfo.UseShellExecute = false;
             consoleApp.StartInfo.CreateNoWindow = true;
             consoleApp.StartInfo.ErrorDialog = false;
+
+            // point the path to the directories where the native library can be found
+            consoleApp.StartInfo.EnvironmentVariables ["PATH"] = 
+                Path.Combine (UnityEngine.Application.dataPath, "FbxSdk/Plugins/x64/Windows;") +
+                Path.Combine (UnityEngine.Application.dataPath, "FbxSdk/Plugins/x64/MacOS;") +
+                consoleApp.StartInfo.EnvironmentVariables ["PATH"];
+            
             consoleApp.Start ();
 
             StringBuilder error = new StringBuilder ();
             while (!consoleApp.HasExited) {
                 error.Append (consoleApp.StandardError.ReadToEnd ());
             }
-            
-            Assert.IsNotEmpty (error.ToString ());
-            Assert.IsTrue (error.ToString ().Contains (
+            string errorString = error.ToString ();
+
+            Assert.IsNotEmpty (errorString);
+            Assert.IsTrue (errorString.Contains (
                 "Unhandled Exception: System.TypeInitializationException: " +
                 "The type initializer for 'Unity.FbxSdk.GlobalsPINVOKE' threw an exception"));
+            Assert.IsTrue (errorString.Contains ("UnityEditor"));
+            Assert.IsTrue (errorString.Contains ("InitFbxAllocators"));
         }
     }
 }
