@@ -33,7 +33,7 @@ namespace Unity.FbxSdk.UnitTests
             alltypes = typeof(Unity.FbxSdk.Globals).Assembly.GetTypes();
             var methodsToCover = new List<MethodBase>();
             foreach(var t in alltypes) {
-                if (t.Namespace != "FbxSdk") {
+                if (t.Namespace != "Unity.FbxSdk") {
                     continue;
                 }
 
@@ -71,7 +71,7 @@ namespace Unity.FbxSdk.UnitTests
              * its assembly. */
             var alltypes = typeof(Unity.FbxSdk.Globals).Assembly.GetTypes();
             foreach(var t in alltypes) {
-                if (t.Namespace == "FbxSdk" && t.Name == kPINVOKE) {
+                if (t.Namespace == "Unity.FbxSdk" && t.Name == kPINVOKE) {
                     s_PINVOKEtype = t;
                     break;
                 }
