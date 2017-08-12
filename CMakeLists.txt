@@ -8,7 +8,7 @@
 cmake_minimum_required (VERSION 3.8)
 
 # Default is a release build.
-if (CMAKE_BUILD_TYPE STREQUAL "")
+if (NOT DEFINED CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
