@@ -7,7 +7,15 @@
 
 cmake_minimum_required (VERSION 2.6)
 
-# has to be done before project is set, or else CMAKE_INSTALL_PREFIX will already by set to a default value
+# Default is a release build.
+if (CMAKE_BUILD_TYPE STREQUAL "")
+  set(CMAKE_BUILD_TYPE "Release")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
+endif()
+message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
+
+# has to be done before project is set, or else CMAKE_INSTALL_PREFIX will already be set to a default value
 SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/FbxSdk" CACHE PATH "Install path prefix")
 MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
@@ -21,13 +29,6 @@ if (NOT DEFINED PACKAGE_PATH)
 endif()
 
 project (UnityFbxSdkNative)
-
-# Default is a debug build.
-if (CMAKE_BUILD_TYPE STREQUAL "")
-  set(CMAKE_BUILD_TYPE "Release")
-elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
-endif()
 
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
