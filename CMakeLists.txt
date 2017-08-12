@@ -5,7 +5,7 @@
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
 
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.8)
 
 # Default is a release build.
 if (CMAKE_BUILD_TYPE STREQUAL "")
@@ -159,7 +159,10 @@ fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
 # Finalize the swig output.
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 
-swig_add_module(UnityFbxSdkNative csharp src/fbxsdk.i)
+swig_add_library(UnityFbxSdkNative
+         TYPE SHARED
+         LANGUAGE csharp
+         SOURCES src/fbxsdk.i)
 
 swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 
