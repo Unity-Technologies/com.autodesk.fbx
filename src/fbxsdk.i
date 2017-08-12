@@ -127,7 +127,7 @@
     return $null;
   }
 %}
-%enddef  
+%enddef
 
 /*
  * Add a new constructor to a template class, that calls the original constructor
@@ -148,18 +148,13 @@
  * In C# a byte is an 8-bit unsigned int.
  */
 %typemap(imtype,
-         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.U8)]") 
+         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.U8)]")
          char "byte";
 %typemap(csout, excode=SWIGEXCODE) char {
     byte ret = $imcall;$excode
     return System.Convert.ToChar(ret);
   }
-  
-  
-%pragma(csharp) imclasscode=%{
-  private const string LIBRARY_NAME = "UnityFbxSdkNative";
-%}
-  
+
 /*
  * How to handle strings. Must be before the includes that actually include code.
  */
@@ -249,7 +244,7 @@
 %include "fbxanimcurvenode.i"
 %include "fbxcamera.i"
 %include "fbxconnectionpoint.i"
-%include "fbxmarker.i"    
+%include "fbxmarker.i"
 %include "fbxlight.i"
 %include "fbxblendshape.i"
 %include "fbxblendshapechannel.i"

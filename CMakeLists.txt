@@ -8,7 +8,7 @@
 cmake_minimum_required (VERSION 3.8)
 
 # Default is a release build.
-if (NOT DEFINED CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release")
 elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
@@ -60,7 +60,6 @@ find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Lin
 include(${SWIG_USE_FILE})
 
 include(deps/cmake/UseFixHeaders.cmake)
-include(deps/cmake/UseFileSearchReplace.cmake)
 
 find_package(FBXSDK REQUIRED)
 find_package(Unity REQUIRED)
@@ -188,14 +187,6 @@ set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks"
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
 ###########################################################################
-# Replace "fbsdsk_csharp" with variable LIBRARY_NAME in GlobalsPINVOKE.cs
-# LIBRARY_NAME is defined in fbxsdk.i
-swig_file_search_replace(UnityFbxSdkNative globals_replace "${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs"
-        "\\\\\"UnityFbxSdkNative\\\\\"," # In cmake have to use 4 backslashes to get escape the backslash char
-        "LIBRARY_NAME,"
-)
-
-###########################################################################
 # Add target for creating a package
 # TODO: synthesize the right project depending on configuration.
 # Make install does the right thing in all cases but it's overkill in release.
@@ -225,11 +216,10 @@ add_custom_target(
 
 ###########################################################################
 # Add custom command to build the generated csharp files into a multi-platform DLL
-set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-set(CLASS_LIBRARY_NAME "UnityFbxSdk.dll")
-
 string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
 if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+    set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+    set(CLASS_LIBRARY_NAME "UnityFbxSdk.dll")
     string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
 
     # glob at cmake-time, so devs might get surprised
@@ -264,11 +254,11 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
                 ${CSHARP_REFERENCES}
                 ${CSHARP_SOURCES}
                 ${CSHARP_GENERATED_SOURCES}
-        DEPENDS UnityFbxSdkNative globals_replace ${CSHARP_SOURCES} ${CLASS_LIBRARY_DEST}
-        COMMENT "Building FbxSharp assembly"
+        DEPENDS UnityFbxSdkNative ${CSHARP_SOURCES} ${CLASS_LIBRARY_DEST}
+        COMMENT "Building Unity.FbxSdk assembly"
         WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
     )
-    add_custom_target(class_library ALL DEPENDS ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME})
+    add_custom_target(UnityFbxSdk ALL DEPENDS ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME})
 endif()
 
 ###########################################################################
