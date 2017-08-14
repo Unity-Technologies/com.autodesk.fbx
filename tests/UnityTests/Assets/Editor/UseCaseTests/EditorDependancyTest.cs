@@ -54,9 +54,9 @@ namespace Unity.FbxSdk.UseCaseTests{
             consoleApp.StartInfo.EnvironmentVariables ["PATH"] = 
 #if UNITY_EDITOR_WIN            
                 Path.Combine (UnityEngine.Application.dataPath, "FbxSdk/Plugins/x64/Windows;") +
-#elseif UNITY_EDITOR_OSX
+#elif UNITY_EDITOR_OSX
                 Path.Combine (UnityEngine.Application.dataPath, "FbxSdk/Plugins/x64/MacOS;") +
-#elseif UNITY_EDITOR_LINUX
+#elif UNITY_EDITOR_LINUX
                 Path.Combine (UnityEngine.Application.dataPath, "FbxSdk/Plugins/x64/Linux;") +
 #endif
                 consoleApp.StartInfo.EnvironmentVariables ["PATH"];
