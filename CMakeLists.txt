@@ -250,16 +250,19 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
             WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
         )
         
+        add_custom_command(OUTPUT UnityDependancyTest.exe
+            COMMAND "${CS_COMPILE_CMD}"
+            ARGS /noconfig
+                 /out:UnityDependancyTest.exe
+                 /reference:\"${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}\"
+                 ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy\\UnityDependancyTest.cs
+            DEPENDS class_library
+            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+        )
         add_custom_target(
             unity_dependency_test ALL
-            COMMAND "${CS_COMPILE_CMD}"
-                    /noconfig
-                    /out:UnityDependancyTest.exe
-                    /reference:\"${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}\"
-                    ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy\\UnityDependancyTest.cs
-            DEPENDS class_library
+            DEPENDS UnityDependancyTest.exe
             COMMENT "Compiling Unity Dependancy Test"
-            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
         )
     else()
         FILE(GLOB CSHARP_SOURCES_properties "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
@@ -293,16 +296,19 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
             WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
         )
         
+        add_custom_command(OUTPUT UnityDependancyTest.exe
+            COMMAND "${CS_COMPILE_CMD}"
+            ARGS /noconfig
+                 /out:UnityDependancyTest.exe
+                 /reference:\""${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}\""
+                 ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy/UnityDependancyTest.cs
+            DEPENDS class_library
+            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+        )
         add_custom_target(
             unity_dependency_test ALL
-            COMMAND "${CS_COMPILE_CMD}"
-                    /noconfig
-                    /out:EditorDependancyTest.exe
-                    /reference:\""${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}\""
-                    ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy/UnityDependancyTest.cs
-            DEPENDS class_library
+            DEPENDS UnityDependancyTest.exe
             COMMENT "Compiling Unity Dependancy Test"
-            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
         )
     endif()
     
