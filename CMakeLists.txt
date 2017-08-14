@@ -9,7 +9,9 @@ cmake_minimum_required (VERSION 3.8)
 
 # Default is a release build.
 if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release")
+  # CMAKE_BUILD_TYPE is special, so we have to CACHE FORCE to actually set it,
+  # or else our 'set' has very wonky scope.
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
 endif()
@@ -216,22 +218,14 @@ add_custom_target(
 
 ###########################################################################
 # Add custom command to build the generated csharp files into a multi-platform DLL
-string( TOLOWER "${CMAKE_BUILD_TYPE}" LOWER_CMAKE_BUILD_TYPE )
-if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
     set(CLASS_LIBRARY_NAME "UnityFbxSdk.dll")
     string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
 
-    # glob at cmake-time, so devs might get surprised
-    FILE(GLOB CSHARP_SOURCES_properties "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
-    list(APPEND CSHARP_SOURCES "${CSHARP_SOURCES_properties}")
-
-    # glob at cmake-time, so devs might get surprised
-    FILE(GLOB CSHARP_SOURCES_optimized "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
-    list(APPEND CSHARP_SOURCES "${CSHARP_SOURCES_optimized}")
-
-    # these are generated so we can't glob at cmake-time
-    list(APPEND CSHARP_GENERATED_SOURCES "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs")
+    list(APPEND CSHARP_SOURCES "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
+    list(APPEND CSHARP_SOURCES "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
+    list(APPEND CSHARP_SOURCES "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs")
 
     list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_MSCORLIB_LIBRARY}")
     list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_SYSTEM_CORE_LIBRARY}")
@@ -253,7 +247,6 @@ if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
                 /target:library
                 ${CSHARP_REFERENCES}
                 ${CSHARP_SOURCES}
-                ${CSHARP_GENERATED_SOURCES}
         DEPENDS UnityFbxSdkNative ${CSHARP_SOURCES} ${CLASS_LIBRARY_DEST}
         COMMENT "Building Unity.FbxSdk assembly"
         WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
@@ -287,7 +280,7 @@ endif(DOXYGEN_FOUND)
 # Install Unit Tests and Mono Reflection for test converage
 include(deps/cmake/InstallMonoReflection.cmake)
 
-if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
     install(FILES ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME} DESTINATION Plugins)
     # install all the unit tests outside the package folder
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests
@@ -320,7 +313,7 @@ install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Ass
 install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
 
 install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
-if(LOWER_CMAKE_BUILD_TYPE MATCHES release)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
     install(FILES ${CMAKE_SOURCE_DIR}/docs/RELEASE_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
 else()
     install(FILES ${CMAKE_SOURCE_DIR}/docs/DEBUG_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
@@ -328,7 +321,7 @@ endif()
 
 install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})")
 
-if(DOXYGEN_FOUND AND LOWER_CMAKE_BUILD_TYPE MATCHES release)
+if(DOXYGEN_FOUND AND CMAKE_BUILD_TYPE STREQUAL "Release")
     # generate and copy docs. This has to happen after the README.txt has been copied into the build dir
     install(CODE "execute_process(COMMAND cmake --build . --target ${DOXYGEN_TARGET})")
     install(FILES ${CMAKE_BINARY_DIR}/${DOC_ZIP_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
