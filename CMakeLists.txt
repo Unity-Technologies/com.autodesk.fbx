@@ -23,7 +23,7 @@ MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
 option(CREATE_PACKAGE "Create Package" OFF)
 if (NOT DEFINED PACKAGE_VERSION)
-    set(PACKAGE_VERSION "0.0.8a")
+    set(PACKAGE_VERSION "0.0.9a")
 endif()
 
 if (NOT DEFINED PACKAGE_PATH)
@@ -254,6 +254,38 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
         WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
     )
     add_custom_target(UnityFbxSdk ALL DEPENDS ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME})
+
+    if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        add_custom_command(OUTPUT UnityDependancyTest.exe
+            COMMAND "${CS_COMPILE_CMD}"
+            ARGS /noconfig
+                 /out:UnityDependancyTest.exe
+                 /reference:\"${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}\"
+                 ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy\\UnityDependancyTest.cs
+            DEPENDS UnityFbxSdk
+            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+        )
+        add_custom_target(
+            unity_dependency_test ALL
+            DEPENDS UnityDependancyTest.exe
+            COMMENT "Compiling Unity Dependancy Test"
+        )
+    else()
+        add_custom_command(OUTPUT UnityDependancyTest.exe
+            COMMAND "${CS_COMPILE_CMD}"
+            ARGS /noconfig
+                 /out:UnityDependancyTest.exe
+                 /reference:\""${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}\""
+                 ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy/UnityDependancyTest.cs
+            DEPENDS UnityFbxSdk
+            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+        )
+        add_custom_target(
+            unity_dependency_test ALL
+            DEPENDS UnityDependancyTest.exe
+            COMMENT "Compiling Unity Dependancy Test"
+        )
+    endif()
 endif()
 
 ###########################################################################
@@ -317,6 +349,12 @@ install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR
 install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     install(FILES ${CMAKE_SOURCE_DIR}/docs/RELEASE_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
+
+    # TODO: Figure out how to make this work so that the executable does not have to be in the same folder as or
+    #       above the UnityFbxSdk.dll.
+    install(FILES ${CLASS_LIBRARY_DEST}/UnityDependancyTest.exe
+                  ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy/UnityDependancyTest.exe.config
+            DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets)
 else()
     install(FILES ${CMAKE_SOURCE_DIR}/docs/DEBUG_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
 endif()

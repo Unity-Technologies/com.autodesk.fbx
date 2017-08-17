@@ -1,5 +1,19 @@
 #RELEASE NOTES
 
+**Version**: 0.0.9a
+
+Set the Doxygen homepage to be README.txt instead of README.md
+
+Rename namespace to Unity.FbxSdk
+
+Rename FbxSharp.dll and fbxsdk_csharp libaries to UnityFbxSdk.dll and UnityFbxSdkNative respectively
+
+Change documentation title to "Unity FBXSDK C# API Reference"
+
+Package zip file containing Doxygen documentation
+
+Update license in README to Autodesk license
+
 **Version**: 0.0.8a
 
 Updated LICENCSE.txt to include Autodesk license
