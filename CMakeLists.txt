@@ -71,6 +71,7 @@ find_package(Doxygen)
 set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(PythonInterp REQUIRED)
 include(deps/cmake/RunPythonScript.cmake)
+include(deps/cmake/BuildCSharp.cmake)
 
 # Set up the include directories
 include_directories(src)
@@ -221,71 +222,38 @@ add_custom_target(
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
     set(CLASS_LIBRARY_NAME "UnityFbxSdk.dll")
-    string(CONCAT CS_COMPILE_CMD $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
-
-    list(APPEND CSHARP_SOURCES "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
-    list(APPEND CSHARP_SOURCES "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
-    list(APPEND CSHARP_SOURCES "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs")
-    file(TO_NATIVE_PATH "${CSHARP_SOURCES}" CSHARP_SOURCES)
-
-    list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_MSCORLIB_LIBRARY}")
-    list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_SYSTEM_CORE_LIBRARY}")
-    list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_SYSTEM_LIBRARY}")
-    list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_UNITYEDITOR_LIBRARY}")
 
     add_custom_command(OUTPUT ${CLASS_LIBRARY_DEST}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CLASS_LIBRARY_DEST}
     )
-    add_custom_command(OUTPUT ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}
-        COMMAND "${CS_COMPILE_CMD}"
-                /noconfig
-                /nowarn:1701,1702,2008
-                /langversion:4
-                /nostdlib+
-                /warn:4
-                /optimize+
-                /out:${CLASS_LIBRARY_NAME}
-                /target:library
-                ${CSHARP_REFERENCES}
-                ${CSHARP_SOURCES}
-        # The dependence on the native library handles the CSHARP_SOURCES
-        DEPENDS UnityFbxSdkNative ${CLASS_LIBRARY_DEST}
-        COMMENT "Building Unity.FbxSdk assembly"
-        WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
+    fbxsharp_compile_csharp(OUTPUT ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}
+            EXTRA_ARGS
+                "/target:library"
+            SOURCES
+                "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs"
+                "${CMAKE_SOURCE_DIR}/src/optimized/*.cs"
+                "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs"
+            REFERENCES
+                "${CSHARP_MSCORLIB_LIBRARY}"
+                "${CSHARP_SYSTEM_CORE_LIBRARY}"
+                "${CSHARP_SYSTEM_LIBRARY}"
+                "${CSHARP_UNITYEDITOR_LIBRARY}"
+            DEPENDS
+                UnityFbxSdkNative
+                "${CLASS_LIBRARY_DEST}"
     )
     add_custom_target(UnityFbxSdk ALL DEPENDS ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME})
 
-    if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-        add_custom_command(OUTPUT UnityDependancyTest.exe
-            COMMAND "${CS_COMPILE_CMD}"
-            ARGS /noconfig
-                 /out:UnityDependancyTest.exe
-                 /reference:\"${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}\"
-                 ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy\\UnityDependancyTest.cs
+    fbxsharp_compile_csharp(OUTPUT "${CLASS_LIBRARY_DEST}/UnityDependancyTest.exe"
+            SOURCES ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy/UnityDependancyTest.cs
+            REFERENCES "${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}"
             DEPENDS UnityFbxSdk
-            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
-        )
-        add_custom_target(
-            unity_dependency_test ALL
-            DEPENDS UnityDependancyTest.exe
-            COMMENT "Compiling Unity Dependancy Test"
-        )
-    else()
-        add_custom_command(OUTPUT UnityDependancyTest.exe
-            COMMAND "${CS_COMPILE_CMD}"
-            ARGS /noconfig
-                 /out:UnityDependancyTest.exe
-                 /reference:\""${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}\""
-                 ${CMAKE_SOURCE_DIR}/tests/UnityEditorDependancy/UnityDependancyTest.cs
-            DEPENDS UnityFbxSdk
-            WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
-        )
-        add_custom_target(
-            unity_dependency_test ALL
-            DEPENDS UnityDependancyTest.exe
-            COMMENT "Compiling Unity Dependancy Test"
-        )
-    endif()
+    )
+    add_custom_target(
+        unity_dependency_test ALL
+        DEPENDS "${CLASS_LIBRARY_DEST}/UnityDependancyTest.exe"
+        COMMENT "Compiling Unity Dependancy Test"
+    )
 endif()
 
 ###########################################################################
