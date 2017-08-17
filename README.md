@@ -2,6 +2,7 @@
 
 ## Requirements
 
+* [Unity](http://unity3d.com) 2017.1 or later
 * [FBX SDK](http://www.autodesk.com/products/fbx/overview) 2016.0 or 2017.1
 * [cmake](https://cmake.org/download/) 3.7.2
 * [swig](http://www.swig.org/download.html) 3.0.12
@@ -9,7 +10,6 @@
 * Windows: [Visual Studio Community 2015](https://www.visualstudio.com/downloads/)
 * Ubuntu: ???
 * OSX: [Xcode](https://developer.apple.com/xcode/features/) 7.3 with command-line tools installed
-* Optional: Unity 5.6.
 
 Newer versions of each software likely also work, except for the FBX SDK. To support newer (or older) versions of FBX SDK, you need to edit the FindFBXSDK.cmake file.
 
@@ -28,7 +28,7 @@ popd
 # build the project
 mkdir FbxSharpBuild
 cd FbxSharpBuild
-cmake ../FbxSharp -DCMAKE_BUILD_TYPE=Release
+cmake ../FbxSharp
 make
 make install
 make unitypackage
@@ -56,7 +56,7 @@ popd
 # build the project
 mkdir FbxSharpBuild
 cd FbxSharpBuild
-cmake ../FbxSharp -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
+cmake ../FbxSharp -G"Visual Studio 14 2015 Win64"
 cmake --build . --target INSTALL --config Release
 cmake --build . --target unitypackage
 
@@ -69,9 +69,8 @@ cmake --build . --target unitypackage
 See the "tl;dr" instructions above for instructions you can copy-paste.
 
 You can add some options to the cmake line:
-* To build a debug version, omit the `-DCMAKE_BUILD_TYPE=Release` flag.
-* To specify the path to Unity (e.g. to use a version other than the default), use the `-DUNITY_EDITOR_PATH="Path/to/Unity.exe"` flag.
-* * On OSX, this needs to specify the executable, not the app bundle: `-DUNITY_EDITOR_PATH="/path/to/Unity.app/Contents/MacOS/Unity"`
+* To build a debug version, add the `-DCMAKE_BUILD_TYPE=Debug` flag.
+* To specify the path to Unity (e.g. to use a version other than the default), use the `-DUNITY="Path/to/Unity"` flag.
 * By default the version number is specified in the CMakeLists.txt but can be overriden with `-DPACKAGE_VERSION=x.y.z` flag.
 * By default the unity package drops in the FbxSharpBuild directory, but this can be overriden with `-DPACKAGE_PATH=/path/to/package` flag.
 * To save time and avoid building the package, omit the line that mentions 'unitypackage'
@@ -136,33 +135,13 @@ OR ```cmake --build . --target RUN_TESTS```
 
 **Requires** [Doxygen 1.8.13+](http://www.stack.nl/~dimitri/doxygen/download.html)
 
-**OSX**
-
+After compiling, the documentation will be in
 ```
-# build the project
-mkdir FbxSharpBuild
-cd FbxSharpBuild
-cmake ../FbxSharp -DCMAKE_BUILD_TYPE=Release
-make
-make install
-
-# run doxygen
-make doc
-open ./docs/html/index.html
+FbxSharpBuild/docs/html/index.html
+```
+Or in zipped form in
+```
+FbxSharpBuild/docs.zip
 ```
 
-**Windows**
-
-```
-# build the project
-mkdir FbxSharpBuild
-cd FbxSharpBuild
-cmake ../FbxSharp -G"Visual Studio 14 2015 Win64" -DCMAKE_BUILD_TYPE=Release
-cmake --build . --target INSTALL --config Release
-
-# run doxygen
-cmake --build . --target doc
-start ./docs/html/index.html
-```
-
-Doxygen documentation can be found in FbxSharpBuild/docs/html/index.html
+In the unity package, the documentation is packaged as the zip file.
