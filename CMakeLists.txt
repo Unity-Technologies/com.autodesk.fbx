@@ -161,7 +161,7 @@ fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 
 swig_add_library(UnityFbxSdkNative
-         TYPE SHARED
+         TYPE MODULE
          LANGUAGE csharp
          SOURCES src/fbxsdk.i)
 
@@ -226,6 +226,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     list(APPEND CSHARP_SOURCES "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs")
     list(APPEND CSHARP_SOURCES "${CMAKE_SOURCE_DIR}/src/optimized/*.cs")
     list(APPEND CSHARP_SOURCES "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs")
+    file(TO_NATIVE_PATH "${CSHARP_SOURCES}" CSHARP_SOURCES)
 
     list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_MSCORLIB_LIBRARY}")
     list(APPEND CSHARP_REFERENCES "/reference:${CSHARP_SYSTEM_CORE_LIBRARY}")
@@ -247,7 +248,8 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
                 /target:library
                 ${CSHARP_REFERENCES}
                 ${CSHARP_SOURCES}
-        DEPENDS UnityFbxSdkNative ${CSHARP_SOURCES} ${CLASS_LIBRARY_DEST}
+        # The dependence on the native library handles the CSHARP_SOURCES
+        DEPENDS UnityFbxSdkNative ${CLASS_LIBRARY_DEST}
         COMMENT "Building Unity.FbxSdk assembly"
         WORKING_DIRECTORY ${CLASS_LIBRARY_DEST}
     )
