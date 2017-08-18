@@ -23,7 +23,7 @@ MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
 option(CREATE_PACKAGE "Create Package" OFF)
 if (NOT DEFINED PACKAGE_VERSION)
-    set(PACKAGE_VERSION "0.0.9a")
+    set(PACKAGE_VERSION "0.0.10a")
 endif()
 
 if (NOT DEFINED PACKAGE_PATH)
@@ -195,8 +195,7 @@ set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 # Make install does the right thing in all cases but it's overkill in release.
 add_custom_command(
     OUTPUT ${PACKAGE_PATH}
-        ${PACKAGE_TARGET}
-        COMMAND "${CMAKE_COMMAND}" --build . --target install
+        COMMAND "${CMAKE_COMMAND}" --build . --target install --config Release
         COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -exportPackage Assets/FbxSdk ${PACKAGE_PATH} -quit
         COMMENT "Creating Unity Package ${PACKAGE_PATH}"
         DEPENDS UnityFbxSdkNative

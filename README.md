@@ -58,7 +58,7 @@ mkdir FbxSharpBuild
 cd FbxSharpBuild
 cmake ../FbxSharp -G"Visual Studio 14 2015 Win64"
 cmake --build . --target INSTALL --config Release
-cmake --build . --target unitypackage
+cmake --build . --target unitypackage --config Release
 
 # run the sample Unity code
 "C:/Program Files/Unity/Editor/Unity.exe" -projectpath %cd%/tests/UnityTests
