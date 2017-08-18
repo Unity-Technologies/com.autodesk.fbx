@@ -1,5 +1,11 @@
 #RELEASE NOTES
 
+**Version**: 0.0.10a
+
+Added test to check that the FbxSdk DLL cannot be used without the Unity Editor.
+
+Improve build process so it is more robust.
+
 **Version**: 0.0.9a
 
 Set the Doxygen homepage to be README.txt instead of README.md
