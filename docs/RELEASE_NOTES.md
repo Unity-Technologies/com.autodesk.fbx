@@ -2,7 +2,9 @@
 
 **Version**: 0.0.10a
 
-Added test to check that the FbxSdk DLL cannot be used without the Unity Editor.
+Added documentation of vector classes.
+
+Added test to check that the FbxSdk DLL cannot be used without the Unity Editor (This is a legal requirement).
 
 Improve build process so it is more robust.
 
