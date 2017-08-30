@@ -4,7 +4,7 @@
 
 * [Unity](http://unity3d.com) 2017.1 or later
 * [FBX SDK](http://www.autodesk.com/products/fbx/overview) 2016.0 or 2017.1
-* [cmake](https://cmake.org/download/) 3.7.2
+* [cmake](https://cmake.org/download/) 3.8
 * [swig](http://www.swig.org/download.html) 3.0.12
 * [Python](https://www.python.org/downloads/) 2.7.x or 3.x
 * Windows: [Visual Studio Community 2015](https://www.visualstudio.com/downloads/)
