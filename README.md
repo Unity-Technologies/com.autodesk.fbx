@@ -8,7 +8,7 @@
 * [swig](http://www.swig.org/download.html) 3.0.12
 * [Python](https://www.python.org/downloads/) 2.7.x or 3.x
 * Windows: [Visual Studio Community 2015](https://www.visualstudio.com/downloads/)
-* Ubuntu: ???
+* Linux: ???
 * OSX: [Xcode](https://developer.apple.com/xcode/features/) 7.3 with command-line tools installed
 
 Newer versions of each software likely also work, except for the FBX SDK. To support newer (or older) versions of FBX SDK, you need to edit the FindFBXSDK.cmake file.
@@ -17,7 +17,7 @@ Newer versions of each software likely also work, except for the FBX SDK. To sup
 
 Install all the software above, then copy-paste this code into a terminal or a cmd prompt:
 
-### OSX or linux:
+### OSX or Linux:
 ```
 # get the source
 git clone https://github.com/Unity-Technologies/FbxSharp.git
@@ -117,7 +117,7 @@ sdkManager.Destroy();
 make test
 ```
 
-**Ubuntu**
+**Linux**
 
 ```
 make test
