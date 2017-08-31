@@ -100,12 +100,15 @@ sdkManager.Destroy();
 
 **What gets installed into your Unity Project**
 ```
-{unity_project}/Assets/Plugins/
-    fbxsdk/
-        libfbxsdk_csharp.so
-        csharp/
-               FbxManager.cs
-               ...
+{unity_project}/Assets/
+    FbxSdk/
+        Plugins/
+            x64/
+                UnityFbxSdk.dll
+                MacOS/
+                    UnityFbxSdkNative.bundle
+                Windows/
+                    UnityFbxSdkNative.dll
 ```
 
 ### Running UnitTests
