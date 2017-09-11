@@ -79,6 +79,7 @@
 %rename("%s") FbxLayer::GetUVs(FbxLayerElement::EType pTypeIdentifier=FbxLayerElement::eTextureDiffuse) const;
 %rename("%s") FbxLayer::GetTangents() const;
 %rename("%s") FbxLayer::GetMaterials() const;
+%define_pointer_equality_functions(FbxLayer);
 
 %rename("$ignore", regextarget=1, fullname=1) "FbxLayerElementTemplate::.*";
 %rename("%s") FbxLayerElementTemplate::GetDirectArray() const;
