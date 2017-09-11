@@ -86,6 +86,25 @@ namespace Unity.FbxSdk.UnitTests
             }
         }
 
+        /// <summary>
+        /// Test that an object created within a scene knows its scene.
+        /// Override for objects that can't be in a scene.
+        /// </summary>
+        protected virtual void TestSceneContainer()
+        {
+            using(var scene = FbxScene.Create(Manager, "thescene")) {
+                var obj = CreateObject(scene, "scene_object");
+                Assert.AreEqual(scene, obj.GetScene());
+                var child = CreateObject(obj, "scene_object_child");
+                Assert.AreEqual(scene, child.GetScene());
+            }
+
+            {
+                var obj = CreateObject(Manager, "not_scene_object");
+                Assert.AreEqual(null, obj.GetScene());
+            }
+        }
+
         [Test]
         public virtual void TestCreate()
         {
@@ -105,6 +124,9 @@ namespace Unity.FbxSdk.UnitTests
             // Test with a null manager or container. Should throw.
             Assert.That (() => { CreateObject((FbxManager)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
             Assert.That (() => { CreateObject((FbxObject)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+
+            // Test having a scene as the container.
+            TestSceneContainer();
 
             // Test with a null string. Should work.
             Assert.IsNotNull(CreateObject((string)null));

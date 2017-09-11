@@ -25,7 +25,9 @@
 %rename("%s") FbxObject::StripPrefix(const char*); // not the FbxString& one, and not RemovePrefix
 %rename("%s") FbxObject::GetSelected;
 %rename("%s") FbxObject::SetSelected;
+
 %rename("%s") FbxObject::GetFbxManager;
+%rename("%s") FbxObject::GetScene;
 
 /* Properties */
 %rename("%s") FbxObject::GetFirstProperty() const;

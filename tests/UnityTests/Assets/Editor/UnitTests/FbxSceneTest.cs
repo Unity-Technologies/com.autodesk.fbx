@@ -11,6 +11,18 @@ namespace Unity.FbxSdk.UnitTests
 {
     public class FbxSceneTest : Base<FbxScene>
     {
+        protected override void TestSceneContainer()
+        {
+            // GetScene returns the parent scene.
+            using(var scene = FbxScene.Create(Manager, "thescene")) {
+                Assert.AreEqual(null, scene.GetScene());
+                var subscene = CreateObject(scene, "subscene");
+                Assert.AreEqual(scene, subscene.GetScene());
+                var subsubscene = CreateObject(subscene, "subscene");
+                Assert.AreEqual(subscene, subsubscene.GetScene());
+            }
+        }
+
         [Test]
         public void TestBasics()
         {

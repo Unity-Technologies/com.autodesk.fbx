@@ -40,6 +40,24 @@ namespace Unity.FbxSdk.UnitTests
             }
         }
 
+        protected override void TestSceneContainer()
+        {
+            // The base test tries to make FbxAnimCurve with an FbxAnimCurve as
+            // parent; that doesn't work for some reason. So simplify it.
+            using(var scene = FbxScene.Create(Manager, "thescene")) {
+                var obj = CreateObject(scene, "scene_object");
+                Assert.AreEqual(scene, obj.GetScene());
+            }
+            {
+                // The base test assumes that if there's no scene, the object
+                // won't be in a scene. But FbxAnimCurve synthesizes a test
+                // scene.
+                var obj = CreateObject(Manager, "not_scene_object");
+                Assert.AreNotEqual(null, obj.GetScene());
+            }
+        }
+
+
         [Test]
         public void TestBasics ()
         {
