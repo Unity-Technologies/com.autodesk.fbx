@@ -11,7 +11,7 @@ using Unity.FbxSdk;
 
 namespace Unity.FbxSdk.UnitTests
 {
-    public class FbxLayerTest
+    public class FbxLayerTest : TestBase<FbxLayer>
     {
 
         private FbxMesh m_fbxMesh;
@@ -158,9 +158,15 @@ namespace Unity.FbxSdk.UnitTests
                 Throws.Exception.TypeOf<System.NullReferenceException>());
         }
 
-        #if ENABLE_COVERAGE_TEST
+        /* Test all the equality functions we can find. */
         [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxLayer), this.GetType()); }
-        #endif
+        public void TestEquality() {
+            var aIndex = m_fbxMesh.CreateLayer();
+            var bIndex = m_fbxMesh.CreateLayer();
+            var a = m_fbxMesh.GetLayer(aIndex);
+            var b = m_fbxMesh.GetLayer(bIndex);
+            var acopy = m_fbxMesh.GetLayer(aIndex);
+            EqualityTester<FbxLayer>.TestEquality(a, b, acopy);
+        }
     }
 }

@@ -24,6 +24,9 @@ namespace Unity.FbxSdk.UnitTests
 
         protected Dictionary<string, string> dataValues { get { return m_dataValues; } }
 
+        // Override this test and simply ignore it: documents don't fit into scenes.
+        protected override void TestSceneContainer() { }
+
         [Test]
         public void TestDocumentInfo ()
         {
