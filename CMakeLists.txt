@@ -18,7 +18,7 @@ endif()
 message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 
 # has to be done before project is set, or else CMAKE_INSTALL_PREFIX will already be set to a default value
-SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/FbxSdk" CACHE PATH "Install path prefix")
+SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/FbxExporters/FbxSdk" CACHE PATH "Install path prefix")
 MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
 option(CREATE_PACKAGE "Create Package" OFF)
@@ -196,7 +196,7 @@ set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 add_custom_command(
     OUTPUT ${PACKAGE_PATH}
         COMMAND "${CMAKE_COMMAND}" --build . --target install --config Release
-        COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -exportPackage Assets/FbxSdk ${PACKAGE_PATH} -quit
+        COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -exportPackage Assets/FbxExporters ${PACKAGE_PATH} -quit
         COMMENT "Creating Unity Package ${PACKAGE_PATH}"
         DEPENDS UnityFbxSdkNative
     )
