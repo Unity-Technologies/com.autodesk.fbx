@@ -1,5 +1,10 @@
 #RELEASE NOTES
 
+**Version**: 0.0.14a
+Note: skipping some versions so that FbxSdk package version matches FbxExporter package version
+
+Added FbxObject::GetScene
+
 **Version**: 0.0.10a
 
 Added documentation of vector classes.
