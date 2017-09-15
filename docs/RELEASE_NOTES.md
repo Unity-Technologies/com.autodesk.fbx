@@ -3,7 +3,7 @@
 **Version**: 0.0.14a
 Note: skipping some versions so that FbxSdk package version matches FbxExporter package version
 
-Add bindings for FbxMesh export (i.e. FbxObject::GetScene)
+Added FbxObject::GetScene
 
 **Version**: 0.0.10a
 
