@@ -23,7 +23,7 @@ MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
 option(CREATE_PACKAGE "Create Package" OFF)
 if (NOT DEFINED PACKAGE_VERSION)
-    set(PACKAGE_VERSION "0.0.14a")
+    set(PACKAGE_VERSION "0.0.15a")
 endif()
 
 if (NOT DEFINED PACKAGE_PATH)
@@ -237,6 +237,7 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
                 "${CSHARP_SYSTEM_CORE_LIBRARY}"
                 "${CSHARP_SYSTEM_LIBRARY}"
                 "${CSHARP_UNITYEDITOR_LIBRARY}"
+                "${CSHARP_UNITYENGINE_LIBRARY}"
             DEPENDS
                 UnityFbxSdkNative
                 "${CLASS_LIBRARY_DEST}"
