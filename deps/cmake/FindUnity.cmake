@@ -70,5 +70,11 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
 find_library(CSHARP_UNITYEDITOR_LIBRARY UnityEditor.dll PATH ${UNITY_EDITOR_DLL_PATH})
 set(CMAKE_FIND_LIBRARY_SUFFIXES ${_platformLibrarySuffix})
 
+message("Looking for UnityEngine.dll in ${UNITY_EDITOR_DLL_PATH}")
+set(_platformLibrarySuffix ${CMAKE_FIND_LIBRARY_SUFFIXES})
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".dll")
+find_library(CSHARP_UNITYENGINE_LIBRARY UnityEngine.dll PATH ${UNITY_EDITOR_DLL_PATH})
+set(CMAKE_FIND_LIBRARY_SUFFIXES ${_platformLibrarySuffix})
+
 # Check whether we found everything we needed.
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Unity DEFAULT_MSG UNITY_EDITOR_PATH CSHARP_UNITYEDITOR_LIBRARY)
