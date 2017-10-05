@@ -1,5 +1,9 @@
 #RELEASE NOTES
 
+**Version**: 1.0.0b1
+
+Enforce FbxSdk DLL only works with Unity 2017.1+
+
 **Version**: 0.0.14a
 Note: skipping some versions so that FbxSdk package version matches FbxExporter package version
 
