@@ -35,6 +35,7 @@
 %fbximmutable(FbxCamera::NearPlane);
 %fbximmutable(FbxCamera::AspectWidth);
 %fbximmutable(FbxCamera::AspectHeight);
+%fbximmutable(FbxCamera::FieldOfView);
 
 %include "fbxsdk/scene/geometry/fbxcamera.h"
 
