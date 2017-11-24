@@ -75,6 +75,7 @@ namespace Unity.FbxSdk.UnitTests
                 TestGetter (fbxCamera.AspectHeight);
                 TestGetter (fbxCamera.AspectWidth);
                 TestGetter (fbxCamera.NearPlane);
+                TestGetter (fbxCamera.FieldOfView);
             }
         }
     }
