@@ -1,5 +1,9 @@
 #RELEASE NOTES
 
+**Version**: sprint35
+
+Add binding for FbxCamera's FieldOfView property
+
 **Version**: 1.0.0b1
 
 Enforce FbxSdk DLL only works with Unity 2017.1+
