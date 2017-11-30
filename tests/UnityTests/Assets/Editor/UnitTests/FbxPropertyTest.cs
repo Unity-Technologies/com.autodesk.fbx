@@ -30,6 +30,7 @@ namespace Unity.FbxSdk.UnitTests
             CoverageTester.TestCoverage(typeof(FbxPropertyEAreaLightShape), this.GetType ());
             CoverageTester.TestCoverage(typeof(FbxPropertyEDecayType), this.GetType ());
             CoverageTester.TestCoverage(typeof(FbxPropertyFloat), this.GetType ());
+            CoverageTester.TestCoverage (typeof(FbxPropertyEInheritType), this.GetType ());
         }
 #endif
 
@@ -48,6 +49,12 @@ namespace Unity.FbxSdk.UnitTests
                 var vis2 = FbxNode.Create(manager, "node2").VisibilityInheritance;
                 var vis1copy = vis1; // TODO: node.FindProperty("Visibility Inheritance"); -- but that has a different proxy type
                 EqualityTester<FbxPropertyBool>.TestEquality(vis1, vis2, vis1copy);
+
+                // FbxPropertyT<EInheritType>
+                var inhType1 = node.InheritType;
+                var inhType2 = FbxNode.Create (manager, "node3").InheritType;
+                var inhType1Copy = inhType1; // TODO: node.FindProperty("InheritType");
+                EqualityTester<FbxPropertyEInheritType>.TestEquality (inhType1, inhType2, inhType1Copy);
 
                 // FbxPropertyT<double>
                 var lambert = FbxSurfaceLambert.Create(manager, "lambert");
@@ -341,6 +348,18 @@ namespace Unity.FbxSdk.UnitTests
                 Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue());
                 Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue(FbxTime.FromSecondDouble(5)));
                 Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT<EInheritType>
+                var node = FbxNode.Create(manager, "node");
+
+                FbxPropertyTest.GenericPropertyTests(node.InheritType, node, "InheritType", Globals.FbxEnumDT);
+                node.InheritType.Set(FbxTransform.EInheritType.eInheritRSrs);
+                Assert.AreEqual(FbxTransform.EInheritType.eInheritRSrs, node.InheritType.Get());
+                Assert.AreEqual(FbxTransform.EInheritType.eInheritRSrs, node.InheritType.EvaluateValue());
+                Assert.AreEqual(FbxTransform.EInheritType.eInheritRSrs, node.InheritType.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxTransform.EInheritType.eInheritRSrs, node.InheritType.EvaluateValue(FbxTime.FromSecondDouble(5), true));
             }
 
             using (var manager = FbxManager.Create()) {
