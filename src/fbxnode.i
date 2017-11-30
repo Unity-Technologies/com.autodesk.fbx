@@ -23,7 +23,6 @@
 %rename("%s") FbxNode::EShadingMode;
 %rename("%s") FbxNode::SetRotationOrder;
 %rename("%s") FbxNode::SetTransformationInheritType;
-%rename("%s") FbxNode::GetTransformationInheritType;
 
 
 %apply int* OUTPUT { FbxEuler::EOrder& pRotationOrder };
