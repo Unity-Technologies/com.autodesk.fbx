@@ -1,5 +1,9 @@
 #RELEASE NOTES
 
+**Version**: sprint36
+
+Expose bindings to set FbxNode's transformation inherit type
+
 **Version**: sprint35
 
 Add binding for FbxCamera's FieldOfView property
