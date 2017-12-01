@@ -190,6 +190,7 @@
 %template("FbxPropertyEDecayType") FbxPropertyT<FbxLight::EDecayType>;
 %template("FbxPropertyMarkerELook") FbxPropertyT<FbxMarker::ELook>;
 %template("FbxPropertyNullELook") FbxPropertyT<FbxNull::ELook>;
+%template("FbxPropertyEInheritType") FbxPropertyT<FbxTransform::EInheritType>;
 
 /* Texture properties */
 %template("FbxPropertyEBlendMode") FbxPropertyT<FbxTexture::EBlendMode>;
