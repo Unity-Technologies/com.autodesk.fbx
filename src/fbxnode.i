@@ -22,6 +22,7 @@
 %rename("%s") FbxNode::GetShadingMode;
 %rename("%s") FbxNode::EShadingMode;
 %rename("%s") FbxNode::SetRotationOrder;
+%rename("%s") FbxNode::SetTransformationInheritType;
 
 
 %apply int* OUTPUT { FbxEuler::EOrder& pRotationOrder };
@@ -73,5 +74,6 @@
 %fbximmutable(FbxNode::LclRotation);
 %fbximmutable(FbxNode::LclScaling);
 %fbximmutable(FbxNode::VisibilityInheritance);
+%fbximmutable(FbxNode::InheritType);
 
 %include "fbxsdk/scene/geometry/fbxnode.h"

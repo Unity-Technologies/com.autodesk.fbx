@@ -288,5 +288,13 @@ namespace Unity.FbxSdk.UnitTests
                 Assert.AreEqual (FbxEuler.EOrder.eOrderZXY, (FbxEuler.EOrder)output);
             }
         }
+
+        [Test]
+        public void TestTransformInheritType(){
+            using (FbxNode node = CreateObject ("root")) {
+                node.SetTransformationInheritType (FbxTransform.EInheritType.eInheritRrs);
+                Assert.AreEqual (FbxTransform.EInheritType.eInheritRrs, node.InheritType.Get());
+            }
+        }
     }
 }
