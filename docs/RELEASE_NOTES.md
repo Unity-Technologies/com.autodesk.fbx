@@ -1,5 +1,9 @@
 #RELEASE NOTES
 
+**Version**: 1.2.0b1
+
+Update version number
+
 **Version**: sprint36
 
 Expose bindings to set FbxNode's transformation inherit type
