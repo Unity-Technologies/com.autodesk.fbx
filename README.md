@@ -70,7 +70,7 @@ See the "tl;dr" instructions above for instructions you can copy-paste.
 
 You can add some options to the cmake line:
 * To build a debug version, add the `-DCMAKE_BUILD_TYPE=Debug` flag.
-* To specify the path to Unity (e.g. to use a version other than the default), use the `-DUNITY_EDITOR_PATH="Path/to/Unity"` flag.
+* To specify the path to Unity (e.g. to use a version other than the default), use the `-DUNITY="Path/to/Unity"` flag.
 * By default the version number is specified in the CMakeLists.txt but can be overriden with `-DPACKAGE_VERSION=x.y.z` flag.
 * By default the unity package drops in the FbxSharpBuild directory, but this can be overriden with `-DPACKAGE_PATH=/path/to/package` flag.
 * To save time and avoid building the package, omit the line that mentions 'unitypackage'
