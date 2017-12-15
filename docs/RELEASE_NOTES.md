@@ -1,5 +1,11 @@
 #RELEASE NOTES
 
+**Version**: 1.2.0b1
+
+Update version number
+
+Replace meta files with meta files from release 1.0.0b1 for backwards compatibility
+
 **Version**: sprint36
 
 Expose bindings to set FbxNode's transformation inherit type
