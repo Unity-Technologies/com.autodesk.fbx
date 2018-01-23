@@ -241,6 +241,7 @@
 %include "fbxanimstack.i"
 %include "fbxanimcurvebase.i"
 %include "fbxanimcurve.i"
+%include "fbxanimcurvefilter.i"
 %include "fbxanimcurvenode.i"
 %include "fbxcamera.i"
 %include "fbxconnectionpoint.i"
