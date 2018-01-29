@@ -12,13 +12,8 @@ using System.Linq;
 
 namespace Unity.FbxSdk.UnitTests
 {
-    public class FbxAnimCurveFilterUnrollTest 
+	public class FbxAnimCurveFilterUnrollTest : TestBase<FbxAnimCurveFilterUnroll>
     {
-        #if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxColor), this.GetType()); }
-        #endif
-
         public static IEnumerable KeyTimeValues {
             get {
                 yield return new float[4] {0f, 33f, 149f, 7f};
