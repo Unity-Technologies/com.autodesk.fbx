@@ -43,6 +43,10 @@ namespace Unity.FbxSdk.UnitTests
             Assert.That(filter.NeedApply(fbxAnimNode), Is.False,  "expected not to need to unroll curves");
             Assert.That(filter.Apply(fbxAnimNode), Is.False, "expected to have nothing to do");
 
+            // ensure coverage for function that takes an FbxStatus
+            Assert.That (filter.NeedApply (fbxAnimNode, new FbxStatus ()), Is.False);
+            Assert.That (filter.Apply (fbxAnimNode, new FbxStatus()), Is.False);
+
             // configure the unroll condition
             foreach (float[] keydata in KeyTimeValues)
             {
@@ -84,6 +88,7 @@ namespace Unity.FbxSdk.UnitTests
             }
 
             filter.Reset();
+            filter.Dispose ();
         }
 
         protected FbxManager Manager {
