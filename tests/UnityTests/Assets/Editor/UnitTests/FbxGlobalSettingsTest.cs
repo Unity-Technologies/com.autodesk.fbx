@@ -45,6 +45,10 @@ namespace Unity.FbxSdk.UnitTests
             // test SetAmbientColor
             settings.SetAmbientColor(new FbxColor(1,1,1));
             Assert.AreEqual (new FbxColor (1, 1, 1), settings.GetAmbientColor ());
+			
+			// test SetTimeMode
+			settings.SetTimeMode(FbxTime.EMode.eFrames100);
+			Assert.That(settings.GetTimeMode(), Is.Equal.To(FbxTime.EMode.eFrames100));
         }
     }
 }
