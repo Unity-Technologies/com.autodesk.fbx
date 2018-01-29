@@ -17,5 +17,7 @@
 %rename("%s") FbxGlobalSettings::GetDefaultCamera;
 %rename("%s") FbxGlobalSettings::SetAmbientColor;
 %rename("%s") FbxGlobalSettings::GetAmbientColor;
+%rename("%s") FbxGlobalSettings::GetTimeMode;
+%rename("%s") FbxGlobalSettings::SetTimeMode;
 
 %include "fbxsdk/fileio/fbxglobalsettings.h"
