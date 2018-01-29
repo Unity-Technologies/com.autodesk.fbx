@@ -48,7 +48,7 @@ namespace Unity.FbxSdk.UnitTests
 			
             // test SetTimeMode
             settings.SetTimeMode(FbxTime.EMode.eFrames100);
-            Assert.That(settings.GetTimeMode(), Is.Equal.To(FbxTime.EMode.eFrames100));
+            Assert.That(settings.GetTimeMode(), Is.EqualTo(FbxTime.EMode.eFrames100));
         }
     }
 }
