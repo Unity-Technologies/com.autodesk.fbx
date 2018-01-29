@@ -15,7 +15,7 @@ Newer versions of each software likely also work, except for the FBX SDK. To sup
 
 Default install locations expected for Unity and FBX SDK. If installing to a different location, modify FindUnity.cmake and FindFBXSDK.cmake files respectively.
 
-# Windows
+### Windows
 
 Make sure to download the version of the FBX SDK corresponding to the version of Visual Studio being used. e.g. if using Visual Studio 2015, make sure to download
 FBX SDK for VS2015.
