@@ -1,5 +1,11 @@
 #RELEASE NOTES
 
+**Version**: sprint43
+
+Add bindings for FbxAnimCurveFilterUnroll
+
+Add binding for FbxGlobalSettings SetTimeMode to set frame rate
+
 **Version**: 1.2.0b1
 
 Update version number
