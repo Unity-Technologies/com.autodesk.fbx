@@ -1,5 +1,9 @@
 #RELEASE NOTES
 
+**Version**: 1.3.0a1
+
+Fix Universal Windows Platform build error caused by UnityFbxSdk.dll being set as compatible with any platform instead of editor only.
+
 **Version**: sprint43
 
 Add bindings for FbxAnimCurveFilterUnroll
