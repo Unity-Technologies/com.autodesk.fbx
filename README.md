@@ -13,6 +13,29 @@
 
 Newer versions of each software likely also work, except for the FBX SDK. To support newer (or older) versions of FBX SDK, you need to edit the FindFBXSDK.cmake file.
 
+Default install locations expected for Unity and FBX SDK. If installing to a different location, modify FindUnity.cmake and FindFBXSDK.cmake files respectively.
+
+### Windows
+
+Make sure to download the version of the FBX SDK corresponding to the version of Visual Studio being used. e.g. if using Visual Studio 2015, make sure to download
+FBX SDK for VS2015.
+
+When installing Visual Studio, make sure to install C# sdk, C++ sdk, and Universal Windows App Development Tools (this can be done by doing a custom install or
+relaunching the installer and selecting "Modify").
+
+In addition to installing the above software, the following items need to be added to the PATH environment variable:
+
+```
+C:\Program Files (x86)\MSBuild\14.0\Bin
+C:\Windows\Microsoft.NET\Framework\v4.0.30319
+D:\Program Files (x86)\Microsoft Visual Studio 14.0\VC
+D:\Users\Viktoria\Downloads\swigwin-3.0.12\swigwin-3.0.12
+D:\Program Files\Autodesk\FBX\FBX SDK\2017.1
+D:\Python27
+```
+
+Set paths according to install locations.
+
 ## tl;dr
 
 Install all the software above, then copy-paste this code into a terminal or a cmd prompt:
