@@ -1,19 +1,17 @@
 find_package(CSharpAssemblies REQUIRED)
 
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  set(_csharpCompile_warnings="/nowarn:1701,1702,2008")
+else()
+  set(_csharpCompile_warnings="/nowarn:1701,1702")
+endif()
+
 macro(FBXSHARP_COMPILE_CSHARP)
   cmake_parse_arguments(_csharpCompile
       ""
       "OUTPUT"
       "SOURCES;REFERENCES;DEPENDS;EXTRA_ARGS"
       ${ARGN})
-
-  string(CONCAT _csharpCompile_compiler $<$<PLATFORM_ID:"Darwin">:"${MONO_COMPILER} "> "${CSHARP_COMPILER}")
-
-  if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    set(_csharpCompile_warnings="/nowarn:1701,1702,2008")
-  else()
-    set(_csharpCompile_warnings="/nowarn:1701,1702")
-  endif()
 
   file(TO_NATIVE_PATH "${_csharpCompile_SOURCES}" _csharpCompile_SOURCES)
 
@@ -22,7 +20,7 @@ macro(FBXSHARP_COMPILE_CSHARP)
   endforeach()
 
   add_custom_command(OUTPUT ${_csharpCompile_OUTPUT}
-        COMMAND "${_csharpCompile_compiler}"
+        COMMAND "${CSHARP_COMPILER}"
                 /noconfig
                 /langversion:4
                 /nostdlib+

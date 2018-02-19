@@ -27,21 +27,22 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     # Before 2018.1 Mono was bundled with Monodevelop.app which was
     # installed next to Unity.app. Try them both.
     # UNITY_EDITOR_DLL_PATH is Unity.app/Contents/Managed
+    #
+    # Note: we rely on the system mcs because the path and executable
+    # name of mono vary so much.
     find_package(Unity REQUIRED)
     list(APPEND MONO_ROOT_PATH "${UNITY_EDITOR_DLL_PATH}/../Mono")
     list(APPEND MONO_ROOT_PATH "${UNITY_EDITOR_DLL_PATH}/../../../Monodevelop.app/Contents/Frameworks/Mono.framework/Versions/Current")
   endif()
 
   foreach(MONO ${MONO_ROOT_PATH})
-      list(APPEND CSHARP_COMPILER_PATHS "${MONO}/bin")
       foreach(VERSION ${NET_REFERENCE_ASSEMBLIES_VERSIONS})
           list(APPEND CSHARP_DLL_PATHS "${MONO}/lib/mono/${VERSION}")
           list(APPEND REFERENCE_ASSEMBLIES_PATHS "${MONO}/lib/mono/${VERSION}")
       endforeach()
   endforeach()
 
-  find_program(MONO_COMPILER mono PATH ${CSHARP_COMPILER_PATH} NO_DEFAULT_PATH)
-  find_program(MONO_COMPILER mono PATH ${CSHARP_COMPILER_PATH})
+  find_program(CSHARP_COMPILER mcs)
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   message("Using .Net versions ${NET_COMPILER_VERSIONS}")
@@ -61,13 +62,12 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     list(APPEND CSHARP_DLL_PATHS "${DOT_NET_PATH}/v${VERSION}")
   endforeach()
 
+  find_program(CSHARP_COMPILER csc mcs PATHS ${CSHARP_COMPILER_PATHS} NO_DEFAULT_PATH)
+  find_program(CSHARP_COMPILER csc mcs PATHS ${CSHARP_COMPILER_PATHS})
+
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   message(WARNING "Linux: Not Implemented")
 endif()
-
-# message("Looking for C# compiler in ${CSHARP_COMPILER_PATHS}")
-find_program(CSHARP_COMPILER mcs csc PATHS ${CSHARP_COMPILER_PATHS} NO_DEFAULT_PATH)
-find_program(CSHARP_COMPILER mcs csc PATHS ${CSHARP_COMPILER_PATHS})
 
 # message("Looking for mscorlib.dll in ${CSHARP_DLL_PATHS}")
 dotnet_find_library(CSHARP_MSCORLIB_LIBRARY mscorlib.dll PATHS ${CSHARP_DLL_PATHS} NO_DEFAULT_PATH)
