@@ -4,7 +4,7 @@
 # Licensed under the ##LICENSENAME##.
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
-if (CSHARP_ASSEMBLIES_FOUND)
+if (CSharpCompiler_FOUND)
   return()
 endif()
 
@@ -81,7 +81,7 @@ dotnet_find_library(CSHARP_SYSTEM_CORE_LIBRARY System.Core.dll PATHS ${REFERENCE
 
 # Standard code to report whether we found the package or not.
 #include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(CSHARP_ASSEMBLIES DEFAULT_MSG
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(CSharpCompiler DEFAULT_MSG
         CSHARP_COMPILER
         CSHARP_MSCORLIB_LIBRARY
         CSHARP_SYSTEM_LIBRARY
