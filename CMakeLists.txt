@@ -71,7 +71,6 @@ find_package(Doxygen)
 set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(PythonInterp REQUIRED)
 include(deps/cmake/RunPythonScript.cmake)
-include(deps/cmake/BuildCSharp.cmake)
 
 # Set up the include directories
 include_directories(src)
