@@ -5,11 +5,6 @@
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
 
-# The list of FBX SDK versions to look for.
-# The first of these is the most-preferred.
-set(FBXSDK_VERSIONS "2017.1" "2016.0")
-message("Using versions ${FBXSDK_VERSIONS}")
-
 # Platform-specific code.
 # Autodesk installs the FBX SDK in a non-standard spot so we need to find it.
 # Result of this code:
@@ -20,14 +15,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   list(APPEND CMAKE_SWIG_FLAGS "-D__x86_64__")
   list(APPEND CMAKE_SWIG_FLAGS "-DFBXSDK_COMPILER_GNU")
 
-  # define FBXSDK installation path 
-  set(FBXSDK_INSTALL_PATH "/Applications/Autodesk/FBX SDK")
-  
-  foreach(VERSION ${FBXSDK_VERSIONS})
-    message("Looking for fbxsdk in ${FBXSDK_INSTALL_PATH}/${VERSION}")
-    list(APPEND FBXSDK_INCLUDE_PATHS "${FBXSDK_INSTALL_PATH}/${VERSION}/include")
-    list(APPEND FBXSDK_LIB_PATHS "${FBXSDK_INSTALL_PATH}/${VERSION}/lib/clang/release")
-  endforeach()
+  set(_fbxsdk_INSTALL_PATH "/Applications/Autodesk/FBX SDK")
+  list(APPEND _fbxsdk_lib_paths "lib/clang/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   SET(CMAKE_FIND_LIBRARY_PREFIXES "lib")
@@ -36,37 +25,32 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   list(APPEND CMAKE_SWIG_FLAGS "-D_M_X64")
   list(APPEND CMAKE_SWIG_FLAGS "-D_MSC_VER")
 
-  foreach(VERSION ${FBXSDK_VERSIONS})
-    message("Windows: Looking for fbxsdk in C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}")
-    list(APPEND FBXSDK_INCLUDE_PATHS "C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}/include")
-    if(${VERSION} STREQUAL "2017.1")
-        list(APPEND FBXSDK_LIB_PATHS "C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}/lib/vs2015/x64/release")
-    else()
-        list(APPEND FBXSDK_LIB_PATHS "C:/Program Files/Autodesk/FBX/FBX SDK/${VERSION}/lib/vs2010/x64/release")
-    endif()
-  endforeach()  
+  set(_fbxsdk_INSTALL_PATH "C:/Program Files/Autodesk/FBX/FBX SDK")
+  list(APPEND _fbxsdk_lib_paths "lib/vs2015/x64/release")
+  list(APPEND _fbxsdk_lib_paths "lib/vs2010/x64/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__linux__")
   list(APPEND CMAKE_SWIG_FLAGS "-D__x86_64__")
   list(APPEND CMAKE_SWIG_FLAGS "-D__GNUC__")
 
-  foreach(VERSION ${FBXSDK_VERSIONS})
-    message("Looking for fbxsdk in /opt/Autodesk/FBX SDK/${VERSION}")
-    list(APPEND FBXSDK_INCLUDE_PATHS "/opt/Autodesk/FBX SDK/${VERSION}/include")
-    list(APPEND FBXSDK_LIB_PATHS "/opt/Autodesk/FBX SDK/${VERSION}/lib/gcc4/x64/release")
-  endforeach()
-  
+  set(_fbxsdk_INSTALL_PATH "/opt/Autodesk/FBX/FBX SDK")
+  list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release")
 endif()
 
-message("Looking for fbxsdk.h in ${FBXSDK_INCLUDE_PATHS}")
+# Iterate over the versions. Pick the first one (reverse-alphabetically)
+file(GLOB _fbxsdk_VERSIONS LIST_DIRECTORIES true "${_fbxsdk_INSTALL_PATH}/*")
+list(SORT _fbxsdk_VERSIONS)
+list(REVERSE _fbxsdk_VERSIONS)
+foreach(_fbxsdk_PATH ${_fbxsdk_VERSIONS})
+  list(APPEND FBXSDK_INCLUDE_PATHS "${_fbxsdk_PATH}/include")
+  foreach(_fbxsdk_lib_path ${_fbxsdk_lib_paths})
+    list(APPEND FBXSDK_LIB_PATHS "${_fbxsdk_PATH}/${_fbxsdk_lib_path}")
+  endforeach()
+endforeach()
+
 find_path(FBXSDK_INCLUDE_DIR fbxsdk.h PATHS ${FBXSDK_INCLUDE_PATHS})
-message("Found ${FBXSDK_INCLUDE_DIR}")
-
-message("Looking for fbxsdk library in ${FBXSDK_LIB_PATHS}")
-
 find_library(FBXSDK_LIBRARY libfbxsdk.a libfbxsdk-mt.lib PATHS ${FBXSDK_LIB_PATHS})
-message("Found static ${FBXSDK_LIBRARY}")
 
 # On OSX we need to link to Cocoa when we statically link.
 # (But if we didn't find FBX, don't link to Cocoa.)
