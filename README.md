@@ -3,17 +3,16 @@
 ## Requirements
 
 * [Unity](http://unity3d.com) 2017.1 or later
-* [FBX SDK](http://www.autodesk.com/products/fbx/overview) 2016.0 or 2017.1
+* [FBX SDK](http://www.autodesk.com/products/fbx/overview) 2017.1
 * [cmake](https://cmake.org/download/) 3.8
 * [swig](http://www.swig.org/download.html) 3.0.12
 * [Python](https://www.python.org/downloads/) 2.7.x or 3.x
 * Windows: [Visual Studio Community 2015](https://www.visualstudio.com/downloads/)
 * Linux: ???
 * OSX: [Xcode](https://developer.apple.com/xcode/features/) 7.3 with command-line tools installed
+* OSX: [mono](http://www.mono-project.com/) 3.12 (`sudo port install mono` or `sudo brew install mono`)
 
-Newer versions of each software likely also work, except for the FBX SDK. To support newer (or older) versions of FBX SDK, you need to edit the FindFBXSDK.cmake file.
-
-Default install locations expected for Unity and FBX SDK. If installing to a different location, modify FindUnity.cmake and FindFBXSDK.cmake files respectively.
+Newer versions of each software likely also work.
 
 ### Windows
 
