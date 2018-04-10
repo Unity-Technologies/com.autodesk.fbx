@@ -179,6 +179,7 @@
 %template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
 %template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
 %template("FbxPropertyString") FbxPropertyT<FbxString>;
+%template("FbxPropertyInt") FbxPropertyT<signed int>;
 
 %csmethodmodifiers FbxPropertyT<float>::Set(const float&) "public new";
 %template("FbxPropertyFloat") FbxPropertyT<float>;

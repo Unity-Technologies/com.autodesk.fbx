@@ -252,3 +252,4 @@
 %include "fbxshape.i"
 %include "fbxio.i"
 %include "fbxtransforms.i"
+%include "fbxconstraint.i"
