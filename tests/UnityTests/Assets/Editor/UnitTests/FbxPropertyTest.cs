@@ -30,7 +30,8 @@ namespace Unity.FbxSdk.UnitTests
             CoverageTester.TestCoverage(typeof(FbxPropertyEAreaLightShape), this.GetType ());
             CoverageTester.TestCoverage(typeof(FbxPropertyEDecayType), this.GetType ());
             CoverageTester.TestCoverage(typeof(FbxPropertyFloat), this.GetType ());
-            CoverageTester.TestCoverage (typeof(FbxPropertyEInheritType), this.GetType ());
+            CoverageTester.TestCoverage(typeof(FbxPropertyEInheritType), this.GetType ());
+            CoverageTester.TestCoverage(typeof(FbxPropertyInt), this.GetType ());
         }
 #endif
 
@@ -68,6 +69,12 @@ namespace Unity.FbxSdk.UnitTests
                 // FbxPropertyT<float>
                 var light = FbxLight.Create(manager, "light");
                 EqualityTester<FbxPropertyFloat>.TestEquality(light.LeftBarnDoor, light.RightBarnDoor, light.LeftBarnDoor);
+
+                // FbxPropertyT<int>
+                var constraint = FbxConstraintAim.Create (manager, "constraint");
+                var constraint2 = FbxConstraintAim.Create (manager, "constraint2");
+                var worldUpTypeCopy = constraint.WorldUpType; // TODO: constraint.FindProperty("WorldUpType");
+                EqualityTester<FbxPropertyInt>.TestEquality (constraint.WorldUpType, constraint2.WorldUpType, worldUpTypeCopy);
 
                 // FbxPropertyT<> for FbxTexture enums
                 var tex1 = FbxTexture.Create(manager, "tex1");
@@ -278,6 +285,20 @@ namespace Unity.FbxSdk.UnitTests
                 Assert.AreEqual(5.0f, property.EvaluateValue());
                 Assert.AreEqual(5.0f, property.EvaluateValue(FbxTime.FromSecondDouble(5)));
                 Assert.AreEqual(5.0f, property.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create ()) {
+                // FbxPropertyT<int> example: the WorldUpType on an aim constraint
+                var constraint = FbxConstraintAim.Create (manager, "constraint");
+                GenericPropertyTests (constraint.WorldUpType, constraint, "WorldUpType", Globals.FbxEnumDT);
+
+                var property = constraint.WorldUpType;
+                int value = (int)FbxConstraintAim.EWorldUp.eAimAtObjectUp;
+                constraint.WorldUpType.Set (value);
+                Assert.That (constraint.WorldUpType.Get (), Is.EqualTo (value));
+                Assert.That (property.EvaluateValue (), Is.EqualTo (value));
+                Assert.That (property.EvaluateValue (FbxTime.FromSecondDouble (5)), Is.EqualTo (value));
+                Assert.That (property.EvaluateValue (FbxTime.FromSecondDouble (5), true), Is.EqualTo (value));
             }
 
             using (var manager = FbxManager.Create()) {
