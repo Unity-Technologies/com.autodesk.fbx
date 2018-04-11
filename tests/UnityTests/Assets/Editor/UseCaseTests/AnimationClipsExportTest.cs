@@ -14,11 +14,58 @@ namespace Unity.FbxSdk.UseCaseTests
     {
         protected int m_keyCount = 5;
 
-        protected string[] m_transformComponents = new string[] {
-            Globals.FBXSDK_CURVENODE_COMPONENT_X, 
-            Globals.FBXSDK_CURVENODE_COMPONENT_Y, 
-            Globals.FBXSDK_CURVENODE_COMPONENT_Z
-        };
+        protected virtual string[] PropertyNames
+        {
+            get
+            {
+                return new string[] {
+                    "Lcl Translation",
+                    "Lcl Rotation",
+                    "Lcl Scaling"
+                };
+            }
+        }
+
+        protected virtual string[] Components
+        {
+            get
+            {
+                return new string[] {
+                    Globals.FBXSDK_CURVENODE_COMPONENT_X,
+                    Globals.FBXSDK_CURVENODE_COMPONENT_Y,
+                    Globals.FBXSDK_CURVENODE_COMPONENT_Z
+                };
+            }
+        }
+
+        protected List<PropertyComponentPair> m_propComponentList;
+        protected virtual List<PropertyComponentPair> PropertyComponentList
+        {
+            get
+            {
+                if (m_propComponentList == null)
+                {
+                    m_propComponentList = new List<PropertyComponentPair>();
+                    foreach (var prop in PropertyNames)
+                    {
+                        m_propComponentList.Add(new PropertyComponentPair(prop, Components));
+                    }
+                }
+                return m_propComponentList;
+            }
+        }
+
+        protected struct PropertyComponentPair
+        {
+            public string propertyName;
+            public string[] componentList;
+
+            public PropertyComponentPair(string propName, string[] components)
+            {
+                propertyName = propName;
+                componentList = components;
+            }
+        }
 
         [SetUp]
         public override void Init ()
@@ -36,39 +83,16 @@ namespace Unity.FbxSdk.UseCaseTests
             FbxNode animNode = FbxNode.Create (scene, "animNode");
 
             // setup anim stack
-            FbxAnimStack fbxAnimStack = FbxAnimStack.Create (scene, "animClip");
-            fbxAnimStack.Description.Set ("Animation Take");
+            FbxAnimStack fbxAnimStack = CreateAnimStack(scene);
 
             // add an animation layer
             FbxAnimLayer fbxAnimLayer = FbxAnimLayer.Create (scene, "animBaseLayer");
             fbxAnimStack.AddMember (fbxAnimLayer);
 
-            // Set up the FPS so our frame-relative math later works out
-            // Custom frame rate isn't really supported in FBX SDK (there's
-            // a bug), so try hard to find the nearest time mode.
-            FbxTime.EMode timeMode = FbxTime.EMode.eCustom;
-            double precision = 1e-6;
-            while (timeMode == FbxTime.EMode.eCustom && precision < 1000) {
-                timeMode = FbxTime.ConvertFrameRateToTimeMode (30, precision);
-                precision *= 10;
-            }
-            if (timeMode == FbxTime.EMode.eCustom) {
-                timeMode = FbxTime.EMode.eFrames30;
-            }
-            FbxTime.SetGlobalTimeMode (timeMode);
-
-            // set time correctly
-            var fbxStartTime = FbxTime.FromSecondDouble (0);
-            var fbxStopTime = FbxTime.FromSecondDouble (25);
-
-            fbxAnimStack.SetLocalTimeSpan (new FbxTimeSpan (fbxStartTime, fbxStopTime));
-
             // set up the translation
-            CreateAnimCurves (animNode, fbxAnimLayer, new List<PropertyComponentPair> () {
-                new PropertyComponentPair ("Lcl Translation", m_transformComponents),
-                new PropertyComponentPair ("Lcl Rotation", m_transformComponents),
-                new PropertyComponentPair ("Lcl Scaling", m_transformComponents)
-            }, (index) => { return index*2.0; }, (index) => { return index*3.0f - 1; });
+            CreateAnimCurves (
+                animNode, fbxAnimLayer, PropertyComponentList, (index) => { return index*2.0; }, (index) => { return index*3.0f - 1; }
+                );
 
             // TODO: avoid needing to this by creating typemaps for
             //       FbxObject::GetSrcObjectCount and FbxCast.
@@ -80,25 +104,31 @@ namespace Unity.FbxSdk.UseCaseTests
             return scene;
         }
 
-        protected struct PropertyComponentPair{
-            public string propertyName;
-            public string[] componentList;
+        protected FbxAnimStack CreateAnimStack(FbxScene scene)
+        {
+            FbxAnimStack fbxAnimStack = FbxAnimStack.Create(scene, "animClip");
+            fbxAnimStack.Description.Set("Animation Take");
 
-            public PropertyComponentPair(string propName, string[] components){
-                propertyName = propName;
-                componentList = components;
-            }
+            FbxTime.EMode timeMode = FbxTime.EMode.eFrames30;
+            scene.GetGlobalSettings().SetTimeMode(timeMode);
+
+            // set time correctly
+            var fbxStartTime = FbxTime.FromSecondDouble(0);
+            var fbxStopTime = FbxTime.FromSecondDouble(25);
+
+            fbxAnimStack.SetLocalTimeSpan(new FbxTimeSpan(fbxStartTime, fbxStopTime));
+            return fbxAnimStack;
         }
 
         protected void CreateAnimCurves(
-            FbxNode animNode, FbxAnimLayer animLayer,
+            FbxObject animObject, FbxAnimLayer animLayer,
             List<PropertyComponentPair> properties,
             System.Func<int,double> calcTime, // lambda function for calculating time based on index
             System.Func<int,float> calcValue, // lambda function for calculating value based on index
             FbxNodeAttribute animNodeAttr=null)
         {
             foreach(var pair in properties){
-                FbxProperty fbxProperty = animNode.FindProperty (pair.propertyName, false);
+                FbxProperty fbxProperty = animObject.FindProperty (pair.propertyName, false);
                 if (animNodeAttr != null && (fbxProperty == null || !fbxProperty.IsValid ())) {
                     // backup method for finding the property if we can't find it on the node itself
                     fbxProperty = animNodeAttr.FindProperty (pair.propertyName, false);
@@ -106,6 +136,7 @@ namespace Unity.FbxSdk.UseCaseTests
 
                 Assert.IsNotNull (fbxProperty);
                 Assert.IsTrue (fbxProperty.IsValid ());
+                Assert.That(fbxProperty.GetFlag(FbxPropertyFlags.EFlags.eAnimatable), Is.True);
 
                 foreach (var component in pair.componentList) {
                     // Create the AnimCurve on the channel
@@ -139,11 +170,7 @@ namespace Unity.FbxSdk.UseCaseTests
             FbxAnimStack origStack = origScene.GetCurrentAnimationStack ();
             FbxAnimStack importStack = scene.GetCurrentAnimationStack ();
 
-            Assert.IsNotNull (origStack);
-            Assert.IsNotNull (importStack);
-            Assert.AreEqual (origStack.GetName (), importStack.GetName ());
-            Assert.AreEqual (origStack.Description.Get (), importStack.Description.Get ());
-            Assert.AreEqual (origStack.GetMemberCount (), importStack.GetMemberCount ());
+            CheckAnimStack(origStack, importStack);
 
             FbxAnimLayer origLayer = origStack.GetAnimLayerMember ();
             FbxAnimLayer importLayer = importStack.GetAnimLayerMember ();
@@ -151,28 +178,34 @@ namespace Unity.FbxSdk.UseCaseTests
             Assert.IsNotNull (origLayer);
             Assert.IsNotNull (importLayer);
 
-            Assert.AreEqual (FbxTime.EMode.eFrames30, FbxTime.GetGlobalTimeMode ());
-            Assert.AreEqual (origStack.GetLocalTimeSpan (), importStack.GetLocalTimeSpan ());
+            Assert.AreEqual(FbxTime.EMode.eFrames30, scene.GetGlobalSettings().GetTimeMode());
 
-            CheckAnimCurve (origAnimNode, importAnimNode, origLayer, importLayer, new List<PropertyComponentPair>(){
-                new PropertyComponentPair("Lcl Translation", m_transformComponents),
-                new PropertyComponentPair("Lcl Rotation", m_transformComponents),
-                new PropertyComponentPair("Lcl Scaling", m_transformComponents)
-            });
+            CheckAnimCurve (origAnimNode, importAnimNode, origLayer, importLayer, PropertyComponentList);
+        }
+
+        protected void CheckAnimStack(FbxAnimStack origStack, FbxAnimStack importStack)
+        {
+            Assert.IsNotNull(origStack);
+            Assert.IsNotNull(importStack);
+            Assert.AreEqual(origStack.GetName(), importStack.GetName());
+            Assert.AreEqual(origStack.Description.Get(), importStack.Description.Get());
+            Assert.AreEqual(origStack.GetMemberCount(), importStack.GetMemberCount());
+
+            Assert.AreEqual(origStack.GetLocalTimeSpan(), importStack.GetLocalTimeSpan());
         }
 
         protected void CheckAnimCurve(
-            FbxNode origAnimNode, FbxNode importAnimNode,
+            FbxObject origAnimObject, FbxObject importAnimObject,
             FbxAnimLayer origLayer, FbxAnimLayer importLayer,
             List<PropertyComponentPair> propCompPairs,
             FbxNodeAttribute origNodeAttr=null, FbxNodeAttribute importNodeAttr=null)
         {
             foreach (var pair in propCompPairs) {
-                FbxProperty origProperty = origAnimNode.FindProperty (pair.propertyName, false);
+                FbxProperty origProperty = origAnimObject.FindProperty (pair.propertyName, false);
                 if (origNodeAttr != null && (origProperty == null || !origProperty.IsValid ())) {
                     origProperty = origNodeAttr.FindProperty (pair.propertyName, false);
                 }
-                FbxProperty importProperty = importAnimNode.FindProperty (pair.propertyName, false);
+                FbxProperty importProperty = importAnimObject.FindProperty (pair.propertyName, false);
                 if (importNodeAttr != null && (importProperty == null || !importProperty.IsValid ())) {
                     importProperty = importNodeAttr.FindProperty (pair.propertyName, false);
                 }
