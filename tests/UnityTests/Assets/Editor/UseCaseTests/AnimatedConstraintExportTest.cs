@@ -92,7 +92,7 @@ namespace Unity.FbxSdk.UseCaseTests
         protected override void CheckScene(FbxScene scene)
         {
             FbxScene origScene = CreateScene(FbxManager);
-            Assert.AreEqual(origScene.GetRootNode().GetChildCount(), scene.GetRootNode().GetChildCount());
+            Assert.That(origScene.GetRootNode().GetChildCount(), Is.EqualTo(scene.GetRootNode().GetChildCount()));
 
             // check nodes match
             FbxNode origSourceNode = origScene.GetRootNode().GetChild(0);
@@ -101,12 +101,12 @@ namespace Unity.FbxSdk.UseCaseTests
             FbxNode importSourceNode = scene.GetRootNode().GetChild(0);
             FbxNode importConstrainedNode = scene.GetRootNode().GetChild(1);
 
-            Assert.IsNotNull(origSourceNode);
-            Assert.IsNotNull(importSourceNode);
-            Assert.IsNotNull(origConstrainedNode);
-            Assert.IsNotNull(importConstrainedNode);
-            Assert.AreEqual(origSourceNode.GetName(), importSourceNode.GetName());
-            Assert.AreEqual(origConstrainedNode.GetName(), importConstrainedNode.GetName());
+            Assert.That(origSourceNode, Is.Not.Null);
+            Assert.That(importSourceNode, Is.Not.Null);
+            Assert.That(origConstrainedNode, Is.Not.Null);
+            Assert.That(importConstrainedNode, Is.Not.Null);
+            Assert.That(importSourceNode.GetName(), Is.EqualTo(origSourceNode.GetName()));
+            Assert.That(importConstrainedNode.GetName(), Is.EqualTo(origConstrainedNode.GetName()));
 
             // check constraints match
             // TODO: find a way to cast to FbxConstraint
@@ -127,10 +127,10 @@ namespace Unity.FbxSdk.UseCaseTests
             FbxAnimLayer origLayer = origStack.GetAnimLayerMember();
             FbxAnimLayer importLayer = importStack.GetAnimLayerMember();
 
-            Assert.IsNotNull(origLayer);
-            Assert.IsNotNull(importLayer);
+            Assert.That(origLayer, Is.Not.Null);
+            Assert.That(importLayer, Is.Not.Null);
 
-            Assert.AreEqual(FbxTime.EMode.eFrames30, scene.GetGlobalSettings().GetTimeMode());
+            Assert.That(scene.GetGlobalSettings().GetTimeMode(), Is.EqualTo(FbxTime.EMode.eFrames30));
 
             CheckAnimCurve(origPosConstraint, importPosConstraint, origLayer, importLayer, PropertyComponentList);
         }
