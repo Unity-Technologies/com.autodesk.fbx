@@ -185,6 +185,72 @@ namespace Unity.FbxSdk.UnitTests
                 TestGetter (constraint.AffectTranslationZ);
             }
         }
+
+        [Test]
+        public void TestSetTranslationOffset()
+        {
+            using (var constraint = FbxConstraintParent.Create(Manager, "pConstraint"))
+            {
+                // test valid input
+                var fbxNode = FbxNode.Create(Manager, "rootnode");
+                var fbxNode2 = FbxNode.Create(Manager, "node2");
+
+                var offset = new FbxVector4(1, 2, 3);
+                constraint.AddConstraintSource(fbxNode);
+                constraint.SetTranslationOffset(fbxNode, offset);
+
+                var offset2 = new FbxVector4(0.5, 0.5, 0.25);
+                constraint.AddConstraintSource(fbxNode2, 2.0);
+                constraint.SetTranslationOffset(fbxNode2, offset2);
+
+                Assert.That(constraint.GetTranslationOffset(fbxNode), Is.EqualTo(offset));
+                Assert.That(constraint.GetTranslationOffset(fbxNode2), Is.EqualTo(offset2));
+
+                // test null input
+                Assert.That(() => constraint.SetTranslationOffset(null, offset), Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That(() => constraint.GetTranslationOffset(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+
+                // test on non source fbx node
+                var fbxNode3 = FbxNode.Create(Manager, "node3");
+                var offset3 = new FbxVector4(1, 1, 1);
+                
+                Assert.That(() => constraint.SetTranslationOffset(fbxNode3, offset3), Throws.Nothing);
+                Assert.That(constraint.GetTranslationOffset(fbxNode3), Is.EqualTo(new FbxVector4(0,0,0)));
+            }
+        }
+
+        [Test]
+        public void TestSetRotationOffset()
+        {
+            using (var constraint = FbxConstraintParent.Create(Manager, "pConstraint"))
+            {
+                // test valid input
+                var fbxNode = FbxNode.Create(Manager, "rootnode");
+                var fbxNode2 = FbxNode.Create(Manager, "node2");
+
+                var offset = new FbxVector4(1, 2, 3);
+                constraint.AddConstraintSource(fbxNode);
+                constraint.SetRotationOffset(fbxNode, offset);
+
+                var offset2 = new FbxVector4(0.5, 0.5, 0.25);
+                constraint.AddConstraintSource(fbxNode2, 2.0);
+                constraint.SetRotationOffset(fbxNode2, offset2);
+
+                Assert.That(constraint.GetRotationOffset(fbxNode), Is.EqualTo(offset));
+                Assert.That(constraint.GetRotationOffset(fbxNode2), Is.EqualTo(offset2));
+
+                // test null input
+                Assert.That(() => constraint.SetRotationOffset(null, offset), Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That(() => constraint.GetRotationOffset(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+
+                // test on non source fbx node
+                var fbxNode3 = FbxNode.Create(Manager, "node3");
+                var offset3 = new FbxVector4(1, 1, 1);
+
+                Assert.That(() => constraint.SetRotationOffset(fbxNode3, offset3), Throws.Nothing);
+                Assert.That(constraint.GetRotationOffset(fbxNode3), Is.EqualTo(new FbxVector4(0, 0, 0)));
+            }
+        }
     }
 
     public class FbxConstraintPositionTest : FbxConstraintDescendantTestBase<FbxConstraintPosition>
