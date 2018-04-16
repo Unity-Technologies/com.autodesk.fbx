@@ -34,10 +34,6 @@
 
 // FbxConstraintParent
 
-%ignore FbxConstraintParent::SetTranslationOffset;
-%ignore FbxConstraintParent::GetTranslationOffset;
-%ignore FbxConstraintParent::SetRotationOffset;
-%ignore FbxConstraintParent::GetRotationOffset;
 %ignore FbxConstraintParent::ConstraintSources;
 %ignore FbxConstraintParent::ConstrainedObject;
 
