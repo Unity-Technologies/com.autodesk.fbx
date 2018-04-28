@@ -175,7 +175,7 @@ swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 # Happens to also reduce the output binary a lot too.
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   set_target_properties(UnityFbxSdkNative PROPERTIES
-  LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt"
+  LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt -Wl,-x,-dead_strip"
   BUNDLE TRUE)
 endif()
 
