@@ -174,9 +174,10 @@ swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 # Hide FBX symbols in case the target application also has a copy of FBX
 # Happens to also reduce the output binary a lot too.
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  set_target_properties(UnityFbxSdkNative PROPERTIES
-  LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt -Wl,-x,-dead_strip"
-  BUNDLE TRUE)
+  set_target_properties(UnityFbxSdkNative PROPERTIES BUNDLE TRUE)
+  target_link_libraries(UnityFbxSdkNative "-exported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/deps/exported_symbols.txt -Wl,-x,-dead_strip")
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  target_link_libraries(UnityFbxSdkNative "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/version-script.txt -Wl,-x,--gc-sections")
 endif()
 
 ###########################################################################
