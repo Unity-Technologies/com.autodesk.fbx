@@ -196,3 +196,6 @@
 /* Texture properties */
 %template("FbxPropertyEBlendMode") FbxPropertyT<FbxTexture::EBlendMode>;
 %template("FbxPropertyEWrapMode") FbxPropertyT<FbxTexture::EWrapMode>;
+
+/* Camera properties */
+%template("FbxPropertyEGateFit") FbxPropertyT<FbxCamera::EGateFit>;
