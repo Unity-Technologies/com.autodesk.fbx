@@ -2,7 +2,6 @@
 
 import re
 import sys
-import time
 
 # Usage:
 #   python replace-dllimport.py path/to/PINVOKE.cs
@@ -14,7 +13,6 @@ def replace_dllimport(filename):
     with open(filename) as infile:
         outdata = [ re.sub(pattern, replace, line) for line in infile.readlines() ]
     with open(filename, 'w') as outfile:
-        outfile.write("// Converted DllImport statements using {} on {}\n\n".format(sys.argv[0], time.asctime()))
         for line in outdata:
             outfile.write(line)
 
