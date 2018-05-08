@@ -166,6 +166,40 @@
 %include "optimization.i"
 
 /*
+ * This code allows the module to load when it's a Unity Package Manager package.
+ *
+ * Hopefully Package Manager will eventually be able to handle [DllImport()]
+ * correctly and not need a full path.
+ *
+ * See also the replace-dllimport.py script.
+ */
+%pragma(csharp) imclasscode=%{
+  /// <summary>
+  /// String to use in the DllImport below.
+  ///
+  /// This must be a constant, but it changes depending on the platform and deployment.
+  ///
+  /// When deploying as an asset (a .unitypackage), define
+  /// COM_UNITY_FORMATS_FBX_AS_ASSET and compile the package.
+  ///
+  /// When deploying with Unity Package Manager, do not add defines: the
+  /// default platform defines suffice.
+  /// </summary>
+#if COM_UNITY_FORMATS_FBX_AS_ASSET
+  const string DllImportName = "$dllimport";
+#elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+  const string DllImportName = "Packages/com.unity.formats.fbx/Editor/Plugins/MacOS/$dllimport.bundle/MacOS/Contents/$dllimport";
+#elif UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
+  const string DllImportName = "Packages/com.unity.formats.fbx/Editor/Plugins/Linux/$dllimport.so";
+#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+  const string DllImportName = "Packages/com.unity.formats.fbx/Editor/Plugins/Windows/$dllimport.dll";
+#else
+  #error "FbxSdk: C# bindings for this platform haven't been implemented yet, sorry."
+  const string DllImportName = "$dllimport";
+#endif
+%}
+
+/*
  * Import a bunch of typedefs and macros, so that SWIG can parse FBX files.
  */
 %import "fbxsdk.h"

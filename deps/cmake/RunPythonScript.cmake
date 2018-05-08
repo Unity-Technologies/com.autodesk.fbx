@@ -31,6 +31,18 @@ macro(FBXSHARP_RUN_PYTHON)
   list(APPEND ${_runpy_TARGETDEPS} ${_runpy_OUTPUT})
 endmacro()
 
+macro(FBXSHARP_RUN_PYTHON_POSTBUILD)
+  cmake_parse_arguments(_runpy
+        ""
+        "TARGET;SCRIPT"
+        "ARGS"
+        ${ARGN})
+
+  add_custom_command(TARGET ${_runpy_TARGET} POST_BUILD
+        COMMAND ${PYTHON_EXECUTABLE}
+        ARGS ${_runpy_SCRIPT} ${_runpy_ARGS}
+  )
+endmacro()
 
 # fbxsharp_discover_immutables(OUTPUT foo.i
 #       HEADERS bar.h quux.h
