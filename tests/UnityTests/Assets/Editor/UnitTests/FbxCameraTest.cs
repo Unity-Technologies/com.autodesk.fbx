@@ -1,4 +1,4 @@
-﻿// ***********************************************************************
+// ***********************************************************************
 // Copyright (c) 2017 Unity Technologies. All rights reserved.
 //
 // Licensed under the ##LICENSENAME##.
@@ -76,6 +76,9 @@ namespace Unity.FbxSdk.UnitTests
                 TestGetter (fbxCamera.AspectWidth);
                 TestGetter (fbxCamera.NearPlane);
                 TestGetter (fbxCamera.FieldOfView);
+                TestGetter (fbxCamera.GateFit);
+                TestGetter (fbxCamera.FilmOffsetX);
+                TestGetter (fbxCamera.FilmOffsetY);
             }
         }
     }
