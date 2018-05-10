@@ -157,7 +157,7 @@ fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         ARGS ${CMAKE_BINARY_DIR}/weakpointerhandles.i ${CMAKE_BINARY_DIR}/fbxsdk.typedefs "FbxEmitter" "FbxManager")
 
 
-# Finalize the swig output.
+# Finalize the swig output: build & link the library, munge the DllImport statements
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 
 swig_add_library(UnityFbxSdkNative
@@ -165,13 +165,19 @@ swig_add_library(UnityFbxSdkNative
          LANGUAGE csharp
          SOURCES src/fbxsdk.i)
 
+fbxsharp_run_python_postbuild(TARGET UnityFbxSdkNative
+        SCRIPT ${CMAKE_SOURCE_DIR}/scripts/replace-dllimport.py
+        ARGS ${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs)
+
 swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 
-# hide FBX symbols in case the target application also has a copy of FBX
+# Hide FBX symbols in case the target application also has a copy of FBX
+# Happens to also reduce the output binary a lot too.
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  set_target_properties(UnityFbxSdkNative PROPERTIES
-  LINK_FLAGS "-exported_symbols_list ${CMAKE_SOURCE_DIR}/deps/exported_symbols.txt"
-  BUNDLE TRUE)
+  set_target_properties(UnityFbxSdkNative PROPERTIES BUNDLE TRUE)
+  target_link_libraries(UnityFbxSdkNative "-exported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/deps/exported_symbols.txt -Wl,-x,-dead_strip")
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+  target_link_libraries(UnityFbxSdkNative "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/version-script.txt -Wl,-x,--gc-sections")
 endif()
 
 ###########################################################################
@@ -240,6 +246,8 @@ if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
             DEPENDS
                 UnityFbxSdkNative
                 "${CLASS_LIBRARY_DEST}"
+            EXTRA_ARGS
+                "-define:COM_UNITY_FORMATS_FBX_AS_ASSET"
     )
     add_custom_target(UnityFbxSdk ALL DEPENDS ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME})
 
