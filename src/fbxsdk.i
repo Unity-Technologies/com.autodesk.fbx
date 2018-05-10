@@ -188,11 +188,11 @@
 #if COM_UNITY_FORMATS_FBX_AS_ASSET
   const string DllImportName = "$dllimport";
 #elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
-  const string DllImportName = "Packages/com.unity.formats.fbx/Editor/Plugins/MacOS/$dllimport.bundle/Contents/MacOS/$dllimport";
+  const string DllImportName = "Packages/com.unity.formats.fbxsdk/MacOS/$dllimport.bundle/Contents/MacOS/$dllimport";
 #elif UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
-  const string DllImportName = "Packages/com.unity.formats.fbx/Editor/Plugins/Linux/$dllimport.so";
+  const string DllImportName = "Packages/com.unity.formats.fbxsdk/Linux/$dllimport.so";
 #elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
-  const string DllImportName = "Packages/com.unity.formats.fbx/Editor/Plugins/Windows/$dllimport.dll";
+  const string DllImportName = "Packages/com.unity.formats.fbxsdk/Windows/$dllimport.dll";
 #else
   #error "FbxSdk: C# bindings for this platform haven't been implemented yet, sorry."
   const string DllImportName = "$dllimport";
