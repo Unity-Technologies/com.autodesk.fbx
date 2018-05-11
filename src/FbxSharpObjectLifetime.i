@@ -71,9 +71,7 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   {
       int result = -1;
       bool verbose = UnityEngine.Debug.unityLogger.logEnabled;
-      UnityEditor.EditorApplication.LockReloadAssemblies();
       result = _InitFbxAllocators();
-      UnityEditor.EditorApplication.UnlockReloadAssemblies();
 
       if (result!=1 && verbose)
       {

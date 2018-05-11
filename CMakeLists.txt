@@ -310,11 +310,11 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/ DESTINATION ${CMAK
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/import/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/MacOS)
+    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/MacOS/x64)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/Linux)
+    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/Linux/x64)
 else()
-    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/Windows)
+    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/Windows/x64)
 endif()
 
 # copy C++ performance tests
