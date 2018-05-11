@@ -1,5 +1,12 @@
 #RELEASE NOTES
 
+**Version**: 1.4.0-preview
+
+* First version accessible via Package Manager
+* Update to FBX SDK 2018.1.1
+* Add bindings for constraints: `FbxConstraint`, `FbxConstraintParent`, `FbxConstraintAim`, and related functions
+* Reduced binary size on Mac (which also shrinks the package for everyone)
+
 **Version**: 1.3.0a1
 
 Fix Universal Windows Platform build error caused by UnityFbxSdk.dll being set as compatible with any platform instead of editor only.
