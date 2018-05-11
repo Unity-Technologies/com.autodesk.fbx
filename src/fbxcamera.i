@@ -11,6 +11,7 @@
 %rename("%s") FbxCamera::EProjectionType;
 %rename("%s") FbxCamera::EApertureMode;
 %rename("%s") FbxCamera::EAspectRatioMode;
+%rename("%s") FbxCamera::EGateFit;
 
 /* Functions */
 %rename("%s") FbxCamera::Create;
@@ -36,6 +37,9 @@
 %fbximmutable(FbxCamera::AspectWidth);
 %fbximmutable(FbxCamera::AspectHeight);
 %fbximmutable(FbxCamera::FieldOfView);
+%fbximmutable(FbxCamera::GateFit);
+%fbximmutable(FbxCamera::FilmOffsetX);
+%fbximmutable(FbxCamera::FilmOffsetY);
 
 %include "fbxsdk/scene/geometry/fbxcamera.h"
 
