@@ -3,15 +3,27 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 using Unity.FbxSdk;
+using System.IO;
 
 public class FbxExporterTest {
     [Test]
     public void TestWriteEmptyFbxFile() {
-        // Hack so the test can resolve UnityFbxSdkNative.dll
-//        string originalPath = System.Environment.GetEnvironmentVariable("PATH");
-  //      System.Environment.SetEnvironmentVariable("PATH", originalPath + @";D:\projects\FbxSharpBuild\tests\UnityTests\Assets\FbxSdk\Plugins\x64\Windows");
+        /*
+        Runtime test that writes an fbx scene file in the directory where the 
+        player is (temp folder while running tests)
+        */
 
-    //    Debug.Log(System.Environment.GetEnvironmentVariable("PATH"));
+        // Build the fbx scene file path 
+        // (player/player_data/emptySceneFromRuntime.fbx)
+        string fbxFilePath = Application.dataPath;
+        fbxFilePath = Path.Combine(fbxFilePath, "emptySceneFromRuntime.fbx");
+
+        // The file should not exist. We are running the test from the Test 
+        // Runner, which should always create a new player with its own fresh 
+        // data directory
+        FileInfo fbxFileInfo = new FileInfo(fbxFilePath);
+        Assert.That(!fbxFileInfo.Exists, string.Format("\"{0}\" already exists but the test did not create it yet", fbxFilePath));
+
         using (var fbxManager = FbxManager.Create())
         {
             FbxIOSettings fbxIOSettings = FbxIOSettings.Create(fbxManager, Globals.IOSROOT);
@@ -24,16 +36,10 @@ public class FbxExporterTest {
 
             // Initialize the exporter.
             int fileFormat = fbxManager.GetIOPluginRegistry().FindWriterIDByDescription("FBX ascii (*.fbx)");
+            bool status = fbxExporter.Initialize(fbxFilePath, fileFormat, fbxIOSettings);
 
-            bool status = fbxExporter.Initialize("d:\\temp\\fromRuntime.fbx", fileFormat, fbxIOSettings);
-            // Check that initialization of the fbxExporter was successful
-            if (!status)
-            {
-                Debug.LogError(string.Format("failed to initialize exporter, reason:D {0}",
+            Assert.That( status, string.Format("failed to initialize exporter, reason:D {0}",
                                                fbxExporter.GetStatus().GetErrorString()));
-                return;
-            }
-
             // Create a scene
             var fbxScene = FbxScene.Create(fbxManager, "Scene");
 
@@ -41,12 +47,12 @@ public class FbxExporterTest {
             FbxDocumentInfo fbxSceneInfo = FbxDocumentInfo.Create(fbxManager, "SceneInfo");
 
             // set some scene info values
-            fbxSceneInfo.mTitle = "fromRuntime";
-            fbxSceneInfo.mSubject = "Exported from a Unity runtime";
+            fbxSceneInfo.mTitle = "emptySceneFromRuntime";
+            fbxSceneInfo.mSubject = "Exported from a Unity runtime while testing in play mode";
             fbxSceneInfo.mAuthor = "Unity Technologies";
             fbxSceneInfo.mRevision = "1.0";
-            fbxSceneInfo.mKeywords = "export runtime";
-            fbxSceneInfo.mComment = "This is to demonstrate the capability of exporting from a Unity runtime, using the FBX SDK C# bindings";
+            fbxSceneInfo.mKeywords = "export fbx runtime player play mode";
+            fbxSceneInfo.mComment = "This is to test the capability of exporting from a Unity runtime, using the FBX SDK C# bindings";
 
             fbxScene.SetSceneInfo(fbxSceneInfo);
 
@@ -58,17 +64,8 @@ public class FbxExporterTest {
             fbxExporter.Destroy();
         }
 
-      //  System.Environment.SetEnvironmentVariable("PATH", originalPath);
+        // Test that the file exists
+        fbxFileInfo = new FileInfo(fbxFilePath);
+        Assert.That(fbxFileInfo.Exists, string.Format("\"{0}\" was not created", fbxFilePath));
     }
-
-    // A UnityTest behaves like a coroutine in PlayMode
-    // and allows you to yield null to skip a frame in EditMode
-    /*
-        [UnityTest]
-        public IEnumerator NewTestScriptWithEnumeratorPasses() {
-            // Use the Assert class to test conditions.
-            // yield to skip a frame
-            yield return null;
-        }
-    */
 }
