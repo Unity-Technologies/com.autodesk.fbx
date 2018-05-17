@@ -64,6 +64,8 @@ namespace Unity.FbxSdk.UseCaseTests{
             consoleApp.Start ();
 
             StringBuilder error = new StringBuilder ();
+
+            error.Append (consoleApp.StandardError.ReadToEnd ());
             while (!consoleApp.HasExited) {
                 error.Append (consoleApp.StandardError.ReadToEnd ());
             }
@@ -73,7 +75,6 @@ namespace Unity.FbxSdk.UseCaseTests{
             Assert.IsTrue (errorString.Contains (
                 "Unhandled Exception: System.TypeInitializationException: " +
                 "The type initializer for 'Unity.FbxSdk.GlobalsPINVOKE' threw an exception"));
-            Assert.IsTrue (errorString.Contains ("UnityEditor"));
             Assert.IsTrue (errorString.Contains ("InitFbxAllocators"));
         }
     }
