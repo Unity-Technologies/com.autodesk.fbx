@@ -21,6 +21,7 @@ namespace Unity.FbxSdk.UnitTests
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyEBlendMode), this.GetType());
+            CoverageTester.TestCoverage(typeof(FbxPropertyEGateFit), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyEWrapMode), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyEProjectionType), this.GetType());
             CoverageTester.TestCoverage(typeof(FbxPropertyMarkerELook), this.GetType());
@@ -369,6 +370,18 @@ namespace Unity.FbxSdk.UnitTests
                 Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue());
                 Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue(FbxTime.FromSecondDouble(5)));
                 Assert.AreEqual(FbxCamera.EProjectionType.ePerspective, camera.ProjectionType.EvaluateValue(FbxTime.FromSecondDouble(5), true));
+            }
+
+            using (var manager = FbxManager.Create()) {
+                // FbxPropertyT for FbxCamera enum EGateFit
+                var camera = FbxCamera.Create(manager, "camera");
+
+                FbxPropertyTest.GenericPropertyTests(camera.GateFit, camera, "GateFit", Globals.FbxEnumDT);
+                camera.GateFit.Set(FbxCamera.EGateFit.eFitHorizontal);
+                Assert.AreEqual(FbxCamera.EGateFit.eFitHorizontal, camera.GateFit.Get());
+                Assert.AreEqual(FbxCamera.EGateFit.eFitHorizontal, camera.GateFit.EvaluateValue());
+                Assert.AreEqual(FbxCamera.EGateFit.eFitHorizontal, camera.GateFit.EvaluateValue(FbxTime.FromSecondDouble(5)));
+                Assert.AreEqual(FbxCamera.EGateFit.eFitHorizontal, camera.GateFit.EvaluateValue(FbxTime.FromSecondDouble(5), true));
             }
 
             using (var manager = FbxManager.Create()) {
