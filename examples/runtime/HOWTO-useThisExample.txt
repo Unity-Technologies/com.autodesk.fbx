@@ -1,0 +1,37 @@
+1- Edit the Packages/manifest.json file to point to the fbxsdk package you want to test, e.g.
+{
+  "dependencies": {
+    "com.unity.formats.fbxsdk": "1.6.0-preview"
+  },
+  "registry": "https://staging-packages.unity.com"
+}
+
+2- Open the scene named "ballsOnAPlane"
+
+3- editor, play mode
+	a. Hit the Play button
+	b. When the spheres start to fall, hit the "Hit me!" button
+	
+	-> The console logs where the fbx file should be written,  e.g. "The file that will be written is D:/projects/FbxSharp/examples/runtime/Assets\emptySceneFromRuntime.fbx"
+	-> Verify that the file was indeed written to disk
+	
+4- standalone "in context"
+		a. File/Build and RunHit
+		b. Select a directory where the game will be located
+		b. When the spheres start to fall, hit the "Hit me!" button
+
+		-> The emptySceneFromRuntime.fbx will be located where the game was compiled, under the gameName_data directory, e.g. "D:\temp\newBalls\newBalls_Data\emptySceneFromRuntime.fbx"
+		
+		-> Verify that the file was indeed written to disk
+		
+5- standalone, "out of context"
+		a. Browse to the Select a directory where the game has been built (using a file explorer, out of Unity)
+		b. Launch the game
+		c. When the spheres start to fall, hit the "Hit me!" button
+
+		-> The emptySceneFromRuntime.fbx will be located where the game was compiled, under the gameName_data directory, e.g. "D:\temp\newBalls\newBalls_Data\emptySceneFromRuntime.fbx"
+		
+		-> Verify that the file was indeed written to disk
+		
+	
+
