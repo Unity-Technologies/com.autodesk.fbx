@@ -186,13 +186,13 @@
   /// default platform defines suffice.
   /// </summary>
 #if COM_UNITY_FORMATS_FBX_AS_ASSET || UNITY_STANDALONE 
-  const string DllImportName = "UnityFbxSdkNative";
+  const string DllImportName = "$dllimport";
 #elif UNITY_EDITOR_OSX
-  const string DllImportName = "Packages/com.unity.formats.fbxsdk/MacOS/UnityFbxSdkNative.bundle/Contents/MacOS/UnityFbxSdkNative";
+  const string DllImportName = "Packages/com.unity.formats.fbxsdk/MacOS/$dllimport.bundle/Contents/MacOS/$dllimport";
 #elif UNITY_EDITOR_LINUX
-  const string DllImportName = "Packages/com.unity.formats.fbxsdk/Linux/UnityFbxSdkNative.so";
+  const string DllImportName = "Packages/com.unity.formats.fbxsdk/Linux/$dllimport.so";
 #elif UNITY_EDITOR_WIN
-  const string DllImportName = "Packages/com.unity.formats.fbxsdk/Windows/UnityFbxSdkNative.dll";
+  const string DllImportName = "Packages/com.unity.formats.fbxsdk/Windows/$dllimport.dll";
 #else
   #error "FbxSdk: C# bindings for this platform haven't been implemented yet, sorry."
   const string DllImportName = "$dllimport";
