@@ -58,6 +58,8 @@ public class FbxExporterTest {
 
             // Export the scene to the file.
             status = fbxExporter.Export(fbxScene);
+            Assert.That( status, string.Format("Failed to export scene, reason: {0}",
+                                               fbxExporter.GetStatus().GetErrorString()));
 
             // cleanup
             fbxScene.Destroy();
