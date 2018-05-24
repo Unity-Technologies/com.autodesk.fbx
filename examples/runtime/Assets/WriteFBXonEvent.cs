@@ -20,6 +20,7 @@ public class WriteFBXonEvent : MonoBehaviour
         // (player/player_data/emptySceneFromRuntime.fbx)
         string fbxFilePath = Application.dataPath;
         fbxFilePath = Path.Combine(fbxFilePath, "emptySceneFromRuntime.fbx");
+        fbxFilePath = Path.GetFullPath(fbxFilePath);
 
         Debug.Log(string.Format("The file that will be written is {0}", fbxFilePath));
 
@@ -40,7 +41,7 @@ public class WriteFBXonEvent : MonoBehaviour
             // Check that initialization of the fbxExporter was successful
             if (!status)
             {
-                Debug.LogError(string.Format("failed to initialize exporter, reason:D {0}",
+                Debug.LogError(string.Format("failed to initialize exporter, reason: {0}",
                                                fbxExporter.GetStatus().GetErrorString()));
                 return;
             }
