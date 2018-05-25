@@ -2,7 +2,7 @@
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
-using Unity.FbxSdk;
+using UnityEngine.Formats.FbxSdk;
 using System.IO;
 
 public class FbxExporterTest {
