@@ -185,13 +185,13 @@
   /// When deploying with Unity Package Manager, do not add defines: the
   /// default platform defines suffice.
   /// </summary>
-#if COM_UNITY_FORMATS_FBX_AS_ASSET
+#if COM_UNITY_FORMATS_FBX_AS_ASSET || UNITY_STANDALONE 
   const string DllImportName = "$dllimport";
-#elif UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+#elif UNITY_EDITOR_OSX
   const string DllImportName = "Packages/com.unity.formats.fbxsdk/MacOS/$dllimport.bundle/Contents/MacOS/$dllimport";
-#elif UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
+#elif UNITY_EDITOR_LINUX
   const string DllImportName = "Packages/com.unity.formats.fbxsdk/Linux/$dllimport.so";
-#elif UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN
+#elif UNITY_EDITOR_WIN
   const string DllImportName = "Packages/com.unity.formats.fbxsdk/Windows/$dllimport.dll";
 #else
   #error "FbxSdk: C# bindings for this platform haven't been implemented yet, sorry."
