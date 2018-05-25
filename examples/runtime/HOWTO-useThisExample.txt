@@ -16,7 +16,7 @@
 	-> Verify that the file was indeed written to disk
 	
 4- standalone "in context"
-		a. File/Build and RunHit
+		a. File/Build and Run
 		b. Select a directory where the game will be located
 		b. When the spheres start to fall, hit the "Hit me!" button
 
