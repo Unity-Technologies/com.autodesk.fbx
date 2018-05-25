@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.FbxSdk;
+using UnityEngine.Formats.FbxSdk;
 using System.IO;
 
 public class WriteFBXonEvent : MonoBehaviour
