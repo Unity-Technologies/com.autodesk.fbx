@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Unity.FbxSdk.UseCaseTests
+namespace UnityEngine.Formats.FbxSdk.UseCaseTests
 {
     public class AnimatedConstraintExportTest : AnimationClipsExportTest
     {

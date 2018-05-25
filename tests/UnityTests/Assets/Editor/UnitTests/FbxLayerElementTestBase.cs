@@ -9,7 +9,7 @@
 
 using NUnit.Framework;
 using System.Collections;
-using Unity.FbxSdk;
+using UnityEngine.Formats.FbxSdk;
 
 /*
  * Convenience class for testing all derived classes of FbxLayerElement.
@@ -17,9 +17,9 @@ using Unity.FbxSdk;
  * FbxLayerElement itself has no public constructor or Create function, so we can
  * only test its functions from its derived classes (which do have Create functions).
  */
-namespace Unity.FbxSdk.UnitTests
+namespace UnityEngine.Formats.FbxSdk.UnitTests
 {
-    public abstract class FbxLayerElementTestBase<T> where T: Unity.FbxSdk.FbxLayerElement
+    public abstract class FbxLayerElementTestBase<T> where T: UnityEngine.Formats.FbxSdk.FbxLayerElement
     {
         // Note: Create function is only present in derived classes (those which are actually used).
         //       Included it here so that we can test FbxLayerElement functions, and because they
