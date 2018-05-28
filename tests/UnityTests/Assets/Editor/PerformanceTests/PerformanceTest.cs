@@ -5,7 +5,7 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using Unity.FbxSdk;
+using UnityEngine.Formats.FbxSdk;
 using System.Diagnostics;
 using System.Text;
 using System.IO;
@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System;
 using UnityEditorInternal;
 
-namespace Unity.FbxSdk.PerformanceTests
+namespace UnityEngine.Formats.FbxSdk.PerformanceTests
 {
 
     public class PerformanceTest

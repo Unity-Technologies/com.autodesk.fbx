@@ -5,11 +5,11 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using Unity.FbxSdk;
+using UnityEngine.Formats.FbxSdk;
 
 using System.Collections.Generic;
 
-namespace Unity.FbxSdk.UnitTests
+namespace UnityEngine.Formats.FbxSdk.UnitTests
 {
     public abstract class TestBase<T>
     {
