@@ -14,7 +14,7 @@ using System.Diagnostics;
 using System.Text;
 using System;
 
-namespace Unity.FbxSdk.UseCaseTests{
+namespace UnityEngine.Formats.FbxSdk.UseCaseTests{
 
     public class EditorDependancyTest {
 
@@ -74,7 +74,7 @@ namespace Unity.FbxSdk.UseCaseTests{
             Assert.IsNotEmpty (errorString);
             Assert.IsTrue (errorString.Contains (
                 "Unhandled Exception: System.TypeInitializationException: " +
-                "The type initializer for 'Unity.FbxSdk.GlobalsPINVOKE' threw an exception"));
+                "The type initializer for 'UnityEngine.Formats.FbxSdk.GlobalsPINVOKE' threw an exception"));
             Assert.IsTrue (errorString.Contains ("InitFbxAllocators"));
         }
     }

@@ -7,10 +7,10 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.FbxSdk;
+using UnityEngine.Formats.FbxSdk;
 using System.Linq;
 
-namespace Unity.FbxSdk.UnitTests
+namespace UnityEngine.Formats.FbxSdk.UnitTests
 {
 	public class FbxAnimCurveFilterUnrollTest : TestBase<FbxAnimCurveFilterUnroll>
     {
