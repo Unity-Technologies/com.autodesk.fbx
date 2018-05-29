@@ -173,7 +173,7 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
         Destroy();
       }
       lock(this) {
-        $modulePINVOKE.ReleaseWeakPointerHandle(swigCPtr);
+        $imclassname.ReleaseWeakPointerHandle(swigCPtr);
         swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
       }
     }

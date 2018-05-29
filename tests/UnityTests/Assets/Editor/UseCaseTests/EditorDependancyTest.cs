@@ -74,7 +74,7 @@ namespace UnityEngine.Formats.FbxSdk.UseCaseTests{
             Assert.IsNotEmpty (errorString);
             Assert.IsTrue (errorString.Contains (
                 "Unhandled Exception: System.TypeInitializationException: " +
-                "The type initializer for 'UnityEngine.Formats.FbxSdk.GlobalsPINVOKE' threw an exception"));
+                "The type initializer for 'UnityEngine.Formats.FbxSdk.NativeMethods' threw an exception"));
             Assert.IsTrue (errorString.Contains ("InitFbxAllocators"));
         }
     }
