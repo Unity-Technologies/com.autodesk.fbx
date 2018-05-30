@@ -155,7 +155,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             // make sure that calling SetNormals on a disposed layer throws
             m_fbxLayer.Dispose ();
             Assert.That(() => m_fbxLayer.SetNormals (FbxLayerElementNormal.Create(m_fbxMesh, "")),
-                Throws.Exception.TypeOf<System.NullReferenceException>());
+                Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         /* Test all the equality functions we can find. */

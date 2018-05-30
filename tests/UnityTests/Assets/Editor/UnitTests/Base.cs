@@ -122,8 +122,8 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.AreEqual(Manager, obj3.GetFbxManager());
 
             // Test with a null manager or container. Should throw.
-            Assert.That (() => { CreateObject((FbxManager)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-            Assert.That (() => { CreateObject((FbxObject)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { CreateObject((FbxManager)null, "MyObject"); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            Assert.That (() => { CreateObject((FbxObject)null, "MyObject"); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // Test having a scene as the container.
             TestSceneContainer();
@@ -139,7 +139,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             // Test with a disposed manager. Should throw.
             mgr = FbxManager.Create();
             mgr.Dispose();
-            Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { CreateObject(mgr, "MyObject"); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]
@@ -186,13 +186,13 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             // Test disposing. TODO: how to test that a was actually destroyed?
             a = CreateObject("a");
             a.Dispose();
-            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // Test that the using statement works.
             using (a = CreateObject ("a")) {
                 a.GetName (); // works here, throws outside using
             }
-            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That(() => a.GetName(), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // Test that if we try to use an object after Destroy()ing its
             // manager, the object was destroyed as well.
@@ -354,7 +354,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                     // TODO: Fix so this doesn't crash
                     /*Assert.That (() => {
                         ownerObj.FindSrcObject (null);
-                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());*/
+                    }, Throws.Exception.TypeOf<System.ArgumentNullException> ());*/
 
                     result = ownerObj.DisconnectSrcObject (obj);
                     Assert.IsTrue (result);
@@ -362,7 +362,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
 
                     Assert.That (() => {
                         ownerObj.ConnectSrcObject (null);
-                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+                    }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
 
                     result = ownerObj.ConnectSrcObject (obj, FbxConnection.EType.eData);
                     Assert.IsTrue (result);
@@ -392,7 +392,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                     // TODO: Fix so this doesn't crash
                     /*Assert.That (() => {
                         ownerObj.FindDstObject (null);
-                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());*/
+                    }, Throws.Exception.TypeOf<System.ArgumentNullException> ());*/
 
                     result = ownerObj.DisconnectDstObject (obj);
                     Assert.IsTrue (result);
@@ -400,7 +400,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
 
                     Assert.That (() => {
                         ownerObj.ConnectDstObject (null);
-                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+                    }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
 
                     result = ownerObj.ConnectDstObject (obj, FbxConnection.EType.eData);
                     Assert.IsTrue (result);

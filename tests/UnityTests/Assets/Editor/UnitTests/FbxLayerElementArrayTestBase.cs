@@ -69,7 +69,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             layerElementArray.Dispose ();
             Assert.That (() => {
                 layerElementArray.SetCount (1);
-            }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+            }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
         }
 
         [Test]
@@ -127,11 +127,11 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
 
             Assert.That (() => {
                 GetAt (layerElementArrayTemplate, int.MinValue);
-            }, Throws.Exception.TypeOf<System.IndexOutOfRangeException> ());
+            }, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException> ());
 
             Assert.That (() => {
                 GetAt (layerElementArrayTemplate, int.MaxValue);
-            }, Throws.Exception.TypeOf<System.IndexOutOfRangeException> ());
+            }, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException> ());
         }
     }
 

@@ -84,8 +84,6 @@ namespace UnityEngine.Formats.FbxSdk.UseCaseTests
             try {
                 m_fbxManager.Destroy ();
             } 
-            catch (System.NullReferenceException){
-            }
             catch (System.ArgumentNullException) {
             }
         }

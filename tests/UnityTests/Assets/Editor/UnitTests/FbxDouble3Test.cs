@@ -63,10 +63,10 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.AreEqual(2, v[1]);
             v[2] = 3;
             Assert.AreEqual(3, v[2]);
-            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 3], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[-1] = 5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 3] = 5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[ 3], Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[-1] = 5, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[ 3] = 5, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
 
             // Test 3-argument constructor and members X/Y/Z
             v = new FbxDouble3(1, 2, 3);

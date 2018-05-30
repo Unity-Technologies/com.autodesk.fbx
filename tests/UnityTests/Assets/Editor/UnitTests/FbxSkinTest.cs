@@ -31,12 +31,12 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.AreEqual (fbxSkin.GetCluster (0), fbxCluster);
 
             // test adding null cluster
-            Assert.That (() => { fbxSkin.AddCluster(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { fbxSkin.AddCluster(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // add invalid cluster
             var fbxCluster2 = FbxCluster.Create(Manager, "cluster2");
             fbxCluster2.Dispose();
-            Assert.That (() => { fbxSkin.AddCluster(fbxCluster2); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { fbxSkin.AddCluster(fbxCluster2); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
     }
 }

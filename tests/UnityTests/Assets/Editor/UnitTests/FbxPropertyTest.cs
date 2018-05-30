@@ -168,7 +168,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             property.GetCurve (layer, "asdf");
             property.GetCurve (layer, "asdf", true);
             property.GetCurve (layer, "asdf", "hjkl", true);
-            Assert.That (() => { property.GetCurve(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { property.GetCurve(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // test GetCurveNode() (make sure it doesn't crash)
             FbxAnimCurveNode curveNode = property.GetCurveNode();
@@ -183,8 +183,8 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             property.GetCurveNode (FbxAnimLayer.Create (parent, "anim layer"));
             property.GetCurveNode (FbxAnimLayer.Create (parent, "anim layer"), true);
 
-            Assert.That (() => { property.GetCurveNode((FbxAnimStack)null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-            Assert.That (() => { property.GetCurveNode((FbxAnimLayer)null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { property.GetCurveNode((FbxAnimStack)null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            Assert.That (() => { property.GetCurveNode((FbxAnimLayer)null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             using (FbxManager manager = FbxManager.Create ()) {
                 // Test ConnectSrcObject functions
@@ -197,12 +197,12 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual (obj, property.GetSrcObject (0));
                 Assert.AreEqual (obj, property.FindSrcObject ("obj"));
                 Assert.IsNull (property.FindSrcObject ("obj", 1));
-                Assert.That (() => { property.FindSrcObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { property.FindSrcObject(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 Assert.IsTrue (property.DisconnectSrcObject (obj));
                 Assert.IsFalse (property.IsConnectedSrcObject (obj));
 
-                Assert.That (() => { property.ConnectSrcObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { property.ConnectSrcObject(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 Assert.IsTrue (property.ConnectSrcObject (obj, FbxConnection.EType.eData));
 
@@ -217,12 +217,12 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual (obj, property.GetDstObject (0));
                 Assert.AreEqual (obj, property.FindDstObject ("obj"));
                 Assert.IsNull (property.FindDstObject ("obj", 1));
-                Assert.That (() => { property.FindDstObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { property.FindDstObject(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 Assert.IsTrue (property.DisconnectDstObject (obj));
                 Assert.IsFalse (property.IsConnectedDstObject (obj));
 
-                Assert.That (() => { property.ConnectDstObject(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { property.ConnectDstObject(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 Assert.IsTrue (property.ConnectDstObject (obj, FbxConnection.EType.eData));
 

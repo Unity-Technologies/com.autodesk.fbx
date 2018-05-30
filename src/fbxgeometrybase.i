@@ -25,7 +25,7 @@
   void SetControlPointChecked(const FbxVector4& pCtrlPoint, int pIndex)
   {
     if (pIndex < 0) {
-      SWIG_CSharpSetPendingException(SWIG_CSharpIndexOutOfRangeException, "");
+      SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, "", "pIndex");
       return;
     }
     $self->SetControlPointAt(pCtrlPoint, pIndex);

@@ -121,7 +121,7 @@
  */
 %typemap(in, canthrow=1) SWIGTYPE *self
 %{ if (!$input) {
-    SWIG_CSharpSetPendingException(SWIG_CSharpNullReferenceException, "'this' is null ($1_basetype)");
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "'this' is null ($1_basetype)", "this");
     return $null;
   }
   $1 = ($1_ltype)$input; %}
@@ -129,7 +129,7 @@
 %define %null_arg_check(PARAMS)
 %typemap(check, canthrow=1) PARAMS %{
   if(!$1){
-    SWIG_CSharpSetPendingException(SWIG_CSharpNullReferenceException, "$1_basetype $1_name is null");
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "$1_basetype is null", "$1_name");
     return $null;
   }
 %}
