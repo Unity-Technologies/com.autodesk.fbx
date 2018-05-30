@@ -39,10 +39,10 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.AreEqual(b, mx[1]);
             Assert.AreEqual(c, mx[2]);
             Assert.AreEqual(d, mx[3]);
-            Assert.That(() => mx[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => mx[ 4], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => mx[-1] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => mx[ 4] = a, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => mx[-1], Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => mx[ 4], Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => mx[-1] = a, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => mx[ 4] = a, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
 
             mx.Dispose();
         }

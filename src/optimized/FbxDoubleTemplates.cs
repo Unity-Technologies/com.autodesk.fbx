@@ -27,14 +27,14 @@ namespace UnityEngine.Formats.FbxSdk
                 switch(i) {
                     case 0: return X;
                     case 1: return Y;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
             set {
                 switch(i) {
                     case 0: X = value; break;
                     case 1: Y = value; break;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
         }
@@ -86,7 +86,7 @@ namespace UnityEngine.Formats.FbxSdk
                     case 0: return X;
                     case 1: return Y;
                     case 2: return Z;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
             set {
@@ -94,7 +94,7 @@ namespace UnityEngine.Formats.FbxSdk
                     case 0: X = value; break;
                     case 1: Y = value; break;
                     case 2: Z = value; break;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
         }
@@ -150,7 +150,7 @@ namespace UnityEngine.Formats.FbxSdk
                     case 1: return Y;
                     case 2: return Z;
                     case 3: return W;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
             set {
@@ -159,7 +159,7 @@ namespace UnityEngine.Formats.FbxSdk
                     case 1: Y = value; break;
                     case 2: Z = value; break;
                     case 3: W = value; break;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
         }
@@ -225,7 +225,7 @@ namespace UnityEngine.Formats.FbxSdk
                     case 1: return mGreen;
                     case 2: return mBlue;
                     case 3: return mAlpha;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
             set {
@@ -234,7 +234,7 @@ namespace UnityEngine.Formats.FbxSdk
                     case 1: mGreen = value; break;
                     case 2: mBlue = value; break;
                     case 3: mAlpha = value; break;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
         }
@@ -289,14 +289,14 @@ namespace UnityEngine.Formats.FbxSdk
                 switch(i) {
                     case 0: return X;
                     case 1: return Y;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
             set {
                 switch(i) {
                     case 0: X = value; break;
                     case 1: Y = value; break;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
         }
@@ -406,7 +406,7 @@ namespace UnityEngine.Formats.FbxSdk
                     case 1: return Y;
                     case 2: return Z;
                     case 3: return W;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
             set {
@@ -415,7 +415,7 @@ namespace UnityEngine.Formats.FbxSdk
                     case 1: Y = value; break;
                     case 2: Z = value; break;
                     case 3: W = value; break;
-                    default: throw new System.IndexOutOfRangeException();
+                    default: throw new System.ArgumentOutOfRangeException();
                 }
             }
         }

@@ -14,7 +14,7 @@
 // also match argument pName in Create (which already handles null values)
 %typemap(check, canthrow=1) (const char* pName, bool pValue) %{
   if(!$1){
-    SWIG_CSharpSetPendingException(SWIG_CSharpNullReferenceException, "$1_basetype $1_name is null");
+    SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "$1_basetype is null", "$1_name");
     return $null;
   }
 %}

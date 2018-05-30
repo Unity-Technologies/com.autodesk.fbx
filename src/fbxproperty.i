@@ -102,7 +102,7 @@
 %csmethodmodifiers FbxProperty::FindSrcObject "private";
 %extend FbxProperty { %proxycode %{
   public FbxObject FindSrcObject(string pName, int pStartIndex = 0) {
-    if (pName == null) { throw new System.NullReferenceException(); }
+    if (pName == null) { throw new System.ArgumentNullException("pName"); }
     return FindSrcObjectInternal(pName, pStartIndex);
   }
 %} }
@@ -120,7 +120,7 @@
 %csmethodmodifiers FbxProperty::FindDstObject "private";
 %extend FbxProperty { %proxycode %{
   public FbxObject FindDstObject(string pName, int pStartIndex = 0) {
-    if (pName == null) { throw new System.NullReferenceException(); }
+    if (pName == null) { throw new System.ArgumentNullException("pName"); }
     return FindDstObjectInternal(pName, pStartIndex);
   }
 %} }

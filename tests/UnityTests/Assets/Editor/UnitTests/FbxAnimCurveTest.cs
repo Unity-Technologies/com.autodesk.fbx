@@ -16,7 +16,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         Dictionary<FbxManager, FbxScene> m_scenes = new Dictionary<FbxManager, FbxScene>();
 
         public override FbxAnimCurve CreateObject(FbxManager mgr, string name = "") {
-            if (mgr == null) { throw new System.NullReferenceException(); }
+            if (mgr == null) { throw new System.ArgumentNullException(); }
 
             /* Creating in a manager doesn't work for AnimCurves, but for the benefit of
                testing, just fudge it by creating a scene for the manager. */
@@ -29,7 +29,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         }
 
         public override FbxAnimCurve CreateObject(FbxObject container, string name = "") {
-            if (container == null) { throw new System.NullReferenceException(); }
+            if (container == null) { throw new System.ArgumentNullException(); }
 
             if (container is FbxScene) {
                 /* Probably should have cast to a scene already... but ok. */

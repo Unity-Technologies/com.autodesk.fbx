@@ -71,7 +71,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 FbxSystemUnit.m.ConvertScene(scene, new FbxSystemUnit.ConversionOptions());
 
                 // test null
-                Assert.That (() => { FbxSystemUnit.dm.ConvertScene(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { FbxSystemUnit.dm.ConvertScene(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test destroyed
                 scene.Destroy();

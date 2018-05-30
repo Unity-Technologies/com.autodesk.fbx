@@ -167,10 +167,10 @@
  */
 %define %define_comparison_functions(THETYPE)
 %extend THETYPE { %proxycode %{
-  public override bool Equals(object other) {
-    if (object.ReferenceEquals(other, null)) { return false; }
-    if (! (other is $csclassname)) { return false; }
-    return CompareTo(($csclassname)other) == 0;
+  public override bool Equals(object obj) {
+    if (object.ReferenceEquals(obj, null)) { return false; }
+    if (! (obj is $csclassname)) { return false; }
+    return CompareTo(($csclassname)obj) == 0;
   }
   public int CompareTo(object other) {
     if (object.ReferenceEquals(other, null)) { return 1; }

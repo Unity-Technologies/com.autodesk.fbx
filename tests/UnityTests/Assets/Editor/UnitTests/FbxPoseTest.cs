@@ -42,7 +42,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                     // test adding null
                     Assert.That (() => {
                         fbxPose.Add (null, null);
-                    }, Throws.Exception.TypeOf<System.NullReferenceException> ());
+                    }, Throws.Exception.TypeOf<System.ArgumentNullException> ());
 
                     fbxPose.Add (FbxNode.Create(Manager,"node1"), fbxMatrix);
                     Assert.AreEqual (2, fbxPose.GetCount ());
