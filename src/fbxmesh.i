@@ -32,11 +32,12 @@
  * check and call into C++ just once for an entire triangle or quad.
  */
 %extend FbxMesh { %proxycode %{
+  [System.SerializableAttribute]
   public class BadBracketingException : System.NotSupportedException {
-      public    BadBracketingException() : base() { }
-      public    BadBracketingException(string message, System.Exception innerException) : base("Improper bracketing of Begin/Add/EndPolygon: " + message, innerException) { }
-      public    BadBracketingException(string message) : base("Improper bracketing of Begin/Add/EndPolygon: " + message) { }
-      protected BadBracketingException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+    public    BadBracketingException() : base() { }
+    public    BadBracketingException(string message, System.Exception innerException) : base("Improper bracketing of Begin/Add/EndPolygon: " + message, innerException) { }
+    public    BadBracketingException(string message) : base("Improper bracketing of Begin/Add/EndPolygon: " + message) { }
+    protected BadBracketingException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
   }
 
   bool m_isAddingPolygon = false;
