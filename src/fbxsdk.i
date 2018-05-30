@@ -4,6 +4,12 @@
 // Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
+/* In order to comply to the FDG, we want the intermediary class to be named NativeMethods (not GlobalsPInvoke)
+ * https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/index
+ * https://msdn.microsoft.com/library/ms182161.aspx
+ */
+%module (imclassname="NativeMethods") Globals
+
 %module(directors="1") Globals
 %{
 #include "fbxsdk.h"

@@ -13,7 +13,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
 {
     public class GlobalsTest
     {
-        const string kPINVOKE = "GlobalsPINVOKE";
+        const string kPINVOKE = "NativeMethods";
         static System.Type s_PINVOKEtype;
         static ConstructorInfo s_PINVOKEctor;
         static List<MethodInfo> s_UpcastFunctions = new List<MethodInfo>();
@@ -107,7 +107,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
              * static, so the coverage tests want us to create them. */
             new Globals();
 
-            /* Create the GlobalsPINVOKE, which isn't static.
+            /* Create the NativeMethods, which isn't static.
              * But it is protected, so we can't create it normally,
              * which is why we use reflection. */
             s_PINVOKEctor.Invoke(null);
