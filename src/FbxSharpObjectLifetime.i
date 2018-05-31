@@ -69,7 +69,16 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
 
   private static int InitFbxAllocators()
   {
-      return _InitFbxAllocators();
+      int result = -1;
+      bool verbose = UnityEngine.Debug.unityLogger.logEnabled;
+      result = _InitFbxAllocators();
+
+      if (result!=1 && verbose)
+      {
+            UnityEngine.Debug.LogError("Failed to configure FbxSdk memory allocators.");
+      }
+
+      return result;
   }
     
   protected static int initFbx = InitFbxAllocators(); /* protected to quiet a warning */
