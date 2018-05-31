@@ -64,7 +64,7 @@ PluginImporter:
       first:
         Standalone: Linux64
       second:
-        enabled: 0
+        enabled: 1
         settings:
           CPU: x86_64
     data:
@@ -92,7 +92,7 @@ PluginImporter:
       first:
         Standalone: OSXUniversal
       second:
-        enabled: 0
+        enabled: 1
         settings:
           CPU: None
     data:
@@ -106,7 +106,7 @@ PluginImporter:
       first:
         Standalone: Win64
       second:
-        enabled: 0
+        enabled: 1
         settings:
           CPU: AnyCPU
     data:

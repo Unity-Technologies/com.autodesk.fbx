@@ -13,9 +13,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
-using Unity.FbxSdk;
+using UnityEngine.Formats.FbxSdk;
 
-namespace Unity.FbxSdk.Examples
+namespace UnityEngine.Formats.FbxSdk.Examples
 {
     namespace Editor
     {
