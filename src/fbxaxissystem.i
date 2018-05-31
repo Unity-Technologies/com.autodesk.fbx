@@ -61,13 +61,11 @@
 %extend FbxAxisSystem {
   %proxycode %{
   public enum EUpVector {
-    eNone = 0,
     eXAxis = 1, eXAxisDown = -1,
     eYAxis = 2, eYAxisDown = -2,
     eZAxis = 3, eZAxisDown = -3,
   };
   public enum EFrontVector {
-    eNone = 0,
     eParityEven = 1, eParityEvenNegative = -1,
     eParityOdd = 2, eParityOddNegative = -2,
   };
