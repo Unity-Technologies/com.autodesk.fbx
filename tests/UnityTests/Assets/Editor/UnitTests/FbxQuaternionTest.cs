@@ -6,9 +6,9 @@
 // ***********************************************************************
 
 using NUnit.Framework;
-using UnityEngine.Formats.FbxSdk;
+using Autodesk.Fbx;
 
-namespace UnityEngine.Formats.FbxSdk.UnitTests
+namespace Autodesk.Fbx.UnitTests
 {
     public class FbxQuaternionTest
     {

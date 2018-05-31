@@ -12,7 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 
-namespace UnityEngine.Formats.FbxSdk.Examples
+namespace Autodesk.Fbx.Examples
 {
     namespace Editor
     {

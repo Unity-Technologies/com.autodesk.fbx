@@ -5,9 +5,9 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using UnityEngine.Formats.FbxSdk;
+using Autodesk.Fbx;
 
-namespace UnityEngine.Formats.FbxSdk.UnitTests
+namespace Autodesk.Fbx.UnitTests
 {
     public class FbxDouble4x4TestBase<T> : TestBase<T> where T: FbxDouble4x4
     {
