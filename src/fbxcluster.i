@@ -29,7 +29,7 @@
 %extend FbxCluster {
     int GetControlPointIndexAt(int index){
         if(index < 0 || index > $self->GetControlPointIndicesCount()){
-            SWIG_CSharpSetPendingException(SWIG_CSharpIndexOutOfRangeException, "Index $1 out of range");
+            SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, "Index out of range", "index");
             return -1;
         }
         return $self->GetControlPointIndices()[index];
@@ -37,7 +37,7 @@
     
     double GetControlPointWeightAt(int index){
         if(index < 0 || index > $self->GetControlPointIndicesCount()){
-            SWIG_CSharpSetPendingException(SWIG_CSharpIndexOutOfRangeException, "Index $1 out of range");
+            SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, "Index out of range", "index");
             return -1;
         }
         return $self->GetControlPointWeights()[index];

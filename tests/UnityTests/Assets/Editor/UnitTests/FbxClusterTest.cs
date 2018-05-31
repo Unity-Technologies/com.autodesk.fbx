@@ -28,7 +28,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 fbxCluster.SetLink (node);
                 Assert.AreEqual (node, fbxCluster.GetLink ());
                 // test set null link
-                Assert.That (() => { fbxCluster.SetLink(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { fbxCluster.SetLink(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test add control point index (make sure it doesn't crash)
                 fbxCluster.AddControlPointIndex(0, 0);

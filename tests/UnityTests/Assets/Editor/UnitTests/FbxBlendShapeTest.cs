@@ -35,8 +35,8 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual(null, fbxBlendShape.RemoveBlendShapeChannel(fbxBlendShapeChannel));
 
                 // test null
-                Assert.That (() => { fbxBlendShape.AddBlendShapeChannel (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-                Assert.That (() => { fbxBlendShape.RemoveBlendShapeChannel (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { fbxBlendShape.AddBlendShapeChannel (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+                Assert.That (() => { fbxBlendShape.RemoveBlendShapeChannel (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test destroyed
                 fbxBlendShapeChannel.Destroy();
@@ -49,7 +49,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual (fbxGeom, fbxBlendShape.GetGeometry ());
 
                 // test null
-                Assert.That (() => { fbxBlendShape.SetGeometry (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { fbxBlendShape.SetGeometry (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test destroyed
                 fbxGeom = FbxGeometry.Create(Manager, "geometry2");

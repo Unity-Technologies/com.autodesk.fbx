@@ -32,11 +32,11 @@
   public void SetAt(int index, double value) { this[index] = value; }
   public double this[int index] {
     get {
-      if (index < 0 || index >= 4) { throw new System.IndexOutOfRangeException(); }
+      if (index < 0 || index >= 4) { throw new System.ArgumentOutOfRangeException("index"); }
       return GetAtUnchecked(index);
     }
     set {
-      if (index < 0 || index >= 4) { throw new System.IndexOutOfRangeException(); }
+      if (index < 0 || index >= 4) { throw new System.ArgumentOutOfRangeException("index"); }
       SetAtUnchecked(index, value);
     }
   }

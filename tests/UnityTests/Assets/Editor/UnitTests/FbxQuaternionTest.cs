@@ -127,14 +127,14 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.AreEqual(0.4, v[3]);
             v.SetAt(3, 0.5);
             Assert.AreEqual(0.5, v.GetAt(3));
-            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v.GetAt(-1), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v.GetAt( 4), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[-1] = 0.5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4] = 0.5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v.SetAt(-1, 0.5), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v.SetAt( 4, 0.5), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[ 4], Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v.GetAt(-1), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v.GetAt( 4), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[-1] = 0.5, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[ 4] = 0.5, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v.SetAt(-1, 0.5), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v.SetAt( 4, 0.5), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
 
             // Test W/X/Y/Z
             v.X = 0.1;

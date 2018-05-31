@@ -32,7 +32,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         {
             using (var doc = CreateObject("RootDoc"))
             {
-                // NOTE: we'll get a NullReferenceException warning if we use the using
+                // NOTE: we'll get a ArgumentNullException warning if we use the using
                 // scope because doc.Clear() will destroy the FbxDocumentInfo.
                 var docInfo = FbxDocumentInfo.Create (this.Manager, "myDocumentInfo");
                 Assert.IsNotNull (docInfo);
@@ -48,7 +48,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 // Assert.AreEqual (docInfo2, docInfo);
                 // Assert.AreSame (docInfo2, docInfo);
 
-                Assert.That (() => { doc.SetDocumentInfo (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { doc.SetDocumentInfo (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // CRASH ALERT!!! remove reference to document info before
                 // going out of using docInfo scope.

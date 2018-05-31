@@ -33,7 +33,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual (-1, fileFormat);
 
                 // test null
-                Assert.That (() => { manager.GetIOPluginRegistry ().FindWriterIDByDescription (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { manager.GetIOPluginRegistry ().FindWriterIDByDescription (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test dispose
                 // TODO: Dispose doesn't really seem useful here, should we do anything about it?

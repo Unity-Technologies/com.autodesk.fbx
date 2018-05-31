@@ -110,7 +110,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             // Negative polygon index. Benign in FBX SDK, but it will crash some importers.
             using (FbxMesh mesh = CreateObject ("mesh")) {
                 mesh.BeginPolygon ();
-                Assert.That(() => mesh.AddPolygon (-1), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+                Assert.That(() => mesh.AddPolygon (-1), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
             }
         }
     }
@@ -133,7 +133,8 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         [Test]
         public void BasicTests()
         {
-            var xcp = new FbxMesh.BadBracketingException("oops");
+            // BadBracketingException()
+            var xcp = new FbxMesh.BadBracketingException();
             xcp.HelpLink = "http://127.0.0.1";
             Assert.AreEqual("http://127.0.0.1", xcp.HelpLink);
             Assert.AreNotEqual("", xcp.Message);
@@ -145,6 +146,39 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.IsNull(xcp.TargetSite);
             Assert.IsNotNull(xcp.Data);
             Assert.AreEqual(typeof(FbxMesh.BadBracketingException), xcp.GetType());
+
+            // BadBracketingException(string message)
+            xcp = new FbxMesh.BadBracketingException("oops");
+            xcp.HelpLink = "http://127.0.0.1";
+            Assert.AreEqual("http://127.0.0.1", xcp.HelpLink);
+            Assert.AreNotEqual("", xcp.Message);
+            xcp.Source = "source";
+            Assert.AreEqual("source", xcp.Source);
+            Assert.AreNotEqual("", xcp.StackTrace);
+            Assert.IsNull(xcp.InnerException);
+            Assert.AreEqual(xcp, xcp.GetBaseException());
+            Assert.IsNull(xcp.TargetSite);
+            Assert.IsNotNull(xcp.Data);
+            Assert.AreEqual(typeof(FbxMesh.BadBracketingException), xcp.GetType());
+
+            // BadBracketingException(string message, System.Exception innerException)
+            xcp = new FbxMesh.BadBracketingException("oops", new System.Exception());
+            xcp.HelpLink = "http://127.0.0.1";
+            Assert.AreEqual("http://127.0.0.1", xcp.HelpLink);
+            Assert.AreNotEqual("", xcp.Message);
+            xcp.Source = "source";
+            Assert.AreEqual("source", xcp.Source);
+            Assert.AreNotEqual("", xcp.StackTrace);
+            Assert.IsNotNull(xcp.InnerException);
+
+            // The base exception becomes the inner exception here since this represents a chain of exceptions
+            Assert.AreNotEqual(xcp, xcp.GetBaseException());
+            Assert.AreEqual(xcp.InnerException, xcp.GetBaseException());
+            Assert.IsNull(xcp.TargetSite);
+            Assert.IsNotNull(xcp.Data);
+            Assert.AreEqual(typeof(FbxMesh.BadBracketingException), xcp.GetType());
+
+
         }
     }
 }

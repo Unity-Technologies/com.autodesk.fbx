@@ -25,7 +25,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             TestGetter (constraint.GetConstraintSource (-1));
             TestGetter (constraint.GetConstraintSource (0));
             TestGetter (constraint.GetSourceWeight (FbxNode.Create (Manager, "Node")));
-            Assert.That (() => constraint.GetSourceWeight (null), Throws.Exception.TypeOf<System.NullReferenceException> ());
+            Assert.That (() => constraint.GetSourceWeight (null), Throws.Exception.TypeOf<System.ArgumentNullException> ());
             Assert.That (constraint.GetConstraintSourceCount (), Is.EqualTo (0));
             Assert.That (constraint.GetConstraintType (), Is.EqualTo (ConstraintType));
         }
@@ -85,7 +85,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         public virtual void TestAddConstraintSource ()
         {
             using (var constraint = CreateObject ("constraint")) {
-                Assert.That (() => AddConstraintSource (constraint, null), Throws.Exception.TypeOf<System.NullReferenceException> ());
+                Assert.That (() => AddConstraintSource (constraint, null), Throws.Exception.TypeOf<System.ArgumentNullException> ());
                 Assert.That (constraint.GetConstraintSourceCount (), Is.EqualTo (0));
 
                 var fbxNode = FbxNode.Create (Manager, "rootnode");
@@ -109,7 +109,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             }
 
             using (var constraint = CreateObject ("constraint")) {
-                Assert.That (() => SetConstrainedObject (constraint, null), Throws.Exception.TypeOf<System.NullReferenceException> ());
+                Assert.That (() => SetConstrainedObject (constraint, null), Throws.Exception.TypeOf<System.ArgumentNullException> ());
 
                 var fbxNode = FbxNode.Create (Manager, "rootnode");
 
@@ -152,7 +152,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         public void TestWorldUpObject ()
         {
             using (var constraint = FbxConstraintAim.Create (Manager, "aimConstraint")) {
-                Assert.That (() => constraint.SetWorldUpObject (null), Throws.Exception.TypeOf<System.NullReferenceException> ());
+                Assert.That (() => constraint.SetWorldUpObject (null), Throws.Exception.TypeOf<System.ArgumentNullException> ());
 
                 var fbxNode = FbxNode.Create (Manager, "rootnode");
 
@@ -207,8 +207,8 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.That(constraint.GetTranslationOffset(fbxNode2), Is.EqualTo(offset2));
 
                 // test null input
-                Assert.That(() => constraint.SetTranslationOffset(null, offset), Throws.Exception.TypeOf<System.NullReferenceException>());
-                Assert.That(() => constraint.GetTranslationOffset(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That(() => constraint.SetTranslationOffset(null, offset), Throws.Exception.TypeOf<System.ArgumentNullException>());
+                Assert.That(() => constraint.GetTranslationOffset(null), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test on non source fbx node
                 var fbxNode3 = FbxNode.Create(Manager, "node3");
@@ -240,8 +240,8 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.That(constraint.GetRotationOffset(fbxNode2), Is.EqualTo(offset2));
 
                 // test null input
-                Assert.That(() => constraint.SetRotationOffset(null, offset), Throws.Exception.TypeOf<System.NullReferenceException>());
-                Assert.That(() => constraint.GetRotationOffset(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That(() => constraint.SetRotationOffset(null, offset), Throws.Exception.TypeOf<System.ArgumentNullException>());
+                Assert.That(() => constraint.GetRotationOffset(null), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test on non source fbx node
                 var fbxNode3 = FbxNode.Create(Manager, "node3");
@@ -278,7 +278,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             // overriding implementation because FbxConstraintPosition also has a RemoveConstraintSource() function
 
             using (var constraint = FbxConstraintPosition.Create (Manager, "pConstraint")) {
-                Assert.That (() => constraint.AddConstraintSource (null), Throws.Exception.TypeOf<System.NullReferenceException> ());
+                Assert.That (() => constraint.AddConstraintSource (null), Throws.Exception.TypeOf<System.ArgumentNullException> ());
                 Assert.That (constraint.GetConstraintSourceCount (), Is.EqualTo (0));
 
                 var fbxNode = FbxNode.Create (Manager, "rootnode");
@@ -292,7 +292,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.That (constraint.GetConstraintSource (1), Is.EqualTo (fbxNode2));
                 Assert.That (constraint.GetConstraintSourceCount (), Is.EqualTo (2));
 
-                Assert.That (() => constraint.RemoveConstraintSource (null), Throws.Exception.TypeOf<System.NullReferenceException> ());
+                Assert.That (() => constraint.RemoveConstraintSource (null), Throws.Exception.TypeOf<System.ArgumentNullException> ());
 
                 constraint.RemoveConstraintSource (fbxNode);
                 Assert.That (constraint.GetConstraintSourceCount (), Is.EqualTo (1));

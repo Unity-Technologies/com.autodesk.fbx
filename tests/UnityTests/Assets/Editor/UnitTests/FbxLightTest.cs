@@ -23,7 +23,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual (shadowTexture, fbxLight.GetShadowTexture ());
 
                 // test setting null shadow texture
-                Assert.That (() => { fbxLight.SetShadowTexture(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { fbxLight.SetShadowTexture(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test setting invalid texture
                 shadowTexture.Destroy();

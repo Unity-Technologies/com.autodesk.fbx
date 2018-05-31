@@ -103,7 +103,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             // Add a material.
             var mat = FbxSurfaceMaterial.Create(Manager, "mat");
             Assert.AreEqual(0, fooNode.AddMaterial(mat));
-            Assert.That(() => { fooNode.AddMaterial (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That(() => { fooNode.AddMaterial (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             int matIndex = fooNode.GetMaterialIndex ("mat");
             Assert.GreaterOrEqual (matIndex, 0);
@@ -156,8 +156,8 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         public void TestSetNullNodeAttribute()
         {
             using (FbxNode node = CreateObject ("root")) {
-                // passing a null NodeAttribute throws a NullReferenceException
-                Assert.That (() => { node.SetNodeAttribute (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                // passing a null NodeAttribute throws a ArgumentNullException
+                Assert.That (() => { node.SetNodeAttribute (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
                 Assert.IsNull (node.GetNodeAttribute ());
             }
         }

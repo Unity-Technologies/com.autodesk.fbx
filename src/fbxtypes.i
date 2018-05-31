@@ -61,14 +61,14 @@
   public $typemap(cstype, T) this[int index] {
     get {
       if (index < 0 || index >= N) {
-        throw new System.IndexOutOfRangeException();
+        throw new System.ArgumentOutOfRangeException("index");
       } else {
         return this._get(index);
       }
     }
     set {
       if (index < 0 || index >= N) {
-        throw new System.IndexOutOfRangeException();
+        throw new System.ArgumentOutOfRangeException("index");
       } else {
         this._set(index, value);
       }

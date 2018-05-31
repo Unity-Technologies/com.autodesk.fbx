@@ -71,7 +71,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual (fbxPose, newScene.GetPose (0));
 
                 // test null
-                Assert.That (() => { newScene.AddPose(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { newScene.AddPose(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test invalid
                 fbxPose.Destroy();
@@ -88,7 +88,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual (animStack, newScene.GetCurrentAnimationStack ());
 
                 // test null
-                Assert.That (() => { newScene.SetCurrentAnimationStack(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { newScene.SetCurrentAnimationStack(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test invalid
                 animStack.Destroy();
