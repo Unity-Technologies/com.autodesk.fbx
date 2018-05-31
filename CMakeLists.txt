@@ -79,7 +79,7 @@ include_directories(${FBXSDK_INCLUDE_DIR})
 ###########################################################################
 # Set up the swig run.
 set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
-set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;UnityEngine.Formats.FbxSdk;-Werror")
+set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;Autodesk.Fbx;-Werror")
 
 # Set up extra swig dependencies. Must be before building the typemaps.
 file(GLOB SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")

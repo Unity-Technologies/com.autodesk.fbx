@@ -12,7 +12,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace UnityEngine.Formats.FbxSdk
+namespace Autodesk.Fbx
 {
 
     static class CoverageTester

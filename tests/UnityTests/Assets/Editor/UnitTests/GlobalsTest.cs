@@ -5,11 +5,11 @@
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
 using NUnit.Framework;
-using UnityEngine.Formats.FbxSdk;
+using Autodesk.Fbx;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace UnityEngine.Formats.FbxSdk.UnitTests
+namespace Autodesk.Fbx.UnitTests
 {
     public class GlobalsTest
     {
@@ -28,12 +28,12 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 CoverageTester.CollectTestMethods(t, unitTestMethods);
             }
 
-            /* Search the assembly that UnityEngine.Formats.FbxSdk.Globals is in to find classes in
+            /* Search the assembly that Autodesk.Fbx.Globals is in to find classes in
              * the FbxSdk namespace to test. */
-            alltypes = typeof(UnityEngine.Formats.FbxSdk.Globals).Assembly.GetTypes();
+            alltypes = typeof(Autodesk.Fbx.Globals).Assembly.GetTypes();
             var methodsToCover = new List<MethodBase>();
             foreach(var t in alltypes) {
-                if (t.Namespace != "UnityEngine.Formats.FbxSdk") {
+                if (t.Namespace != "Autodesk.Fbx") {
                     continue;
                 }
 
@@ -69,9 +69,9 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         {
             /* We test the PINVOKE class by reflection since it's private to
              * its assembly. */
-            var alltypes = typeof(UnityEngine.Formats.FbxSdk.Globals).Assembly.GetTypes();
+            var alltypes = typeof(Autodesk.Fbx.Globals).Assembly.GetTypes();
             foreach(var t in alltypes) {
-                if (t.Namespace == "UnityEngine.Formats.FbxSdk" && t.Name == kPINVOKE) {
+                if (t.Namespace == "Autodesk.Fbx" && t.Name == kPINVOKE) {
                     s_PINVOKEtype = t;
                     break;
                 }
