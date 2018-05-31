@@ -33,8 +33,8 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 blendShapeChannel.AddTargetShape (shape, 45);
 
                 // test null
-                Assert.That (() => { blendShapeChannel.AddTargetShape (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
-                Assert.That (() => { blendShapeChannel.RemoveTargetShape (null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { blendShapeChannel.AddTargetShape (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+                Assert.That (() => { blendShapeChannel.RemoveTargetShape (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test destroyed
                 shape.Destroy();
@@ -50,7 +50,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 Assert.AreEqual (blendShape, blendShapeChannel.GetBlendShapeDeformer ());
 
                 // test null
-                Assert.That (() => { blendShapeChannel.SetBlendShapeDeformer(null); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { blendShapeChannel.SetBlendShapeDeformer(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test destroyed
                 blendShape = FbxBlendShape.Create(Manager, "blendShape2");

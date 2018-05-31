@@ -150,7 +150,7 @@
 %extend FbxLayerElementArrayTemplate { %proxycode %{
    public $typemap(cstype, T) GetAt(int pIndex) { 
       if (pIndex < 0 || pIndex >= GetCount()) { 
-        throw new System.IndexOutOfRangeException();
+        throw new System.ArgumentOutOfRangeException("pIndex");
       }
       return GetAtUnchecked(pIndex);
     }

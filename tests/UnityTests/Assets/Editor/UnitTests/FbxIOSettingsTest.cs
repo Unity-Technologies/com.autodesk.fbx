@@ -50,7 +50,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
                 ioSettings.SetBoolProp (Globals.EXP_FBX_EMBEDDED, true);
                 ioSettings.SetBoolProp ("", true);
 
-                Assert.That (() => { ioSettings.SetBoolProp (null, true); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+                Assert.That (() => { ioSettings.SetBoolProp (null, true); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
             }
         }
     }

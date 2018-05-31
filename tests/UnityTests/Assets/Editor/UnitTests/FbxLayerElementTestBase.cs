@@ -123,7 +123,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.IsInstanceOf<T> (obj);
 
             // test null container
-            Assert.That (() => { CreateObject((FbxLayerContainer)null, "MyObject"); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { CreateObject((FbxLayerContainer)null, "MyObject"); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // test null name
             CreateObject((string)null);
@@ -139,13 +139,13 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
         {
             var layerElement = CreateObject ("element");
             layerElement.Dispose ();
-            Assert.That (() => { layerElement.SetMappingMode (FbxLayerElement.EMappingMode.eAllSame); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { layerElement.SetMappingMode (FbxLayerElement.EMappingMode.eAllSame); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             T element;
             using (element = CreateObject ("element2")) {
                 element.SetMappingMode (FbxLayerElement.EMappingMode.eAllSame); // should be fine
             }
-            Assert.That (() => { element.SetMappingMode (FbxLayerElement.EMappingMode.eAllSame); }, Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => { element.SetMappingMode (FbxLayerElement.EMappingMode.eAllSame); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
         }
 
         [Test]

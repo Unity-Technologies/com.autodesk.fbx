@@ -141,10 +141,10 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.AreEqual(3, v[2]);
             v[3] = 4;
             Assert.AreEqual(4, v[3]);
-            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4], Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[-1] = 5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
-            Assert.That(() => v[ 4] = 5, Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That(() => v[-1], Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[ 4], Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[-1] = 5, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            Assert.That(() => v[ 4] = 5, Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
 
             // Test 4-argument constructor and members X/Y/Z/W
             v = new FbxVector4(1, 2, 3, 4);

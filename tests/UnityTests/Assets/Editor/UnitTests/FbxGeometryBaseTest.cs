@@ -29,7 +29,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.AreNotEqual(layer0, layer1);
 
             // Fbx crashes setting a negative control point index, so we do some testing:
-            Assert.That (() => geometryBase.SetControlPointAt (new FbxVector4(), -1), Throws.Exception.TypeOf<System.IndexOutOfRangeException>());
+            Assert.That (() => geometryBase.SetControlPointAt (new FbxVector4(), -1), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
 
             // It doesn't crash with past-the-end, it resizes; make sure we don't block that.
             geometryBase.SetControlPointAt (new FbxVector4(1,2,3,4), 50); // does not throw
@@ -103,7 +103,7 @@ namespace UnityEngine.Formats.FbxSdk.UnitTests
             Assert.AreEqual (origCount+1, fbxGeometry.GetDeformerCount ());
 
             // test add null deformer
-            Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.NullReferenceException>());
+            Assert.That (() => fbxGeometry.AddDeformer(null), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
             // test add invalid deformer
             skin.Destroy();
