@@ -7,9 +7,9 @@
 
 using NUnit.Framework;
 using System.Collections;
-using UnityEngine.Formats.FbxSdk;
+using Autodesk.Fbx;
 
-namespace UnityEngine.Formats.FbxSdk.UnitTests
+namespace Autodesk.Fbx.UnitTests
 {
     public class FbxSkinTest : FbxDeformerTestBase<FbxSkin>
     {

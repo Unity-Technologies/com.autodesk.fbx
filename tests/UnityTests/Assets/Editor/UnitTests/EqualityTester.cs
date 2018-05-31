@@ -8,7 +8,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace UnityEngine.Formats.FbxSdk.UnitTests
+namespace Autodesk.Fbx.UnitTests
 {
     public static class EqualityTester<T>
     {

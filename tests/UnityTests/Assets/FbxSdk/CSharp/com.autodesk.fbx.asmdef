@@ -1,0 +1,10 @@
+{
+    "name": "Autodesk.Fbx",
+    "references": [],
+    "includePlatforms": [
+        "Editor",
+        "macOSStandalone",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": []
+}
