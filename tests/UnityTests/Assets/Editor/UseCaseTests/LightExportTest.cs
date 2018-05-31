@@ -6,9 +6,9 @@
 // ***********************************************************************
 using NUnit.Framework;
 using System.Collections.Generic;
-using UnityEngine.Formats.FbxSdk;
+using Autodesk.Fbx;
 
-namespace UnityEngine.Formats.FbxSdk.UseCaseTests
+namespace Autodesk.Fbx.UseCaseTests
 {
     public class LightExportTest : AnimationClipsExportTest
     {

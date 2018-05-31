@@ -6,11 +6,11 @@
 // ***********************************************************************
 
 using NUnit.Framework;
-using UnityEngine.Formats.FbxSdk;
+using Autodesk.Fbx;
 using System.IO;
 using System.Collections.Generic;
 
-namespace UnityEngine.Formats.FbxSdk.UseCaseTests
+namespace Autodesk.Fbx.UseCaseTests
 {
 
     public class EmptyExportTest : RoundTripTestBase

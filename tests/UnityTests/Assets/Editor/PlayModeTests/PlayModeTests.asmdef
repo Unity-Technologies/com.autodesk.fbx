@@ -1,6 +1,8 @@
-﻿{
+{
     "name": "PlayModeTests",
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ]
+    "references": [
+        "Autodesk.Fbx"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
 }

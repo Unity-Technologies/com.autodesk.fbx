@@ -9,9 +9,9 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using UnityEngine.Formats.FbxSdk;
+using Autodesk.Fbx;
 
-namespace UnityEngine.Formats.FbxSdk.Examples
+namespace Autodesk.Fbx.Examples
 {
     namespace Editor
     {
