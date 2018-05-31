@@ -1,5 +1,9 @@
 #RELEASE NOTES
 
+**Version**: 1.6.0-preview
+
+* The fbxsdk package can now be used in standalone builds (runtime)
+
 **Version**: 1.5.0-preview
 
 * Added support for physical camera attributes

@@ -71,9 +71,7 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
   {
       int result = -1;
       bool verbose = UnityEngine.Debug.unityLogger.logEnabled;
-      UnityEditor.EditorApplication.LockReloadAssemblies();
       result = _InitFbxAllocators();
-      UnityEditor.EditorApplication.UnlockReloadAssemblies();
 
       if (result!=1 && verbose)
       {
@@ -175,7 +173,7 @@ extern "C" SWIGEXPORT int SWIGSTDCALL CSharp_$module_InitFbxAllocators() {
         Destroy();
       }
       lock(this) {
-        $modulePINVOKE.ReleaseWeakPointerHandle(swigCPtr);
+        $imclassname.ReleaseWeakPointerHandle(swigCPtr);
         swigCPtr = new global::System.Runtime.InteropServices.HandleRef(null, global::System.IntPtr.Zero);
       }
     }

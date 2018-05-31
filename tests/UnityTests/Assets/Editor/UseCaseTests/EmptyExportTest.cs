@@ -6,11 +6,11 @@
 // ***********************************************************************
 
 using NUnit.Framework;
-using Unity.FbxSdk;
+using UnityEngine.Formats.FbxSdk;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Unity.FbxSdk.UseCaseTests
+namespace UnityEngine.Formats.FbxSdk.UseCaseTests
 {
 
     public class EmptyExportTest : RoundTripTestBase

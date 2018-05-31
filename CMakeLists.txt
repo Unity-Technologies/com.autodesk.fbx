@@ -23,7 +23,7 @@ MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
 
 option(CREATE_PACKAGE "Create Package" OFF)
 if (NOT DEFINED PACKAGE_VERSION)
-    set(PACKAGE_VERSION "1.5.0-preview")
+    set(PACKAGE_VERSION "1.6.0-preview")
 endif()
 
 if (NOT DEFINED PACKAGE_PATH)
@@ -79,7 +79,7 @@ include_directories(${FBXSDK_INCLUDE_DIR})
 ###########################################################################
 # Set up the swig run.
 set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
-set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;Unity.FbxSdk;-Werror")
+set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;UnityEngine.Formats.FbxSdk;-Werror")
 
 # Set up extra swig dependencies. Must be before building the typemaps.
 file(GLOB SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
@@ -167,7 +167,7 @@ swig_add_library(UnityFbxSdkNative
 
 fbxsharp_run_python_postbuild(TARGET UnityFbxSdkNative
         SCRIPT ${CMAKE_SOURCE_DIR}/scripts/replace-dllimport.py
-        ARGS ${CMAKE_BINARY_DIR}/swig/generated/csharp/GlobalsPINVOKE.cs)
+        ARGS ${CMAKE_BINARY_DIR}/swig/generated/csharp/NativeMethods.cs)
 
 swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 
