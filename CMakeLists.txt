@@ -276,7 +276,7 @@ if(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 ###########################################################################
-# Install Unit Tests and Mono Reflection for test converage
+# Install Unit Tests and Mono Reflection for test coverage
 include(deps/cmake/InstallMonoReflection.cmake)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
