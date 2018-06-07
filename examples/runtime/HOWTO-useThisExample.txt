@@ -1,7 +1,7 @@
 1- Edit the Packages/manifest.json file to point to the fbxsdk package you want to test, e.g.
 {
   "dependencies": {
-    "com.unity.formats.fbxsdk": "1.6.0-preview"
+    "com.autodesk.fbx": "1.7.0-preview"
   },
   "registry": "https://staging-packages.unity.com"
 }
