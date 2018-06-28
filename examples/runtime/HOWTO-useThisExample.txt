@@ -16,9 +16,10 @@
 	-> Verify that the file was indeed written to disk
 	
 4- standalone "in context"
-		a. File/Build and Run
-		b. Select a directory where the game will be located
-		b. When the spheres start to fall, hit the "Hit me!" button
+		a. File/Build Settings...
+		b. Make sure that ballsOnAPlane is in the list of "Scenes in build". Click "Add Open Scenes" if not
+		c. Select a directory where the game will be located
+		d. When the spheres start to fall, hit the "Hit me!" button
 
 		-> The emptySceneFromRuntime.fbx will be located where the game was compiled, under the gameName_data directory, e.g. "D:\temp\newBalls\newBalls_Data\emptySceneFromRuntime.fbx"
 		

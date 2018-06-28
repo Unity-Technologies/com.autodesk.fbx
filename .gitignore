@@ -67,3 +67,8 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# The runtime project
+examples/runtime/Library
+examples/runtime/Temp
+ 
