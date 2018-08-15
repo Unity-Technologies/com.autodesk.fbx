@@ -21,24 +21,8 @@ spike/2016.0/
 *.swp
 *.swo
 
-## Unity ##
-tests/UnityTests/Assets/Plugins
-tests/UnityTests/ProjectSettings/*
-tests/UnityTests/Assets/Editor/**/*.meta
-tests/**/*.unity*
-tests/UnityTests/Assets/Plugins*
-tests/UnityTests/Assets/Bindings*
-!tests/UnityTests/ProjectSettings/ProjectSettings.asset
-!tests/UnityTests/ProjectSettings/EditorSettings.asset
-
-# below taken from: https://github.com/github/gitignore/blob/master/Unity.gitignore
-
-tests/UnityTests/[Ll]ibrary/
-tests/UnityTests/[Tt]emp/
-tests/UnityTests/[Oo]bj/
-tests/UnityTests/[Bb]uild/
-tests/UnityTests/[Bb]uilds/
-tests/UnityTests/Assets/AssetStoreTools*
+**/Library/**
+**/Temp/**
 
 # Visual Studio 2015 cache directory
 tests/UnityTests/.vs/
@@ -72,3 +56,6 @@ sysinfo.txt
 examples/runtime/Library
 examples/runtime/Temp
  
+artifacts/**
+build/**
+.idea/**
