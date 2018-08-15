@@ -1,3 +1,0 @@
-[submodule "deps/mono.reflection"]
-	path = deps/mono.reflection
-	url = https://github.com/jbevain/mono.reflection

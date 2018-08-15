@@ -17,19 +17,6 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 
-# has to be done before project is set, or else CMAKE_INSTALL_PREFIX will already be set to a default value
-SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/FbxSdk" CACHE PATH "Install path prefix")
-MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
-
-option(CREATE_PACKAGE "Create Package" OFF)
-if (NOT DEFINED PACKAGE_VERSION)
-    set(PACKAGE_VERSION "1.7.0-preview")
-endif()
-
-if (NOT DEFINED PACKAGE_PATH)
-    set(PACKAGE_PATH "${CMAKE_BINARY_DIR}/FbxSdk_${PACKAGE_VERSION}.unitypackage")
-endif()
-
 project (UnityFbxSdkNative)
 
 # We build for c++11
@@ -47,11 +34,11 @@ add_definitions(${PROJECT_COMPILE_FLAGS})
 
 # build uto se the multithread, static version of the run-time library.
 if (MSVC)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/deps/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
@@ -61,28 +48,28 @@ SET(CMAKE_SWIG_FLAGS -fvirtual)
 find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Linux
 include(${SWIG_USE_FILE})
 
-include(deps/cmake/UseFixHeaders.cmake)
+include(cmake/UseFixHeaders.cmake)
 
 find_package(FBXSDK REQUIRED)
-find_package(Unity REQUIRED)
-find_package(CSharpCompiler REQUIRED)
+#find_package(Unity REQUIRED)
+#find_package(CSharpCompiler REQUIRED)
 find_package(Doxygen)
 
 set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(PythonInterp REQUIRED)
-include(deps/cmake/RunPythonScript.cmake)
+include(cmake/RunPythonScript.cmake)
 
 # Set up the include directories
-include_directories(src)
+include_directories(Source)
 include_directories(${FBXSDK_INCLUDE_DIR})
 
 ###########################################################################
 # Set up the swig run.
-set_source_files_properties(src/fbxsdk.i PROPERTIES CPLUSPLUS ON)
-set_source_files_properties(src/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;Autodesk.Fbx;-Werror")
+set_source_files_properties(Source/fbxsdk.i PROPERTIES CPLUSPLUS ON)
+set_source_files_properties(Source/fbxsdk.i PROPERTIES SWIG_FLAGS "-namespace;Autodesk.Fbx;-Werror")
 
 # Set up extra swig dependencies. Must be before building the typemaps.
-file(GLOB SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/src/*.i")
+file(GLOB SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS "${CMAKE_SOURCE_DIR}/Source/*.i")
 
 # Fix the header files we need to fix. Must be before building the typemaps.
 swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxpropertytypes.h")
@@ -134,7 +121,7 @@ fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxlightimmutables.i
 # 2. generate the weakpointerhandles.py from the typedefs.
 # Important: only add the weakpointerhandles.i *after* this or it gets circular.
 #       But other dependencies (e.g. for immutables) should go before.
-get_filename_component(FBXSDK_SWIG_I_FILE src/fbxsdk.i ABSOLUTE)
+get_filename_component(FBXSDK_SWIG_I_FILE Source/fbxsdk.i ABSOLUTE)
 add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/fbxsdk.typedefs.temp"
         COMMAND "${SWIG_EXECUTABLE}"
@@ -163,7 +150,7 @@ SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 swig_add_library(UnityFbxSdkNative
          TYPE MODULE
          LANGUAGE csharp
-         SOURCES src/fbxsdk.i)
+         SOURCES Source/fbxsdk.i)
 
 fbxsharp_run_python_postbuild(TARGET UnityFbxSdkNative
         SCRIPT ${CMAKE_SOURCE_DIR}/scripts/replace-dllimport.py
@@ -175,7 +162,7 @@ swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 # Happens to also reduce the output binary a lot too.
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   set_target_properties(UnityFbxSdkNative PROPERTIES BUNDLE TRUE)
-  target_link_libraries(UnityFbxSdkNative "-exported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/deps/exported_symbols.txt -Wl,-x,-dead_strip")
+  target_link_libraries(UnityFbxSdkNative "-exported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/Source/exported_symbols.txt -Wl,-x,-dead_strip")
 elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   target_link_libraries(UnityFbxSdkNative "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/version-script.txt -Wl,-x,--gc-sections")
 endif()
@@ -195,63 +182,18 @@ set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks"
 set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
 
 ###########################################################################
-# Add target for creating a package
-# TODO: synthesize the right project depending on configuration.
-# Make install does the right thing in all cases but it's overkill in release.
-add_custom_command(
-    OUTPUT ${PACKAGE_PATH}
-        COMMAND "${CMAKE_COMMAND}" --build . --target install --config Release
-        COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests -exportPackage Assets/FbxSdk ${PACKAGE_PATH} -quit
-        COMMENT "Creating Unity Package ${PACKAGE_PATH}"
-        DEPENDS UnityFbxSdkNative
-    )
-add_custom_target(unitypackage DEPENDS ${PACKAGE_PATH})
-
-###########################################################################
 # Add target to replace the version number in README.txt
 set(README_TARGET readme_replace)
 add_custom_target(
     ${README_TARGET}
     COMMAND ${PYTHON_EXECUTABLE}
             "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
-            "${CMAKE_INSTALL_PREFIX}/README.txt"
+            "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/README.md"
             "**Version**:"
             "**Version**: ${PACKAGE_VERSION}"
     DEPENDS "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
-    COMMENT "Replacing version number in README.txt"
+    COMMENT "Replacing version number in README.md"
 )
-
-###########################################################################
-# Add custom command to build the generated csharp files into a multi-platform DLL
-if("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-    set(CLASS_LIBRARY_DEST "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
-    set(CLASS_LIBRARY_NAME "UnityFbxSdk.dll")
-
-    add_custom_command(OUTPUT ${CLASS_LIBRARY_DEST}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CLASS_LIBRARY_DEST}
-    )
-    fbxsharp_compile_csharp(OUTPUT ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME}
-            EXTRA_ARGS
-                "/target:library"
-            SOURCES
-                "${CMAKE_SOURCE_DIR}/scripts/Properties/*.cs"
-                "${CMAKE_SOURCE_DIR}/src/optimized/*.cs"
-                "${CMAKE_BINARY_DIR}/swig/generated/csharp/*.cs"
-            REFERENCES
-                "${CSHARP_MSCORLIB_LIBRARY}"
-                "${CSHARP_SYSTEM_CORE_LIBRARY}"
-                "${CSHARP_SYSTEM_LIBRARY}"
-                "${CSHARP_UNITYEDITOR_LIBRARY}"
-                "${CSHARP_UNITYENGINE_LIBRARY}"
-            DEPENDS
-                UnityFbxSdkNative
-                "${CLASS_LIBRARY_DEST}"
-            EXTRA_ARGS
-                "-define:COM_UNITY_FORMATS_FBX_AS_ASSET"
-    )
-    add_custom_target(UnityFbxSdk ALL DEPENDS ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME})
-
-endif()
 
 ###########################################################################
 # Doxygen documentation
@@ -275,61 +217,29 @@ if(DOXYGEN_FOUND)
     add_custom_target(${DOXYGEN_TARGET} DEPENDS ${DOC_ZIP_NAME})
 endif(DOXYGEN_FOUND)
 
-###########################################################################
-# Install Unit Tests and Mono Reflection for test coverage
-include(deps/cmake/InstallMonoReflection.cmake)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    install(FILES ${CLASS_LIBRARY_DEST}/${CLASS_LIBRARY_NAME} DESTINATION Plugins)
-    # install all the unit tests outside the package folder
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests
-        DESTINATION ${CMAKE_BINARY_DIR}/tests)
-else() # Debug Build
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests
-        DESTINATION ${CMAKE_BINARY_DIR}/tests
-        PATTERN "Editor/UnitTests" EXCLUDE
-        PATTERN "Editor/UseCaseTests" EXCLUDE)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UnitTests DESTINATION Editor)
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/tests/UnityTests/Assets/Editor/UseCaseTests DESTINATION Editor)
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/optimized/ DESTINATION CSharp FILES_MATCHING PATTERN "*.cs")
-endif()
-
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/export/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/examples/import/Assets/ DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/examples)
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/MacOS)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/Linux)
-else()
-    install(TARGETS UnityFbxSdkNative DESTINATION Plugins/x64/Windows)
-endif()
+install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Plugins/x86_64)
 
 # copy C++ performance tests
-install(TARGETS unity_tests DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/Plugins/fbxsdk)
-install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_BINARY_DIR}/tests/UnityTests/)
+install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing)
+install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing)
 
-install(FILES ${CMAKE_SOURCE_DIR}/docs/README.txt DESTINATION ${CMAKE_INSTALL_PREFIX})
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    install(FILES ${CMAKE_SOURCE_DIR}/docs/RELEASE_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
-else()
-    install(FILES ${CMAKE_SOURCE_DIR}/docs/DEBUG_LICENSE.txt DESTINATION ${CMAKE_INSTALL_PREFIX} RENAME LICENSE.txt)
-endif()
+install(FILES ${CMAKE_SOURCE_DIR}/docs/README.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 
 install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})")
 
 if(DOXYGEN_FOUND AND CMAKE_BUILD_TYPE STREQUAL "Release")
     # generate and copy docs. This has to happen after the README.txt has been copied into the build dir
     install(CODE "execute_process(COMMAND cmake --build . --target ${DOXYGEN_TARGET})")
-    install(FILES ${CMAKE_BINARY_DIR}/${DOC_ZIP_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(FILES ${CMAKE_BINARY_DIR}/${DOC_ZIP_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Documentation~)
 endif()
 
-# Create the package after all the installs complete if CREATE_PACKAGE set to ON
-if(CREATE_PACKAGE)
-    install(CODE "execute_process(COMMAND cmake --build . --target ${PACKAGE_TARGET})")
-endif()
+# create packages
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx.testing/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing)
 
-enable_testing()
-add_test(NAME run-all COMMAND "${UNITY_EDITOR_PATH}" -batchmode -projectPath ${CMAKE_BINARY_DIR}/tests/UnityTests runEditorTests -quit)
