@@ -14,7 +14,14 @@ function(stevedore command)
     endif()
 
     find_program(BEE bee.exe HINTS ${CMAKE_SOURCE_DIR})
+    if(${BEE} STREQUAL "BEE-NOTFOUND")
+        message(FATAL "bee.exe required by Stevedore was not found in ${CMAKE_SOURCE_DIR}")
+    endif()
+
     find_program(7ZA 7za)
+    if(${7ZA} STREQUAL "7ZA-NOTFOUND")
+        message(FATAL "7za required by Stevedore was not found")
+    endif()
 
     message(STATUS "Stevedore fetching ${repo_name}:${artifact_id} to ${target_path}")
         execute_process(COMMAND ${CMAKE_COMMAND} -E env "BEE_INTERNAL_STEVEDORE_7ZA=${7ZA}" ${MONO} ${BEE} steve internal-unpack ${repo_name} ${artifact_id} ${target_path})
