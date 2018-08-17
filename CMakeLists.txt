@@ -55,19 +55,19 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(fbxsdk_artifact_id 2018.1.1_61b679df32b3967a62ca4a8285a79bcbb396b329c860307e7c667ec91745b236.7z)
 
     set(swig_artifact_name swig-mac-x64)
-    set(swig_artifact_id 3.0.12_18ce905c3098aad588b3c2e4f785daaee16409a537ad1e0b88cc0f438eb08f9c.7z)
+    set(swig_artifact_id 3.0.12_a8df24137209600acbec717d2aee1e5243a61cb5e9ce7d99dbb5fe8d6910effd.7z)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(fbxsdk_artifact_name fbxsdk-win-x64)
     set(fbxsdk_artifact_id 2018.1.1_53da254f05c8aecb53045d5d74178004d0a7a76b367c1464d11e3ce3ce949925.7z)
 
     set(swig_artifact_name swig-win-x64)
-    set(swig_artifact_id 3.0.12_68ddc856588db75d81dcf29b322f9ee729ada57fe369be2c1ee3860c890635bf.7z)
+    set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     set(fbxsdk_artifact_name fbxsdk-linux-x64)
     set(fbxsdk_artifact_id 2018.1.1_9fd6bb314e0761415879fe91228f536902aa90082adb198889f71bdf094415fd.7z)
 
     set(swig_artifact_name swig-linux-x64)
-    set(swig_artifact_id 3.0.12_4e4b7b9c93  5e8c7c44ff23386edcc710903ec30675f56c81e478517aa6583ea9.7z)
+    set(swig_artifact_id 3.0.12_f3f14d565afd0ec44d3d77298f708f41bd12ef1fa209a1535226cf3e30a5f15b.7z)
 endif()
 
 stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
@@ -75,9 +75,10 @@ stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_ar
 
 # workaround for FindSWIG.cmake's inflexibility - tell it where to find the executable and library
 file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig")
-file(GLOB_RECURSE SWIG_LIB "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
-get_filename_component(SWIG_LIB "${SWIG_LIB}" DIRECTORY)
-set(ENV{SWIG_LIB} ${SWIG_LIB})
+file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
+get_filename_component(swig_lib "${swig_lib}" DIRECTORY)
+message(STATUS "found ${swig_lib}")
+set(ENV{SWIG_LIB} ${swig_lib})
 
 ###########################################################################
 # Find packages that we need.
