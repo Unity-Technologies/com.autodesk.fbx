@@ -43,6 +43,42 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
+include(cmake/Stevedore.cmake)
+
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
+
+# fetch dependencies
+set(stevedore_repo_name testing)
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    set(fbxsdk_artifact_name fbxsdk-mac-x64)
+    set(fbxsdk_artifact_id 2018.1.1_61b679df32b3967a62ca4a8285a79bcbb396b329c860307e7c667ec91745b236.7z)
+
+    set(swig_artifact_name swig-mac-x64)
+    set(swig_artifact_id 3.0.12_18ce905c3098aad588b3c2e4f785daaee16409a537ad1e0b88cc0f438eb08f9c.7z)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    set(fbxsdk_artifact_name fbxsdk-win-x64)
+    set(fbxsdk_artifact_id 2018.1.1_53da254f05c8aecb53045d5d74178004d0a7a76b367c1464d11e3ce3ce949925.7z)
+
+    set(swig_artifact_name swig-win-x64)
+    set(swig_artifact_id 3.0.12_68ddc856588db75d81dcf29b322f9ee729ada57fe369be2c1ee3860c890635bf.7z)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(fbxsdk_artifact_name fbxsdk-linux-x64)
+    set(fbxsdk_artifact_id 2018.1.1_9fd6bb314e0761415879fe91228f536902aa90082adb198889f71bdf094415fd.7z)
+
+    set(swig_artifact_name swig-linux-x64)
+    set(swig_artifact_id 3.0.12_4e4b7b9c93  5e8c7c44ff23386edcc710903ec30675f56c81e478517aa6583ea9.7z)
+endif()
+
+stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
+stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_artifact_id} "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
+
+# workaround for FindSWIG.cmake's inflexibility - tell it where to find the executable and library
+file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig")
+file(GLOB_RECURSE SWIG_LIB "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
+get_filename_component(SWIG_LIB "${SWIG_LIB}" DIRECTORY)
+set(ENV{SWIG_LIB} ${SWIG_LIB})
+
 ###########################################################################
 # Find packages that we need.
 find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Linux
@@ -230,6 +266,7 @@ install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PR
 install(FILES ${CMAKE_SOURCE_DIR}/docs/README.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 
 install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})")
 

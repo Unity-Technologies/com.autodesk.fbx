@@ -15,9 +15,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   list(APPEND CMAKE_SWIG_FLAGS "-D__x86_64__")
   list(APPEND CMAKE_SWIG_FLAGS "-DFBXSDK_COMPILER_GNU")
 
-  set(_fbxsdk_artifact_name fbxsdk-mac-x64)
-  set(_fbxsdk_artifact_id 2018.1.1_61b679df32b3967a62ca4a8285a79bcbb396b329c860307e7c667ec91745b236.7z)
-
   list(APPEND _fbxsdk_lib_paths "lib/clang/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
@@ -27,9 +24,6 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   list(APPEND CMAKE_SWIG_FLAGS "-D_M_X64")
   list(APPEND CMAKE_SWIG_FLAGS "-D_MSC_VER")
 
-  set(_fbxsdk_artifact_name fbxsdk-win-x64)
-  set(_fbxsdk_artifact_id 2018.1.1_53da254f05c8aecb53045d5d74178004d0a7a76b367c1464d11e3ce3ce949925.7z)
-
   list(APPEND _fbxsdk_lib_paths "lib/vs2015/x64/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -37,25 +31,11 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__x86_64__")
   list(APPEND CMAKE_SWIG_FLAGS "-D__GNUC__")
 
-  set(_fbxsdk_artifact_name fbxsdk-linux-x64)
-  set(_fbxsdk_artifact_id 2018.1.1_9fd6bb314e0761415879fe91228f536902aa90082adb198889f71bdf094415fd.7z)
-
   list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release")
 endif()
 
-set(_fbxsdk_INSTALL_PATH "${CMAKE_BINARY_DIR}/deps/${_fbxsdk_artifact_name}")
-find_program(_fbxsdk_7ZA 7za)
-message("-- Fetching FBXSDK from Stevedore: ${_fbxsdk_artifact_name}/${_fbxsdk_artifact_id}")
-execute_process(COMMAND ${CMAKE_COMMAND} -E env "BEE_INTERNAL_STEVEDORE_7ZA=${_fbxsdk_7ZA}" mono ${CMAKE_SOURCE_DIR}/bee.exe steve internal-unpack testing ${_fbxsdk_artifact_name}/${_fbxsdk_artifact_id} ${_fbxsdk_INSTALL_PATH})
-list(APPEND FBXSDK_INCLUDE_PATHS "${_fbxsdk_INSTALL_PATH}/include")
-foreach(_fbxsdk_lib_path ${_fbxsdk_lib_paths})
-  list(APPEND FBXSDK_LIB_PATHS "${_fbxsdk_INSTALL_PATH}/${_fbxsdk_lib_path}")
-endforeach()
-find_path(FBXSDK_INCLUDE_DIR fbxsdk.h PATHS ${FBXSDK_INCLUDE_PATHS})
-find_library(FBXSDK_LIBRARY libfbxsdk.a libfbxsdk-mt.lib PATHS ${FBXSDK_LIB_PATHS})
-
 # Iterate over the versions. Pick the first one (reverse-alphabetically)
-file(GLOB _fbxsdk_VERSIONS LIST_DIRECTORIES true "${_fbxsdk_INSTALL_PATH}/*")
+file(GLOB _fbxsdk_VERSIONS LIST_DIRECTORIES true "${CMAKE_PREFIX_PATH}/*")
 list(SORT _fbxsdk_VERSIONS)
 list(REVERSE _fbxsdk_VERSIONS)
 foreach(_fbxsdk_PATH ${_fbxsdk_VERSIONS})
@@ -68,6 +48,20 @@ endforeach()
 find_path(FBXSDK_INCLUDE_DIR fbxsdk.h PATHS ${FBXSDK_INCLUDE_PATHS})
 find_library(FBXSDK_LIBRARY libfbxsdk.a libfbxsdk-md.lib PATHS ${FBXSDK_LIB_PATHS})
 
+find_file(_fbxsdk_VERSION_HEADER fbxsdk_version.h PATHS ${FBXSDK_INCLUDE_DIR}/fbxsdk)
+if(${_fbxsdk_VERSION_HEADER} STREQUAL "_fbxsdk_VERSION_HEADER-NOTFOUND")
+  message(FATAL_ERROR "Couldn't find fbxsdk_version.h")
+else()
+  file(READ ${_fbxsdk_VERSION_HEADER} _fbxsdk_VERSION_HEADER_CONTENTS)
+  string(REGEX MATCH "FBXSDK_VERSION_MAJOR[\t ]+[0-9]+" FBXSDK_VERSION_MAJOR "${_fbxsdk_VERSION_HEADER_CONTENTS}")
+  string(REGEX REPLACE "FBXSDK_VERSION_MAJOR[\t ]+" "" FBXSDK_VERSION_MAJOR "${FBXSDK_VERSION_MAJOR}")
+  string(REGEX MATCH "FBXSDK_VERSION_MINOR[\t ]+[0-9]+" FBXSDK_VERSION_MINOR "${_fbxsdk_VERSION_HEADER_CONTENTS}")
+  string(REGEX REPLACE "FBXSDK_VERSION_MINOR[\t ]+" "" FBXSDK_VERSION_MINOR "${FBXSDK_VERSION_MINOR}")
+  string(REGEX MATCH "FBXSDK_VERSION_POINT[\t ]+[0-9]+" FBXSDK_VERSION_POINT "${_fbxsdk_VERSION_HEADER_CONTENTS}")
+  string(REGEX REPLACE "FBXSDK_VERSION_POINT[\t ]+" "" FBXSDK_VERSION_POINT "${FBXSDK_VERSION_POINT}")
+  set(FBXSDK_VERSION ${FBXSDK_VERSION_MAJOR}.${FBXSDK_VERSION_MINOR}.${FBXSDK_VERSION_POINT})
+endif()
+
 # On OSX we need to link to Cocoa when we statically link.
 # (But if we didn't find FBX, don't link to Cocoa.)
 if(APPLE)
@@ -78,5 +72,12 @@ if(APPLE)
 endif()
 
 # Standard code to report whether we found the package or not.
-#include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(FBXSDK DEFAULT_MSG FBXSDK_LIBRARY FBXSDK_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(FBXSDK
+  FOUND_VAR FBXSDK_FOUND
+  REQUIRED_VARS
+    FBXSDK_LIBRARY
+    FBXSDK_INCLUDE_DIR
+    FBXSDK_VERSION FBXSDK_VERSION_MAJOR FBXSDK_VERSION_MINOR FBXSDK_VERSION_POINT
+  VERSION_VAR
+    FBXSDK_VERSION
+)
