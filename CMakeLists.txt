@@ -82,6 +82,7 @@ file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.
 get_filename_component(swig_lib "${swig_lib}" DIRECTORY)
 file(TO_NATIVE_PATH "${swig_lib}" swig_lib_native)
 set(ENV{SWIG_LIB} "${swig_lib_native}")
+message("FOUND ${swig_lib_native}")
 
 ###########################################################################
 # Find packages that we need.
