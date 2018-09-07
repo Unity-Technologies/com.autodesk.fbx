@@ -56,29 +56,32 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 
     set(swig_artifact_name swig-mac-x64)
     set(swig_artifact_id 3.0.12_a8df24137209600acbec717d2aee1e5243a61cb5e9ce7d99dbb5fe8d6910effd.7z)
+    set(swig_executable_name swig)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(fbxsdk_artifact_name fbxsdk-win-x64)
     set(fbxsdk_artifact_id 2018.1.1_53da254f05c8aecb53045d5d74178004d0a7a76b367c1464d11e3ce3ce949925.7z)
 
     set(swig_artifact_name swig-win-x64)
     set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
+    set(swig_executable_name swig.exe)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     set(fbxsdk_artifact_name fbxsdk-linux-x64)
     set(fbxsdk_artifact_id 2018.1.1_9fd6bb314e0761415879fe91228f536902aa90082adb198889f71bdf094415fd.7z)
 
     set(swig_artifact_name swig-linux-x64)
     set(swig_artifact_id 3.0.12_f3f14d565afd0ec44d3d77298f708f41bd12ef1fa209a1535226cf3e30a5f15b.7z)
+    set(swig_executable_name swig)
 endif()
 
 stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
 stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_artifact_id} "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
 
 # workaround for FindSWIG.cmake's inflexibility - tell it where to find the executable and library
-file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig")
+file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/${swig_executable_name}")
 file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
 get_filename_component(swig_lib "${swig_lib}" DIRECTORY)
-message(STATUS "found ${swig_lib}")
-set(ENV{SWIG_LIB} ${swig_lib})
+file(TO_NATIVE_PATH "${swig_lib}" swig_lib_native)
+set(ENV{SWIG_LIB} "${swig_lib_native}")
 
 ###########################################################################
 # Find packages that we need.
