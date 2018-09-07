@@ -8,7 +8,7 @@ if exist build (
 md build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release ^
-    -DCMAKE_INSTALL_PREFIX=${installdir} ^
+    -DCMAKE_INSTALL_PREFIX=%installdir% ^
     -G "Visual Studio 14 2015 Win64"
 cmake --build . --target install --config Release
 cd ..
