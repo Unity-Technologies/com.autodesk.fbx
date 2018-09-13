@@ -52,10 +52,10 @@ set(stevedore_repo_name testing)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     set(fbxsdk_artifact_name fbxsdk-mac-x64)
-    set(fbxsdk_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
+    set(fbxsdk_artifact_id 2018.1.1_61b679df32b3967a62ca4a8285a79bcbb396b329c860307e7c667ec91745b236.7z)
 
     set(swig_artifact_name swig-mac-x64)
-    set(swig_artifact_id 3.0.12_a8df24137209600acbec717d2aee1e5243a61cb5e9ce7d99dbb5fe8d6910effd.7z)
+    set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
     set(swig_executable_name swig)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(fbxsdk_artifact_name fbxsdk-win-x64)
