@@ -36,6 +36,8 @@
 %rename("%s") FbxNode::GetGeometry;
 %rename("%s") FbxNode::GetCamera(); /* non-const to avoid warning */
 %rename("%s") FbxNode::GetLight();
+%rename("%s") FbxNode::GetNurbsCurve();
+
 
 /* Materials */
 %rename("%s") FbxNode::AddMaterial;
