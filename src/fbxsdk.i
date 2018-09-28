@@ -272,6 +272,7 @@
 %include "fbxgeometrybase.i"
 %include "fbxgeometry.i"
 %include "fbxmesh.i"
+%include "fbxnurbscurve.i"
 %include "fbxglobalsettings.i"
 %include "fbximplementation.i"
 %include "fbxsurfacematerial.i"
