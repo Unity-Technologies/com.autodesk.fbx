@@ -220,7 +220,13 @@ add_custom_target(vector_test_output ALL DEPENDS vector_test.txt)
 add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
 target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
 set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
-set_target_properties(unity_tests PROPERTIES SUFFIX ".exe")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+set_target_properties(unity_tests PROPERTIES SUFFIX "-mac-x64")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    set_target_properties(unity_tests PROPERTIES SUFFIX "-win-x64.exe")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set_target_properties(unity_tests PROPERTIES SUFFIX "-linux-x64")
+endif()
 
 ###########################################################################
 # Add target to replace the version number in README.txt
