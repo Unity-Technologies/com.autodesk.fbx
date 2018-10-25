@@ -1,13 +1,9 @@
 FBX SDK C# Bindings
 ===================
 
-Autodesk FBX SDK. Copyright (c) 2016 Autodesk, Inc. All rights reserved.<br/>
-Use of the FBX SDK requires agreeing to and complying with the FBX SDK License and Service Agreement terms 
-accessed at https://damassets.autodesk.net/content/dam/autodesk/www/Company/docs/pdf/legal-notices-&-trademarks/Autodesk_FBX_SDK_2015_License_and_Services_Agreement.pdf"
-
 **Version**:
 
-This package contains only a subset of the FbxSdk, and is designed to work in the Unity Editor only.
+This package contains only a subset of the Autodesk® FBX® SDK, and is designed to work in Unity only.
 
 How to Access Bindings in Code
 -------------------------------
@@ -20,9 +16,3 @@ How to Access Global Variables and Functions
 --------------------------------------------
 All global variables and functions are in Globals.cs, in the Globals class under the FbxSdk namespace.
 e.g. if we want to access the IOSROOT variable, we would do FbxSdk.Globals.IOSROOT
-
-   
-How to Access Documentation for Bindings
-----------------------------------------
-1. Unzip docs.zip outside of the Assets folder
-2. Open docs/html/index.html

@@ -58,4 +58,7 @@ examples/runtime/Temp
  
 artifacts/**
 build/**
-.idea/**
+**/.idea/**
+
+.DS_Store
+
