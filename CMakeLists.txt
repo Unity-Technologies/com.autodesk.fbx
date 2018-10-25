@@ -22,7 +22,6 @@ project (UnityFbxSdkNative)
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
 
-# promote warnings to errors
 if(MSVC)
 set(PROJECT_COMPILE_FLAGS "/WX")
 else()
@@ -103,6 +102,26 @@ include(cmake/RunPythonScript.cmake)
 # Set up the include directories
 include_directories(Source)
 include_directories(${FBXSDK_INCLUDE_DIR})
+
+# Get git tag as package version
+find_package(Git REQUIRED)
+execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags HEAD
+        OUTPUT_VARIABLE PACKAGE_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+# only keep x.y.z[-preview.n]
+string(REGEX REPLACE "^.*([0-9]\.[0-9]\.[0-9].*)$" "\\1" PACKAGE_VERSION "${PACKAGE_VERSION}")
+
+# Get git revision hash as package revision
+execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+        OUTPUT_VARIABLE PACKAGE_REVISION
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# Get git repo url
+execute_process(COMMAND ${GIT_EXECUTABLE} config --get remote.origin.url
+        OUTPUT_VARIABLE PACKAGE_REPO_URL
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+configure_file(${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/package.json.in ${CMAKE_BINARY_DIR}/package.json @ONLY)
 
 ###########################################################################
 # Set up the swig run.
@@ -229,42 +248,11 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 endif()
 
 ###########################################################################
-# Add target to replace the version number in README.txt
-set(README_TARGET readme_replace)
-add_custom_target(
-    ${README_TARGET}
-    COMMAND ${PYTHON_EXECUTABLE}
-            "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
-            "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/README.md"
-            "**Version**:"
-            "**Version**: ${PACKAGE_VERSION}"
-    DEPENDS "${CMAKE_SOURCE_DIR}/scripts/file-search-replace.py"
-    COMMENT "Replacing version number in README.md"
-)
+# Replace variables in source files
+configure_file(${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/Documentation~/com.autodesk.fbx.md.in ${CMAKE_BINARY_DIR}/com.autodesk.fbx.md @ONLY)
+configure_file(${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/package.json.in ${CMAKE_BINARY_DIR}/package.json @ONLY)
 
-###########################################################################
-# Doxygen documentation
-# add a target to generate API documentation with Doxygen
-set(DOXYGEN_TARGET doc)
-set(DOC_ZIP_NAME "docs.zip")
-if(DOXYGEN_FOUND)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/doxygen.stamp
-        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMAND cmake -E touch ${CMAKE_BINARY_DIR}/doxygen.stamp
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        COMMENT "Generating API documentation with Doxygen" VERBATIM
-    )
-    add_custom_command(OUTPUT ${DOC_ZIP_NAME}
-        COMMAND ${CMAKE_COMMAND} -E tar "cfv" ${CMAKE_BINARY_DIR}/${DOC_ZIP_NAME} --format=zip
-           "${CMAKE_CURRENT_BINARY_DIR}/docs"
-        DEPENDS ${CMAKE_BINARY_DIR}/doxygen.stamp
-    )
-    add_custom_target(${DOXYGEN_TARGET} DEPENDS ${DOC_ZIP_NAME})
-endif(DOXYGEN_FOUND)
-
-
+install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
@@ -279,15 +267,5 @@ install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFI
 install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 
-install(CODE "execute_process(COMMAND cmake --build . --target ${README_TARGET})")
-
-if(DOXYGEN_FOUND AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    # generate and copy docs. This has to happen after the README.txt has been copied into the build dir
-    install(CODE "execute_process(COMMAND cmake --build . --target ${DOXYGEN_TARGET})")
-    install(FILES ${CMAKE_BINARY_DIR}/${DOC_ZIP_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Documentation~)
-endif()
-
-# create packages
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx.testing/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing)
-
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx FILES_MATCHING PATTERN "*.in" EXCLUDE)
+install(FILES ${CMAKE_BINARY_DIR}/com.autodesk.fbx.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Documentation~)
