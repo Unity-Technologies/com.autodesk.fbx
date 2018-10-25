@@ -1,0 +1,10 @@
+{
+    "name": "com.autodesk.fbx",
+    "version" : "@PACKAGE_VERSION@",
+    "displayName" : "Autodesk FBX SDK",
+    "unity": "2018.2",
+    "description" : "This package provides Unity C# bindings to the Autodesk® FBX® SDK.",
+    "keywords" : [ "fbx", "animation", "modeling", "maya", "max" ],
+    "repository.url" : "@PACKAGE_REPO_URL@",
+    "repository.revision" : "@PACKAGE_REVISION@"
+}
