@@ -1,0 +1,16 @@
+{
+    "name": "Autodesk.Fbx.Tests",
+    "references": [
+        "Autodesk.Fbx",
+        "Mono.Reflection",
+        "Autodesk.Fbx.Tests.VisualComparison"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor",
+        "macOSStandalone",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}
