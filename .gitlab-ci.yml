@@ -12,59 +12,89 @@ variables:
     GIT_SUBMODULE_STRATEGY: recursive
     
 stages:
+  - prepare
   - build
   - test
   #- push_to_packman_staging
 
+.base:
+  artifacts:
+    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
+    paths:
+      - artifacts
+    expire_in: 1 hour
+# Important! Do not remove this after_script as the VM will live for 12 hours before being destroyed!
+  after_script:
+    - /opt/post_build_script.sh
+
+prepare:mac:
+  extends: .base
+  stage: prepare
+  tags:
+    - buildfarm
+    - darwin
+  script:
+    - virtualenv --clear --no-site-packages artifacts/venv
+    - . artifacts/venv/bin/activate
+    - pip install unity-downloader-cli --extra-index-url https://artifactory.eu-cph-1.unityops.net/api/pypi/common-python/simple
+
+prepare:windows:
+  extends: .base
+  stage: prepare
+  tags:
+    - buildfarm
+    - windows
+  script:
+    - virtualenv --clear --no-site-packages artifacts\venv
+    - artifacts\venv\Scripts\activate
+    - pip install unity-downloader-cli --extra-index-url https://artifactory.eu-cph-1.unityops.net/api/pypi/common-python/simple
+
+prepare:linux:
+  extends: .base
+  stage: prepare
+  tags:
+    - buildfarm
+    - darwin
+  script:
+    - virtualenv --clear --no-site-packages artifacts/venv
+    - . artifacts/venv/bin/activate
+    - pip install unity-downloader-cli --extra-index-url https://artifactory.eu-cph-1.unityops.net/api/pypi/common-python/simple
+
 build:mac:
+  extends: .base
   stage: build
   tags:
     - buildfarm
     - darwin
   script:
     - ./build.sh
-  artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-    - artifacts
-    expire_in: 1 hour
-# Important! Do not remove this after_script as the VM will live for 12 hours before being destroyed!
-  after_script:
-    - /opt/post_build_script.sh
+  dependencies:
+    - prepare:mac
 
 build:windows:
+  extends: .base
   stage: build
   tags:
     - buildfarm
     - windows
   script:
     - build.cmd
-  artifacts:
-    name: "%CI_JOB_STAGE%-%CI_COMMIT_REF_NAME%"
-    paths:
-      - artifacts
-    expire_in: 1 hour
-# Important! Do not remove this after_script as the VM will live for 12 hours before being destroyed!
-  after_script:
-    - C:\Users\builduser\post_build_script.bat
+  dependencies:
+    - prepare:windows
 
 build:linux:
+  extends: .base
   stage: build
   tags:
     - buildfarm
     - linux
   script:
-  - ./build.sh
-  artifacts:
-    name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-      - artifacts
-    expire_in: 1 hour
-# Important! Do not remove this after_script as the VM will live for 12 hours before being destroyed!
-  after_script:
-    - /opt/post_build_script.sh
+    - ./build.sh
+  dependencies:
+    - prepare:linux
 
 test:mac:
+  extends: .base
   stage: test
   tags:
     - buildfarm
@@ -75,6 +105,7 @@ test:mac:
     - build:mac
   
 test:windows:
+  extends: .base
   stage: test
   tags:
     - buildfarm
@@ -85,6 +116,7 @@ test:windows:
     - build:windows
   
 test:linux:
+  extends: .base
   stage: test
   tags:
     - buildfarm
