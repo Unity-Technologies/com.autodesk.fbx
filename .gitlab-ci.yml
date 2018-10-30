@@ -19,46 +19,46 @@ stages:
 build:mac:
   stage: build
   tags:
-    - mac
+    - buildfarm
+    - darwin
   script:
     - ./build.sh
   artifacts:
     name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
     paths:
-    - External/install
-    - build/install
+    - artifacts
     expire_in: 1 hour
 # Important! Do not remove this after_script as the VM will live for 12 hours before being destroyed!
   after_script:
     - /opt/post_build_script.sh
 
-build:win:
+build:windows:
   stage: build
   tags:
-    - win
+    - buildfarm
+    - windows
   script:
     - build.cmd
   artifacts:
     name: "%CI_JOB_STAGE%-%CI_COMMIT_REF_NAME%"
     paths:
-      - External/install
-      - build/install
+      - artifacts
     expire_in: 1 hour
 # Important! Do not remove this after_script as the VM will live for 12 hours before being destroyed!
   after_script:
     - C:\Users\builduser\post_build_script.bat
 
-build:lin:
+build:linux:
   stage: build
   tags:
-    - lin
+    - buildfarm
+    - linux
   script:
   - ./build.sh
   artifacts:
     name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
     paths:
-      - External/install
-      - build/install
+      - artifacts
     expire_in: 1 hour
 # Important! Do not remove this after_script as the VM will live for 12 hours before being destroyed!
   after_script:
@@ -67,29 +67,32 @@ build:lin:
 test:mac:
   stage: test
   tags:
-    - mac
+    - buildfarm
+    - darwin
   script: 
     - npm test
   dependencies:
     - build:mac
   
-test:win:
+test:windows:
   stage: test
   tags:
-    - win
+    - buildfarm
+    - windows
   script: 
     - npm test
   dependencies:
-    - build:win
+    - build:windows
   
-test:lin:
+test:linux:
   stage: test
   tags:
-    - lin
+    - buildfarm
+    - linux
   script:
     - npm test
   dependencies:
-    - build:lin
+    - build:linux
   
 #push_to_packman_staging:
 #  stage: push_to_packman_staging

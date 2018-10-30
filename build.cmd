@@ -1,6 +1,9 @@
 @echo off
 
-SET installdir=%cd%\build\install
+SET installdir=%cd%\artifacts\install
+setlocal enableextensions
+md %installdir%
+endlocal
 
 if exist build (
     rd /s /q build

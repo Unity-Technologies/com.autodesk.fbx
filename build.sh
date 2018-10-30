@@ -4,7 +4,9 @@ if [[ -e build ]]; then
     rm -rf build
 fi
 
-installdir=${PWD}/build/install
+installdir=${PWD}/artifacts/install
+mkdir -p ${installdir}
+
 mkdir -p build
 pushd build
 cmake .. -DCMAKE_BUILD_TYPE=Release \
