@@ -5,13 +5,11 @@ import platform
 def packages_list():
     return [
         ("com.autodesk.fbx", os.path.join("build", "install", "com.autodesk.fbx")),
-        ("com.autodesk.fbx.testing", os.path.join("build", "install", "com.autodesk.fbx.testing")),
     ]
 
 def test_packages_list():
     return [
         "com.autodesk.fbx",
-        "com.autodesk.fbx.testing"
     ]
 
 def gitlab_ci_build_stage():
