@@ -1,5 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
+## [2.0.1-preview] - 2018-11-12
+
+CHANGES
+* Moved unit tests into Tests/ folder
+
 ## [2.0.0-preview.1] - 2018-10-25
 
 CHANGES
