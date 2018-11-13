@@ -254,7 +254,6 @@ endif()
 
 ###########################################################################
 # Replace variables in source files
-configure_file(${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/Documentation~/com.autodesk.fbx.md.in ${CMAKE_BINARY_DIR}/com.autodesk.fbx.md @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/package.json.in ${CMAKE_BINARY_DIR}/package.json @ONLY)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
@@ -275,4 +274,3 @@ install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}
 install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx FILES_MATCHING PATTERN "*.in" EXCLUDE)
-install(FILES ${CMAKE_BINARY_DIR}/com.autodesk.fbx.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Documentation~)
