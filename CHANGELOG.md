@@ -1,5 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
+## [2.0.0-preview.2] - 2018-11-13
+
+CHANGES
+* Removed version number from documentation (already available in changelog)
+
 ## [2.0.0-preview.1] - 2018-10-25
 
 CHANGES
