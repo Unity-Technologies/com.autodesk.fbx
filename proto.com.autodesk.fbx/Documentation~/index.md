@@ -1,6 +1,6 @@
 # About Autodesk® FBX® SDK for Unity
 
-The C# Autodesk® FBX® SDK package provides access to a subset of the Autodesk® FBX® SDK, version @FBXSDK_VERSION@ from Unity C# scripts.
+The C# Autodesk® FBX® SDK package provides access to a subset of the Autodesk® FBX® SDK from Unity C# scripts.
 
 The Autodesk® FBX® SDK is a C++ software development platform and API toolkit that is free and easy-to-use. It allows application and content vendors to transfer existing content into the FBX format with minimal effort.
 

@@ -1,8 +1,6 @@
 FBX SDK C# Bindings
 ===================
 
-**Version**:
-
 This package contains only a subset of the Autodesk® FBX® SDK, and is designed to work in Unity only.
 
 How to Access Bindings in Code
