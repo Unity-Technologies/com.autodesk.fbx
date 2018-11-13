@@ -3,10 +3,9 @@
 ## Requirements
 
 * [Unity](http://unity3d.com) 2018.1
-* [cmake](https://cmake.org/download/) 3.8
-* [swig](http://www.swig.org/download.html) 3.0.12
+* [cmake](https://cmake.org/download/) 3.12
+* [swig](http://www.swig.org/download.html) 3.0.12 (bundled as artifact)
 * [Python](https://www.python.org/downloads/) 2.7.x or 3.x
-* [Doxygen](http://www.stack.nl/~dimitri/doxygen/download.html) 1.8.13+
 * Windows: [Visual Studio Community 2015](https://www.visualstudio.com/downloads/)
 * OSX: [Xcode](https://developer.apple.com/xcode/features/) 9.x with command-line tools installed
 * Linux: not supported
