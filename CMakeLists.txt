@@ -24,9 +24,12 @@ set(CMAKE_CXX_STANDARD 11)
 
 if(MSVC)
 set(PROJECT_COMPILE_FLAGS "/WX")
-else()
+elseif(CMAKE_HOST_APPLE)
 # requires gcc 6 or higher
 set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference")
+else()
+# No Werror because there's invalid use of incomplete type FbxAnimEvaluator in fbxproperty.h
+set(PROJECT_COMPILE_FLAGS "-Wall -Wno-format -Wno-strict-aliasing")
 endif()
 
 add_definitions(${PROJECT_COMPILE_FLAGS})
@@ -224,7 +227,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   set_target_properties(UnityFbxSdkNative PROPERTIES BUNDLE TRUE)
   target_link_libraries(UnityFbxSdkNative "-exported_symbols_list ${CMAKE_CURRENT_SOURCE_DIR}/Source/exported_symbols.txt -Wl,-x,-dead_strip")
 elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-  target_link_libraries(UnityFbxSdkNative "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/version-script.txt -Wl,-x,--gc-sections")
+  target_link_libraries(UnityFbxSdkNative "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/Source/version-script.txt -Wl,-x,--gc-sections")
 endif()
 
 ###########################################################################
@@ -244,7 +247,9 @@ set_target_properties(unity_tests PROPERTIES SUFFIX "-mac-x64")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set_target_properties(unity_tests PROPERTIES SUFFIX "-win-x64.exe")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    find_package(Threads)
     set_target_properties(unity_tests PROPERTIES SUFFIX "-linux-x64")
+    target_link_libraries(unity_tests ${CMAKE_THREAD_LIBS_INIT}) # need to include pthread libs for Linux
 endif()
 
 ###########################################################################
