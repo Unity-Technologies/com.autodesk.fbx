@@ -6,6 +6,7 @@ CHANGES
 * Removed version number from documentation (already available in changelog)
 * Fixed missing .meta file for plugins
 * Corrected asmdef name
+* Build system fixes for Linux
 
 ## [2.0.0-preview.1] - 2018-10-25
 
