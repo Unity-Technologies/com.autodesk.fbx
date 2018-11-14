@@ -1,0 +1,8 @@
+LIBUNITYFBXSDKNATIVE_1.0 {
+  global:
+    CSharp*;
+    SWIG*;
+  local:
+    *;
+};
+
