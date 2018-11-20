@@ -125,6 +125,16 @@ namespace Autodesk.Fbx.UnitTests
             Assert.IsNull(fooNode.GetNodeAttribute());
             Assert.IsNull(fooNode.GetSkeleton());
             Assert.IsNull (fooNode.GetLight ());
+
+            // Test that we can get at the limits by reference.
+            Assert.IsNotNull(fooNode.GetTranslationLimits());
+            Assert.IsNotNull(fooNode.GetRotationLimits());
+            Assert.IsNotNull(fooNode.GetScalingLimits());
+
+            var limits = fooNode.GetTranslationLimits();
+            Assert.IsFalse(limits.GetActive());
+            limits.SetActive(true);
+            Assert.IsTrue(fooNode.GetTranslationLimits().GetActive());
         }
 
         [Test]
