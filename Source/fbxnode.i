@@ -67,6 +67,18 @@
 %rename("%s") FbxNode::SetScalingOffset;
 %rename("%s") FbxNode::GetScalingPivot;
 %rename("%s") FbxNode::SetScalingPivot;
+
+// Limits (returns by ref; there's no corresponding set)
+// Note: swig doesn't see these functions, so we need to redefine them.
+// (order matters: rename first, extend after)
+%rename("%s") FbxNode::GetTranslationLimits;
+%rename("%s") FbxNode::GetRotationLimits;
+%rename("%s") FbxNode::GetScalingLimits;
+%extend FbxNode {
+  FbxLimits& GetTranslationLimits() { return self->GetTranslationLimits(); }
+  FbxLimits& GetRotationLimits() { return self->GetRotationLimits(); }
+  FbxLimits& GetScalingLimits() { return self->GetScalingLimits(); }
+}
 #endif
 
 /* The properties need to be marked immutable. */
