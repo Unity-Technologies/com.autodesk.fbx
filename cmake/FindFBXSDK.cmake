@@ -7,6 +7,8 @@
 set(FBXSDK_INCLUDE_PATHS $ENV{FBXSDK_INCLUDE_PATHS})
 set(FBXSDK_LIB_PATHS $ENV{FBXSDK_LIB_PATHS})
 
+option(USE_CUSTOM_FBXSDK "Allow linking to a custom build of FBX SDK" OFF)
+
 # Platform-specific code.
 # Autodesk installs the FBX SDK in a non-standard spot so we need to find it.
 # Result of this code:
@@ -75,11 +77,15 @@ else()
 endif()
 
 # On OSX we need to link to Cocoa when we statically link.
+# With a custom build we also need to link to its components.
 # (But if we didn't find FBX, don't link to Cocoa.)
 if(APPLE)
   if (NOT(FBXSDK_LIBRARY STREQUAL ""))
       find_library(COCOA_LIBRARY Cocoa)
       list(APPEND FBXSDK_LIBRARY ${COCOA_LIBRARY})
+      if (USE_CUSTOM_FBXSDK)
+        list(APPEND FBXSDK_LIBRARY "-lxml2" "-liconv" "-lz")
+      endif()
   endif()
 endif()
 
