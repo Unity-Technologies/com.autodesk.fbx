@@ -14,14 +14,8 @@ namespace Autodesk.Fbx.UnitTests
     /// If you add tests here, you probably want to add them to the other
     /// FbxDouble* test classes.
     /// </summary>
-    public class FbxAxisSystemTest
+    public class FbxAxisSystemTest : TestBase<FbxAxisSystem>
     {
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxAxisSystem), this.GetType()); }
-#endif
-
         [Test]
         public void TestEquality() {
             var a = FbxAxisSystem.MayaZUp;
@@ -78,6 +72,8 @@ namespace Autodesk.Fbx.UnitTests
             using (var Manager = FbxManager.Create()) {
                 var scene = FbxScene.Create(Manager, "scene");
                 axes.ConvertScene(scene);
+                var scene2 = FbxScene.Create(Manager, "scene2");
+                axes.DeepConvertScene(scene2);
             }
         }
 
