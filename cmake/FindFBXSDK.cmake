@@ -4,6 +4,8 @@
 # Licensed under the ##LICENSENAME##.
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
+set(FBXSDK_INCLUDE_PATHS $ENV{FBXSDK_INCLUDE_PATHS})
+set(FBXSDK_LIB_PATHS $ENV{FBXSDK_LIB_PATHS})
 
 # Platform-specific code.
 # Autodesk installs the FBX SDK in a non-standard spot so we need to find it.
@@ -15,6 +17,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
   list(APPEND CMAKE_SWIG_FLAGS "-D__x86_64__")
   list(APPEND CMAKE_SWIG_FLAGS "-DFBXSDK_COMPILER_GNU")
 
+  set(_fbxsdk_root_path "/Applications/Autodesk/FBX SDK")
   list(APPEND _fbxsdk_lib_paths "lib/clang/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
@@ -24,6 +27,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   list(APPEND CMAKE_SWIG_FLAGS "-D_M_X64")
   list(APPEND CMAKE_SWIG_FLAGS "-D_MSC_VER")
 
+  set(_fbxsdk_root_path "c:/Program Files/Autodesk/FBX SDK")
   list(APPEND _fbxsdk_lib_paths "lib/vs2015/x64/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -31,11 +35,18 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__x86_64__")
   list(APPEND CMAKE_SWIG_FLAGS "-D__GNUC__")
 
+  # where is fbxsdk installed by default on linux?
   list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release")
 endif()
 
+# When using Stevedore, FBX SDK gets installed in the source tree, and we
+# don't want to use the system-installed version.
+if (${USE_STEVEDORE} STREQUAL "ON")
+  set(_fbxsdk_root_path "${CMAKE_PREFIX_PATH}")
+endif()
+
 # Iterate over the versions. Pick the first one (reverse-alphabetically)
-file(GLOB _fbxsdk_VERSIONS LIST_DIRECTORIES true "${CMAKE_PREFIX_PATH}/*")
+file(GLOB _fbxsdk_VERSIONS LIST_DIRECTORIES true "${_fbxsdk_root_path}/*")
 list(SORT _fbxsdk_VERSIONS)
 list(REVERSE _fbxsdk_VERSIONS)
 foreach(_fbxsdk_PATH ${_fbxsdk_VERSIONS})
@@ -43,6 +54,7 @@ foreach(_fbxsdk_PATH ${_fbxsdk_VERSIONS})
   foreach(_fbxsdk_lib_path ${_fbxsdk_lib_paths})
     list(APPEND FBXSDK_LIB_PATHS "${_fbxsdk_PATH}/${_fbxsdk_lib_path}")
   endforeach()
+  list(APPEND FBXSDK_LIB_PATHS "${_fbxsdk_PATH}")
 endforeach()
 
 find_path(FBXSDK_INCLUDE_DIR fbxsdk.h PATHS ${FBXSDK_INCLUDE_PATHS})
@@ -72,12 +84,14 @@ if(APPLE)
 endif()
 
 # Standard code to report whether we found the package or not.
+# Careful with REQUIRED_VARS and version numbers -- '0' is a valid minor
+# version number but tests as false
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(FBXSDK
   FOUND_VAR FBXSDK_FOUND
   REQUIRED_VARS
     FBXSDK_LIBRARY
     FBXSDK_INCLUDE_DIR
-    FBXSDK_VERSION FBXSDK_VERSION_MAJOR FBXSDK_VERSION_MINOR FBXSDK_VERSION_POINT
+    FBXSDK_VERSION
   VERSION_VAR
     FBXSDK_VERSION
 )
