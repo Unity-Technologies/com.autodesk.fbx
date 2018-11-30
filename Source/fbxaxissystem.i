@@ -10,6 +10,7 @@
 %rename("%s") FbxAxisSystem;
 %rename("%s") FbxAxisSystem::~FbxAxisSystem();
 %rename("%s") FbxAxisSystem::ConvertScene(FbxScene* pScene) const;
+%rename("%s") FbxAxisSystem::DeepConvertScene;
 
 /* Get a bunch of constants. */
 %rename("%s") FbxAxisSystem::MayaZUp;
