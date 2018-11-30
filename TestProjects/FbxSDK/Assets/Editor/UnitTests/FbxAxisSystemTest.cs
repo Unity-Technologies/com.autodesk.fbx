@@ -14,14 +14,8 @@ namespace Autodesk.Fbx.UnitTests
     /// If you add tests here, you probably want to add them to the other
     /// FbxDouble* test classes.
     /// </summary>
-    public class FbxAxisSystemTest
+    public class FbxAxisSystemTest : TestBase<FbxAxisSystem>
     {
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxAxisSystem), this.GetType()); }
-#endif
-
         [Test]
         public void TestEquality() {
             var a = FbxAxisSystem.MayaZUp;
@@ -74,10 +68,37 @@ namespace Autodesk.Fbx.UnitTests
             Assert.AreEqual(FbxAxisSystem.EFrontVector.eParityOddNegative, axes.GetFrontVector());
             Assert.AreEqual(FbxAxisSystem.ECoordSystem.eLeftHanded, axes.GetCoorSystem());
 
-            // Test we can call ConvertScene and not crash.
+        }
+
+        [Test]
+        public void TestConvertScene()
+        {
+            var axes = new FbxAxisSystem(
+                FbxAxisSystem.EUpVector.eYAxis,
+                FbxAxisSystem.EFrontVector.eParityOddNegative, // negative! check the sign goes through
+                FbxAxisSystem.ECoordSystem.eLeftHanded);
             using (var Manager = FbxManager.Create()) {
                 var scene = FbxScene.Create(Manager, "scene");
                 axes.ConvertScene(scene);
+            }
+        }
+
+        // Note: as of this writing, DeepConvertScene is an internal API
+        // not yet available in publicly-available builds of FBX SDK.
+        [Test]
+        public void TestDeepConvertScene()
+        {
+            var axes = new FbxAxisSystem(
+                FbxAxisSystem.EUpVector.eYAxis,
+                FbxAxisSystem.EFrontVector.eParityOddNegative, // negative! check the sign goes through
+                FbxAxisSystem.ECoordSystem.eLeftHanded);
+            using (var Manager = FbxManager.Create()) {
+                var scene = FbxScene.Create(Manager, "scene");
+                try {
+                    axes.DeepConvertScene(scene);
+                } catch(System.EntryPointNotFoundException) {
+                    Assert.Ignore("Testing against FBX SDK that doesn't have DeepConvertScene");
+                }
             }
         }
 
