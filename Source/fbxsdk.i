@@ -253,6 +253,7 @@
 %include "fbxstatus.i"
 %include "fbxquaternion.i"
 %include "fbxprogress.i"
+%include "fbxtransforms.i"
 
 /* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"
@@ -298,5 +299,4 @@
 %include "fbxblendshapechannel.i"
 %include "fbxshape.i"
 %include "fbxio.i"
-%include "fbxtransforms.i"
 %include "fbxconstraint.i"
