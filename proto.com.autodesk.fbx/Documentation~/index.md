@@ -4,7 +4,7 @@ The C# Autodesk® FBX® SDK package provides access to a subset of the Autodesk�
 
 The Autodesk® FBX® SDK is a C++ software development platform and API toolkit that is free and easy-to-use. It allows application and content vendors to transfer existing content into the FBX format with minimal effort.
 
-> ***Note:*** The C# Autodesk® FBX® SDK exposes only a subset of the full API. That subset enables exporter tools, such as the [FBX Exporter](https://docs.unity3d.com/Packages/com.autodesk.fbx@latest) package. Using the C# Autodesk® FBX® SDK package for importing is not recommended. See [Known issues](#issues) below for more information.
+> ***Note:*** The C# Autodesk® FBX® SDK exposes only a subset of the full API. That subset enables exporter tools, such as the [FBX Exporter](https://docs.unity3d.com/Packages/com.unity.formats.fbx@latest) package. Using the C# Autodesk® FBX® SDK package for importing is not recommended. See [Known issues](#issues) below for more information.
 
 ## Requirements
 
@@ -18,6 +18,10 @@ The Autodesk® FBX® SDK for Unity package contains:
 
 * C# bindings
 * Compiled binaries for MacOS and Windows that include the FBX SDK
+
+## Installation
+
+The Autodesk® FBX® SDK is automatically installed as a dependency of the [FBX Exporter](https://docs.unity3d.com/Packages/com.unity.formats.fbx@latest) package. It is not discoverable from the Package Manager UI, but can be installed without installing the FBX Exporter by adding it to your package manifest [Package Manager documentation](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest/index.html#PackManManifestsProject).
 
 ## Known issues
 
@@ -33,7 +37,9 @@ While there are guards against some common errors, it is possible to crash Unity
 
 The C# Autodesk® FBX® SDK package is not supported at Runtime if you build using the IL2CPP backend.
 
+### Linux
 
+Linux support is currently experimental and unsupported.
 
 ## API documentation
 
