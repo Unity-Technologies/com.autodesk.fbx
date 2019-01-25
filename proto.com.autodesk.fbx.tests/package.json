@@ -1,7 +1,7 @@
 {
 "type": "tests",
 "name": "com.autodesk.fbx.tests",
-"version" : "2.0.0-preview",
+"version" : "2.0.0-preview.1",
 "displayName" : "Autodesk FBX SDK Tests",
 "unity": "2018.2",
 "description": "This is not a user-facing package."
