@@ -191,14 +191,14 @@
   /// When deploying with Unity Package Manager, do not add defines: the
   /// default platform defines suffice.
   /// </summary>
-#if COM_UNITY_FORMATS_FBX_AS_ASSET || UNITY_STANDALONE 
-  const string DllImportName = "$dllimport";
-#elif UNITY_EDITOR_OSX
-  const string DllImportName = "Packages/com.autodesk.fbx/MacOS/$dllimport.bundle/Contents/MacOS/$dllimport";
+#if UNITY_EDITOR_OSX
+  const string DllImportName = "Packages/com.autodesk.fbx/Runtime/Plugins/x86_64/$dllimport.bundle/Contents/MacOS/$dllimport";
 #elif UNITY_EDITOR_LINUX
-  const string DllImportName = "Packages/com.autodesk.fbx/Linux/$dllimport.so";
+  const string DllImportName = "Packages/com.autodesk.fbx/Runtime/Plugins/x86_64/$dllimport.so";
 #elif UNITY_EDITOR_WIN
-  const string DllImportName = "Packages/com.autodesk.fbx/Windows/$dllimport.dll";
+  const string DllImportName = "Packages/com.autodesk.fbx/Runtime/Plugins/x86_64/$dllimport.dll";
+#elif COM_UNITY_FORMATS_FBX_AS_ASSET || UNITY_STANDALONE 
+  const string DllImportName = "$dllimport";
 #else
   #error "FbxSdk: C# bindings for this platform haven't been implemented yet, sorry."
   const string DllImportName = "$dllimport";
