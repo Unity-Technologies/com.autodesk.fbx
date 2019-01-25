@@ -1,5 +1,5 @@
 {
-    "name": "Unity.Fbx.Editor.Tests",
+    "name": "Autodesk.Fbx.Editor.Tests",
     "references": [
         "Autodesk.Fbx"
     ],
