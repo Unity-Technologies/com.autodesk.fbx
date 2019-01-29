@@ -159,7 +159,7 @@ namespace Autodesk.Fbx.PerformanceTests
         [Test]
         public void FbxObjectCreateTest ()
         {
-            int N = 10000;
+            int N = 5000;
             DefaultTest (
                 "FbxObjectCreate",
                 N,
