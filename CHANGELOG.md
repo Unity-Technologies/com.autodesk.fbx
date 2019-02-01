@@ -1,5 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
+## [2.0.0-preview.6] - 2018-02-01
+
+CHANGES
+* Updated asmdefs to only include Editor platform
+
 ## [2.0.0-preview.5] - 2018-01-25
 
 CHANGES
