@@ -48,13 +48,12 @@ namespace Autodesk.Fbx.UnitTests
                 var obj = CreateObject(scene, "scene_object");
                 Assert.AreEqual(scene, obj.GetScene());
             }
-            {
-                // The base test assumes that if there's no scene, the object
-                // won't be in a scene. But FbxAnimCurve synthesizes a test
-                // scene.
-                var obj = CreateObject(Manager, "not_scene_object");
-                Assert.AreNotEqual(null, obj.GetScene());
-            }
+            
+            // The base test assumes that if there's no scene, the object
+            // won't be in a scene. But FbxAnimCurve synthesizes a test
+            // scene.
+            var obj2 = CreateObject(Manager, "not_scene_object");
+            Assert.AreNotEqual(null, obj2.GetScene());
         }
 
 
@@ -136,7 +135,7 @@ namespace Autodesk.Fbx.UnitTests
             // this test is much simpler than the usual FbxObject test.
             var curve = CreateObject("a");
             DisposeTester.TestDispose(curve);
-            using (CreateObject("b"));
+            using (CreateObject("b")) { };
 
             curve = CreateObject("c");
             curve.Destroy();
