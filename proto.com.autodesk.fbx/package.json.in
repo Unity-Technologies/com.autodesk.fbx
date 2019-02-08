@@ -17,6 +17,6 @@
     "unity": "2018.2", 
     "version": "@PACKAGE_VERSION@",
     "relatedPackages": {
-        "com.autodesk.fbx.tests": "2.0.0-preview.1"
+        "com.autodesk.fbx.tests": "2.0.0-preview.2"
     }
 }

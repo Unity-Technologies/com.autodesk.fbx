@@ -1,5 +1,9 @@
 # Changes in FBX SDK C# Bindings
 
+## [2.0.0-preview.7] - 2018-02-08
+CHANGES
+* Fixed compiler warnings in tests
+
 ## [2.0.0-preview.6] - 2018-02-01
 
 CHANGES
