@@ -21,7 +21,7 @@ build_win:
   artifacts:
     build:
       paths:
-        - "build/*"
+        - "build/**/*"
 
 build_mac:
   name: Build Mac
@@ -34,7 +34,7 @@ build_mac:
   artifacts:
     build:
       paths:
-        - "build/*"
+        - "build/**/*"
 
 pack:
   name: Pack
@@ -51,7 +51,7 @@ pack:
        - "upm-ci~/packages/**/*"
    build:
      paths:
-       - "build/*"
+       - "build/**/*"
   dependencies:
     - .yamato/upm-ci.yml#build_win
     - .yamato/upm-ci.yml#build_mac
