@@ -124,8 +124,6 @@ execute_process(COMMAND ${GIT_EXECUTABLE} config --get remote.origin.url
         OUTPUT_VARIABLE PACKAGE_REPO_URL
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-configure_file(${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/package.json.in ${CMAKE_BINARY_DIR}/package.json @ONLY)
-
 ###########################################################################
 # Set up the swig run.
 set_source_files_properties(Source/fbxsdk.i PROPERTIES CPLUSPLUS ON)
@@ -254,9 +252,8 @@ endif()
 
 ###########################################################################
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx.tests/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.tests PATTERN "*.in" EXCLUDE)
-install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx.tests/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.tests)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
