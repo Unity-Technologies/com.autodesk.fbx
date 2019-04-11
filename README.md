@@ -1,5 +1,13 @@
 # FbxSharp Project : FBX SDK C# bindings
 
+The FBX SDK C# bindings are available in Unity 2018.3 or later via the `com.autodesk.fbx` package in the Package Manager.
+
+The bindings were built to support the Fbx Exporter package (`com.unity.formats.fbx`).
+
+The bindings are a subset of the FBX SDK, and in particular they do not support all that you would need for a general-purpose importer.
+
+# Building from source
+
 ## Requirements
 
 * [Unity](http://unity3d.com) 2018.1
