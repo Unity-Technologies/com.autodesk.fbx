@@ -17,19 +17,6 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 
-# has to be done before project is set, or else CMAKE_INSTALL_PREFIX will already be set to a default value
-SET(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/tests/UnityTests/Assets/FbxSdk" CACHE PATH "Install path prefix")
-MESSAGE(STATUS "CMAKE_INSTALL_PREFIX is: " ${CMAKE_INSTALL_PREFIX})
-
-option(CREATE_PACKAGE "Create Package" OFF)
-if (NOT DEFINED PACKAGE_VERSION)
-    set(PACKAGE_VERSION "1.7.0-preview")
-endif()
-
-if (NOT DEFINED PACKAGE_PATH)
-    set(PACKAGE_PATH "${CMAKE_BINARY_DIR}/FbxSdk_${PACKAGE_VERSION}.unitypackage")
-endif()
-
 project (UnityFbxSdkNative)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -102,47 +89,6 @@ if (${USE_STEVEDORE} STREQUAL "ON")
     set(ENV{SWIG_LIB} "${swig_lib_native}")
     message("FOUND ${swig_lib_native}")
 endif()
-
-include(cmake/Stevedore.cmake)
-
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
-
-# fetch dependencies
-set(stevedore_repo_name testing)
-
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    set(fbxsdk_artifact_name fbxsdk-mac-x64)
-    set(fbxsdk_artifact_id 2018.1.1_61b679df32b3967a62ca4a8285a79bcbb396b329c860307e7c667ec91745b236.7z)
-
-    set(swig_artifact_name swig-mac-x64)
-    set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
-    set(swig_executable_name swig)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    set(fbxsdk_artifact_name fbxsdk-win-x64)
-    set(fbxsdk_artifact_id 2018.1.1_53da254f05c8aecb53045d5d74178004d0a7a76b367c1464d11e3ce3ce949925.7z)
-
-    set(swig_artifact_name swig-win-x64)
-    set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
-    set(swig_executable_name swig.exe)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(fbxsdk_artifact_name fbxsdk-linux-x64)
-    set(fbxsdk_artifact_id 2018.1.1_9fd6bb314e0761415879fe91228f536902aa90082adb198889f71bdf094415fd.7z)
-
-    set(swig_artifact_name swig-linux-x64)
-    set(swig_artifact_id 3.0.12_f3f14d565afd0ec44d3d77298f708f41bd12ef1fa209a1535226cf3e30a5f15b.7z)
-    set(swig_executable_name swig)
-endif()
-
-stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
-stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_artifact_id} "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
-
-# workaround for FindSWIG.cmake's inflexibility - tell it where to find the executable and library
-file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/${swig_executable_name}")
-file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
-get_filename_component(swig_lib "${swig_lib}" DIRECTORY)
-file(TO_NATIVE_PATH "${swig_lib}" swig_lib_native)
-set(ENV{SWIG_LIB} "${swig_lib_native}")
-message("FOUND ${swig_lib_native}")
 
 ###########################################################################
 # Find packages that we need.
