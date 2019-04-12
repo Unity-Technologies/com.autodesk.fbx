@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "com.autodesk.fbx": "file:../../../build/install/com.autodesk.fbx",
-    "com.autodesk.fbx.tests": "file:../../../build/install/com.autodesk.fbx.tests",
     "com.unity.ads": "2.0.8",
     "com.unity.analytics": "3.2.2",
     "com.unity.collab-proxy": "1.2.15",
@@ -41,6 +40,6 @@
     "com.unity.modules.xr": "1.0.0"
   },
   "testables": [
-    "com.autodesk.fbx.tests"
+    "com.autodesk.fbx"
   ]
 }
