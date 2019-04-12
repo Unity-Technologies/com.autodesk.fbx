@@ -1,7 +1,6 @@
 ## Executable + Temp files ##
 
 *.exe
-*.exe.*
 !*.exe.config
 *.o
 *.pdb
