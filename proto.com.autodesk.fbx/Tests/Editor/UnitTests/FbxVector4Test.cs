@@ -212,12 +212,11 @@ namespace Autodesk.Fbx.UnitTests
             { "a.Distance(b)", ApproximatelyEqualX }
         };
 
-        [Ignore("Fails if imported from a package because of Vector.cpp dependency")]
         [Test]
         public void MatchingTests ()
         {
             CppMatchingHelper.MatchingTest<FbxVector4>(
-                    "vector_test.txt",
+                    "Packages/com.autodesk.fbx/Tests/Data~/vector_test.txt",
                     "FbxVector4",
                     Vector,
                     s_commands,
