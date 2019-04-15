@@ -5,7 +5,18 @@ using System.Collections;
 using Autodesk.Fbx;
 using System.IO;
 
-public class FbxExporterTest {
+public class FbxExporterTest
+{
+    private static string s_fbxFilePath;
+    
+    [OneTimeSetUp]
+    public static void OneTimeSetUp()
+    {
+        // Build the fbx scene file path 
+        // (player/player_data/emptySceneFromRuntime.fbx)
+        s_fbxFilePath = Path.Combine(Application.dataPath, "emptySceneFromRuntime.fbx");
+    }
+    
     [Test]
     public void TestWriteEmptyFbxFile() {
         /*
@@ -13,16 +24,11 @@ public class FbxExporterTest {
         player is (temp folder while running tests)
         */
 
-        // Build the fbx scene file path 
-        // (player/player_data/emptySceneFromRuntime.fbx)
-        string fbxFilePath = Application.dataPath;
-        fbxFilePath = Path.Combine(fbxFilePath, "emptySceneFromRuntime.fbx");
-
         // The file should not exist. We are running the test from the Test 
         // Runner, which should always create a new player with its own fresh 
         // data directory
-        FileInfo fbxFileInfo = new FileInfo(fbxFilePath);
-        Assert.That(!fbxFileInfo.Exists, string.Format("\"{0}\" already exists but the test did not create it yet", fbxFilePath));
+        FileInfo fbxFileInfo = new FileInfo(s_fbxFilePath);
+        Assert.That(!fbxFileInfo.Exists, string.Format("\"{0}\" already exists but the test did not create it yet", s_fbxFilePath));
 
         using (var fbxManager = FbxManager.Create())
         {
@@ -36,7 +42,7 @@ public class FbxExporterTest {
 
             // Initialize the exporter.
             int fileFormat = fbxManager.GetIOPluginRegistry().FindWriterIDByDescription("FBX ascii (*.fbx)");
-            bool status = fbxExporter.Initialize(fbxFilePath, fileFormat, fbxIOSettings);
+            bool status = fbxExporter.Initialize(s_fbxFilePath, fileFormat, fbxIOSettings);
 
             Assert.That( status, string.Format("failed to initialize exporter, reason:D {0}",
                                                fbxExporter.GetStatus().GetErrorString()));
@@ -67,7 +73,13 @@ public class FbxExporterTest {
         }
 
         // Test that the file exists
-        fbxFileInfo = new FileInfo(fbxFilePath);
-        Assert.That(fbxFileInfo.Exists, string.Format("\"{0}\" was not created", fbxFilePath));
+        fbxFileInfo = new FileInfo(s_fbxFilePath);
+        Assert.That(fbxFileInfo.Exists, string.Format("\"{0}\" was not created", s_fbxFilePath));
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        File.Delete(s_fbxFilePath);
     }
 }
