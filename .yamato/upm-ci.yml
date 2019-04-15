@@ -71,6 +71,7 @@ pack:
   dependencies:
     - .yamato/upm-ci.yml#build_win
     - .yamato/upm-ci.yml#build_mac
+    - .yamato/upm-ci.yml#build_linux
 
 {% for editor in editors %}
 {% for platform in platforms %}
