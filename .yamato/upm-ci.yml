@@ -39,6 +39,19 @@ build_mac:
       paths:
         - "build/**/*"
 
+build_linux:
+  name: Build Linux
+  agent:
+    type: Unity::VM
+    image: package-ci/ubuntu:latest
+    flavor: m1.large
+  commands:
+    - ./build.sh
+  artifacts:
+    build:
+      paths:
+        - "build/**/*"
+
 pack:
   name: Pack
   agent:
