@@ -113,8 +113,18 @@ namespace Autodesk.Fbx.UnitTests
         [Test]
         public void MatchingTests ()
         {
+            string vectorTestFilename;
+            try
+            {
+                vectorTestFilename = Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx.tests/Tests/Bin~/vector_test.txt"));
+            }
+            catch
+            {
+                vectorTestFilename = Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx/Tests/Bin~/vector_test.txt"));
+            }
+            
             CppMatchingHelper.MatchingTest<FbxVector2>(
-                    "Packages/com.autodesk.fbx/Tests/Data~/vector_test.txt",
+                    vectorTestFilename,
                     "FbxVector2",
                     Vector,
                     s_commands,
