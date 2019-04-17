@@ -7,6 +7,7 @@
 using NUnit.Framework;
 using Autodesk.Fbx;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Autodesk.Fbx.UnitTests
 {
