@@ -74,7 +74,7 @@ if (${USE_STEVEDORE} STREQUAL "ON")
         set(fbxsdk_artifact_id 2018.1.1_9fd6bb314e0761415879fe91228f536902aa90082adb198889f71bdf094415fd.7z)
 
         set(swig_artifact_name swig-linux-x64)
-        set(swig_artifact_id 3.0.12_93a3df294545754247d07a1426cf74410eb948564ea46fd493360040b84d9043.7z)
+        set(swig_artifact_id 3.0.12-repack_93a3df294545754247d07a1426cf74410eb948564ea46fd493360040b84d9043.7z)
         set(swig_executable_name swig)
     endif()
 
