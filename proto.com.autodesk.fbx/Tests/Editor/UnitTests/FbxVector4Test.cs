@@ -219,11 +219,11 @@ namespace Autodesk.Fbx.UnitTests
             string vectorTestFilename;
             try
             {
-                vectorTestFilename = Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx.tests/Tests/Bin~/vector_test.txt"));
+                vectorTestFilename = Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx.tests/Tests/Data~/vector_test.txt"));
             }
             catch
             {
-                vectorTestFilename = Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx/Tests/Bin~/vector_test.txt"));
+                vectorTestFilename = Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx/Tests/Data~/vector_test.txt"));
             }
 
             CppMatchingHelper.MatchingTest<FbxVector4>(
