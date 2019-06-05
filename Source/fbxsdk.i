@@ -204,12 +204,6 @@
   const string DllImportName = "$dllimport";
 #endif
 
-// Because of a non-static delegate (ProgressCallback) that is called from NativeFBX->Managed, 
-// we are not supporting IL2CPP
-#if ENABLE_IL2CPP
-     #error Autodesk.Fbx is not supported on IL2CPP
-#endif
-
 %}
 
 /*
