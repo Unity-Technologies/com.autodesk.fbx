@@ -13,12 +13,12 @@ mono_pinvoke_callback_attr = "    [AOT.MonoPInvokeCallback(typeof({0}))]\n{1}"
 # pattern to parse delegate and function name from delegate declaration
 # e.g. 'static SWIGStringDelegate stringDelegate = new SWIGStringDelegate(CreateString);'
 # gives delegate = SWIGStringDelegate and function = CreateString
-delegate_pattern = r'static +(?P<delegate>[^ ]+Delegate) [^=]*= *new *[^ \(]+Delegate\((?P<function>[^ ]+)\)'
+delegate_pattern = re.compile(r'static +(?P<delegate>[^ ]+Delegate) [^=]*= *new *[^ \(]+Delegate\((?P<function>[^ ]+)\)')
 
 # pattern to parse function name
 # e.g. 'static string CreateString(string cString) {'
 # gives func_name = CreateString
-function_pattern = r'static [^ ]+ (?P<func_name>[^ \(]+)\('
+function_pattern = re.compile(r'static [^ ]+ (?P<func_name>[^ \(]+)\(')
 
 def il2cpp_fix_swighelpers(filename):
     # gather all the delegates to add the attribute to
