@@ -221,6 +221,11 @@ swig_add_library(UnityFbxSdkNative
 fbxsharp_run_python_postbuild(TARGET UnityFbxSdkNative
         SCRIPT ${CMAKE_SOURCE_DIR}/scripts/replace-dllimport.py
         ARGS ${CMAKE_BINARY_DIR}/swig/generated/csharp/NativeMethods.cs)
+        
+fbxsharp_run_python_postbuild(TARGET UnityFbxSdkNative
+        SCRIPT ${CMAKE_SOURCE_DIR}/scripts/il2cpp-fix-swighelpers.py
+        ARGS ${CMAKE_BINARY_DIR}/swig/generated/csharp/NativeMethods.cs)
+        
 
 swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 
