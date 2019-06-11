@@ -25,6 +25,7 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
 
+# promote warnings to errors
 if(MSVC)
 set(PROJECT_COMPILE_FLAGS "/WX")
 elseif(CMAKE_HOST_APPLE)
@@ -108,26 +109,6 @@ include(cmake/RunPythonScript.cmake)
 # Set up the include directories
 include_directories(Source)
 include_directories(${FBXSDK_INCLUDE_DIR})
-
-# Get git tag as package version
-find_package(Git REQUIRED)
-execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags HEAD
-        OUTPUT_VARIABLE PACKAGE_VERSION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-# only keep x.y.z[-preview.n]
-string(REGEX REPLACE "^.*([0-9]\.[0-9]\.[0-9].*)$" "\\1" PACKAGE_VERSION "${PACKAGE_VERSION}")
-
-# Get git revision hash as package revision
-execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
-        OUTPUT_VARIABLE PACKAGE_REVISION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-# Get git repo url
-execute_process(COMMAND ${GIT_EXECUTABLE} config --get remote.origin.url
-        OUTPUT_VARIABLE PACKAGE_REPO_URL
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-configure_file(${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/package.json.in ${CMAKE_BINARY_DIR}/package.json @ONLY)
 
 ###########################################################################
 # Set up the swig run.
@@ -262,17 +243,15 @@ endif()
 
 ###########################################################################
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx.testing/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing PATTERN "*.in" EXCLUDE)
-install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
 install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Plugins/x86_64)
 
 # copy C++ performance tests
-install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing)
-install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing)
+install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/Bin~)
+install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/Data~)
 
 install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)

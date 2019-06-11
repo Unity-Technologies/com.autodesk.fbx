@@ -43,7 +43,7 @@ endif()
 
 # When using Stevedore, FBX SDK gets installed in the source tree, and we
 # don't want to use the system-installed version.
-if (${USE_STEVEDORE} STREQUAL "ON")
+if(${USE_STEVEDORE} STREQUAL "ON")
   set(_fbxsdk_root_path "${CMAKE_PREFIX_PATH}")
 endif()
 
@@ -97,7 +97,7 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(FBXSDK
   REQUIRED_VARS
     FBXSDK_LIBRARY
     FBXSDK_INCLUDE_DIR
-    FBXSDK_VERSION
+    FBXSDK_VERSION FBXSDK_VERSION_MAJOR FBXSDK_VERSION_MINOR FBXSDK_VERSION_POINT
   VERSION_VAR
     FBXSDK_VERSION
 )

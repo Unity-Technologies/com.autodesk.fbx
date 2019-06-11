@@ -1,7 +1,11 @@
 {
-    "name": "Autodesk.Fbx",
-    "references": [],
-    "optionalUnityReferences": [],
+    "name": "Autodesk.Fbx.Editor.Tests",
+    "references": [
+        "Autodesk.Fbx"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
     "includePlatforms": [
         "Editor"
     ],
