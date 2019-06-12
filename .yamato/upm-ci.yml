@@ -12,6 +12,9 @@ platforms:
     type: Unity::VM::osx
     image: buildfarm/mac:stable
     flavor: m1.mac
+  - name: linux
+    type: package-ci/ubuntu:latest
+    flavor: m1.large
 ---
 build_win:
   name: Build Win
@@ -24,7 +27,7 @@ build_win:
   artifacts:
     build:
       paths:
-        - "build/**/*"
+        - "com.autodesk.fbx/**/*"
 
 build_mac:
   name: Build Mac
@@ -37,7 +40,20 @@ build_mac:
   artifacts:
     build:
       paths:
-        - "build/**/*"
+        - "com.autodesk.fbx/**/*"
+
+build_linux:
+  name: Build Linux
+  agent:
+    type: Unity::VM 
+    image: package-ci/ubuntu:latest
+    flavor: m1.large
+  commands:
+    - ./build.sh
+  artifacts:
+    build:
+      paths:
+        - "com.autodesk.fbx/**/*"
 
 pack:
   name: Pack
@@ -54,10 +70,11 @@ pack:
        - "upm-ci~/packages/**/*"
    build:
      paths:
-       - "build/**/*"
+       - "build/**"
   dependencies:
     - .yamato/upm-ci.yml#build_win
     - .yamato/upm-ci.yml#build_mac
+    - .yamato/upm-ci.yml#build_linux
 
 {% for editor in editors %}
 {% for platform in platforms %}
@@ -117,7 +134,7 @@ publish:
   name: Publish
   agent:
     type: Unity::VM
-    image: package-ci/win10:latest
+    image: package-ci/win10:stable
     flavor: m1.large
     name: Runner
   commands:
