@@ -7,6 +7,7 @@
 using NUnit.Framework;
 using Autodesk.Fbx;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Autodesk.Fbx.UnitTests
 {
@@ -110,12 +111,21 @@ namespace Autodesk.Fbx.UnitTests
             { "a.Distance(b)", (FbxVector2 a, FbxVector2 b) => { Assert.AreEqual(a.X, b.X, 1e-8); return true; } },
         };
 
-        [Ignore("Fails if imported from a package because of Vector.cpp dependency")]
         [Test]
         public void MatchingTests ()
         {
+            string vectorTestFilename;
+            try
+            {
+                vectorTestFilename = Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx.tests/Tests/Data~/vector_test.txt"));
+            }
+            catch
+            {
+                vectorTestFilename = Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx/Tests/Data~/vector_test.txt"));
+            }
+            
             CppMatchingHelper.MatchingTest<FbxVector2>(
-                    "vector_test.txt",
+                    vectorTestFilename,
                     "FbxVector2",
                     Vector,
                     s_commands,

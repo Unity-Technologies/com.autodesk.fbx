@@ -1,7 +1,6 @@
 ## Executable + Temp files ##
 
 *.exe
-*.exe.*
 !*.exe.config
 *.o
 *.pdb
@@ -23,6 +22,7 @@ spike/2016.0/
 
 **/Library/**
 **/Temp/**
+**/Logs/**
 
 # Visual Studio 2015 cache directory
 tests/UnityTests/.vs/

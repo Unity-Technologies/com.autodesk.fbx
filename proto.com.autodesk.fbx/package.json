@@ -9,14 +9,6 @@
         "max"
     ], 
     "name": "com.autodesk.fbx", 
-    "repository": {
-        "revision": "@PACKAGE_REVISION@", 
-        "type": "git", 
-        "url": "@PACKAGE_REPO_URL@"
-    },
     "unity": "2018.2", 
-    "version": "@PACKAGE_VERSION@",
-    "relatedPackages": {
-        "com.autodesk.fbx.tests": "2.0.0-preview.2"
-    }
+    "version": "2.0.0-preview.7"
 }
