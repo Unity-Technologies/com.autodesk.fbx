@@ -1,6 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
-## [2.0.0-preview.3] - 2018.01-03
+## [2.0.1-preview] - 2019-06-12
+
+* Added IL2CPP build support for bindings
+
+## [2.0.0-preview.3] - 2018-01-03
 
 CHANGES
 * Updated documentation
