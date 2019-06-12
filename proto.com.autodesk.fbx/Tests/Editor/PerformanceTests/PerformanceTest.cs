@@ -19,16 +19,26 @@ namespace Autodesk.Fbx.PerformanceTests
     public class PerformanceTest
     {
         protected string exeFileName {
-            get {
+            get
+            {
 #if UNITY_EDITOR_WIN
-                return Path.GetFullPath("Packages/com.autodesk.fbx.tests/PerformanceBenchmarks-win-x64.exe");
+                var filename = "PerformanceBenchmarks-win-x64.exe";
 #elif UNITY_EDITOR_OSX
-                return Path.GetFullPath("Packages/com.autodesk.fbx.tests/PerformanceBenchmarks-mac-x64");
+                var filename = "PerformanceBenchmarks-mac-x64";
 #elif UNITY_EDITOR_LINUX
-                return Path.GetFullPath("Packages/com.autodesk.fbx.tests/PerformanceBenchmarks-linux-x64");
+                var filename = "PerformanceBenchmarks-linux-x64";
 #else
                 throw new NotImplementedException();
 #endif
+
+                try
+                {
+                    return Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx.tests/Tests/Bin~", filename));
+                }
+                catch
+                {
+                    return Path.GetFullPath(Path.Combine("Packages/com.autodesk.fbx/Tests/Bin~", filename));
+                }
             }
         }
 
@@ -163,7 +173,7 @@ namespace Autodesk.Fbx.PerformanceTests
             DefaultTest (
                 "FbxObjectCreate",
                 N,
-                10,
+                15,
                 () => {
                     for (int i = 0; i < N; i++) {
                         FbxObject.Create (m_fbxManager, "");

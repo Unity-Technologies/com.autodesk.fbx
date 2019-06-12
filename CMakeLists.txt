@@ -19,72 +19,76 @@ message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 
 project (UnityFbxSdkNative)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
+
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
 
+# promote warnings to errors
 if(MSVC)
-set(PROJECT_COMPILE_FLAGS "/WX")
+    set(PROJECT_COMPILE_FLAGS "/WX")
 elseif(CMAKE_HOST_APPLE)
-# requires gcc 6 or higher
-set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference")
+    # requires gcc 6 or higher
+    set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference")
 else()
-# No Werror because there's invalid use of incomplete type FbxAnimEvaluator in fbxproperty.h
-set(PROJECT_COMPILE_FLAGS "-Wall -Wno-format -Wno-strict-aliasing")
+    # No Werror because there's invalid use of incomplete type FbxAnimEvaluator in fbxproperty.h
+    set(PROJECT_COMPILE_FLAGS "-Wall -Wno-format -Wno-strict-aliasing")
 endif()
 
 add_definitions(${PROJECT_COMPILE_FLAGS})
 
-# build uto se the multithread, static version of the run-time library.
+# build to use the multithread, static version of the run-time library.
 if (MSVC)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
 endif()
-
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
-include(cmake/Stevedore.cmake)
+option(USE_STEVEDORE "Use stevedore to get dependencies (useful on contiuous integration platforms, default on)" ON)
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
+if (${USE_STEVEDORE} STREQUAL "ON")
+    include(cmake/Stevedore.cmake)
 
-# fetch dependencies
-set(stevedore_repo_name testing)
+    # fetch dependencies
+    set(stevedore_repo_name testing)
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    set(fbxsdk_artifact_name fbxsdk-mac-x64)
-    set(fbxsdk_artifact_id 2018.1.1_61b679df32b3967a62ca4a8285a79bcbb396b329c860307e7c667ec91745b236.7z)
+    if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+        set(fbxsdk_artifact_name fbxsdk-mac-x64)
+        set(fbxsdk_artifact_id 2018.1.1_61b679df32b3967a62ca4a8285a79bcbb396b329c860307e7c667ec91745b236.7z)
 
-    set(swig_artifact_name swig-mac-x64)
-    set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
-    set(swig_executable_name swig)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    set(fbxsdk_artifact_name fbxsdk-win-x64)
-    set(fbxsdk_artifact_id 2018.1.1_53da254f05c8aecb53045d5d74178004d0a7a76b367c1464d11e3ce3ce949925.7z)
+        set(swig_artifact_name swig-mac-x64)
+        set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
+        set(swig_executable_name swig)
+    elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        set(fbxsdk_artifact_name fbxsdk-win-x64)
+        set(fbxsdk_artifact_id 2018.1.1_53da254f05c8aecb53045d5d74178004d0a7a76b367c1464d11e3ce3ce949925.7z)
 
-    set(swig_artifact_name swig-win-x64)
-    set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
-    set(swig_executable_name swig.exe)
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(fbxsdk_artifact_name fbxsdk-linux-x64)
-    set(fbxsdk_artifact_id 2018.1.1_9fd6bb314e0761415879fe91228f536902aa90082adb198889f71bdf094415fd.7z)
+        set(swig_artifact_name swig-win-x64)
+        set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
+        set(swig_executable_name swig.exe)
+    elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        set(fbxsdk_artifact_name fbxsdk-linux-x64)
+        set(fbxsdk_artifact_id 2018.1.1_9fd6bb314e0761415879fe91228f536902aa90082adb198889f71bdf094415fd.7z)
 
-    set(swig_artifact_name swig-linux-x64)
-    set(swig_artifact_id 3.0.12_f3f14d565afd0ec44d3d77298f708f41bd12ef1fa209a1535226cf3e30a5f15b.7z)
-    set(swig_executable_name swig)
-endif()
+        set(swig_artifact_name swig-linux-x64)
+        set(swig_artifact_id 3.0.12-repack_93a3df294545754247d07a1426cf74410eb948564ea46fd493360040b84d9043.7z)
+        set(swig_executable_name swig)
+    endif()
 
-stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
-stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_artifact_id} "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
+    stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
+    stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_artifact_id} "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
 
 # workaround for FindSWIG.cmake's inflexibility - tell it where to find the executable and library
-file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/${swig_executable_name}")
-file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
-get_filename_component(swig_lib "${swig_lib}" DIRECTORY)
-file(TO_NATIVE_PATH "${swig_lib}" swig_lib_native)
-set(ENV{SWIG_LIB} "${swig_lib_native}")
-message("FOUND ${swig_lib_native}")
+    file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/${swig_executable_name}")
+    file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
+    get_filename_component(swig_lib "${swig_lib}" DIRECTORY)
+    file(TO_NATIVE_PATH "${swig_lib}" swig_lib_native)
+    set(ENV{SWIG_LIB} "${swig_lib_native}")
+    message("FOUND ${swig_lib_native}")
+endif()
 
 ###########################################################################
 # Find packages that we need.
@@ -105,26 +109,6 @@ include(cmake/RunPythonScript.cmake)
 # Set up the include directories
 include_directories(Source)
 include_directories(${FBXSDK_INCLUDE_DIR})
-
-# Get git tag as package version
-find_package(Git REQUIRED)
-execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags HEAD
-        OUTPUT_VARIABLE PACKAGE_VERSION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-# only keep x.y.z[-preview.n]
-string(REGEX REPLACE "^.*([0-9]\.[0-9]\.[0-9].*)$" "\\1" PACKAGE_VERSION "${PACKAGE_VERSION}")
-
-# Get git revision hash as package revision
-execute_process(COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
-        OUTPUT_VARIABLE PACKAGE_REVISION
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-# Get git repo url
-execute_process(COMMAND ${GIT_EXECUTABLE} config --get remote.origin.url
-        OUTPUT_VARIABLE PACKAGE_REPO_URL
-        OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-configure_file(${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/package.json.in ${CMAKE_BINARY_DIR}/package.json @ONLY)
 
 ###########################################################################
 # Set up the swig run.
@@ -254,17 +238,15 @@ endif()
 
 ###########################################################################
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx.tests/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.tests PATTERN "*.in" EXCLUDE)
-install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
 install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Plugins/x86_64)
 
 # copy C++ performance tests
-install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.tests)
-install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.tests)
+install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/Bin~)
+install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/Data~)
 
 install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
