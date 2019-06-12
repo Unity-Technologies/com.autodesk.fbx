@@ -2,7 +2,11 @@
 
 ## [2.0.1-preview] - 2019-06-12
 
+NEW FEATURES
 * Added IL2CPP build support for bindings
+
+KNOWN ISSUES
+* Using the FbxExporter::SetProgressCallback function with IL2CPP will give Runtime errors
 
 ## [2.0.0-preview.7] - 2018-02-08
 CHANGES
