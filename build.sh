@@ -7,7 +7,7 @@ fi
 installdir=${PWD}/build/install
 mkdir -p build
 pushd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${installdir}
+VERBOSE=1 cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${installdir}
 
 # can't find another way to tell SWIG where to find its libraries
 SWIG_VERSION="3.0.12"
