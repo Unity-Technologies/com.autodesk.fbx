@@ -45,9 +45,9 @@ pack:
     build:
       paths:
         - "build/install/**/*"
-   packages:
-     paths:
-       - "upm-ci~/packages/**/*"
+    packages:
+      paths:
+        - "upm-ci~/packages/**/*"
   dependencies:
   {% for platform in platforms %}
     - .yamato/upm-ci.yml#build_{{ platform.name }}
