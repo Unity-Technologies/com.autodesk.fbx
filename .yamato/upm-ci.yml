@@ -17,44 +17,20 @@ platforms:
     image: package-ci/ubuntu:latest
     flavor: m1.large
 ---
-build_win:
-  name: Build Win
+{% for platform in platforms %}
+build_{{ platform.name }}:
+  name: Build on {{ platform.name }}
   agent:
-    type: Unity::VM
-    image: package-ci/win10:stable
-    flavor: m1.large
+    type: {{ platform.type }}
+    image: {{ platform.image }}
+    flavor: {{ platform.flavor}}
   commands:
-    - build.cmd
+    - {{ platform.build_command }}
   artifacts:
     build:
       paths:
         - "build/install/**/*"
-
-build_mac:
-  name: Build Mac
-  agent:
-    type: Unity::VM::osx
-    image: buildfarm/mac:stable
-    flavor: m1.mac
-  commands:
-    - ./build.sh
-  artifacts:
-    build:
-      paths:
-        - "build/install/**/*"
-
-build_linux:
-  name: Build Linux
-  agent:
-    type: Unity::VM 
-    image: package-ci/ubuntu:latest
-    flavor: m1.large
-  commands:
-    - ./build.sh
-  artifacts:
-    build:
-      paths:
-        - "build/install/**/*"
+{% endfor %}
 
 pack:
   name: Pack
@@ -70,9 +46,9 @@ pack:
      paths:
        - "upm-ci~/packages/**/*"
   dependencies:
-    - .yamato/upm-ci.yml#build_win
-    - .yamato/upm-ci.yml#build_mac
-    - .yamato/upm-ci.yml#build_linux
+  {% for platform in platforms %}
+    - .yamato/upm-ci.yml#build_{{ platform.name }}
+  {% endfor %}
 
 {% for editor in editors %}
 {% for platform in platforms %}
@@ -86,6 +62,9 @@ test_{{ platform.name }}_{{ editor.version }}:
     - npm install -g upm-ci-utils --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package test --unity-version {{ editor.version }} --package-path build/install/com.autodesk.fbx
   artifacts:
+    build:
+      paths:
+        - "build/install/**/*"
     logs.zip:
       paths:
         - "upm-ci~/logs/**/*"
