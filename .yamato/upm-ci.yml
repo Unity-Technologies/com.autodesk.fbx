@@ -13,7 +13,8 @@ platforms:
     image: buildfarm/mac:stable
     flavor: m1.mac
   - name: linux
-    type: package-ci/ubuntu:latest
+    type: Unity::VM
+    image: package-ci/ubuntu:latest
     flavor: m1.large
 ---
 build_win:
