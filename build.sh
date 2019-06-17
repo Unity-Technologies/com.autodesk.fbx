@@ -16,5 +16,5 @@ if test x`uname -s` = xDarwin; then
 else
 	export SWIG_LIB=${PWD}/deps/swig-linux-x64/share/swig/${SWIG_VERSION}
 fi
-cmake --build . --target install --config Release -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DVERBOSE:BOOL=ON
+VERFBOSE=1 cmake --build . --target install --config Release -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON -DVERBOSE:BOOL=ON
 popd
