@@ -27,7 +27,7 @@ build_win:
   artifacts:
     build:
       paths:
-        - "com.autodesk.fbx/**/*"
+        - "build/install/**/*"
 
 build_mac:
   name: Build Mac
@@ -40,7 +40,7 @@ build_mac:
   artifacts:
     build:
       paths:
-        - "com.autodesk.fbx/**/*"
+        - "build/install/**/*"
 
 build_linux:
   name: Build Linux
@@ -53,7 +53,7 @@ build_linux:
   artifacts:
     build:
       paths:
-        - "com.autodesk.fbx/**/*"
+        - "build/install/**/*"
 
 pack:
   name: Pack
@@ -68,9 +68,6 @@ pack:
    packages:
      paths:
        - "upm-ci~/packages/**/*"
-   build:
-     paths:
-       - "build/**"
   dependencies:
     - .yamato/upm-ci.yml#build_win
     - .yamato/upm-ci.yml#build_mac
