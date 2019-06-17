@@ -23,7 +23,7 @@ build_{{ platform.name }}:
   agent:
     type: {{ platform.type }}
     image: {{ platform.image }}
-    flavor: {{ platform.flavor}}
+    flavor: {{ platform.flavor }}
   commands:
     - {{ platform.build_command }}
   artifacts:
