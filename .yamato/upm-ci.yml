@@ -8,36 +8,32 @@ platforms:
     type: Unity::VM
     image: package-ci/win10:stable
     flavor: m1.large
+    build_command: build.cmd
   - name: mac
     type: Unity::VM::osx
     image: buildfarm/mac:stable
     flavor: m1.mac
----
-build_win:
-  name: Build Win
-  agent:
+    build_command: ./build.sh
+  - name: linux
     type: Unity::VM
-    image: package-ci/win10:stable
+    image: package-ci/ubuntu:latest
     flavor: m1.large
-  commands:
-    - build.cmd
-  artifacts:
-    build:
-      paths:
-        - "build/**/*"
-
-build_mac:
-  name: Build Mac
+    build_command: ./build.sh
+---
+{% for platform in platforms %}
+build_{{ platform.name }}:
+  name: Build on {{ platform.name }}
   agent:
-    type: Unity::VM::osx
-    image: buildfarm/mac:stable
-    flavor: m1.mac
+    type: {{ platform.type }}
+    image: {{ platform.image }}
+    flavor: {{ platform.flavor }}
   commands:
-    - ./build.sh
+    - {{ platform.build_command }}
   artifacts:
     build:
       paths:
-        - "build/**/*"
+        - "build/install/**/*"
+{% endfor %}
 
 pack:
   name: Pack
@@ -49,15 +45,16 @@ pack:
     - npm install upm-ci-utils -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package pack --package-path build/install/com.autodesk.fbx
   artifacts:
-   packages:
-     paths:
-       - "upm-ci~/packages/**/*"
-   build:
-     paths:
-       - "build/**/*"
+    build:
+      paths:
+        - "build/install/**/*"
+    packages:
+      paths:
+        - "upm-ci~/packages/**/*"
   dependencies:
-    - .yamato/upm-ci.yml#build_win
-    - .yamato/upm-ci.yml#build_mac
+  {% for platform in platforms %}
+    - .yamato/upm-ci.yml#build_{{ platform.name }}
+  {% endfor %}
 
 {% for editor in editors %}
 {% for platform in platforms %}
@@ -71,6 +68,9 @@ test_{{ platform.name }}_{{ editor.version }}:
     - npm install -g upm-ci-utils --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package test --unity-version {{ editor.version }} --package-path build/install/com.autodesk.fbx
   artifacts:
+    build:
+      paths:
+        - "build/install/**/*"
     logs.zip:
       paths:
         - "upm-ci~/logs/**/*"
@@ -117,7 +117,7 @@ publish:
   name: Publish
   agent:
     type: Unity::VM
-    image: package-ci/win10:latest
+    image: package-ci/win10:stable
     flavor: m1.large
     name: Runner
   commands:
