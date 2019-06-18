@@ -58,6 +58,7 @@ pack:
 
 {% for editor in editors %}
 {% for platform in platforms %}
+{% if platform.name != 'linux' %}
 test_{{ platform.name }}_{{ editor.version }}:
   name : Test version {{ editor.version }} on {{ platform.name }}
   agent:
@@ -81,6 +82,7 @@ test_{{ platform.name }}_{{ editor.version }}:
         - "upm-ci~/templates/**/*"
   dependencies:
     - .yamato/upm-ci.yml#pack
+{% endif %}
 {% endfor %}
 {% endfor %}
 
@@ -109,7 +111,9 @@ test_trigger:
     - .yamato/upm-ci.yml#pack
     {% for editor in editors %}
     {% for platform in platforms %}
+    {% if platform.name != 'linux' %}
     - .yamato/upm-ci.yml#test_{{platform.name}}_{{editor.version}}
+    {% endif %}
     {% endfor %}
     {% endfor %}
 
@@ -138,6 +142,8 @@ publish:
   dependencies:
   {% for editor in editors %}
   {% for platform in platforms %}
+  {% if platform.name != 'linux' %}
     - .yamato/upm-ci.yml#test_{{ platform.name }}_{{ editor.version }}
+  {% endif %}
   {% endfor %}  
   {% endfor %}
