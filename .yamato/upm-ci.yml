@@ -7,7 +7,7 @@ platforms:
   - name: win
     type: Unity::VM
     image: package-ci/win10:stable
-    flavor: m1.large
+    flavor: b1.large
     build_command: build.cmd
   - name: mac
     type: Unity::VM::osx
@@ -17,7 +17,7 @@ platforms:
   - name: linux
     type: Unity::VM
     image: package-ci/ubuntu:latest
-    flavor: m1.large
+    flavor: b1.large
     build_command: ./build.sh
 ---
 {% for platform in platforms %}
@@ -40,7 +40,7 @@ pack:
   agent:
     type: Unity::VM
     image: package-ci/ubuntu:latest
-    flavor: m1.large
+    flavor: b1.small
   commands:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package pack --package-path build/install/com.autodesk.fbx
@@ -88,7 +88,7 @@ test_trigger:
   agent:
     type: Unity::VM
     image: package-ci/win10:stable
-    flavor: m1.large
+    flavor: b1.small
   commands:
     - dir
   triggers:
@@ -119,7 +119,7 @@ publish:
   agent:
     type: Unity::VM
     image: package-ci/win10:stable
-    flavor: m1.large
+    flavor: b1.small
     name: Runner
   commands:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
