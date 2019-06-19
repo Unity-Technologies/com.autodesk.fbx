@@ -35,7 +35,7 @@ While there are guards against some common errors, it is possible to crash Unity
 
 ### IL2CPP backend
 
-The C# Autodesk® FBX® SDK package is not supported at Runtime if you build using the IL2CPP backend.
+The C# Autodesk® FBX® SDK package is supported at Runtime with both the Mono and IL2CPP backend. However, using the FbxExporter::SetProgressCallback function with IL2CPP is not supported and will produce runtime errors.
 
 ### Linux
 
