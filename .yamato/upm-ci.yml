@@ -122,7 +122,7 @@ publish:
     flavor: b1.small
   commands:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package publish
+    - upm-ci package publish --package-path build/install/com.autodesk.fbx
   triggers:
     tags:
       only:
@@ -133,10 +133,10 @@ publish:
         - "upm-ci~/packages/*.tgz"
   dependencies:
     - .yamato/upm-ci.yml#pack
-  {% for editor in test_editors %}
-  {% for platform in test_platforms %}
+  {% for editor in editors %}
+  {% for platform in platforms %}
   {% if platform.name != 'linux' %}
-- .yamato/upm-ci.yml#test_{{ platform.name }}_{{ editor.version }}
+    - .yamato/upm-ci.yml#test_{{ platform.name }}_{{ editor.version }}
   {% endif %}
   {% endfor %}
   {% endfor %}
