@@ -133,8 +133,8 @@ publish:
         - "upm-ci~/packages/*.tgz"
   dependencies:
     - .yamato/upm-ci.yml#pack
-  {% for editor in test_editors %}
-  {% for platform in test_platforms %}
+  {% for editor in editors %}
+  {% for platform in platforms %}
   {% if platform.name != 'linux' %}
 - .yamato/upm-ci.yml#test_{{ platform.name }}_{{ editor.version }}
   {% endif %}
