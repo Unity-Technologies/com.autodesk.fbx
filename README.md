@@ -29,7 +29,7 @@ relaunching the installer and selecting "Modify").
 
 ```
 # get the source
-git clone https://github.com/Unity-Technologies/FbxSharp.git
+git clone https://github.com/Unity-Technologies/com.autodesk.fbx.git
 cd FbxSharp
 ./build.sh
 ```
@@ -38,7 +38,7 @@ cd FbxSharp
 
 ```
 # get the source
-git clone https://github.com/Unity-Technologies/FbxSharp.git
+git clone https://github.com/Unity-Technologies/com.autodesk.fbx.git
 cd FbxSharp
 build.cmd
 ```
