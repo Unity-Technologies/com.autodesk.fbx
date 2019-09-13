@@ -75,3 +75,7 @@ FbxSharp/build/install/com.autodesk.fbx/Documentation~/docs.zip
 ```
 
 In the Unity package, the documentation is packaged as the zip file.
+
+### Reporting Bugs
+
+Please create a minimal Unity project that reproduces the issue and use the Unity Bug Reporter (built in to the Unity Editor).
