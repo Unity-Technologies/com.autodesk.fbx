@@ -55,7 +55,10 @@ public class MiniFbxImporter : MonoBehaviour
 
     ~MiniFbxImporter()
     {
-        m_fbxManager.Dispose();
+        if (m_fbxManager != null)
+        {
+            m_fbxManager.Dispose();
+        }
     }
 
     Dictionary<GameObject, FbxNode> m_nodes = new Dictionary<GameObject, FbxNode>();
