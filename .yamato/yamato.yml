@@ -190,6 +190,7 @@ promotion_test:
     packages:
       paths:
         - "com.autodesk.fbx/**"
+        - "com.autodesk.fbx.testing/**"
   dependencies:
     - .yamato/yamato.yml#pack
 
