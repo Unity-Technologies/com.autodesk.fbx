@@ -19,6 +19,10 @@
 # On windows and mac, the full build gets run but we only grab the binaries.
 # The basic packages are set up on linux.
 #
+# Note that I have the platforms listed up top and a list of platforms below
+# and they repeat, because variable definitions can't use variables. If you
+# change one, change both! (Hopefully yamato handles this soon)
+#
 editors:
   - version: 2019.3
 mac_platform:
@@ -37,24 +41,24 @@ win_platform:
   image: package-ci/win10:stable
   flavor: b1.medium
 platforms:
-  - name: {{mac_platform.name}}
-    type: {{mac_platform.type}}
-    image: {{mac_platform.image}}
-    flavor: {{mac_platform.flavor}}
-  - name: {{win_platform.name}}
-    type: {{win_platform.type}}
-    image: {{win_platform.image}}
-    flavor: {{win_platform.flavor}}
-  - name: {{ubuntu_platform.name}}
-    type: {{ubuntu_platform.type}}
-    image: {{ubuntu_platform.image}}
-    flavor: {{ubuntu_platform.flavor}}
+  - name: mac
+    type: Unity::VM::osx
+    image: buildfarm/mac:stable
+    flavor: m1.mac
+  - name: ubuntu
+    type: Unity::VM
+    image: package-ci/ubuntu:stable
+    flavor: b1.medium
+  - name: win
+    type: Unity::VM
+    image: package-ci/win10:stable
+    flavor: b1.medium
 promote_platform:
   version: 2019.3
-  name: {{win_platform.name}}
-  type: {{win_platform.type}}
-  image: {{win_platform.image}}
-  flavor: {{win_platform.flavor}}
+  name: win
+  type: Unity::VM
+  image: package-ci/win10:stable
+  flavor: b1.medium
 ---
 
 build_win:
@@ -113,8 +117,8 @@ pack:
     - cp -vrfpc build-mac/install/* .
     - cp -vrfpc build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package pack install/com.autodesk.fbx
-    - upm-ci package pack install/com.autodesk.fbx.testing
+    - upm-ci package pack --package-path install/com.autodesk.fbx
+    - upm-ci package pack --package-path install/com.autodesk.fbx.testing
   dependencies:
     - .yamato/yamato.yml#build_win
     - .yamato/yamato.yml#build_mac
@@ -125,6 +129,8 @@ pack:
         - "build-ubuntu/install/**"
         - "build-mac/install/**"
         - "build-win/install/**"
+    packages:
+      paths:
         - "com.autodesk.fbx/**"
         - "com.autodesk.fbx.testing/**"
 
@@ -142,14 +148,14 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endif %}
   commands:
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package test --unity-version {{ editor.version }} com.autodesk.fbx.testing
+    - upm-ci package test --unity-version {{ editor.version }} --package-path com.autodesk.fbx.testing
   triggers:
     pull_requests:
       - targets:
           only:
             - "/.*/"
   artifacts:
-    build:
+    packages:
       paths:
         - "com.autodesk.fbx/**"
         - "com.autodesk.fbx.testing/**"
@@ -171,7 +177,7 @@ promotion_test:
     UPMCI_PROMOTION: 1
   commands:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package test --unity-version {{ promote_platform.version }} com.autodesk.fbx.testing
+    - upm-ci package test --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx.testing
   triggers:
     pull_requests:
       - targets:
@@ -181,7 +187,7 @@ promotion_test:
     logs:
       paths:
         - "upm-ci~/test-results/**/*"
-    build:
+    packages:
       paths:
         - "com.autodesk.fbx/**"
   dependencies:
@@ -195,13 +201,13 @@ publish:
     flavor: b1.small
   commands:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package publish com.autodesk.fbx
-    - upm-ci package publish com.autodesk.fbx.testing
+    - upm-ci package publish --package-path com.autodesk.fbx
+    - upm-ci package publish --package-path com.autodesk.fbx.testing
   artifacts:
     artifacts:
       paths:
         - "upm-ci~/packages/*.tgz"
-    build:
+    packages:
       paths:
         - "com.autodesk.fbx/**"
         - "com.autodesk.fbx.testing/**"
@@ -223,13 +229,13 @@ promote:
     UPMCI_PROMOTION: 1
   commands:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package promote com.autodesk.fbx
-    - upm-ci package promote com.autodesk.fbx.testing
+    - upm-ci package promote --package-path com.autodesk.fbx
+    - upm-ci package promote --package-path com.autodesk.fbx.testing
   artifacts:
     artifacts:
       paths:
         - "upm-ci~/packages/*.tgz"
-    build:
+    packages:
       paths:
         - "com.autodesk.fbx/**"
         - "com.autodesk.fbx.testing/**"
