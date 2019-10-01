@@ -98,7 +98,7 @@ build_ubuntu:
     image: {{ ubuntu_platform.image }}
     flavor: {{ ubuntu_platform.flavor}}
   commands:
-    - sudo apt-get install p7zip
+    - sudo apt-get install p7zip mono
     - sh build.sh
     - mv build build-ubuntu
   artifacts:
