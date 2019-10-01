@@ -68,7 +68,7 @@ build_win:
     image: {{ win_platform.image }}
     flavor: {{ win_platform.flavor}}
   commands:
-    - choco -v -y install 7zip swig
+    - choco -v -y install 7zip
     - build.cmd
     - ren build build-win
   artifacts:
@@ -84,7 +84,6 @@ build_mac:
     flavor: {{ mac_platform.flavor}}
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
-    - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list swig || brew install swig
     - sh build.sh
     - mv build build-mac
   artifacts:
@@ -99,7 +98,7 @@ build_ubuntu:
     image: {{ ubuntu_platform.image }}
     flavor: {{ ubuntu_platform.flavor}}
   commands:
-    - sudo apt-get install p7zip swig
+    - sudo apt-get install p7zip
     - sh build.sh
     - mv build build-ubuntu
   artifacts:
