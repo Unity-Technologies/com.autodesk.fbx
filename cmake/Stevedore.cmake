@@ -29,5 +29,10 @@ function(stevedore command)
     message(STATUS "Stevedore fetching ${repo_name}:${artifact_id} to ${target_path}")
     file(TO_NATIVE_PATH "${7ZA}" 7ZA_NATIVE)
 
-    execute_process(COMMAND ${CMAKE_COMMAND} -E env BEE_INTERNAL_STEVEDORE_7ZA="${7ZA_NATIVE}" ${MONO} ${BEE} steve internal-unpack ${repo_name} ${artifact_id} ${target_path})
+    # Quoting the 7za argument on windows is required and on linux/mac is forbidden.
+    if(WIN32)
+        execute_process(COMMAND ${CMAKE_COMMAND} -E env BEE_INTERNAL_STEVEDORE_7ZA="${7ZA_NATIVE}" ${MONO} ${BEE} steve internal-unpack ${repo_name} ${artifact_id} ${target_path})
+    else()
+        execute_process(COMMAND ${CMAKE_COMMAND} -E env BEE_INTERNAL_STEVEDORE_7ZA=${7ZA_NATIVE} ${MONO} ${BEE} steve internal-unpack ${repo_name} ${artifact_id} ${target_path})
+    endif()
 endfunction()
