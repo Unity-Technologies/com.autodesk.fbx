@@ -131,8 +131,7 @@ pack:
         - "build-win/install/**"
     packages:
       paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
+        - "upm-ci~/packages/**"
 
 {% for editor in editors %}
 {% for platform in platforms %}
@@ -157,8 +156,7 @@ test_{{ platform.name }}_{{ editor.version }}:
   artifacts:
     packages:
       paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
+        - "upm-ci~/packages/**"
     logs:
       paths:
         - "upm-ci~/test-results/**/*"
@@ -189,8 +187,7 @@ promotion_test:
         - "upm-ci~/test-results/**/*"
     packages:
       paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
+        - "upm-ci~/packages/**"
   dependencies:
     - .yamato/yamato.yml#pack
 
@@ -232,7 +229,6 @@ promote:
   artifacts:
     packages:
       paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
+        - "upm-ci~/packages/**"
   dependencies:
     - .yamato/yamato.yml#publish
