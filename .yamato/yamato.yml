@@ -147,9 +147,9 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endif %}
   commands:
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx.testing
+    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path "upm-ci~/packages/com.autodesk.fbx.testing"
     - echo "****** PASSED mono backend *******"
-    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx.testing
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path "upm-ci~/packages/com.autodesk.fbx.testing"
     - echo "****** PASSED il2cpp backend *******"
   triggers:
     pull_requests:
@@ -157,10 +157,6 @@ test_{{ platform.name }}_{{ editor.version }}:
           only:
             - "/.*/"
   artifacts:
-    packages:
-      paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
     packages:
       paths:
         - "upm-ci~/packages/**"
@@ -194,10 +190,6 @@ promotion_test:
         - "upm-ci~/test-results/**/*"
     packages:
       paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
-    packages:
-      paths:
         - "upm-ci~/packages/**"
   dependencies:
     - .yamato/yamato.yml#pack
@@ -213,10 +205,6 @@ publish:
     - upm-ci package publish --package-path com.autodesk.fbx
     - upm-ci package publish --package-path com.autodesk.fbx.testing
   artifacts:
-    packages:
-      paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
     packages:
       paths:
         - "upm-ci~/packages/**"
