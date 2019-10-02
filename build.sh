@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [[ -e build ]]; then
+if [ -e build ] ; then
     rm -rf build
 fi
 
 installdir=${PWD}/build/install
 mkdir -p build
-pushd build
+cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_INSTALL_PREFIX=${installdir}
 
@@ -18,4 +18,3 @@ else
 	export SWIG_LIB=${PWD}/deps/swig-linux-x64/share/swig/${SWIG_VERSION}
 fi
 cmake --build . --target install --config Release
-popd

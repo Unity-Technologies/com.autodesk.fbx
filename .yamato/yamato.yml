@@ -1,0 +1,237 @@
+#
+# Trigger all tests (including promotion tests) on any pull request.
+#
+# Dependency graph:
+# promote (to the production server)
+#  . publish (to the candidates server)
+#    . test on each platform x editor version
+#       . pack (see below)
+#    . promotion tests on one fixed platform
+#       . pack (see below)
+# pack
+#  . build on each platform
+#
+# The tests are triggered on every push to a pull request branch.
+# That means build and package are run on those events as well.
+#
+# Publish and promote must be run manually.
+#
+# On windows and mac, the full build gets run but we only grab the binaries.
+# The basic packages are set up on linux.
+#
+# Note that I have the platforms listed up top and a list of platforms below
+# and they repeat, because variable definitions can't use variables. If you
+# change one, change both! (Hopefully yamato handles this soon)
+#
+editors:
+  - version: 2019.3
+mac_platform:
+  name: mac
+  type: Unity::VM::osx
+  image: buildfarm/mac:stable
+  flavor: m1.mac
+ubuntu_platform:
+  name: ubuntu
+  type: Unity::VM
+  image: package-ci/ubuntu:stable
+  flavor: b1.medium
+win_platform:
+  name: win
+  type: Unity::VM
+  image: package-ci/win10:stable
+  flavor: b1.medium
+platforms:
+  - name: mac
+    type: Unity::VM::osx
+    image: buildfarm/mac:stable
+    flavor: m1.mac
+  - name: ubuntu
+    type: Unity::VM
+    image: package-ci/ubuntu:stable
+    flavor: b1.medium
+  - name: win
+    type: Unity::VM
+    image: package-ci/win10:stable
+    flavor: b1.medium
+promote_platform:
+  version: 2019.3
+  name: win
+  type: Unity::VM
+  image: package-ci/win10:stable
+  flavor: b1.medium
+---
+
+build_win:
+  name: Build on win
+  agent:
+    type: {{ win_platform.type }}
+    image: {{ win_platform.image }}
+    flavor: {{ win_platform.flavor}}
+  commands:
+    - choco -v -y install 7zip
+    - build.cmd
+    - ren build build-win
+  artifacts:
+    build:
+      paths:
+        - "build-win/install/**"
+
+build_mac:
+  name: Build on mac
+  agent:
+    type: {{ mac_platform.type }}
+    image: {{ mac_platform.image }}
+    flavor: {{ mac_platform.flavor}}
+  commands:
+    - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
+    - sh build.sh
+    - mv build build-mac
+  artifacts:
+    build:
+      paths:
+        - "build-mac/install/**"
+
+build_ubuntu:
+  name: Build on ubuntu
+  agent:
+    type: {{ ubuntu_platform.type }}
+    image: {{ ubuntu_platform.image }}
+    flavor: {{ ubuntu_platform.flavor}}
+  commands:
+    - sudo apt-get install p7zip mono-devel
+    - sh build.sh
+    - mv build build-ubuntu
+  artifacts:
+    build:
+      paths:
+        - "build-ubuntu/install/**"
+
+pack:
+  name: Pack
+  agent:
+    type: Unity::VM
+    image: package-ci/ubuntu:stable
+    flavor: b1.small
+  commands:
+    - mv build-ubuntu/install/* .
+    - cp -vrfp build-mac/install/* .
+    - cp -vrfp build-win/install/* .
+    - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
+    - upm-ci package pack --package-path com.autodesk.fbx
+    - upm-ci package pack --package-path com.autodesk.fbx.testing
+    - ls -lR "upm-ci~"
+  dependencies:
+    - .yamato/yamato.yml#build_win
+    - .yamato/yamato.yml#build_mac
+    - .yamato/yamato.yml#build_ubuntu
+  artifacts:
+    build:
+      paths:
+        - "build-ubuntu/install/**"
+        - "build-mac/install/**"
+        - "build-win/install/**"
+    packages:
+      paths:
+        - "upm-ci~/packages/**"
+
+{% for editor in editors %}
+{% for platform in platforms %}
+test_{{ platform.name }}_{{ editor.version }}:
+  name : Test version {{ editor.version }} on {{ platform.name }}
+  agent:
+    type: {{ platform.type }}
+    image: {{ platform.image }}
+    flavor: {{ platform.flavor}}
+{% if platform.name == "ubuntu" %}
+  variables:
+    DISPLAY: ":0"
+{% endif %}
+  commands:
+    - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
+    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path "proto.com.autodesk.fbx.testing"
+    - echo "****** PASSED mono backend *******"
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path "proto.com.autodesk.fbx.testing"
+    - echo "****** PASSED il2cpp backend *******"
+  triggers:
+    pull_requests:
+      - targets:
+          only:
+            - "/.*/"
+  artifacts:
+    packages:
+      paths:
+        - "upm-ci~/packages/**"
+    logs:
+      paths:
+        - "upm-ci~/test-results/**/*"
+  dependencies:
+    - .yamato/yamato.yml#pack
+{% endfor %}
+{% endfor %}
+
+promotion_test:
+  name : Promotion Test with {{ promote_platform.version }} on {{ promote_platform.name }}
+  agent:
+    type: {{ promote_platform.type }}
+    image: {{ promote_platform.image }}
+    flavor: {{ promote_platform.flavor}}
+  variables:
+    UPMCI_PROMOTION: 1
+  commands:
+    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - upm-ci package test --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx.testing
+  triggers:
+    pull_requests:
+      - targets:
+          only:
+            - "master"
+  artifacts:
+    logs:
+      paths:
+        - "upm-ci~/test-results/**/*"
+    packages:
+      paths:
+        - "upm-ci~/packages/**"
+  dependencies:
+    - .yamato/yamato.yml#pack
+
+publish:
+  name: Publish to Internal Registry
+  agent:
+    type: Unity::VM
+    image: package-ci/win10:stable
+    flavor: b1.small
+  commands:
+    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - upm-ci package publish --package-path com.autodesk.fbx
+    - upm-ci package publish --package-path com.autodesk.fbx.testing
+  artifacts:
+    packages:
+      paths:
+        - "upm-ci~/packages/**"
+  dependencies:
+    - .yamato/yamato.yml#promotion_test
+{% for editor in editors %}
+{% for platform in platforms %}
+    - .yamato/yamato.yml#test_{{platform.name}}_{{editor.version}}
+{% endfor %}
+{% endfor %}
+
+promote:
+  name: Promote to Production
+  agent:
+    type: Unity::VM
+    image: package-ci/win10:stable
+    flavor: b1.small
+  variables:
+    UPMCI_PROMOTION: 1
+  commands:
+    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - upm-ci package promote --package-path com.autodesk.fbx
+    - upm-ci package promote --package-path com.autodesk.fbx.testing
+  artifacts:
+    packages:
+      paths:
+        - "upm-ci~/packages/**"
+  dependencies:
+    - .yamato/yamato.yml#publish
