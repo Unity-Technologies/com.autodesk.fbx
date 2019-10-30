@@ -12,7 +12,7 @@ parser.add_argument('--fbxsdk', type=str, dest='fbxsdk_location', help='location
 parser.add_argument('-s', '--stevedore', action='store_true', dest='use_stevedore', help='Use stevedore (used for internal builds)')
 parser.add_argument('-n', '--ninja', action='store_true', dest='use_ninja', help='Generate Ninja build files')
 parser.add_argument('-t', '--build_type', default='Release', dest='build_type', help='Build type to do (Release, Debug, ...)')
-parser.add_argument('-z', '--zap', '-c' '--clean', action='store_true', dest='clean_build', help='Removes the build directory')
+parser.add_argument('-z', '--zap', '-c', '--clean', action='store_true', dest='clean_build', help='Removes the build directory')
 parser.add_argument('-v', '--verbose', action='store_true', dest='verbose_build', help='Make CMake verbose')
 args = parser.parse_args()
 
