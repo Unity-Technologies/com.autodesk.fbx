@@ -5,7 +5,7 @@
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
 
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.12)
 
 # Default is a release build.
 if (NOT CMAKE_BUILD_TYPE)
@@ -46,7 +46,7 @@ endif()
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
-option(USE_STEVEDORE "Use stevedore to get dependencies (useful on contiuous integration platforms, default on)" ON)
+option(USE_STEVEDORE "Use stevedore to get dependencies (useful on contiuous integration platforms, default on)" OFF)
 
 if (${USE_STEVEDORE} STREQUAL "ON")
     include(cmake/Stevedore.cmake)
@@ -80,17 +80,13 @@ if (${USE_STEVEDORE} STREQUAL "ON")
     stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
     stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_artifact_id} "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
 
-# workaround for FindSWIG.cmake's inflexibility - tell it where to find the executable and library
-    file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/${swig_executable_name}")
-    file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
-    get_filename_component(swig_lib "${swig_lib}" DIRECTORY)
-    file(TO_NATIVE_PATH "${swig_lib}" swig_lib_native)
-    set(ENV{SWIG_LIB} "${swig_lib_native}")
-    message("FOUND ${swig_lib_native}")
+    set(SWIG_ROOT "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
 endif()
 
 ###########################################################################
 # Find packages that we need.
+cmake_policy(SET CMP0074 NEW)
+
 find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Linux
 include(${SWIG_USE_FILE})
 
