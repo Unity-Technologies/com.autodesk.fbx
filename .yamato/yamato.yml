@@ -69,7 +69,7 @@ build_win:
     flavor: {{ win_platform.flavor}}
   commands:
     - choco -v -y install 7zip
-    - build.cmd
+    - python build.py --stevedore --verbose --clean
     - ren build build-win
   artifacts:
     build:
@@ -84,7 +84,7 @@ build_mac:
     flavor: {{ mac_platform.flavor}}
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
-    - sh build.sh
+    - python ./build.py --stevedore --verbose --clean
     - mv build build-mac
   artifacts:
     build:
@@ -99,7 +99,7 @@ build_ubuntu:
     flavor: {{ ubuntu_platform.flavor}}
   commands:
     - sudo apt-get install p7zip mono-devel
-    - sh build.sh
+    - python ./build.py --stevedore --verbose --clean
     - mv build build-ubuntu
   artifacts:
     build:
