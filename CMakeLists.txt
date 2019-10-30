@@ -46,7 +46,7 @@ endif()
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
-option(USE_STEVEDORE "Use stevedore to get dependencies (useful on contiuous integration platforms, default on)" OFF)
+option(USE_STEVEDORE "Use stevedore to get dependencies (useful on contiuous integration platforms, default off)" OFF)
 
 if (${USE_STEVEDORE} STREQUAL "ON")
     include(cmake/Stevedore.cmake)
@@ -80,7 +80,12 @@ if (${USE_STEVEDORE} STREQUAL "ON")
     stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
     stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_artifact_id} "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
 
-    set(SWIG_ROOT "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
+    file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/${swig_executable_name}")
+    file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
+    get_filename_component(swig_lib "${swig_lib}" DIRECTORY)
+    file(TO_NATIVE_PATH "${swig_lib}" swig_lib_native)
+    set(ENV{SWIG_LIB} "${swig_lib_native}")
+    message("FOUND ${swig_lib_native}")
 endif()
 
 ###########################################################################

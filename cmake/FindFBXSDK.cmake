@@ -36,7 +36,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__GNUC__")
 
   # where is fbxsdk installed by default on linux?
-  list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release")
+  list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release" "lib/gcc/x64/release")
 endif()
 
 if(NOT ${FBXSDK_ROOT_PATH} STREQUAL "" )

@@ -82,16 +82,17 @@ if retcode != 0:
 # And do the build
 build_args= [
     cmake_exe,
-    '--build .',
-    '--target install',
-    '--config {}'.format(args.build_type)
+    '--build',
+    '.',
+    '--target',
+    'install',
+    '--config',
+    args.build_type
 ]
 
 if args.verbose_build:
     build_args.append('--verbose')
 
-# Somehow the args gets mangled if we don't join
-build_args =' '.join(build_args)
 print(build_args)
 retcode = subprocess.check_call(build_args, stderr=subprocess.STDOUT, shell=shell, cwd=builddir)
 
