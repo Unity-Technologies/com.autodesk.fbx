@@ -93,7 +93,26 @@ build_args= [
 if args.verbose_build:
     build_args.append('--verbose')
 
+env = None
+# Mac and Linux SWIG were compiled and have hard coded paths to swig.swg.
+# Set the correct location in the environment for the build, since the
+# configure is able to set it for itself.
+if args.use_stevedore and not sys.platform.startswith('win'):
+    env = os.environ
+    env['LD_LIBRARY_PATH'] = '{}:{}'.format(os.environ['LD_LIBRARY_PATH'], os.path.join(curdir, 'tmp'))
+    
+    def find(name, path):
+        '''
+        https://stackoverflow.com/a/1724723
+        '''
+        for root, dirs, files in os.walk(path):
+            if name in files:
+                # we need only the directory
+                return root
+    env["SWIG_LIB"] = find('swig.swg', curdir)
+
+
 print(build_args)
-retcode = subprocess.check_call(build_args, stderr=subprocess.STDOUT, shell=shell, cwd=builddir)
+retcode = subprocess.check_call(build_args, stderr=subprocess.STDOUT, shell=shell, cwd=builddir, env=env)
 
 sys.exit(retcode)

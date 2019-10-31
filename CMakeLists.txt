@@ -5,7 +5,7 @@
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
 
-cmake_minimum_required (VERSION 3.12)
+cmake_minimum_required (VERSION 3.08)
 
 # Default is a release build.
 if (NOT CMAKE_BUILD_TYPE)
@@ -20,7 +20,7 @@ message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 project (UnityFbxSdkNative)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/tmp")
 
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
@@ -90,7 +90,6 @@ endif()
 
 ###########################################################################
 # Find packages that we need.
-cmake_policy(SET CMP0074 NEW)
 
 find_package(SWIG 3.0.12 REQUIRED) # lower version not guaranteed to work on Linux
 include(${SWIG_USE_FILE})
