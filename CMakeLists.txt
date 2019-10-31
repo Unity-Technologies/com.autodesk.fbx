@@ -20,7 +20,7 @@ message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 project (UnityFbxSdkNative)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/tmp")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
 
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
