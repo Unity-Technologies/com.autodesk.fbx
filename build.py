@@ -90,7 +90,7 @@ build_args= [
     args.build_type
 ]
 
-if args.verbose_build:
+if args.verbose_build and (args.use_ninja or sys.platform.startswith('win')):
     build_args.append('--verbose')
 
 env = None
@@ -99,7 +99,7 @@ env = None
 # configure is able to set it for itself.
 if args.use_stevedore and not sys.platform.startswith('win'):
 
-    
+    env = os.environ
     def find(name, path):
         '''
         https://stackoverflow.com/a/1724723
@@ -108,7 +108,7 @@ if args.use_stevedore and not sys.platform.startswith('win'):
             if name in files:
                 # we need only the directory
                 return root
-    env["SWIG_LIB"] = find('swig.swg', curdir)
+    env["SWIG_LIB"] = find('swig.swg', builddir)
 
 
 print(build_args)
