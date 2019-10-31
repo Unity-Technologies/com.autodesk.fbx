@@ -99,7 +99,11 @@ env = None
 # configure is able to set it for itself.
 if args.use_stevedore and not sys.platform.startswith('win'):
     env = os.environ
-    env['LD_LIBRARY_PATH'] = '{}:{}'.format(os.environ['LD_LIBRARY_PATH'], os.path.join(curdir, 'tmp'))
+    if 'LD_LIBRARY_PATH' in env:
+        new_ld_lib = '{}:{}'.format(os.environ['LD_LIBRARY_PATH'], os.path.join(curdir, 'tmp'))
+    else:
+        new_ld_lib = 'LD_LIBRARY_PATH:{}'.os.path.join(curdir, 'tmp')
+    env['LD_LIBRARY_PATH'] = new_ld_lib
     
     def find(name, path):
         '''
