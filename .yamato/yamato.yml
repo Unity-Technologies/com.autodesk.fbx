@@ -113,7 +113,9 @@ pack:
     image: package-ci/ubuntu:stable
     flavor: b1.small
   commands:
-    - mv build-ubuntu/install/* .
+    - pwd
+    - ls -alh
+    - mv -v build-ubuntu/install/* .
     - cp -vrfp build-mac/install/* .
     - cp -vrfp build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
@@ -147,9 +149,10 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endif %}
   commands:
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path "com.autodesk.fbx"
+    - pwd
+    - upm-ci package test --backend mono --unity-version {{ editor.version }}
     - echo "****** PASSED mono backend *******"
-    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path "com.autodesk.fbx"
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }}
     - echo "****** PASSED il2cpp backend *******"
   triggers:
     pull_requests:
