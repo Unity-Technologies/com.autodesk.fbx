@@ -119,7 +119,9 @@ pack:
     - cp -vrfp build-mac/install/* .
     - cp -vrfp build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
+    - ls -alh
     - upm-ci package pack --package-path com.autodesk.fbx
+    - echo $? 
     - ls -lR "upm-ci~"
   dependencies:
     - .yamato/yamato.yml#build_win
