@@ -148,11 +148,12 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% if platform.name == "ubuntu" %}
   variables:
     DISPLAY: ":0"
-  commands:
-    - pwd
-    -ls -alhR
 {% endif %}
   commands:
+{% if platform.name == "ubuntu" %}
+    - pwd
+    - ls -alhR
+{% endif %}
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path build/com.fbx.autodesk
     - echo "****** PASSED mono backend *******"
