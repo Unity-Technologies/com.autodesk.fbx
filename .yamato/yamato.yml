@@ -136,6 +136,9 @@ pack:
     packages:
       paths:
         - "upm-ci~/packages/**"
+    pack:
+      paths:
+        - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
 {% for platform in platforms %}
