@@ -151,7 +151,7 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endif %}
   commands:
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path build-mac/install/com.autodesk.fbx
+    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path upm-ci~/packages
     - echo "****** PASSED mono backend *******"
     # - upm-ci package test --backend il2cpp --unity-version {{ editor.version }}
     # - echo "****** PASSED il2cpp backend *******"
