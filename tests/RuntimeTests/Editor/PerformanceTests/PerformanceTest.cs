@@ -21,11 +21,11 @@ namespace Autodesk.Fbx.PerformanceTests
         protected string exeFileName {
             get {
 #if UNITY_EDITOR_WIN
-                return Path.GetFullPath("Packages/com.autodesk.fbx.testing/PerformanceBenchmarks-win-x64.exe");
+                return Path.GetFullPath("Packages/com.autodesk.fbx/Tests/PerformanceBenchmarks-win-x64.exe");
 #elif UNITY_EDITOR_OSX
-                return Path.GetFullPath("Packages/com.autodesk.fbx.testing/PerformanceBenchmarks-mac-x64");
+                return Path.GetFullPath("Packages/com.autodesk.fbx/Tests/PerformanceBenchmarks-mac-x64");
 #elif UNITY_EDITOR_LINUX
-                return Path.GetFullPath("Packages/com.autodesk.fbx.testing/PerformanceBenchmarks-linux-x64");
+                return Path.GetFullPath("Packages/com.autodesk.fbx/Tests/PerformanceBenchmarks-linux-x64");
 #else
                 throw new NotImplementedException();
 #endif
