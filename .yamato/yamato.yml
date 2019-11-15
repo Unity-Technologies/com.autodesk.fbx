@@ -123,6 +123,7 @@ pack:
     - upm-ci package pack --package-path com.autodesk.fbx
     - echo $? 
     - ls -lR "upm-ci~"
+    - ls -lR com.autodesk.fbx
   dependencies:
     - .yamato/yamato.yml#build_win
     - .yamato/yamato.yml#build_mac
@@ -134,9 +135,6 @@ pack:
         - "build-mac/install/**"
         - "build-win/install/**"
     packages:
-      paths:
-        - "upm-ci~/packages/**"
-    pack:
       paths:
         - "com.autodesk.fbx/**"
 
