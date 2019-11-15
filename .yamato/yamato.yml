@@ -134,8 +134,9 @@ pack:
         - "build-ubuntu/install/**"
         - "build-mac/install/**"
         - "build-win/install/**"
-    buildout:
+    packages:
       paths:
+        - "upm-ci~/packages/**"
         - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
