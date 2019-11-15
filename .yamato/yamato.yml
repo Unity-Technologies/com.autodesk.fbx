@@ -150,7 +150,7 @@ test_{{ platform.name }}_{{ editor.version }}:
   variables:
     DISPLAY: ":0"
 {% endif %}
-commands:
+  commands:
 {% if platform.name == "ubuntu" %}
     - ls -lR .
 {% endif %}
