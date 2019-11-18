@@ -282,6 +282,3 @@ install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_I
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
 install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
-
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Mono.Reflection" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
-install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Mono.Reflection.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
