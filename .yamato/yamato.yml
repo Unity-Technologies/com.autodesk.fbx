@@ -123,7 +123,6 @@ pack:
     - upm-ci package pack --package-path com.autodesk.fbx
     - echo $? 
     - ls -lR "upm-ci~"
-    - ls -lR com.autodesk.fbx
   dependencies:
     - .yamato/yamato.yml#build_win
     - .yamato/yamato.yml#build_mac
@@ -137,7 +136,6 @@ pack:
     packages:
       paths:
         - "upm-ci~/packages/**"
-        - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
 {% for platform in platforms %}
@@ -153,10 +151,11 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endif %}
   commands:
 {% if platform.name == "ubuntu" %}
-    - ls -lR .
+    - pwd
+    - ls -alhR
 {% endif %}
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path build-mac/install/com.autodesk.fbx
     - echo "****** PASSED mono backend *******"
     # - upm-ci package test --backend il2cpp --unity-version {{ editor.version }}
     # - echo "****** PASSED il2cpp backend *******"

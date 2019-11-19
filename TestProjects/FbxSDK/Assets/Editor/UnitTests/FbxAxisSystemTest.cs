@@ -85,22 +85,22 @@ namespace Autodesk.Fbx.UnitTests
 
         // Note: as of this writing, DeepConvertScene is an internal API
         // not yet available in publicly-available builds of FBX SDK.
-        // [Test]
-        // public void TestDeepConvertScene()
-        // {
-        //     var axes = new FbxAxisSystem(
-        //         FbxAxisSystem.EUpVector.eYAxis,
-        //         FbxAxisSystem.EFrontVector.eParityOddNegative, // negative! check the sign goes through
-        //         FbxAxisSystem.ECoordSystem.eLeftHanded);
-        //     using (var Manager = FbxManager.Create()) {
-        //         var scene = FbxScene.Create(Manager, "scene");
-        //         try {
-        //             axes.DeepConvertScene(scene);
-        //         } catch(System.EntryPointNotFoundException) {
-        //             Assert.Ignore("Testing against FBX SDK that doesn't have DeepConvertScene");
-        //         }
-        //     }
-        // }
+        [Test]
+        public void TestDeepConvertScene()
+        {
+            var axes = new FbxAxisSystem(
+                FbxAxisSystem.EUpVector.eYAxis,
+                FbxAxisSystem.EFrontVector.eParityOddNegative, // negative! check the sign goes through
+                FbxAxisSystem.ECoordSystem.eLeftHanded);
+            using (var Manager = FbxManager.Create()) {
+                var scene = FbxScene.Create(Manager, "scene");
+                try {
+                    axes.DeepConvertScene(scene);
+                } catch(System.EntryPointNotFoundException) {
+                    Assert.Ignore("Testing against FBX SDK that doesn't have DeepConvertScene");
+                }
+            }
+        }
 
     }
 }
