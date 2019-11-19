@@ -120,7 +120,7 @@ pack:
     - cp -vrfp build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
     - ls -alh
-    - upm-ci package pack --package-path com.autodesk.fbx
+    - upm-ci project pack --project-path TestProjects
     - echo $? 
     - ls -lR "upm-ci~"
   dependencies:
@@ -133,7 +133,7 @@ pack:
         - "build-ubuntu/install/**"
         - "build-mac/install/**"
         - "build-win/install/**"
-    packages:
+    Packages:
       paths:
         - "upm-ci~/packages/**"
 
@@ -155,7 +155,7 @@ test_{{ platform.name }}_{{ editor.version }}:
     - ls -alhR
 {% endif %}
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path build-mac/install/com.autodesk.fbx
+    - upm-ci project test --backend mono --unity-version {{ editor.version }}
     - echo "****** PASSED mono backend *******"
     # - upm-ci package test --backend il2cpp --unity-version {{ editor.version }}
     # - echo "****** PASSED il2cpp backend *******"
@@ -165,7 +165,7 @@ test_{{ platform.name }}_{{ editor.version }}:
           only:
             - "/.*/"
   artifacts:
-    packages:
+    Packages:
       paths:
         - "upm-ci~/packages/**"
     logs:
@@ -196,7 +196,7 @@ promotion_test:
     logs:
       paths:
         - "upm-ci~/test-results/**/*"
-    packages:
+    Packages:
       paths:
         - "upm-ci~/packages/**"
   dependencies:
@@ -212,7 +212,7 @@ publish:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package publish --package-path com.autodesk.fbx
   artifacts:
-    packages:
+    Packages:
       paths:
         - "upm-ci~/packages/**"
   dependencies:
@@ -235,7 +235,7 @@ promote:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package promote --package-path com.autodesk.fbx
   artifacts:
-    packages:
+    Packages:
       paths:
         - "upm-ci~/packages/**"
   dependencies:
