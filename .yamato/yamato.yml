@@ -135,7 +135,7 @@ pack:
         - "build-win/install/**"
     Packages:
       paths:
-        - "com.autodesk.fbx"
+        - "com.autodesk.fbx/**"
         - "upm-ci~/packages/**"
 
 {% for editor in editors %}
@@ -168,7 +168,7 @@ test_{{ platform.name }}_{{ editor.version }}:
   artifacts:
     Packages:
       paths:
-        - "com.autodesk.fbx"
+        - "com.autodesk.fbx/**"
         - "upm-ci~/packages/**"
     logs:
       paths:
