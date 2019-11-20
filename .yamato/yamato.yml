@@ -136,6 +136,7 @@ pack:
     Packages:
       paths:
         - "com.autodesk.fbx/**"
+        - "com.autodesk.fbx.testing/**"
         - "upm-ci~/packages/**"
 
 {% for editor in editors %}
@@ -169,6 +170,7 @@ test_{{ platform.name }}_{{ editor.version }}:
     Packages:
       paths:
         - "com.autodesk.fbx/**"
+        - "com.autodesk.fbx.testing/**"
         - "upm-ci~/packages/**"
     logs:
       paths:
