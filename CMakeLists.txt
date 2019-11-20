@@ -271,8 +271,8 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INST
 install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Plugins/x86_64)
 
 # copy C++ performance tests
-install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests)
-install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests)
+install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing)
+install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx.testing)
 
 install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
