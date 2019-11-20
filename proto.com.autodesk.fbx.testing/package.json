@@ -1,0 +1,10 @@
+{
+    "description": "This package provides the tests for Unity C# bindings to the Autodesk\u00ae FBX\u00ae SDK.", 
+    "displayName": "Autodesk FBX SDK", 
+    "keywords": [
+        "tests"
+    ], 
+    "name": "com.autodesk.fbx.testing", 
+    "unity": "2018.2", 
+    "version": "1.0.0"
+}
