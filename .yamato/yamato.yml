@@ -120,9 +120,10 @@ pack:
     - cp -vrfp build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
     - ls -alh
-    - upm-ci project pack --project-path TestProjects/FbxSDK
+    - upm-ci package pack --package-path com.autodesk.fbx
     - echo $? 
     - ls -lR "upm-ci~"
+    - ls -lR com.autodesk.fbx
   dependencies:
     - .yamato/yamato.yml#build_win
     - .yamato/yamato.yml#build_mac
@@ -133,11 +134,10 @@ pack:
         - "build-ubuntu/install/**"
         - "build-mac/install/**"
         - "build-win/install/**"
-    Packages:
+    packages:
       paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
         - "upm-ci~/packages/**"
+        - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
 {% for platform in platforms %}
@@ -153,11 +153,10 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endif %}
   commands:
 {% if platform.name == "ubuntu" %}
-    - pwd
-    - ls -alhR
+    - ls -lR .
 {% endif %}
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci project test --backend mono --unity-version {{ editor.version }} --project-path TestProjects/FbxSDK
+    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
     - echo "****** PASSED mono backend *******"
     # - upm-ci package test --backend il2cpp --unity-version {{ editor.version }}
     # - echo "****** PASSED il2cpp backend *******"
@@ -167,10 +166,8 @@ test_{{ platform.name }}_{{ editor.version }}:
           only:
             - "/.*/"
   artifacts:
-    Packages:
+    packages:
       paths:
-        - "com.autodesk.fbx/**"
-        - "com.autodesk.fbx.testing/**"
         - "upm-ci~/packages/**"
     logs:
       paths:
@@ -200,7 +197,7 @@ promotion_test:
     logs:
       paths:
         - "upm-ci~/test-results/**/*"
-    Packages:
+    packages:
       paths:
         - "upm-ci~/packages/**"
   dependencies:
@@ -216,7 +213,7 @@ publish:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package publish --package-path com.autodesk.fbx
   artifacts:
-    Packages:
+    packages:
       paths:
         - "upm-ci~/packages/**"
   dependencies:
@@ -239,7 +236,7 @@ promote:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package promote --package-path com.autodesk.fbx
   artifacts:
-    Packages:
+    packages:
       paths:
         - "upm-ci~/packages/**"
   dependencies:

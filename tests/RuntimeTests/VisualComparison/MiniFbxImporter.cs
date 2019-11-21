@@ -161,7 +161,7 @@ public class MiniFbxImporter : MonoBehaviour
                     break;
                 // case Settings.Conversion.Deep:
                 //     axes.DeepConvertScene(scene);
-                //    break;
+                //     break;
                 case Settings.Conversion.None:
                     break;
             }
