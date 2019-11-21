@@ -14,6 +14,7 @@ parser.add_argument('-n', '--ninja', action='store_true', dest='use_ninja', help
 parser.add_argument('-t', '--build_type', default='Release', dest='build_type', help='Build type to do (Release, Debug, ...)')
 parser.add_argument('-z', '--zap', '-c', '--clean', action='store_true', dest='clean_build', help='Removes the build directory')
 parser.add_argument('-v', '--verbose', action='store_true', dest='verbose_build', help='Make CMake verbose')
+parser.add_argument('--yamato', action='store_true', dest='yamato_build', help='Used internally for CI')
 args = parser.parse_args()
 
 curdir = os.path.dirname(os.path.abspath(__file__))
@@ -57,6 +58,9 @@ if args.fbxsdk_location is not None:
 
 # Use Stevedore?
 config_args.append('-DUSE_STEVEDORE' + ('=ON' if args.use_stevedore else '=OFF'))
+
+# Is a CI build?
+config_args.append('-DYAMATO' + ('=ON' if args.yamato_build else '=OFF'))
 
 # Generator selection
 config_args.append('-G')

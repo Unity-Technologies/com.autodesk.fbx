@@ -1,5 +1,5 @@
 {
-    "name": "FbxUnitTests",
+    "name": "PerformanceTests",
     "references": [
         "Autodesk.Fbx"
     ],
@@ -7,7 +7,7 @@
         "Editor"
     ],
     "optionalUnityReferences": [
-    "TestAssemblies"
+        "TestAssemblies"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

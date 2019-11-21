@@ -238,41 +238,45 @@ elseif (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   target_link_libraries(UnityFbxSdkNative "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/Source/version-script.txt -Wl,-x,--gc-sections")
 endif()
 
-###########################################################################
-# enable a test that the C# and C++ vectors behave the same
-add_executable(vector_test tests/Vectors/Vectors.cpp)
-target_link_libraries(vector_test ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
-add_custom_command(OUTPUT vector_test.txt COMMAND vector_test ARGS ">" vector_test.txt DEPENDS vector_test)
-add_custom_target(vector_test_output ALL DEPENDS vector_test.txt)
+if (${YAMATO} STREQUAL "OFF")
+        ###########################################################################
+        # enable a test that the C# and C++ vectors behave the same
+        add_executable(vector_test tests/Vectors/Vectors.cpp)
+        target_link_libraries(vector_test ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
+        add_custom_command(OUTPUT vector_test.txt COMMAND vector_test ARGS ">" vector_test.txt DEPENDS vector_test)
+        add_custom_target(vector_test_output ALL DEPENDS vector_test.txt)
 
-###########################################################################
-# build the native C++ unit tests
-add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
-target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
-set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-set_target_properties(unity_tests PROPERTIES SUFFIX "-mac-x64")
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    set_target_properties(unity_tests PROPERTIES SUFFIX "-win-x64.exe")
-elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    find_package(Threads)
-    set_target_properties(unity_tests PROPERTIES SUFFIX "-linux-x64")
-    target_link_libraries(unity_tests ${CMAKE_THREAD_LIBS_INIT}) # need to include pthread libs for Linux
+        ###########################################################################
+        # build the native C++ unit tests
+        add_executable(unity_tests tests/NativePerformance/PerformanceBenchmarks.cpp)
+        target_link_libraries(unity_tests ${FBXSDK_LIBRARY} ${CMAKE_DL_LIBS}) # need to include DL libs for Linux
+        set_target_properties(unity_tests PROPERTIES OUTPUT_NAME "PerformanceBenchmarks")
+        if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+        set_target_properties(unity_tests PROPERTIES SUFFIX "-mac-x64")
+        elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        set_target_properties(unity_tests PROPERTIES SUFFIX "-win-x64.exe")
+        elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        find_package(Threads)
+        set_target_properties(unity_tests PROPERTIES SUFFIX "-linux-x64")
+        target_link_libraries(unity_tests ${CMAKE_THREAD_LIBS_INIT}) # need to include pthread libs for Linux
+        endif()
+
+        install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx.testing/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests PATTERN "*.in" EXCLUDE)
+        # copy C++ performance tests
+        install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests)
+        install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests)
+        
+        ###########################################################################
 endif()
 
-###########################################################################
-
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx.testing/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests PATTERN "*.in" EXCLUDE)
 install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
 install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Plugins/x86_64)
 
-# copy C++ performance tests
-install(TARGETS unity_tests DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests)
-install(FILES ${CMAKE_BINARY_DIR}/vector_test.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests)
+
 
 install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
