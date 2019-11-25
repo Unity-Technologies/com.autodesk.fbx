@@ -83,6 +83,10 @@ namespace Autodesk.Fbx.UnitTests
                 Assert.AreEqual (5, curve.KeyGetValue (index));
                 Assert.AreEqual (keyTime, curve.KeyGetTime (index));
                 Assert.AreEqual (1, curve.KeyGetCount ());
+                
+                // test don't crash
+                FbxAnimCurveKey key = curve.KeyGet(index);
+                Assert.That(key, Is.Not.Null);
 
                 // make sure none of the variations crash
                 curve.KeySet (index, new FbxTime (), 5, FbxAnimCurveDef.EInterpolationType.eInterpolationConstant
@@ -119,6 +123,41 @@ namespace Autodesk.Fbx.UnitTests
                     FbxAnimCurveDef.EInterpolationType.eInterpolationCubic,
                     FbxAnimCurveDef.ETangentMode.eTangentAuto,
                     0, 0, FbxAnimCurveDef.EWeightedMode.eWeightedAll, 0, 0, 0, 0);
+
+                // more setter test
+                curve.KeySetTangentMode (index, FbxAnimCurveDef.ETangentMode.eTangentAuto);
+                curve.KeySetLeftTangentWeight (index, 0.5f, false);
+                curve.KeySetRightTangentWeight (index, 0.5f, false);
+                curve.KeySetLeftDerivative (index, 0.5f);
+                curve.KeySetRightDerivative (index, 0.5f);
+
+                // test settings key parameters
+                key.SetTangentMode (FbxAnimCurveDef.ETangentMode.eTangentUser);
+                // Set break is only meaningful if tangent is eTangentAuto or eTangentUser
+                key.SetBreak (true);
+                key.SetDataFloat (FbxAnimCurveDef.EDataIndex.eRightSlope, 1.0f);
+                key.SetDataFloat (FbxAnimCurveDef.EDataIndex.eNextLeftSlope, 1.0f);
+                key.SetDataFloat (FbxAnimCurveDef.EDataIndex.eWeights, 1.0f);
+                key.SetDataFloat (FbxAnimCurveDef.EDataIndex.eRightWeight, 1.0f);
+                key.SetDataFloat (FbxAnimCurveDef.EDataIndex.eNextLeftWeight, 1.0f);
+                key.SetBreak (false);
+                //
+                key.SetTangentWeightMode (FbxAnimCurveDef.EWeightedMode.eWeightedAll);
+                key.SetTangentWeightMode (FbxAnimCurveDef.EWeightedMode.eWeightedAll, FbxAnimCurveDef.EWeightedMode.eWeightedAll);
+                //
+                key.SetBreak (true);
+                key.SetTangentWeightAndAdjustTangent (FbxAnimCurveDef.EDataIndex.eRightSlope, 1.0);
+                key.SetTangentWeightAndAdjustTangent (FbxAnimCurveDef.EDataIndex.eNextLeftSlope, 1.0);
+                key.SetTangentWeightAndAdjustTangent (FbxAnimCurveDef.EDataIndex.eWeights, 1.0);
+                key.SetTangentWeightAndAdjustTangent (FbxAnimCurveDef.EDataIndex.eRightWeight, 1.0);
+                key.SetTangentWeightAndAdjustTangent (FbxAnimCurveDef.EDataIndex.eNextLeftWeight, 1.0);
+                key.SetBreak (false);
+                //
+                key.SetTangentVelocityMode (FbxAnimCurveDef.EVelocityMode.eVelocityAll, FbxAnimCurveDef.EVelocityMode.eVelocityAll);
+                key.SetTangentVelocityMode (FbxAnimCurveDef.EVelocityMode.eVelocityNone, FbxAnimCurveDef.EVelocityMode.eVelocityAll);
+                //
+                key.SetTangentVisibility(FbxAnimCurveDef.ETangentVisibility.eTangentShowLeft);
+                key.SetTangentVisibility(FbxAnimCurveDef.ETangentVisibility.eTangentShowRight);
 
                 // test KeyModifyEnd (make sure it doesn't crash)
                 curve.KeyModifyEnd ();
