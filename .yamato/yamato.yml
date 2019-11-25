@@ -25,23 +25,26 @@
 #
 editors:
   - version: 2019.3
+backends:
+  - name: mono
+  - name: il2cpp
 mac_platform:
   name: mac
   type: Unity::VM::osx
   image: buildfarm/mac:stable
   flavor: m1.mac
-ubuntu_platform:
-  name: ubuntu
-  type: Unity::VM
-  image: package-ci/ubuntu:stable
-  flavor: b1.medium
-win_platform:
+# ubuntu_platform:
+#   name: ubuntu
+#   type: Unity::VM
+#   image: package-ci/ubuntu:stable
+#   flavor: b1.medium
+# win_platform:
   name: win
   type: Unity::VM
   image: package-ci/win10:stable
   flavor: b1.medium
 platforms:
-  - name: mac
+  - name: macl
     type: Unity::VM::osx
     image: buildfarm/mac:stable
     flavor: m1.mac
@@ -91,20 +94,20 @@ build_mac:
       paths:
         - "build-mac/install/**"
 
-build_ubuntu:
-  name: Build on ubuntu
-  agent:
-    type: {{ ubuntu_platform.type }}
-    image: {{ ubuntu_platform.image }}
-    flavor: {{ ubuntu_platform.flavor}}
-  commands:
-    - sudo apt-get install p7zip mono-devel
-    - python ./build.py --stevedore --verbose --clean --yamato
-    - mv build build-ubuntu
-  artifacts:
-    build:
-      paths:
-        - "build-ubuntu/install/**"
+# build_ubuntu:
+#   name: Build on ubuntu
+#   agent:
+#     type: {{ ubuntu_platform.type }}
+#     image: {{ ubuntu_platform.image }}
+#     flavor: {{ ubuntu_platform.flavor}}
+#   commands:
+#     - sudo apt-get install p7zip mono-devel
+#     - python ./build.py --stevedore --verbose --clean --yamato
+#     - mv build build-ubuntu
+#   artifacts:
+#     build:
+#       paths:
+#         - "build-ubuntu/install/**"
 
 pack:
   name: Pack
@@ -113,25 +116,19 @@ pack:
     image: package-ci/ubuntu:stable
     flavor: b1.small
   commands:
-    - pwd
-    - ls -alh
-    - mv -v build-ubuntu/install/* .
+    # - mv -v build-ubuntu/install/* .
     - cp -vrfp build-mac/install/* .
     - cp -vrfp build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - ls -alh
     - upm-ci package pack --package-path com.autodesk.fbx
-    - echo $? 
-    - ls -lR "upm-ci~"
-    - ls -lR com.autodesk.fbx
   dependencies:
     - .yamato/yamato.yml#build_win
     - .yamato/yamato.yml#build_mac
-    - .yamato/yamato.yml#build_ubuntu
+    # - .yamato/yamato.yml#build_ubuntu
   artifacts:
     build:
       paths:
-        - "build-ubuntu/install/**"
+        # - "build-ubuntu/install/**"
         - "build-mac/install/**"
         - "build-win/install/**"
     packages:
@@ -140,6 +137,7 @@ pack:
         - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
+{% for backend in backends %}
 {% for platform in platforms %}
 test_{{ platform.name }}_{{ editor.version }}:
   name : Test version {{ editor.version }} on {{ platform.name }}
@@ -147,19 +145,14 @@ test_{{ platform.name }}_{{ editor.version }}:
     type: {{ platform.type }}
     image: {{ platform.image }}
     flavor: {{ platform.flavor}}
-{% if platform.name == "ubuntu" %}
-  variables:
-    DISPLAY: ":0"
-{% endif %}
+# {% if platform.name == "ubuntu" %}
+#   variables:
+#     DISPLAY: ":0"
+# {% endif %}
   commands:
-{% if platform.name == "ubuntu" %}
-    - ls -lR .
-{% endif %}
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
-    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
-    - echo "****** PASSED mono backend *******"
-    # - upm-ci package test --backend il2cpp --unity-version {{ editor.version }}
-    # - echo "****** PASSED il2cpp backend *******"
+    - upm-ci package test --backend {{ backend.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+    - echo "****** PASSED {{ backend.name }} backend *******"
   triggers:
     pull_requests:
       - targets:
@@ -174,6 +167,7 @@ test_{{ platform.name }}_{{ editor.version }}:
         - "upm-ci~/test-results/**/*"
   dependencies:
     - .yamato/yamato.yml#pack
+{% endfor %}
 {% endfor %}
 {% endfor %}
 
