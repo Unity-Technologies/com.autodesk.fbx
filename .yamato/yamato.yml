@@ -33,11 +33,11 @@ mac_platform:
   type: Unity::VM::osx
   image: buildfarm/mac:stable
   flavor: m1.mac
-# ubuntu_platform:
-#   name: ubuntu
-#   type: Unity::VM
-#   image: package-ci/ubuntu:stable
-#   flavor: b1.medium
+ubuntu_platform:
+  name: ubuntu
+  type: Unity::VM
+  image: package-ci/ubuntu:stable
+  flavor: b1.medium
 win_platform:
   name: win
   type: Unity::VM
@@ -48,10 +48,10 @@ platforms:
     type: Unity::VM::osx
     image: buildfarm/mac:stable
     flavor: m1.mac
-  # - name: ubuntu
-  #   type: Unity::VM
-  #   image: package-ci/ubuntu:stable
-  #   flavor: b1.medium
+  - name: ubuntu
+    type: Unity::VM
+    image: package-ci/ubuntu:stable
+    flavor: b1.medium
   - name: win
     type: Unity::VM
     image: package-ci/win10:stable
@@ -94,20 +94,20 @@ build_mac:
       paths:
         - "build-mac/install/**"
 
-# build_ubuntu:
-#   name: Build on ubuntu
-#   agent:
-#     type: {{ ubuntu_platform.type }}
-#     image: {{ ubuntu_platform.image }}
-#     flavor: {{ ubuntu_platform.flavor}}
-#   commands:
-#     - sudo apt-get install p7zip mono-devel
-#     - python ./build.py --stevedore --verbose --clean --yamato
-#     - mv build build-ubuntu
-#   artifacts:
-#     build:
-#       paths:
-#         - "build-ubuntu/install/**"
+build_ubuntu:
+  name: Build on ubuntu
+  agent:
+    type: {{ ubuntu_platform.type }}
+    image: {{ ubuntu_platform.image }}
+    flavor: {{ ubuntu_platform.flavor}}
+  commands:
+    - sudo apt-get install p7zip mono-devel
+    - python ./build.py --stevedore --verbose --clean --yamato
+    - mv build build-ubuntu
+  artifacts:
+    build:
+      paths:
+        - "build-ubuntu/install/**"
 
 pack:
   name: Pack
@@ -116,7 +116,7 @@ pack:
     image: package-ci/ubuntu:stable
     flavor: b1.small
   commands:
-    # - mv -v build-ubuntu/install/* .
+    - mv -v build-ubuntu/install/* .
     - cp -vrfp build-mac/install/* .
     - cp -vrfp build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
@@ -124,11 +124,11 @@ pack:
   dependencies:
     - .yamato/yamato.yml#build_win
     - .yamato/yamato.yml#build_mac
-    # - .yamato/yamato.yml#build_ubuntu
+    - .yamato/yamato.yml#build_ubuntu
   artifacts:
     build:
       paths:
-        # - "build-ubuntu/install/**"
+        - "build-ubuntu/install/**"
         - "build-mac/install/**"
         - "build-win/install/**"
     packages:
@@ -145,10 +145,10 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
     type: {{ platform.type }}
     image: {{ platform.image }}
     flavor: {{ platform.flavor}}
-# {% if platform.name == "ubuntu" %}
-#   variables:
-#     DISPLAY: ":0"
-# {% endif %}
+{% if platform.name == "ubuntu" %}
+  variables:
+    DISPLAY: ":0"
+{% endif %}
   commands:
     - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package test --backend {{ backend.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx
