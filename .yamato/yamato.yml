@@ -139,7 +139,7 @@ pack:
 {% for editor in editors %}
 {% for backend in backends %}
 {% for platform in platforms %}
-test_{{ platform.name }}_{{ editor.version }}:
+test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
   name : Test version {{ editor.version }} on {{ platform.name }}
   agent:
     type: {{ platform.type }}
