@@ -38,7 +38,7 @@ mac_platform:
 #   type: Unity::VM
 #   image: package-ci/ubuntu:stable
 #   flavor: b1.medium
-# win_platform:
+win_platform:
   name: win
   type: Unity::VM
   image: package-ci/win10:stable
@@ -140,7 +140,7 @@ pack:
 {% for backend in backends %}
 {% for platform in platforms %}
 test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
-  name : Test version {{ editor.version }} on {{ platform.name }}
+  name : Test version {{ editor.version }} {{ backend.name }} on {{ platform.name }}
   agent:
     type: {{ platform.type }}
     image: {{ platform.image }}
