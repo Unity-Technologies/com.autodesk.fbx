@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 parser = argparse.ArgumentParser(description='Parse the options')
-parser.add_argument('--swig', type=str, dest='swig_location', help='Root location of swig')
+parser.add_argument('--swig', type=str, dest='swig_location', help='Root location of the swig executable')
 parser.add_argument('--fbxsdk', type=str, dest='fbxsdk_location', help='location of the FBX SDK')
 parser.add_argument('--fbxsdkversion', type=str, dest='fbxsdk_version', help='Version of the FBX SDK to use. Valid only if used with --stevedore. Valid values are 2018.1.1 and 2020.0')
 parser.add_argument('-s', '--stevedore', action='store_true', dest='use_stevedore', help='Use stevedore (used for internal builds)')
@@ -52,7 +52,7 @@ config_args = [
 
 # Where to find swig if not standard install
 if args.swig_location is not None:
-    config_args.append('-DSWIG_ROOT={}'.format(args.swig_location))
+    config_args.append('-DSWIG_EXECUTABLE={}'.format(args.swig_location))
     # config_args.append(args.swig_location)
 if args.fbxsdk_location is not None:
     config_args.append('-DFBXSDK_ROOT_PATH={}'.format(args.fbxsdk_location))

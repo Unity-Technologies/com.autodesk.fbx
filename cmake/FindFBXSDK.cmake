@@ -103,6 +103,11 @@ if (FBXSDK_VERSION VERSION_GREATER 2019.1)
     list(APPEND FBXSDK_LIBRARY "-lxml2" "-lz")
   endif()
 endif()
+if(FBXSDK_VERSION VERSION_GREATER_EQUAL 2020.0)
+  if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    list(APPEND FBXSDK_LIBRARY "-liconv")
+  endif()
+endif()
 
 # Standard code to report whether we found the package or not.
 # Careful with REQUIRED_VARS and version numbers -- '0' is a valid minor
