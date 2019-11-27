@@ -39,8 +39,10 @@
   FbxVector4 GetControlPointChecked(int pIndex)
   {
     if (pIndex < 0) {
-      SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, "", "pIndex");
-      return FbxVector4(0,0,0,1);
+      // There is a regression in 2020.0 that makes this crash. Before, 
+      // it returned (0,0,0,epsilon). Go with the what the docs says.
+      // The vector returned is documented to be FbxVector4(0,0,0)
+      return FbxVector4(0,0,0);
     }
     return $self->GetControlPointAt(pIndex);
   }

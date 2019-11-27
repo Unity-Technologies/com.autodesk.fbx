@@ -35,10 +35,10 @@ namespace Autodesk.Fbx.UnitTests
             geometryBase.SetControlPointAt (new FbxVector4(1,2,3,4), 50); // does not throw
             Assert.AreEqual (geometryBase.GetControlPointsCount (), 51);
 
-            // It doesn't crash getting negative nor past-the-end.
-            // The vector returned is documented to be (0,0,0,1) but actually
-            // seems to be (0,0,0,epsilon).
-            Assert.That( () => geometryBase.GetControlPointAt(-1), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+            // There is a regression in 2020.0 that makes this crash. Before, 
+            // it returned (0,0,0,epsilon). Go with the what the docs says.
+            // The vector returned is documented to be FbxVector4(0,0,0)
+            Assert.That( geometryBase.GetControlPointAt(-1), Is.EqualTo(new FbxVector4(0,0,0)));
             geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
 
             var elementNormal = geometryBase.CreateElementNormal ();
