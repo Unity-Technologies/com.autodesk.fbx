@@ -205,10 +205,12 @@ namespace Autodesk.Fbx.UnitTests
 
                 Assert.That(constraint.GetTranslationOffset(fbxNode), Is.EqualTo(offset));
                 Assert.That(constraint.GetTranslationOffset(fbxNode2), Is.EqualTo(offset2));
+                Assert.That(constraint.GetTranslationOffsetProperty(fbxNode2).IsValid(), Is.True);
 
                 // test null input
                 Assert.That(() => constraint.SetTranslationOffset(null, offset), Throws.Exception.TypeOf<System.ArgumentNullException>());
                 Assert.That(() => constraint.GetTranslationOffset(null), Throws.Exception.TypeOf<System.ArgumentNullException>());
+                Assert.That(() => constraint.GetTranslationOffsetProperty(null), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test on non source fbx node
                 var fbxNode3 = FbxNode.Create(Manager, "node3");
@@ -238,10 +240,12 @@ namespace Autodesk.Fbx.UnitTests
 
                 Assert.That(constraint.GetRotationOffset(fbxNode), Is.EqualTo(offset));
                 Assert.That(constraint.GetRotationOffset(fbxNode2), Is.EqualTo(offset2));
+                Assert.That(constraint.GetRotationOffsetProperty(fbxNode2).IsValid(), Is.True);
 
                 // test null input
                 Assert.That(() => constraint.SetRotationOffset(null, offset), Throws.Exception.TypeOf<System.ArgumentNullException>());
                 Assert.That(() => constraint.GetRotationOffset(null), Throws.Exception.TypeOf<System.ArgumentNullException>());
+                Assert.That(() => constraint.GetRotationOffsetProperty(null), Throws.Exception.TypeOf<System.ArgumentNullException>());
 
                 // test on non source fbx node
                 var fbxNode3 = FbxNode.Create(Manager, "node3");
