@@ -9,7 +9,6 @@ import sys
 parser = argparse.ArgumentParser(description='Parse the options')
 parser.add_argument('--swig', type=str, dest='swig_location', help='Root location of the swig executable')
 parser.add_argument('--fbxsdk', type=str, dest='fbxsdk_location', help='location of the FBX SDK')
-parser.add_argument('--fbxsdkversion', type=str, dest='fbxsdk_version', help='Version of the FBX SDK to use. Valid only if used with --stevedore. Valid values are 2018.1.1 and 2020.0')
 parser.add_argument('-s', '--stevedore', action='store_true', dest='use_stevedore', help='Use stevedore (used for internal builds)')
 parser.add_argument('-n', '--ninja', action='store_true', dest='use_ninja', help='Generate Ninja build files')
 parser.add_argument('-t', '--build_type', default='Release', dest='build_type', help='Build type to do (Release, Debug, ...)')
@@ -56,8 +55,6 @@ if args.swig_location is not None:
     # config_args.append(args.swig_location)
 if args.fbxsdk_location is not None:
     config_args.append('-DFBXSDK_ROOT_PATH={}'.format(args.fbxsdk_location))
-
-config_args.append('-DFBXSDK_VERSION={}'.format(args.fbxsdk_location if args.fbxsdk_location is not None else '2020.0'))
 
 # Use Stevedore?
 config_args.append('-DUSE_STEVEDORE' + ('=ON' if args.use_stevedore else '=OFF'))
