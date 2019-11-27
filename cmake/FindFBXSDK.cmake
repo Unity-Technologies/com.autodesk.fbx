@@ -4,8 +4,6 @@
 # Licensed under the ##LICENSENAME##.
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
-set(FBXSDK_INCLUDE_PATHS $ENV{FBXSDK_INCLUDE_PATHS})
-set(FBXSDK_LIB_PATHS $ENV{FBXSDK_LIB_PATHS})
 
 option(USE_CUSTOM_FBXSDK "Allow linking to a custom build of FBX SDK" OFF)
 
@@ -29,7 +27,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   list(APPEND CMAKE_SWIG_FLAGS "-D_M_X64")
   list(APPEND CMAKE_SWIG_FLAGS "-D_MSC_VER")
 
-  set(_fbxsdk_root_path "c:/Program Files/Autodesk/FBX SDK")
+  set(_fbxsdk_root_path "C:/Program Files/Autodesk/FBX/FBX SDK")
   list(APPEND _fbxsdk_lib_paths "lib/vs2015/x64/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -38,7 +36,11 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__GNUC__")
 
   # where is fbxsdk installed by default on linux?
-  list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release")
+  list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release" "lib/gcc/x64/release")
+endif()
+
+if(NOT ${FBXSDK_ROOT_PATH} STREQUAL "" )
+  set(_fbxsdk_root_path ${FBXSDK_ROOT_PATH})
 endif()
 
 # When using Stevedore, FBX SDK gets installed in the source tree, and we
@@ -64,7 +66,7 @@ find_library(FBXSDK_LIBRARY libfbxsdk.a libfbxsdk-md.lib PATHS ${FBXSDK_LIB_PATH
 
 find_file(_fbxsdk_VERSION_HEADER fbxsdk_version.h PATHS ${FBXSDK_INCLUDE_DIR}/fbxsdk)
 if(${_fbxsdk_VERSION_HEADER} STREQUAL "_fbxsdk_VERSION_HEADER-NOTFOUND")
-  message(FATAL_ERROR "Couldn't find fbxsdk_version.h")
+  message(FATAL_ERROR "Couldn't find fbxsdk_version.h in drectory: ${FBXSDK_INCLUDE_DIR}/fbxsdk")
 else()
   file(READ ${_fbxsdk_VERSION_HEADER} _fbxsdk_VERSION_HEADER_CONTENTS)
   string(REGEX MATCH "FBXSDK_VERSION_MAJOR[\t ]+[0-9]+" FBXSDK_VERSION_MAJOR "${_fbxsdk_VERSION_HEADER_CONTENTS}")
@@ -84,8 +86,21 @@ if(APPLE)
       find_library(COCOA_LIBRARY Cocoa)
       list(APPEND FBXSDK_LIBRARY ${COCOA_LIBRARY})
       if (USE_CUSTOM_FBXSDK)
-        list(APPEND FBXSDK_LIBRARY "-lxml2" "-liconv" "-lz")
+        list(APPEND FBXSDK_LIBRARY "-liconv")
       endif()
+  endif()
+endif()
+
+if (FBXSDK_VERSION VERSION_GREATER 2019.1)
+# since 2019.1 we ahve to explicitly link against libxml and zlib. Fortunately 
+# for us, FBS SDk ships them.
+  if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    find_library(LIBXML2_LIBRARY libxml2-md.lib PATHS ${FBXSDK_LIB_PATHS})
+    find_library(ZLIB_LIBRARY zlib-md.lib PATHS ${FBXSDK_LIB_PATHS})
+    list(APPEND FBXSDK_LIBRARY "${ZLIB_LIBRARY}" "${LIBXML2_LIBRARY}")
+  else()
+    # on UNIXes, they're system libraries
+    list(APPEND FBXSDK_LIBRARY "-lxml2" "-lz")
   endif()
 endif()
 

@@ -159,9 +159,9 @@ public class MiniFbxImporter : MonoBehaviour
                 case Settings.Conversion.Legacy:
                     axes.ConvertScene(scene);
                     break;
-                case Settings.Conversion.Deep:
-                    axes.DeepConvertScene(scene);
-                    break;
+                // case Settings.Conversion.Deep:
+                //     axes.DeepConvertScene(scene);
+                //     break;
                 case Settings.Conversion.None:
                     break;
             }
