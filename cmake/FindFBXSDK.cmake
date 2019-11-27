@@ -89,7 +89,7 @@ if(APPLE)
 endif()
 
 # since 2019.1 we have to explicitly link against libxml and zlib. Fortunately 
-# for us, FBS SDk ships them.
+# for us, FBX SDk ships them.
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   find_library(LIBXML2_LIBRARY libxml2-md.lib PATHS ${FBXSDK_LIB_PATHS})
   find_library(ZLIB_LIBRARY zlib-md.lib PATHS ${FBXSDK_LIB_PATHS})
