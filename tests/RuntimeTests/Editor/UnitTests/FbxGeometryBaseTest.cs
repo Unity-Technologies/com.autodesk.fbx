@@ -38,8 +38,7 @@ namespace Autodesk.Fbx.UnitTests
             // It doesn't crash getting negative nor past-the-end.
             // The vector returned is documented to be (0,0,0,1) but actually
             // seems to be (0,0,0,epsilon).
-            UnityEngine.Debug.Log("Uncomment me!");
-            // geometryBase.GetControlPointAt(-1);
+            Assert.That( () => geometryBase.GetControlPointAt(-1), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
             geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
 
             var elementNormal = geometryBase.CreateElementNormal ();

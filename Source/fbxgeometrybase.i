@@ -32,4 +32,18 @@
   }
 }
 
+/* Prevent a crash when getting a negative index. */
+%ignore FbxGeometryBase::GetControlPointAt;
+%rename("GetControlPointAt") FbxGeometryBase::GetControlPointChecked;
+%extend FbxGeometryBase {
+  FbxVector4 GetControlPointChecked(int pIndex)
+  {
+    if (pIndex < 0) {
+      SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, "", "pIndex");
+      return FbxVector4(0,0,0,1);
+    }
+    return $self->GetControlPointAt(pIndex);
+  }
+}
+
 %include "fbxsdk/scene/geometry/fbxgeometrybase.h"
