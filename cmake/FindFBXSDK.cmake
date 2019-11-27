@@ -84,25 +84,21 @@ endif()
 if(APPLE)
   if (NOT(FBXSDK_LIBRARY STREQUAL ""))
       find_library(COCOA_LIBRARY Cocoa)
-      list(APPEND FBXSDK_LIBRARY ${COCOA_LIBRARY})
-      if (USE_CUSTOM_FBXSDK)
-        list(APPEND FBXSDK_LIBRARY "-liconv")
-      endif()
+      list(APPEND FBXSDK_LIBRARY ${COCOA_LIBRARY} "-liconv")
   endif()
 endif()
 
-if (FBXSDK_VERSION VERSION_GREATER 2019.1)
-# since 2019.1 we ahve to explicitly link against libxml and zlib. Fortunately 
-# for us, FBS SDk ships them.
-  if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-    find_library(LIBXML2_LIBRARY libxml2-md.lib PATHS ${FBXSDK_LIB_PATHS})
-    find_library(ZLIB_LIBRARY zlib-md.lib PATHS ${FBXSDK_LIB_PATHS})
-    list(APPEND FBXSDK_LIBRARY "${ZLIB_LIBRARY}" "${LIBXML2_LIBRARY}")
-  else()
-    # on UNIXes, they're system libraries
-    list(APPEND FBXSDK_LIBRARY "-lxml2" "-lz")
-  endif()
+# since 2019.1 we have to explicitly link against libxml and zlib. Fortunately 
+# for us, FBX SDk ships them.
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+  find_library(LIBXML2_LIBRARY libxml2-md.lib PATHS ${FBXSDK_LIB_PATHS})
+  find_library(ZLIB_LIBRARY zlib-md.lib PATHS ${FBXSDK_LIB_PATHS})
+  list(APPEND FBXSDK_LIBRARY "${ZLIB_LIBRARY}" "${LIBXML2_LIBRARY}")
+else()
+  # on UNIXes, they're system libraries
+  list(APPEND FBXSDK_LIBRARY "-lxml2" "-lz")
 endif()
+
 
 # Standard code to report whether we found the package or not.
 # Careful with REQUIRED_VARS and version numbers -- '0' is a valid minor

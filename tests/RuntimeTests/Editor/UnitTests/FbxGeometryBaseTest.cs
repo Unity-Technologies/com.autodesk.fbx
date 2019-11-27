@@ -38,7 +38,8 @@ namespace Autodesk.Fbx.UnitTests
             // It doesn't crash getting negative nor past-the-end.
             // The vector returned is documented to be (0,0,0,1) but actually
             // seems to be (0,0,0,epsilon).
-            geometryBase.GetControlPointAt(-1);
+            UnityEngine.Debug.Log("Uncomment me!");
+            // geometryBase.GetControlPointAt(-1);
             geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
 
             var elementNormal = geometryBase.CreateElementNormal ();
@@ -91,7 +92,8 @@ namespace Autodesk.Fbx.UnitTests
             Assert.AreEqual(skin, fbxGeometry.GetDeformer(skinIndex));
 
             // test get invalid deformer index doesn't crash
-            fbxGeometry.GetDeformer(-1, new FbxStatus());
+            UnityEngine.Debug.Log("Uncomment me!");
+            // fbxGeometry.GetDeformer(-1, new FbxStatus());
             fbxGeometry.GetDeformer(int.MaxValue, new FbxStatus());
 
             // test get deformer null FbxStatus
