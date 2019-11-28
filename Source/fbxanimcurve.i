@@ -28,6 +28,26 @@
 %rename("%s") FbxAnimCurve::KeyModifyEnd;
 %rename("%s") FbxAnimCurve::KeyGetCount;
 
+%rename("%s") FbxAnimCurve::KeySetTangentMode;
+%rename("%s") FbxAnimCurve::KeyGetTangentMode;
+
+%rename("%s", %$isclass) FbxAnimCurveKey;
+%rename("%s") FbxAnimCurveKey::SetTangentMode;
+%rename("%s") FbxAnimCurveKey::GetTangentMode;
+%rename("%s") FbxAnimCurveKey::SetTangentWeightMode;
+%rename("%s") FbxAnimCurveKey::GetTangentWeightMode;
+%rename("%s") FbxAnimCurveKey::SetTangentWeightAndAdjustTangent;
+%rename("%s") FbxAnimCurveKey::SetTangentVelocityMode;
+%rename("%s") FbxAnimCurveKey::GetTangentVelocityMode;
+%rename("%s") FbxAnimCurveKey::SetDataFloat;
+%rename("%s") FbxAnimCurveKey::GetDataFloat;
+%rename("%s") FbxAnimCurveKey::SetTangentVisibility;
+%rename("%s") FbxAnimCurveKey::GetTangentVisibility;
+%rename("%s") FbxAnimCurveKey::SetBreak;
+%rename("%s") FbxAnimCurveKey::GetBreak;
+
+%rename("%s") FbxAnimCurve::KeyGet;
+
 %apply int* INOUT {int* pLast};
 
 %rename("%s") FbxAnimCurve::KeyAdd(FbxTime pTime, int* pLast=((void *) 0));
@@ -53,6 +73,9 @@
 %rename("%s") FbxAnimCurveDef::EInterpolationType;
 %rename("%s") FbxAnimCurveDef::ETangentMode;
 %rename("%s") FbxAnimCurveDef::EWeightedMode;
+%rename("%s") FbxAnimCurveDef::EDataIndex;
+%rename("%s") FbxAnimCurveDef::ETangentVisibility;
+%rename("%s") FbxAnimCurveDef::EVelocityMode;
 %fbximmutable(FbxAnimCurveDef::sDEFAULT_WEIGHT);
 %fbximmutable(FbxAnimCurveDef::sDEFAULT_VELOCITY);
 %fbximmutable(FbxAnimCurveDef::sMIN_WEIGHT);
