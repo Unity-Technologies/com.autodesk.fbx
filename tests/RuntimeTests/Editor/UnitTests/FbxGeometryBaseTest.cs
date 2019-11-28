@@ -35,9 +35,8 @@ namespace Autodesk.Fbx.UnitTests
             geometryBase.SetControlPointAt (new FbxVector4(1,2,3,4), 50); // does not throw
             Assert.AreEqual (geometryBase.GetControlPointsCount (), 51);
 
-            // There is a regression in 2020.0 that makes this crash. Before, 
-            // it returned (0,0,0,epsilon). Go with the what the docs says.
-            // The vector returned is documented to be FbxVector4(0,0,0)
+            // Out of bounds returns FbxVector4(0,0,0). FBX code crashes with
+            // index < 0. Don't crash and return the documented value
             Assert.That( geometryBase.GetControlPointAt(-1), Is.EqualTo(new FbxVector4(0,0,0)));
             geometryBase.GetControlPointAt(geometryBase.GetControlPointsCount() + 1);
 
@@ -91,8 +90,7 @@ namespace Autodesk.Fbx.UnitTests
             Assert.AreEqual(skin, fbxGeometry.GetDeformer(skinIndex));
 
             // test get invalid deformer index doesn't crash
-            UnityEngine.Debug.Log("Uncomment me!");
-            // fbxGeometry.GetDeformer(-1, new FbxStatus());
+            fbxGeometry.GetDeformer(-1, new FbxStatus());
             fbxGeometry.GetDeformer(int.MaxValue, new FbxStatus());
 
             // test get deformer null FbxStatus
