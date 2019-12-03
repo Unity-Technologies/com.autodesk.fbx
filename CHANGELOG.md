@@ -1,5 +1,19 @@
 # Changes in FBX SDK C# Bindings
 
+## [3.0.0-preview.1] - 2019-12-03
+
+CHANGES
+* Upgraded to FBX SDK 2020.0
+* Added bindings for FbxAnimCurve::KeySetTangents and FbxAnimCurve::KeyGetTangents
+* Added bindings for FbxAnimCurveKey methods to set and get tangent mode and data
+* Added bindings for FbxAxisSystem::DeepConvertScene
+
+BUGFIXES
+* The FBX SDK C# Bindings package now supports the IL2CPP backend.
+
+KNOW ISSUES
+* The FBX SDK C# Bindings package cannot the used on Linux CentOS 7
+
 ## [2.0.0-preview.3] - 2018.01-03
 
 CHANGES
