@@ -187,8 +187,53 @@
   /// </summary>
   const string DllImportName = "$dllimport";
 
+  // Dictionary to cache the creator functions
+  static System.Collections.Generic.Dictionary<System.IntPtr, System.Reflection.ConstructorInfo> downcast_dict = new System.Collections.Generic.Dictionary<System.IntPtr, System.Reflection.ConstructorInfo>();
+  // argument descriptions used for binding the constructor
+  static readonly System.Linq.Expressions.ParameterExpression arg0 = System.Linq.Expressions.Expression.Parameter(typeof(System.IntPtr), "cPtr");
+  static readonly System.Linq.Expressions.ParameterExpression arg1 = System.Linq.Expressions.Expression.Parameter(typeof(bool), "ignored");
+  static object[] args = new object[] {System.IntPtr.Zero, false};
+  public static FbxObject Realtype(System.IntPtr cPtr, bool ignored)
+  {
+    if (cPtr == System.IntPtr.Zero)
+    {
+      return null;
+    }
+
+    System.IntPtr p = NativeMethods.FbxObject_GetRuntimeClassId(new System.Runtime.InteropServices.HandleRef(null, cPtr));
+    var name = NativeMethods.FbxClassId_GetClassIdInfo(new System.Runtime.InteropServices.HandleRef(null, p));
+    args[0] = cPtr;
+    if (!downcast_dict.ContainsKey(name))
+    {
+      // Get the FbxClassId
+      FbxClassId id = new FbxClassId(NativeMethods.FbxObject_GetRuntimeClassId(new System.Runtime.InteropServices.HandleRef(null, cPtr)), false);
+      // Get the type, using the qualified name
+      System.Type t = typeof(FbxObject).Assembly.GetType($"Autodesk.Fbx.{id.GetName()}");
+      // Get the the constructor (thank Gods SWIG always uses the same same for arguments)
+      System.Reflection.ConstructorInfo cinfo = t.GetConstructors(System.Reflection.BindingFlags.NonPublic 
+      | System.Reflection.BindingFlags.Public
+      | System.Reflection.BindingFlags.Instance)[0];
+
+    // Make a compiled expression for the constructor, thus avoiding the cost of invoke.
+    // inspired from here https://stackoverflow.com/questions/752/how-to-create-a-new-object-instance-from-a-type
+    System.Func<System.IntPtr, bool, FbxObject> creator = System.Linq.Expressions.Expression.Lambda<System.Func<System.IntPtr, bool, FbxObject>>(
+      System.Linq.Expressions.Expression.New(cinfo, new[] { arg0, arg1 }),
+      arg0, 
+      arg1
+      ).Compile();
+      downcast_dict[name] = creator;
+    }
+
+    // Create the object
+    return downcast_dict[name](cPtr, ignored);
+  }
+
 %}
 
+  // FbxClassId id = o.GetRuntimeClassId();
+  // // FbxObject ss = id.Create(Manager, "sdkfklsd", o);
+  // var a = System.Activator.CreateInstance(s.GetType(), new object[] {System.IntPtr.Zero, false});
+  // FbxSkin ss = a as FbxSkin;
 /*
  * Import a bunch of typedefs and macros, so that SWIG can parse FBX files.
  */
@@ -219,6 +264,12 @@
  ***************************************************************************/
 %reveal_all_end;
 
+%typemap(csout, excode=SWIGEXCODE) FbxDeformer*, FbxSkin*, FbxObject* {
+  System.IntPtr cPtr = $imcall;
+  $csclassname ret = ($csclassname) NativeMethods.Realtype(cPtr, $owner);$excode;
+  return ret;
+}
+
 /* Core classes */
 %include "fbxmath.i"
 %include "fbxmanager.i"
@@ -231,6 +282,7 @@
 %include "fbxquaternion.i"
 %include "fbxprogress.i"
 %include "fbxtransforms.i"
+%include "fbxclassid.i"
 
 /* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"
