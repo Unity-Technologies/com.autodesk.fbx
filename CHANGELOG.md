@@ -12,9 +12,9 @@ BUGFIXES
 * The FBX SDK C# Bindings package now supports the IL2CPP backend.
 
 KNOW ISSUES
-* The FBX SDK C# Bindings package cannot the used on Linux CentOS 7
+* For Linux support use Ubuntu 18.04 (Bionic Beaver). The FBX SDK C# Bindings package is not compatible with CentOS 7.
 
-## [2.0.0-preview.3] - 2018.01-03
+## [2.0.0-preview.3] - 2018-12-03
 
 CHANGES
 * Updated documentation
