@@ -21,8 +21,8 @@
  * this. */
 %rename("GetClassIdInfo") FbxClassId::GetClassIdInt;
 %extend FbxClassId {
-  FbxObject* GetClassIdInt() {
-    return (FbxObject*)$self->GetClassIdInfo();
+  intptr_t GetClassIdInt() {
+    return (intptr_t)$self->GetClassIdInfo();
   }
 }
 
