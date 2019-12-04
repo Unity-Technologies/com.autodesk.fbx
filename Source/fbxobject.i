@@ -29,6 +29,8 @@
 %rename("%s") FbxObject::GetFbxManager;
 %rename("%s") FbxObject::GetScene;
 
+%rename("%s") FbxObject::GetRuntimeClassId;
+
 /* Properties */
 %rename("%s") FbxObject::GetFirstProperty() const;
 %rename("%s") FbxObject::GetNextProperty(const FbxProperty& pProperty) const;
