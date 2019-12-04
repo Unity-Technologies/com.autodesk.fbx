@@ -29,6 +29,23 @@
 %rename("%s") IMP_FBX_ANIMATION;
 %rename("%s") IMP_FBX_GLOBAL_SETTINGS;
 %rename("%s") IMP_FBX_EXTRACT_EMBEDDED_DATA;
+%rename("%s") IMP_FBX_AUDIO;
+%rename("%s") IMP_FBX_CHARACTER;
+%rename("%s") IMP_FBX_POLYGROUP;
+%rename("%s") IMP_FBX_USERDATA;
+%rename("%s") IMP_FBX_EDGECREASE;
+%rename("%s") IMP_FBX_VERTEXCREASE;
+%rename("%s") IMP_FBX_HOLE;
+%rename("%s") IMP_FBX_SHAPE;
+%rename("%s") IMP_FBX_NORMAL;
+%rename("%s") IMP_FBX_BINORMAL;
+%rename("%s") IMP_FBX_TANGENT;
+%rename("%s") IMP_FBX_VISIBILITY;
+%rename("%s") IMP_FBX_CONSTRAINT;
+%rename("%s") IMP_FBX_LINK;
+%rename("%s") IMP_FBX_CALCULATE_LEGACY_SHAPE_NORMAL;
+%rename("%s") IMP_CACHE_SIZE;
+%rename("%s") IMP_RELAXED_FBX_CHECK;
 
 %include "fbxsdk/fileio/fbxiosettingspath.h"
 

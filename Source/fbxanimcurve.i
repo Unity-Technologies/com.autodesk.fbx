@@ -47,6 +47,12 @@
 %rename("%s") FbxAnimCurveKey::SetBreak;
 %rename("%s") FbxAnimCurveKey::GetBreak;
 
+%rename("%s") FbxAnimCurveKey::GetTime;
+%rename("%s") FbxAnimCurveKey::GetInterpolation;
+%rename("%s") FbxAnimCurveKey::GetValue;
+%rename("%s") FbxAnimCurveKey::GetConstantMode;
+
+
 %rename("%s") FbxAnimCurve::KeyGet;
 
 %apply int* INOUT {int* pLast};
@@ -99,6 +105,8 @@
 %rename("%s") FbxAnimCurveDef::EDataIndex;
 %rename("%s") FbxAnimCurveDef::ETangentVisibility;
 %rename("%s") FbxAnimCurveDef::EVelocityMode;
+%rename("%s") FbxAnimCurveDef::EConstantMode;
+
 %fbximmutable(FbxAnimCurveDef::sDEFAULT_WEIGHT);
 %fbximmutable(FbxAnimCurveDef::sDEFAULT_VELOCITY);
 %fbximmutable(FbxAnimCurveDef::sMIN_WEIGHT);

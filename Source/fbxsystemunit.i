@@ -28,6 +28,7 @@
 %rename("%s") FbxSystemUnit::ConversionOptions;
 %rename("%s") FbxSystemUnit::ConversionOptions::ConversionOptions;
 %rename("%s") FbxSystemUnit::ConversionOptions::~ConversionOptions;
+%rename("%s") FbxSystemUnit::ConversionOptions::mConvertRrsNodes;
 #endif
 
 /* Define equality and hash code. */
