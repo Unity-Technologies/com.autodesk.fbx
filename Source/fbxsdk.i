@@ -205,7 +205,7 @@
 #endif
 
   // Dictionary to cache the creator functions
-  static System.Collections.Generic.Dictionary<System.IntPtr, System.Reflection.ConstructorInfo> downcast_dict = new System.Collections.Generic.Dictionary<System.IntPtr, System.Reflection.ConstructorInfo>();
+  static System.Collections.Generic.Dictionary<System.IntPtr, System.Func<System.IntPtr, bool, FbxObject>> downcast_dict = new System.Collections.Generic.Dictionary<System.IntPtr, System.Func<System.IntPtr, bool, FbxObject>>();  
   // argument descriptions used for binding the constructor
   static readonly System.Linq.Expressions.ParameterExpression arg0 = System.Linq.Expressions.Expression.Parameter(typeof(System.IntPtr), "cPtr");
   static readonly System.Linq.Expressions.ParameterExpression arg1 = System.Linq.Expressions.Expression.Parameter(typeof(bool), "ignored");
@@ -226,6 +226,17 @@
       FbxClassId id = new FbxClassId(NativeMethods.FbxObject_GetRuntimeClassId(new System.Runtime.InteropServices.HandleRef(null, cPtr)), false);
       // Get the type, using the qualified name
       System.Type t = typeof(FbxObject).Assembly.GetType($"Autodesk.Fbx.{id.GetName()}");
+      UnityEngine.Debug.Log(id.GetName());
+      // TODO:: investigate: When running UseCaseTests.AnimatedConstraintExportTest, there is a failure
+      // when retrieving a constraint in an imported scene. Seems like there are extra types created.
+      // The same will apply to types derived by users of FBX#, as we only search in this assembly.
+      // For now, find the nearest Fbx type in this assembly.
+      // FIXME:: this may clobber the constructor entry
+      while (t == null)
+      {
+        id = id.GetParent();
+        t = typeof(FbxObject).Assembly.GetType($"Autodesk.Fbx.{id.GetName()}");
+      }
       // Get the the constructor (thank Gods SWIG always uses the same same for arguments)
       System.Reflection.ConstructorInfo cinfo = t.GetConstructors(System.Reflection.BindingFlags.NonPublic 
       | System.Reflection.BindingFlags.Public

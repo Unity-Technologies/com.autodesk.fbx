@@ -13,6 +13,7 @@
 %rename("%s") FbxClassId::Is;
 %rename("%s") FbxClassId::GetName;
 %rename("%s") FbxClassId::IsValid;
+%rename("%s") FbxClassId::GetParent;
 
 // %rename("%s") FbxClassId::GetClassIdInfo;
 /* Getting the matrix; C# would usually return it, not stuff an out reference.
