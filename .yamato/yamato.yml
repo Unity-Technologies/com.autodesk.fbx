@@ -162,6 +162,7 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
     packages:
       paths:
         - "upm-ci~/packages/**"
+        - "com.autodesk.fbx/**"
     logs:
       paths:
         - "upm-ci~/test-results/**/*"
