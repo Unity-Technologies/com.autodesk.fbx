@@ -44,7 +44,7 @@ win_platform:
   image: package-ci/win10:stable
   flavor: b1.medium
 platforms:
-  - name: macl
+  - name: mac
     type: Unity::VM::osx
     image: buildfarm/mac:stable
     flavor: m1.mac
@@ -214,7 +214,7 @@ publish:
     - .yamato/yamato.yml#promotion_test
 {% for editor in editors %}
 {% for platform in platforms %}
-    - .yamato/yamato.yml#test_{{platform.name}}_{{editor.version}}
+    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}
 {% endfor %}
 {% endfor %}
 
