@@ -211,6 +211,7 @@ publish:
     packages:
       paths:
         - "upm-ci~/packages/**"
+        - "com.autodesk.fbx/**"
   dependencies:
     - .yamato/yamato.yml#promotion_test
 {% for editor in editors %}
