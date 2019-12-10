@@ -15,16 +15,6 @@
 %rename("%s") FbxClassId::IsValid;
 %rename("%s") FbxClassId::GetParent;
 
-// %rename("%s") FbxClassId::GetClassIdInfo;
-/* Getting the matrix; C# would usually return it, not stuff an out reference.
- * If there's performance issues, we can %apply the OUTPUT instead of ignoring
- * this. */
-%rename("GetClassIdInfo") FbxClassId::GetClassIdInt;
-%extend FbxClassId {
-  intptr_t GetClassIdInt() {
-    return (intptr_t)$self->GetClassIdInfo();
-  }
-}
 
 // also IS, getName, and others.
 %include "fbxsdk/core/fbxclassid.h"

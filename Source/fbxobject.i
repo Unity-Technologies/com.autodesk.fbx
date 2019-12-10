@@ -74,6 +74,16 @@
 %rename("%s") FbxObject::GetDefaultImplementation;
 %rename("%s") FbxObject::SetDefaultImplementation;
 
+%rename("%s") FbxObject::GetClassId;
+%rename("%s") FbxObject::GetClassIdPtr;
+%apply void *VOID_INT_PTR { void * }
+%extend FbxObject {
+  void* GetClassIdPtr ()
+  {
+    return (void*)&($self->GetClassId());
+  }
+}
+
 %extend FbxObject {
   %proxycode %{
   public override string ToString() {
@@ -84,6 +94,6 @@
     return string.Format("{0}({1})", name, GetType().Name);
   }
   %}
+  
 }
-
 %include "fbxsdk/core/fbxobject.h"
