@@ -106,6 +106,8 @@
 %include "FbxSharpObjectLifetime.i"
 #ifndef SWIG_GENERATING_TYPEDEFS
   %include "weakpointerhandles.i"
+  /*Downcast table information is generated at the same time as the weakpointer*/
+  %include "downcast_table.i" 
 #endif
 
 /*
@@ -189,10 +191,6 @@
 
 %}
 
-  // FbxClassId id = o.GetRuntimeClassId();
-  // // FbxObject ss = id.Create(Manager, "sdkfklsd", o);
-  // var a = System.Activator.CreateInstance(s.GetType(), new object[] {System.IntPtr.Zero, false});
-  // FbxSkin ss = a as FbxSkin;
 /*
  * Import a bunch of typedefs and macros, so that SWIG can parse FBX files.
  */
