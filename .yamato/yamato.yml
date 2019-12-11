@@ -206,8 +206,6 @@ publish:
     flavor: b1.medium
   commands:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
-    - ls -lah .
-    - ls -lah com.autodesk.fbx
     - upm-ci package publish --package-path com.autodesk.fbx
   artifacts:
     packages:
