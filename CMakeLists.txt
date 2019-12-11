@@ -229,6 +229,13 @@ fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/weakpointerhandles.i
         TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
         ARGS ${CMAKE_BINARY_DIR}/weakpointerhandles.i ${CMAKE_BINARY_DIR}/fbxsdk.typedefs "FbxEmitter" "FbxManager")
 
+# Find all children of FbxObject to generate the downcast method to enable the
+# downcast of FbxObjects on the C# side
+fbxsharp_run_python(OUTPUT ${CMAKE_BINARY_DIR}/downcast_table.i
+        SCRIPT ${CMAKE_SOURCE_DIR}/scripts/generate-downcast-table.py
+        DEPENDS ${CMAKE_BINARY_DIR}/fbxsdk.typedefs
+        TARGETDEPS SWIG_MODULE_UnityFbxSdkNative_EXTRA_DEPS
+        ARGS ${CMAKE_BINARY_DIR}/downcast_table.i ${CMAKE_BINARY_DIR}/fbxsdk.typedefs)
 
 # Finalize the swig output: build & link the library, munge the DllImport statements
 SET(CMAKE_SWIG_OUTDIR ${CMAKE_BINARY_DIR}/swig/generated/csharp)
