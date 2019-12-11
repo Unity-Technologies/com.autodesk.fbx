@@ -202,7 +202,7 @@ publish:
   name: Publish to Internal Registry
   agent:
     type: Unity::VM::osx
-    image: package-ci/osx:stable
+    image: package-ci/mac:stable
     flavor: m1.mac
   commands:
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
