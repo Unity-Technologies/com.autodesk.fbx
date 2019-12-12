@@ -172,7 +172,7 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
         - "upm-ci~/test-results/**/*"
     build_output:
       paths:
-        - ""
+        - "com.autodesk.fbx"
   dependencies:
     - .yamato/yamato.yml#pack
 {% endfor %}
