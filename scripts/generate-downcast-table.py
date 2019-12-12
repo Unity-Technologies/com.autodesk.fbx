@@ -63,6 +63,20 @@ for cls in baseclasses:
     if rootclass in baseclasses[cls]:
         handleclasses.add(cls)
 
+leafclasses = set()
+allbases = []
+# for klass in handleclasses:
+# import pprint as pp
+for klass in handleclasses:
+    allbases += baseclasses[klass]
+allbases = set(allbases)
+for klass in handleclasses:
+    if klass not in allbases:
+        leafclasses.add(klass)
+nonleafclasses = handleclasses - leafclasses
+
+
+
 statement_start = """
 private static System.Collections.Generic.Dictionary<System.IntPtr, int> ptrToIndexDict = new System.Collections.Generic.Dictionary<System.IntPtr, int>();
 public static FbxObject Realtype (System.IntPtr cPtr, bool ignored)
@@ -91,6 +105,14 @@ statement_end = """
 }
 """
 
+typemap_template = """
+%typemap(csout, excode=SWIGEXCODE) {} {{
+  System.IntPtr cPtr = $imcall;
+  $csclassname ret = ($csclassname) NativeMethods.Realtype(cPtr, $owner);$excode;
+  return ret;
+}}
+"""
+
 body_statements = [statement_body_template.format(klass, klass) for klass in handleclasses]
 constructor_func = statement_start + ''.join(body_statements) + statement_end
 
@@ -100,5 +122,8 @@ with open(output_filename, 'w') as outfile:
     outfile.write("%pragma(csharp) imclasscode=%{\n")
     outfile.write(constructor_func)
     outfile.write("%}\n")
+    # the last type in the list also needs the pointer type qualifier
+    typemap_list = "*, \n".join(nonleafclasses) + '*'
+    outfile.write(typemap_template.format(typemap_list))
 
 print("Generated downcast table for {} classes.".format(len(handleclasses)))
