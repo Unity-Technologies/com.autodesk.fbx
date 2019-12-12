@@ -136,10 +136,7 @@ pack:
         - "upm-ci~/packages/**"
     build_output:
       paths:
-        - "com.autodesk.fbx"
-    build_output_promotion:
-      paths:
-        - "com.autodesk.fbx"
+        - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
 {% for backend in backends %}
@@ -170,9 +167,6 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
     logs:
       paths:
         - "upm-ci~/test-results/**/*"
-    build_output:
-      paths:
-        - "com.autodesk.fbx"
   dependencies:
     - .yamato/yamato.yml#pack
 {% endfor %}
@@ -220,11 +214,9 @@ publish:
     packages:
       paths:
         - "upm-ci~/packages/**"
-    build_output_promotion:
-      paths:
-        - "com.autodesk.fbx"
   dependencies:
     - .yamato/yamato.yml#promotion_test
+    - .yamato/yamato.yml#pack
 {% for editor in editors %}
 {% for platform in platforms %}
 {% for backend in backends %}
@@ -248,8 +240,6 @@ promote:
     packages:
       paths:
         - "upm-ci~/packages/**"
-    build_output_promotion:
-      paths:
-        - "com.autodesk.fbx"
   dependencies:
+    - .yamato/yamato.yml#pack
     - .yamato/yamato.yml#publish
