@@ -134,7 +134,6 @@ pack:
     packages:
       paths:
         - "upm-ci~/packages/**"
-        - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
 {% for backend in backends %}
@@ -162,7 +161,6 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
     packages:
       paths:
         - "upm-ci~/packages/**"
-        - "com.autodesk.fbx/**"
     logs:
       paths:
         - "upm-ci~/test-results/**/*"
@@ -213,7 +211,6 @@ publish:
     packages:
       paths:
         - "upm-ci~/packages/**"
-        - "com.autodesk.fbx/**"
   dependencies:
     - .yamato/yamato.yml#promotion_test
 {% for editor in editors %}
