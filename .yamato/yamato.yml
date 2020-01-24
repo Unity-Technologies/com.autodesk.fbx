@@ -44,7 +44,7 @@ win_platform:
   image: package-ci/win10:stable
   flavor: b1.medium
 platforms:
-  - name: macl
+  - name: mac
     type: Unity::VM::osx
     image: buildfarm/mac:stable
     flavor: m1.mac
@@ -134,6 +134,8 @@ pack:
     packages:
       paths:
         - "upm-ci~/packages/**"
+    build_output:
+      paths:
         - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
@@ -202,8 +204,10 @@ publish:
   agent:
     type: Unity::VM
     image: package-ci/win10:stable
-    flavor: b1.small
+    flavor: b1.medium
   commands:
+    - dir /A 
+    - dir /A com.autodesk.fbx
     - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
     - upm-ci package publish --package-path com.autodesk.fbx
   artifacts:
@@ -212,9 +216,12 @@ publish:
         - "upm-ci~/packages/**"
   dependencies:
     - .yamato/yamato.yml#promotion_test
+    - .yamato/yamato.yml#pack
 {% for editor in editors %}
 {% for platform in platforms %}
-    - .yamato/yamato.yml#test_{{platform.name}}_{{editor.version}}
+{% for backend in backends %}
+    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}
+{% endfor %}
 {% endfor %}
 {% endfor %}
 
@@ -234,4 +241,5 @@ promote:
       paths:
         - "upm-ci~/packages/**"
   dependencies:
+    - .yamato/yamato.yml#pack
     - .yamato/yamato.yml#publish
