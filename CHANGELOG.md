@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [3.0.1-preview.1] - 2020-03-25
+## [3.0.1-preview.1] - 2020-03-31
 
 BUGFIXES
 * Fix incorrect DLL path used when calling functions, giving DLL not found errors.
