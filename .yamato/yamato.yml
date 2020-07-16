@@ -119,7 +119,7 @@ pack:
     - mv -v build-ubuntu/install/* .
     - cp -vrfp build-mac/install/* .
     - cp -vrfp build-win/install/* .
-    - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package pack --package-path com.autodesk.fbx
   dependencies:
     - .yamato/yamato.yml#build_win
@@ -152,7 +152,7 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
     DISPLAY: ":0"
 {% endif %}
   commands:
-    - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package test --backend {{ backend.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx
     - echo "****** PASSED {{ backend.name }} backend *******"
   triggers:
@@ -182,7 +182,7 @@ promotion_test:
   variables:
     UPMCI_PROMOTION: 1
   commands:
-    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package test --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx
   triggers:
     pull_requests:
@@ -208,7 +208,7 @@ publish:
   commands:
     - dir /A 
     - dir /A com.autodesk.fbx
-    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package publish --package-path com.autodesk.fbx
   artifacts:
     packages:
@@ -234,7 +234,7 @@ promote:
   variables:
     UPMCI_PROMOTION: 1
   commands:
-    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package promote --package-path com.autodesk.fbx
   artifacts:
     packages:
