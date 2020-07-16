@@ -46,7 +46,9 @@ config_args = [
     '..', # because the working directory is the "build" directory, go back
     '-DCMAKE_SOURCE_DIR={}'.format(curdir),
     '-DCMAKE_BUILD_TYPE={}'.format(args.build_type), 
-    '-DCMAKE_INSTALL_PREFIX={}'.format(os.path.join(builddir, 'install'))
+    '-DCMAKE_INSTALL_PREFIX={}'.format(os.path.join(builddir, 'install')),
+    '--debug-output',
+    '-Wdev'
     ]
 
 # Where to find swig if not standard install
