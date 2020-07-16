@@ -88,7 +88,7 @@ build_mac:
     flavor: {{ mac_platform.flavor}}
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
-    - brew list p7zip 
+    - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list mono || brew install mono
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
   artifacts:
