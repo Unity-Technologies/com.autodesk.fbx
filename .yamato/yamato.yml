@@ -58,7 +58,7 @@ platforms:
     image: package-ci/win10:stable
     flavor: b1.medium
 promote_platform:
-  version: 2019.3
+  version: 2019.4
   name: win
   type: Unity::VM
   image: package-ci/win10:stable
