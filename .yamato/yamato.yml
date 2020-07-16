@@ -24,7 +24,8 @@
 # change one, change both! (Hopefully yamato handles this soon)
 #
 editors:
-  - version: 2019.3
+  - version: 2019.4
+  - version: 2020.1
 backends:
   - name: mono
   - name: il2cpp
