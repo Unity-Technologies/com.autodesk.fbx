@@ -48,6 +48,7 @@ config_args = [
     '-DCMAKE_BUILD_TYPE={}'.format(args.build_type), 
     '-DCMAKE_INSTALL_PREFIX={}'.format(os.path.join(builddir, 'install')),
     '--debug-output',
+    '--trace-expand'
     '-Wdev'
     ]
 
