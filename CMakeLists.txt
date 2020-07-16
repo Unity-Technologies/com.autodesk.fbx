@@ -70,7 +70,7 @@ if (${USE_STEVEDORE} STREQUAL "ON")
         set(swig_executable_name swig.exe)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         set(fbxsdk_artifact_name fbxsdk-linux-x64)
-        set(fbxsdk_artifact_id /2020.1_54995de9b1603fac0a018fbb7fb962d81f45b20aabf35ba846a2e498b14795e4.7z)
+        set(fbxsdk_artifact_id 2020.1_54995de9b1603fac0a018fbb7fb962d81f45b20aabf35ba846a2e498b14795e4.7z)
 
         set(swig_artifact_name swig-linux-x64)
         set(swig_artifact_id 3.0.12_f3f14d565afd0ec44d3d77298f708f41bd12ef1fa209a1535226cf3e30a5f15b.7z)
