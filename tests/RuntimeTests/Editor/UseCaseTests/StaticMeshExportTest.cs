@@ -62,6 +62,28 @@ namespace Autodesk.Fbx.UseCaseTests
                 cubeMesh.SetControlPointAt (m_controlPoints [i], i);
             }
 
+            int[] vertices = 
+            { 
+                0, 1, 2, 3,
+                4, 5, 6, 7,
+                8, 9, 10, 11,
+                12, 13, 14, 15,
+                16, 17, 18, 19,
+                20, 21, 22, 23 
+            };
+
+            for (int i = 0; i < 6; i++)
+            {
+                cubeMesh.BeginPolygon(-1, -1, 0);
+                for (int j = 0; j < 4; j++)
+                {
+                    //this function points 
+                    cubeMesh.AddPolygon(vertices[i * 4 + j]);
+                }
+
+                cubeMesh.EndPolygon();
+            }
+
             return scene;
         }
 
@@ -200,9 +222,9 @@ namespace Autodesk.Fbx.UseCaseTests
 
                 // For each face index, point to a texture uv
                 FbxLayerElementArray fbxIndexArray = fbxLayerElement.GetIndexArray ();
-                fbxIndexArray.SetCount (12);
+                fbxIndexArray.SetCount (24);
 
-                for (int vertIndex = 0; vertIndex < 12; vertIndex++)
+                for (int vertIndex = 0; vertIndex < 24; vertIndex++)
                 {
                     fbxIndexArray.SetAt (vertIndex, vertIndex % 8); // TODO: switch to correct values
                 }
@@ -341,9 +363,9 @@ namespace Autodesk.Fbx.UseCaseTests
 
                 // For each face index, point to a texture uv
                 FbxLayerElementArray fbxIndexArray = fbxLayerElement.GetIndexArray ();
-                fbxIndexArray.SetCount (12);
+                fbxIndexArray.SetCount (24);
 
-                for (int vertIndex = 0; vertIndex < 12; vertIndex++)
+                for (int vertIndex = 0; vertIndex < 24; vertIndex++)
                 {
                     fbxIndexArray.SetAt (vertIndex, vertIndex % 8); // TODO: switch to correct values
                 }
