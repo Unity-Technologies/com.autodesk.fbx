@@ -1,5 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
+## [3.1.0-preview.1] - 2020-07-17
+
+CHANGES
+* Upgraded to FBX SDK 2020.0
+
 ## [3.0.1-preview.1] - 2020-03-31
 
 BUGFIXES
