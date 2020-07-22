@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [3.1.0-preview.1] - 2020-07-21
+## [3.1.0-preview.2] - 2020-07-21
 
 CHANGES
 * ERRATA: The "Upgraded to FBX SDK 2020.0" entry in the previous version should have been "Upgraded to FBX SDK 2020.1".
