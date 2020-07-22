@@ -62,6 +62,7 @@ namespace Autodesk.Fbx.UseCaseTests
                 cubeMesh.SetControlPointAt (m_controlPoints [i], i);
             }
 
+            // A cube: 6 polygons with 4 vertices each
             int[] vertices = 
             { 
                 0, 1, 2, 3,
@@ -74,10 +75,9 @@ namespace Autodesk.Fbx.UseCaseTests
 
             for (int i = 0; i < 6; i++)
             {
-                cubeMesh.BeginPolygon(-1, -1, 0);
+                cubeMesh.BeginPolygon(pGroup: -1);
                 for (int j = 0; j < 4; j++)
                 {
-                    //this function points 
                     cubeMesh.AddPolygon(vertices[i * 4 + j]);
                 }
 

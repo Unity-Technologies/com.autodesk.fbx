@@ -137,7 +137,6 @@ namespace Autodesk.Fbx.UseCaseTests
             Assert.AreEqual (origLight.FileName.Get (), importLight.FileName.Get ());
             Assert.AreEqual (origLight.DrawGroundProjection.Get (), importLight.DrawGroundProjection.Get ());
             Assert.AreEqual (origLight.DrawVolumetricLight.Get (), importLight.DrawVolumetricLight.Get ());
-            //                                                                                                                   0.0099999997764825821
             Assert.That (origLight.DrawFrontFacingVolumetricLight.Get (), Is.EqualTo(importLight.DrawFrontFacingVolumetricLight.Get ()).Within(2).Ulps);
             Assert.AreEqual (origLight.Intensity.Get (), importLight.Intensity.Get ());
             Assert.That (origLight.FarAttenuationStart.Get (), Is.EqualTo(importLight.FarAttenuationStart.Get ()).Within(2).Ulps);
