@@ -144,6 +144,8 @@ pack:
 {% for editor in editors %}
 {% for backend in backends %}
 {% for platform in platforms %}
+# There is no IL2CPP on Ubuntu before 2019.3
+{% unless platform.name == "ubuntu" and editor.version == 2018.4 and backend.name == "il2cpp" %}
 test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
   name : Test version {{ editor.version }} {{ backend.name }} on {{ platform.name }}
   agent:
@@ -172,6 +174,7 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
         - "upm-ci~/test-results/**/*"
   dependencies:
     - .yamato/yamato.yml#pack
+{% endunless %}
 {% endfor %}
 {% endfor %}
 {% endfor %}
@@ -223,7 +226,10 @@ publish:
 {% for editor in editors %}
 {% for platform in platforms %}
 {% for backend in backends %}
+# There is no IL2CPP on Ubuntu before 2019.3
+{% unless platform.name == "ubuntu" and editor.version == 2018.4 and backend.name == "il2cpp" %}
     - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}
+{% endunless %}
 {% endfor %}
 {% endfor %}
 {% endfor %}
