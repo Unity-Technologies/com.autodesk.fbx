@@ -24,14 +24,16 @@
 # change one, change both! (Hopefully yamato handles this soon)
 #
 editors:
-  - version: 2019.3
+  - version: 2018.4
+  - version: 2019.4
+  - version: 2020.1
 backends:
   - name: mono
   - name: il2cpp
 mac_platform:
   name: mac
   type: Unity::VM::osx
-  image: buildfarm/mac:stable
+  image: package-ci/mac:stable
   flavor: m1.mac
 ubuntu_platform:
   name: ubuntu
@@ -46,7 +48,7 @@ win_platform:
 platforms:
   - name: mac
     type: Unity::VM::osx
-    image: buildfarm/mac:stable
+    image: package-ci/mac:stable
     flavor: m1.mac
   - name: ubuntu
     type: Unity::VM
@@ -57,7 +59,7 @@ platforms:
     image: package-ci/win10:stable
     flavor: b1.medium
 promote_platform:
-  version: 2019.3
+  version: 2019.4
   name: win
   type: Unity::VM
   image: package-ci/win10:stable
@@ -87,6 +89,7 @@ build_mac:
     flavor: {{ mac_platform.flavor}}
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
+    - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list mono || brew install mono
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
   artifacts:
@@ -119,7 +122,7 @@ pack:
     - mv -v build-ubuntu/install/* .
     - cp -vrfp build-mac/install/* .
     - cp -vrfp build-win/install/* .
-    - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package pack --package-path com.autodesk.fbx
   dependencies:
     - .yamato/yamato.yml#build_win
@@ -141,6 +144,8 @@ pack:
 {% for editor in editors %}
 {% for backend in backends %}
 {% for platform in platforms %}
+# There is no IL2CPP on Ubuntu before 2019.3
+{% unless platform.name == "ubuntu" and editor.version == 2018.4 and backend.name == "il2cpp" %}
 test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
   name : Test version {{ editor.version }} {{ backend.name }} on {{ platform.name }}
   agent:
@@ -152,7 +157,7 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
     DISPLAY: ":0"
 {% endif %}
   commands:
-    - npm install -g upm-ci-utils@stable --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package test --backend {{ backend.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx
     - echo "****** PASSED {{ backend.name }} backend *******"
   triggers:
@@ -169,6 +174,7 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
         - "upm-ci~/test-results/**/*"
   dependencies:
     - .yamato/yamato.yml#pack
+{% endunless %}
 {% endfor %}
 {% endfor %}
 {% endfor %}
@@ -182,7 +188,7 @@ promotion_test:
   variables:
     UPMCI_PROMOTION: 1
   commands:
-    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package test --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx
   triggers:
     pull_requests:
@@ -208,7 +214,7 @@ publish:
   commands:
     - dir /A 
     - dir /A com.autodesk.fbx
-    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package publish --package-path com.autodesk.fbx
   artifacts:
     packages:
@@ -220,7 +226,10 @@ publish:
 {% for editor in editors %}
 {% for platform in platforms %}
 {% for backend in backends %}
+# There is no IL2CPP on Ubuntu before 2019.3
+{% unless platform.name == "ubuntu" and editor.version == 2018.4 and backend.name == "il2cpp" %}
     - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}
+{% endunless %}
 {% endfor %}
 {% endfor %}
 {% endfor %}
@@ -234,7 +243,7 @@ promote:
   variables:
     UPMCI_PROMOTION: 1
   commands:
-    - npm install upm-ci-utils@stable -g --registry https://api.bintray.com/npm/unity/unity-npm
+    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package promote --package-path com.autodesk.fbx
   artifacts:
     packages:
