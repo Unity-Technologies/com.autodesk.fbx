@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if FBXSDK_RUNTIME
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using System.IO;
@@ -19,7 +20,7 @@ namespace Autodesk.Fbx
 
         private const string buildPluginPathWin = "{0}_Data/Plugins";
         private const string buildPluginPathOSX = "{0}.app/Contents/Plugins";
-        private const string buildPluginPathLinux = "";
+        private const string buildPluginPathLinux = "{0}_Data/Plugins";
 
         [PostProcessBuild(1)]
         public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
@@ -28,20 +29,28 @@ namespace Autodesk.Fbx
 
             string destPath = null;
             string sourcePath = null;
+            string sourcePathExt = null;
             switch (target)
             {
                 case BuildTarget.StandaloneWindows64:
                     destPath = string.Format(buildPluginPathWin, buildPathWithoutExt);
-                    sourcePath = Path.Combine(fbxsdkNativePluginPath, fbxsdkNativePlugin + fbxsdkNativePluginExtWin);
+                    sourcePathExt = fbxsdkNativePluginExtWin;
                     break;
                 case BuildTarget.StandaloneOSX:
                     destPath = string.Format(buildPluginPathOSX, buildPathWithoutExt);
                     // Since the bundle is technically a folder and not a file, need to copy the contents of the bundle
                     destPath = Path.Combine(destPath, fbxsdkNativePlugin + fbxsdkNativePluginExtOSX);
-                    sourcePath = Path.Combine(fbxsdkNativePluginPath, fbxsdkNativePlugin + fbxsdkNativePluginExtOSX);
+                    sourcePathExt = fbxsdkNativePluginExtOSX;
                     break;
                 case BuildTarget.StandaloneLinux64:
+                    destPath = string.Format(buildPluginPathLinux, buildPathWithoutExt);
+                    sourcePathExt = fbxsdkNativePluginExtLinux;
                     break;
+            }
+
+            if (!string.IsNullOrEmpty(sourcePathExt))
+            {
+                sourcePath = Path.Combine(fbxsdkNativePluginPath, fbxsdkNativePlugin + sourcePathExt);
             }
 
             if (string.IsNullOrEmpty(destPath) || string.IsNullOrEmpty(sourcePath))
@@ -108,3 +117,4 @@ namespace Autodesk.Fbx
         }
     }
 }
+#endif // FBXSDK_RUNTIME
