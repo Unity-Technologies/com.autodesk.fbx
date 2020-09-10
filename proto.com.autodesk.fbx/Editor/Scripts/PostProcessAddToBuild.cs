@@ -73,6 +73,7 @@ namespace Autodesk.Fbx
                 DirectoryCopy(sourcePath, destPath, true);
             }
             else {
+                destPath = Path.Combine(destPath, fbxsdkNativePlugin + sourcePathExt);
                 File.Copy(sourcePath, destPath);
             }
         }
