@@ -1,15 +1,15 @@
 {
-    "name": "PlayModeTests",
+    "name": "FbxBuildTests",
     "references": [
         "Autodesk.Fbx"
+    ],
+    "includePlatforms": [
+        "Editor"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "defineConstraints": [
-        "!FBX_RUNNING_BUILD_TEST"
-    ],
     "allowUnsafeCode": false
 }
