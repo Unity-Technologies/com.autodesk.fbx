@@ -5,6 +5,7 @@ using NUnit.Framework;
 using UnityEditor.Build.Reporting;
 using System.IO;
 using UnityEngine.TestTools;
+using System.Diagnostics;
 
 namespace Autodesk.Fbx.BuildTests
 {
@@ -29,6 +30,8 @@ namespace Autodesk.Fbx.BuildTests
         private const BuildTarget k_buildTarget = BuildTarget.StandaloneLinux64;
         private const string k_autodeskDllInstallPath = "Managed";
 #endif
+
+        private const string k_buildTestScene = "Packages/com.autodesk.fbx/Tests/Editor/BuildTestAssets/BuildTestScene.unity";
 
         private const string k_runningBuildSymbol = "FBX_RUNNING_BUILD_TEST";
 
@@ -73,6 +76,7 @@ namespace Autodesk.Fbx.BuildTests
             options.locationPathName = Path.Combine(BuildFolder, k_buildName);
             options.target = k_buildTarget;
             options.targetGroup = BuildTargetGroup.Standalone;
+            options.scenes = new string[] { k_buildTestScene };
 
             var report = BuildPipeline.BuildPlayer(options);
 
@@ -158,6 +162,22 @@ namespace Autodesk.Fbx.BuildTests
             {
                 Assert.That(fileInfo.Length, Is.LessThan(expectedDllFileSize));
             }
+
+            var buildPath = report.summary.outputPath;
+            Process p = new Process();
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            p.StartInfo.FileName = buildPath;
+            p.StartInfo.UseShellExecute = false;
+            p.Start();
+
+            p.WaitForExit();
+
+            // Check that the FBX was created
+            var buildPluginFbxPath = Path.Combine(
+                    string.Format(k_buildPluginPath, buildPathWithoutExt),
+                    "emptySceneFromRuntime.fbx"
+                );
+            Assert.That(File.Exists(buildPluginFbxPath), constraint);
         }
     }
 }

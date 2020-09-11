@@ -1,0 +1,14 @@
+{
+    "name": "FbxBuildTestAssets",
+    "references": [
+        "Autodesk.Fbx"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
