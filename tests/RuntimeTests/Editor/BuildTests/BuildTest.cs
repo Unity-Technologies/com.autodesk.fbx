@@ -17,14 +17,17 @@ namespace Autodesk.Fbx.BuildTests
         private const string k_fbxsdkNativePluginExt = ".dll";
         private const string k_buildPluginPath = "{0}_Data";
         private const BuildTarget k_buildTarget = BuildTarget.StandaloneWindows64;
+        private const string k_autodeskDllInstallPath = "Managed";
 #elif UNITY_EDITOR_OSX
         private const string k_fbxsdkNativePluginExt = ".bundle";
         private const string k_buildPluginPath = "{0}.app/Contents";
         private const BuildTarget k_buildTarget = BuildTarget.StandaloneOSX;
+        private const string k_autodeskDllInstallPath = "Resources/Data/Managed";
 #else // UNITY_EDITOR_LINUX
         private const string k_fbxsdkNativePluginExt = ".so";
         private const string k_buildPluginPath = "{0}_Data";
         private const BuildTarget k_buildTarget = BuildTarget.StandaloneLinux64;
+        private const string k_autodeskDllInstallPath = "Managed";
 #endif
 
         private const string k_runningBuildSymbol = "FBX_RUNNING_BUILD_TEST";
@@ -137,12 +140,24 @@ namespace Autodesk.Fbx.BuildTests
             // check the size of Autodesk.Fbx.dll
             var autodeskDllFullPath = Path.Combine(
                     string.Format(k_buildPluginPath, buildPathWithoutExt),
-                    "Managed",
+                    k_autodeskDllInstallPath,
                     k_autodeskFbxDll
                 );
             Assert.That(File.Exists(autodeskDllFullPath), Is.True);
             var fileInfo = new FileInfo(autodeskDllFullPath);
-            Debug.Log("Autodesk DLL file size: " + fileInfo.Length);
+
+            // If the FBX SDK is copied over at runtime, the DLL filesize will
+            // be ~350,000. If it isn't copied over it will be ~3500.
+            // Putting the expected size as 10000 to allow for some buffer room.
+            var expectedDllFileSize = 10000;
+            if (dllExists)
+            {
+                Assert.That(fileInfo.Length, Is.GreaterThan(expectedDllFileSize));
+            }
+            else
+            {
+                Assert.That(fileInfo.Length, Is.LessThan(expectedDllFileSize));
+            }
         }
     }
 }
