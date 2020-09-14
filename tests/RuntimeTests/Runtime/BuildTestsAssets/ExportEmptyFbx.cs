@@ -12,7 +12,7 @@ namespace Autodesk.Fbx.BuildTests
             // Build the fbx scene file path 
             // (player/player_data/emptySceneFromRuntime.fbx)
             string fbxFilePath = Application.dataPath;
-            fbxFilePath = Path.Combine(fbxFilePath, "emptySceneFromRuntime.fbx");
+            fbxFilePath = Path.Combine(fbxFilePath, "emptySceneFromRuntimeBuild.fbx");
             fbxFilePath = Path.GetFullPath(fbxFilePath);
 
             Debug.Log(string.Format("The file that will be written is {0}", fbxFilePath));

@@ -64,8 +64,6 @@ namespace Autodesk.Fbx
                 Directory.CreateDirectory(destPath);
             }
 
-            UnityEngine.Debug.LogFormat("copying {0} to {1}", sourcePath, destPath);
-
             if (target == BuildTarget.StandaloneOSX)
             {
                 // bundle is technically a folder and gives an error

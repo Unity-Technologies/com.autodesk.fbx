@@ -30,12 +30,15 @@ namespace Autodesk.Fbx.BuildTests
         private const BuildTarget k_buildTarget = BuildTarget.StandaloneLinux64;
         private const string k_autodeskDllInstallPath = "Managed";
 #endif
+        
+        private const string k_buildTestScene = "Packages/com.autodesk.fbx/Tests/Runtime/BuildTestsAssets/BuildTestScene.unity";
 
-        private const string k_buildTestScene = "Packages/com.autodesk.fbx/Tests/Editor/BuildTestAssets/BuildTestScene.unity";
+        private const string k_createdFbx = "emptySceneFromRuntimeBuild.fbx";
 
         private const string k_runningBuildSymbol = "FBX_RUNNING_BUILD_TEST";
 
         private const string k_buildName = "test.exe";
+
         private string BuildFolder { get { return Path.Combine(Path.GetDirectoryName(Application.dataPath), "_safe_to_delete_build"); } }
 
         public static IEnumerable RuntimeFbxSdkTestData
@@ -175,7 +178,7 @@ namespace Autodesk.Fbx.BuildTests
             // Check that the FBX was created
             var buildPluginFbxPath = Path.Combine(
                     string.Format(k_buildPluginPath, buildPathWithoutExt),
-                    "emptySceneFromRuntime.fbx"
+                    k_createdFbx
                 );
             Assert.That(File.Exists(buildPluginFbxPath), constraint);
         }
