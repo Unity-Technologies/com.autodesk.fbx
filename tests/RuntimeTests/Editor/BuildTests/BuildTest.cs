@@ -132,17 +132,12 @@ namespace Autodesk.Fbx.BuildTests
                     k_fbxsdkNativePlugin + k_fbxsdkNativePluginExt
                 );
 
-            NUnit.Framework.Constraints.Constraint constraint = Is.False;
+            NUnit.Framework.Constraints.Constraint constraint = Does.Not.Exist;
             if (dllExists)
             {
-                constraint = Is.True;
+                constraint = Does.Exist;
             }
-
-#if UNITY_EDITOR_OSX
-            Assert.That(Directory.Exists(buildPluginFullPath), constraint);
-#else
-            Assert.That(File.Exists(buildPluginFullPath), constraint);
-#endif
+            Assert.That(buildPluginFullPath, constraint);
 
             // check the size of Autodesk.Fbx.dll
             var autodeskDllFullPath = Path.Combine(
@@ -150,7 +145,7 @@ namespace Autodesk.Fbx.BuildTests
                     k_autodeskDllInstallPath,
                     k_autodeskFbxDll
                 );
-            Assert.That(File.Exists(autodeskDllFullPath), Is.True);
+            Assert.That(autodeskDllFullPath, Does.Exist);
             var fileInfo = new FileInfo(autodeskDllFullPath);
 
             // If the FBX SDK is copied over at runtime, the DLL filesize will
@@ -170,17 +165,34 @@ namespace Autodesk.Fbx.BuildTests
             Process p = new Process();
             p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             p.StartInfo.FileName = buildPath;
-            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.Arguments = "-batchmode -nographics";
+            p.StartInfo.UseShellExecute = true;
             p.Start();
 
-            p.WaitForExit();
+            // Wait for 10 seconds for application to run.
+            // If it doesn't finish by then something has probably
+            // gone wrong, like the export script gave an error or wasn't
+            // included in the build.
+            bool hasExited = p.WaitForExit(10000);
+            if (!hasExited)
+            {
+                p.Close();
+            }
 
             // Check that the FBX was created
             var buildPluginFbxPath = Path.Combine(
                     string.Format(k_buildPluginPath, buildPathWithoutExt),
                     k_createdFbx
                 );
-            Assert.That(File.Exists(buildPluginFbxPath), constraint);
+
+            // Make sure the constraint is still set properly.
+            // The constraint resets between this check and the previous.
+            constraint = Does.Not.Exist;
+            if (dllExists)
+            {
+                constraint = Does.Exist;
+            }
+            Assert.That(buildPluginFbxPath, constraint);
         }
     }
 }

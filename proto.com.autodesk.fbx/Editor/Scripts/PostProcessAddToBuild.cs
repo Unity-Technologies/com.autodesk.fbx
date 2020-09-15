@@ -12,7 +12,7 @@ namespace Autodesk.Fbx
     public class PostProcessAddToBuild
     {
         private const string fbxsdkNativePlugin = "UnityFbxSdkNative";
-        private const string fbxsdkNativePluginPath = "Packages/com.autodesk.fbx/Editor/Plugins/x86_64";
+        private const string fbxsdkNativePluginPath = "Packages/com.autodesk.fbx/Editor/Plugins";
         
         private const string fbxsdkNativePluginExtWin = ".dll";
         private const string fbxsdkNativePluginExtOSX = ".bundle";
@@ -46,6 +46,8 @@ namespace Autodesk.Fbx
                     destPath = string.Format(buildPluginPathLinux, buildPathWithoutExt);
                     sourcePathExt = fbxsdkNativePluginExtLinux;
                     break;
+                default:
+                    throw new System.PlatformNotSupportedException("FBX SDK not supported on Build Target: " + target);
             }
 
             if (!string.IsNullOrEmpty(sourcePathExt))
