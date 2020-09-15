@@ -14,14 +14,14 @@
 
 /* Attributes */
 %rename("%s") FbxNurbsCurve::EDimension;
+%rename("%s") FbxNurbsCurve::EType;
 %rename("%s") FbxNurbsCurve::GetKnotCount;
 %rename("%s") FbxNurbsCurve::GetStep;
 %rename("%s") FbxNurbsCurve::GetDimension;
 %rename("%s") FbxNurbsCurve::GetSpanCount;
 %rename("%s") FbxNurbsCurve::IsPolyline;
 %rename("%s") FbxNurbsCurve::IsBezier;
-%rename("%s") FbxNurbsCurve::GetKnotVector;
-%rename("%s") FbxNurbsCurve::GetKnotVectorAtIndex;
+%rename("%s") FbxNurbsCurve::GetKnotVectorAt;
 %rename("%s") FbxNurbsCurve::GetOrder;
 %rename("%s") FbxNurbsCurve::IsRational;
 
@@ -36,14 +36,22 @@
 #endif
 
 %extend FbxNurbsCurve {
-   double GetKnotVectorAtIndex( int pIndex ) const
+   double GetKnotVectorAt( int pIndex ) const
    {
+      if (pIndex < 0 || pIndex >= $self->GetKnotCount()){
+          SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, "Index out of range", "pIndex");
+          return -1;
+      }
       double* aKnotArray = $self->GetKnotVector();
       double aKnot = aKnotArray[pIndex];
       return aKnot;
    }
    void SetKnotVectorAt( int pIndex, double aKnot )
    {
+      if (pIndex < 0 || pIndex >= $self->GetKnotCount()){
+          SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentOutOfRangeException, "Index out of range", "pIndex");
+          return;
+      }
       double* aKnotArray = $self->GetKnotVector();
       aKnotArray[pIndex] = aKnot;
    }

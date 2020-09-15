@@ -6,8 +6,6 @@
 // ***********************************************************************
 
 using NUnit.Framework;
-using System.Collections;
-using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
@@ -24,7 +22,7 @@ namespace Autodesk.Fbx.UnitTests
                 curve.SetOrder(4);
                 curve.SetDimension(FbxNurbsCurve.EDimension.e3D);
 
-                curve.InitControlPoints(7, (SWIGTYPE_FbxNurbsCurve__EType)0);
+                curve.InitControlPoints(7, FbxNurbsCurve.EType.eOpen);
                 curve.SetControlPointAt(new FbxVector4(-104.648651123047, -55.7837829589844, 0, 1), 0);
                 curve.SetControlPointAt(new FbxVector4(-109.405403137207, 22.9189186096191, 0, 1), 1);
                 curve.SetControlPointAt(new FbxVector4(-73.5135116577148, 76.5405426025391, 0, 1), 2);
@@ -35,9 +33,9 @@ namespace Autodesk.Fbx.UnitTests
 
                 var knotCount = curve.GetKnotCount();
                 Assert.AreEqual(curve.GetKnotCount(), 11);
-                Autodesk.Fbx.SWIGTYPE_p_double knots = curve.GetKnotVector();
-                Assert.NotNull(knots);
 
+                Assert.That(() => curve.SetKnotVectorAt(-1, 0), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+                Assert.That(() => curve.SetKnotVectorAt(11, 0), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
                 curve.SetKnotVectorAt(0, 0);
                 curve.SetKnotVectorAt(1, 0);
                 curve.SetKnotVectorAt(2, 0);
@@ -49,6 +47,13 @@ namespace Autodesk.Fbx.UnitTests
                 curve.SetKnotVectorAt(8, 1);
                 curve.SetKnotVectorAt(9, 1);
                 curve.SetKnotVectorAt(10, 1);
+
+                Assert.That(() => curve.GetKnotVectorAt(-1), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+                Assert.That(() => curve.GetKnotVectorAt(11), Throws.Exception.TypeOf<System.ArgumentOutOfRangeException>());
+                Assert.That(curve.GetKnotVectorAt(0), Is.EqualTo(0));
+                Assert.That(curve.GetKnotVectorAt(4), Is.EqualTo(0.25));
+                Assert.That(curve.GetKnotVectorAt(6), Is.EqualTo(0.75));
+                Assert.That(curve.GetKnotVectorAt(10), Is.EqualTo(1));
 
                 Assert.AreEqual(curve.GetOrder(), 4);
                 Assert.AreEqual(curve.GetDimension(), FbxNurbsCurve.EDimension.e3D);
