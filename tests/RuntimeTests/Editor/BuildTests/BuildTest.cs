@@ -176,7 +176,7 @@ namespace Autodesk.Fbx.BuildTests
             bool hasExited = p.WaitForExit(10000);
             if (!hasExited)
             {
-                p.Close();
+                p.Kill();
             }
 
             // Check that the FBX was created
