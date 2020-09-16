@@ -18,6 +18,8 @@ namespace Autodesk.Fbx.UnitTests
 
             using (FbxNurbsCurve curve = CreateObject("nurbscurve"))
             {
+                // returns -1 if the curve has not been initialized.
+                Assert.That(curve.GetSpanCount(), Is.EqualTo(-1));
 
                 curve.SetOrder(4);
                 curve.SetDimension(FbxNurbsCurve.EDimension.e3D);
@@ -54,6 +56,22 @@ namespace Autodesk.Fbx.UnitTests
                 Assert.That(curve.GetKnotVectorAt(4), Is.EqualTo(0.25));
                 Assert.That(curve.GetKnotVectorAt(6), Is.EqualTo(0.75));
                 Assert.That(curve.GetKnotVectorAt(10), Is.EqualTo(1));
+
+                curve.SetStep(-1);
+                curve.SetStep(int.MaxValue);
+                curve.SetStep(2);
+                Assert.That(curve.GetStep(), Is.EqualTo(2));
+
+                Assert.That(curve.IsRational(), Is.False);
+
+                // Calculation is as follows:
+                // S = Number of spans N = Number of CVs M = Order of the curve.
+                // S = N - M + 1;
+                // N includes the duplicate CVs for closed and periodic curves.
+                Assert.That(curve.GetSpanCount(), Is.EqualTo(4));
+
+                Assert.That(curve.IsBezier(), Is.False);
+                Assert.That(curve.IsPolyline(), Is.False);
 
                 Assert.AreEqual(curve.GetOrder(), 4);
                 Assert.AreEqual(curve.GetDimension(), FbxNurbsCurve.EDimension.e3D);
