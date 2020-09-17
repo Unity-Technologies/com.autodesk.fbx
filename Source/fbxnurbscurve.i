@@ -15,6 +15,7 @@
 /* Attributes */
 %rename("%s") FbxNurbsCurve::EDimension;
 %rename("%s") FbxNurbsCurve::EType;
+%typemap(csclassmodifiers) FbxNurbsCurve::EType "new public enum";
 %rename("%s") FbxNurbsCurve::GetKnotCount;
 %rename("%s") FbxNurbsCurve::GetStep;
 %rename("%s") FbxNurbsCurve::GetDimension;
