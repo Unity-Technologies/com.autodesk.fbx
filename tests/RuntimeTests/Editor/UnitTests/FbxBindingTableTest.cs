@@ -12,19 +12,6 @@ namespace Autodesk.Fbx.UnitTests
 {
     public class FbxBindingTableTest : Base<FbxBindingTable>
     {
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public override void TestCoverage() {
-            // This test is also responsible for FbxBindingTableBase and FbxBindingTableEntry
-            base.TestCoverage();
-            CoverageTester.TestCoverage(typeof(FbxBindingTableBase), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxBindingTableEntry), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxEntryView), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEntryView), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxSemanticEntryView), this.GetType());
-        }
-#endif
-
         [Test]
         public void TestBasics() {
             var table = FbxBindingTable.Create(Manager, "table");

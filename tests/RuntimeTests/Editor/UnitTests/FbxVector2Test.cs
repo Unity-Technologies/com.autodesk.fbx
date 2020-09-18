@@ -12,19 +12,6 @@ namespace Autodesk.Fbx.UnitTests
 {
     public class FbxVector2Test
     {
-#if ENABLE_COVERAGE_TEST
-        static FbxVector2Test()
-        {
-            // The coverage tester doesn't realize that MatchingTests calls
-            // every command (it asserts as much at the end). We need to tell it.
-            var lambdaCaller = typeof(FbxVector2Test).GetMethod("MatchingTests");
-            CppMatchingHelper.RegisterLambdaCalls(lambdaCaller, s_commands);
-        }
-
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxVector2), this.GetType()); }
-#endif
-
         [Test]
         public void TestEquality()
         {

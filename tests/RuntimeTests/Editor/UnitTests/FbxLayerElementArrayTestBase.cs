@@ -84,18 +84,6 @@ namespace Autodesk.Fbx.UnitTests
         static FbxLayerElementArrayTemplateTestBase() {
             s_getAt = typeof(T).GetMethod("GetAt", new System.Type[] { typeof(int) });
             s_constructor = typeof(T).GetConstructor (System.Type.EmptyTypes);
-
-            #if ENABLE_COVERAGE_TEST
-            // Register the calls we make through reflection.
-            if(s_getAt != null){
-                var getAt = typeof(FbxLayerElementArrayTemplateTestBase<T,U>).GetMethod("GetAt");
-                CoverageTester.RegisterReflectionCall(getAt, s_getAt);
-            }
-            if(s_constructor != null){
-                var constructor = typeof(FbxLayerElementArrayTemplateTestBase<T,U>).GetMethod("CreateObject");
-                CoverageTester.RegisterReflectionCall(constructor, s_constructor);
-            }
-            #endif
         }
 
         public T CreateObject()

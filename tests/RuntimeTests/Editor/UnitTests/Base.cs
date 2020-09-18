@@ -22,20 +22,6 @@ namespace Autodesk.Fbx.UnitTests
         static Base() {
             s_createFromMgrAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxManager), typeof(string)});
             s_createFromObjAndName = typeof(T).GetMethod("Create", new System.Type[] {typeof(FbxObject), typeof(string)});
-
-#if ENABLE_COVERAGE_TEST
-            // Register the calls we make through reflection.
-
-            // We use reflection in CreateObject(FbxManager, string) and CreateObject(FbxObject, string).
-            if (s_createFromMgrAndName != null) {
-                var createFromMgrAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxManager), typeof(string)});
-                CoverageTester.RegisterReflectionCall(createFromMgrAndName, s_createFromMgrAndName);
-            }
-            if (s_createFromObjAndName != null) {
-                var createFromObjAndName = typeof(Base<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxObject), typeof(string)});
-                CoverageTester.RegisterReflectionCall(createFromObjAndName, s_createFromObjAndName);
-            }
-#endif
         }
 
 

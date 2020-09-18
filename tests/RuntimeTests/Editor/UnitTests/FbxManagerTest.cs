@@ -101,10 +101,5 @@ namespace Autodesk.Fbx.UnitTests
             var ioPluginRegistry = m_fbxManager.GetIOPluginRegistry();
             Assert.IsInstanceOf<FbxIOPluginRegistry> (ioPluginRegistry);
         }
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxManager), this.GetType()); }
-#endif
     }
 }

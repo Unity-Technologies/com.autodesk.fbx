@@ -16,12 +16,6 @@ namespace Autodesk.Fbx.UnitTests
     /// </summary>
     public class FbxDouble4Test
     {
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDouble4), this.GetType()); }
-#endif
-
         [Test]
         public void TestEquality()
         {

@@ -53,14 +53,6 @@ namespace Autodesk.Fbx.UnitTests
                 // Repeat on the base type, if there is one.
                 U = U.BaseType;
             } while (U != null);
-
-#if ENABLE_COVERAGE_TEST
-            // Register the calls we make through reflection.
-            var testEquality = typeof(EqualityTester<T>).GetMethod("TestEquality");
-            foreach(var equals in s_Equals) { CoverageTester.RegisterReflectionCall(testEquality, equals); }
-            foreach(var equals in s_op_Equality) { CoverageTester.RegisterReflectionCall(testEquality, equals); }
-            foreach(var equals in s_op_Inequality) { CoverageTester.RegisterReflectionCall(testEquality, equals); }
-#endif
         }
 
         /* Instances of this class definitely don't cast to T. */

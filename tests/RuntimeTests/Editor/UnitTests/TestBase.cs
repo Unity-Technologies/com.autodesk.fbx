@@ -25,10 +25,5 @@ namespace Autodesk.Fbx.UnitTests
          * invalid.
          */
         public static void TestGetter<U>(U item) { /* we tested the getter by passing the argument! */ }
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public virtual void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
-#endif
     }
 }
