@@ -1,10 +1,3 @@
-// ***********************************************************************
-// Copyright (c) 2017 Unity Technologies. All rights reserved.
-//
-// Licensed under the ##LICENSENAME##.
-// See LICENSE.md file in the project root for full license information.
-// ***********************************************************************
-
 #ifdef IGNORE_ALL_INCLUDE_SOME
 %rename("%s", %$isclass) FbxNurbsCurve;
 // As the ignore everything will include the constructor, destructor, methods etc
@@ -15,6 +8,10 @@
 /* Attributes */
 %rename("%s") FbxNurbsCurve::EDimension;
 %rename("%s") FbxNurbsCurve::EType;
+// Mark EType enum as new, as otherwise it gives a warning about
+// hiding FbxNodeAttribute::EType in the parent class in C#.
+// This shouldn't be an issue as none of the exposed functions use FbxNodeAttribute::EType.
+// If ever this changes, an alternative solution could be renaming the enum.
 %typemap(csclassmodifiers) FbxNurbsCurve::EType "new public enum";
 %rename("%s") FbxNurbsCurve::GetKnotCount;
 %rename("%s") FbxNurbsCurve::GetStep;
@@ -57,13 +54,5 @@
       aKnotArray[pIndex] = aKnot;
    }
 }
-
-
-/* The properties need to be marked immutable. 
-%fbximmutable(FbxNode::LclTranslation);
-%fbximmutable(FbxNode::LclRotation);
-%fbximmutable(FbxNode::LclScaling);
-%fbximmutable(FbxNode::VisibilityInheritance);
-%fbximmutable(FbxNode::InheritType);*/
 
 %include "fbxsdk/scene/geometry/fbxnurbscurve.h"
