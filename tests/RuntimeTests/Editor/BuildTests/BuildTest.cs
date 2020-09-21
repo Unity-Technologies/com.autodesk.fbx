@@ -129,6 +129,9 @@ namespace Autodesk.Fbx.BuildTests
             var buildPluginFullPath = Path.Combine(
                     string.Format(k_buildPluginPath, buildPathWithoutExt),
                     "Plugins",
+#if UNITY_EDITOR_LINUX
+                    "x86_64",
+#endif
                     k_fbxsdkNativePlugin + k_fbxsdkNativePluginExt
                 );
 
