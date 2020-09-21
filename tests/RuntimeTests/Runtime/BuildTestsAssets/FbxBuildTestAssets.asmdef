@@ -1,12 +1,19 @@
 {
     "name": "FbxBuildTestAssets",
     "references": [
-        "Autodesk.Fbx"
-    ],
-    "optionalUnityReferences": [
-        "TestAssemblies"
+        "Autodesk.Fbx",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

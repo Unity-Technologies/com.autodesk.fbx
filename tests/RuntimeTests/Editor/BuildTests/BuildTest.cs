@@ -174,6 +174,7 @@ namespace Autodesk.Fbx.BuildTests
             Process p = new Process();
             p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             p.StartInfo.FileName = buildPath;
+            p.StartInfo.Arguments = "-batchmode -nographics";
             p.StartInfo.UseShellExecute = true;
             p.Start();
 
