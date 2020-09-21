@@ -20,7 +20,7 @@ namespace Autodesk.Fbx
 
         private const string buildPluginPathWin = "{0}_Data/Plugins";
         private const string buildPluginPathOSX = "{0}.app/Contents/Plugins";
-        private const string buildPluginPathLinux = "{0}_Data/Plugins";
+        private const string buildPluginPathLinux = "{0}_Data/Plugins/x86_64";
 
         [PostProcessBuild(1)]
         public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
