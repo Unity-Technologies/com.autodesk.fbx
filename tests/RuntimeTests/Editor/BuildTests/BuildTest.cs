@@ -162,6 +162,15 @@ namespace Autodesk.Fbx.BuildTests
             }
 
             var buildPath = report.summary.outputPath;
+            
+#if UNITY_EDITOR_OSX
+            buildPath = Path.ChangeExtension(buildPath, "app");
+            buildPath = Path.Combine(buildPath, "Contents", "MacOS");
+            buildPath = Path.Combine(buildPath, Path.GetFileName(Path.GetDirectoryName(Application.dataPath)));
+#elif UNITY_EDITOR_LINUX
+            buildPath = Path.ChangeExtension(buildPath, "x86_64");
+#endif
+            
             Process p = new Process();
             p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             p.StartInfo.FileName = buildPath;
