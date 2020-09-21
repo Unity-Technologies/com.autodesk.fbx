@@ -177,6 +177,7 @@ namespace Autodesk.Fbx.BuildTests
             if (!hasExited)
             {
                 p.Kill();
+                Assert.Fail(string.Format("Process running {0} timed out", buildPath));
             }
 
             // Check that the FBX was created
