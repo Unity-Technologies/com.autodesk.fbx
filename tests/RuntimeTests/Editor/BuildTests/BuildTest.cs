@@ -183,7 +183,6 @@ namespace Autodesk.Fbx.BuildTests
                 buildPath = Path.Combine(buildPath, Application.productName);
             #endif // UNITY_2018_4
 #endif // UNITY_EDITOR_OSX
-#endif
             
             Process p = new Process();
             p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
