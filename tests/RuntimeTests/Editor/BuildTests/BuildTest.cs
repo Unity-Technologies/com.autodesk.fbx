@@ -173,7 +173,16 @@ namespace Autodesk.Fbx.BuildTests
 #if UNITY_EDITOR_OSX
             buildPath = Path.ChangeExtension(buildPath, "app");
             buildPath = Path.Combine(buildPath, "Contents", "MacOS");
-            buildPath = Path.Combine(buildPath, Path.GetFileName(Path.GetDirectoryName(Application.dataPath)));
+            // on Unity 2018.4, the path to the executable is:
+            // test.app/Contents/MacOS/test
+            // whereas in later versions, the path is:
+            // test.app/Contents/MacOS/{product_name}
+            #if UNITY_2018_4
+                buildPath = Path.Combine(buildPath, Path.GetFileNameWithoutExtension(k_buildName));
+            #else // UNITY_2018_4
+                buildPath = Path.Combine(buildPath, Application.productName);
+            #endif // UNITY_2018_4
+#endif // UNITY_EDITOR_OSX
 #endif
             
             Process p = new Process();
