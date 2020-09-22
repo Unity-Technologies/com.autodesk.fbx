@@ -37,7 +37,11 @@ namespace Autodesk.Fbx.BuildTests
 
         private const string k_runningBuildSymbol = "FBX_RUNNING_BUILD_TEST";
 
+#if UNITY_EDITOR_LINUX
+        private const string k_buildName = "test.x86_64";
+#else
         private const string k_buildName = "test.exe";
+#endif
 
         private string BuildFolder { get { return Path.Combine(Path.GetDirectoryName(Application.dataPath), "_safe_to_delete_build"); } }
 
@@ -170,8 +174,6 @@ namespace Autodesk.Fbx.BuildTests
             buildPath = Path.ChangeExtension(buildPath, "app");
             buildPath = Path.Combine(buildPath, "Contents", "MacOS");
             buildPath = Path.Combine(buildPath, Path.GetFileName(Path.GetDirectoryName(Application.dataPath)));
-#elif UNITY_EDITOR_LINUX
-            buildPath = Path.ChangeExtension(buildPath, "x86_64");
 #endif
             
             Process p = new Process();
