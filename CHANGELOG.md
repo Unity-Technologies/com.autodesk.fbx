@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [3.2.0-preview.1] - 2020-09-22
+## [3.2.0-preview.1] - 2020-09-23
 
 CHANGES
 * Switched to using Unity code coverage to test unit test coverage.
