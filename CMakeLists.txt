@@ -225,7 +225,10 @@ fbxsharp_run_python_postbuild(TARGET UnityFbxSdkNative
 fbxsharp_run_python_postbuild(TARGET UnityFbxSdkNative
         SCRIPT ${CMAKE_SOURCE_DIR}/scripts/il2cpp-fix-swighelpers.py
         ARGS ${CMAKE_BINARY_DIR}/swig/generated/csharp/NativeMethods.cs)
-        
+
+fbxsharp_run_python_postbuild(TARGET UnityFbxSdkNative
+        SCRIPT ${CMAKE_SOURCE_DIR}/scripts/add-runtime-define.py
+        ARGS ${CMAKE_BINARY_DIR}/swig/generated/csharp)
 
 swig_link_libraries(UnityFbxSdkNative ${FBXSDK_LIBRARY})
 
@@ -274,7 +277,7 @@ install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFI
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
-install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Plugins/x86_64)
+install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
 
 
 
@@ -286,3 +289,5 @@ install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_I
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
 install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
+install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")

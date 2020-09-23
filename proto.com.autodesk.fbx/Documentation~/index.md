@@ -23,6 +23,13 @@ The Autodesk® FBX® SDK for Unity package contains:
 
 The Autodesk® FBX® SDK is automatically installed as a dependency of the [FBX Exporter](https://docs.unity3d.com/Packages/com.unity.formats.fbx@latest) package. It is not discoverable from the Package Manager UI, but can be installed without installing the FBX Exporter by adding it to your package manifest [Package Manager documentation](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest/index.html#PackManManifestsProject).
 
+## Including the Package in a Build
+
+This package can be used at runtime, however by default it is Editor only and will not be included in a build.
+In order for the package to be included in the build, add the FBXSDK_RUNTIME define to Edit > Project Settings... > Player > Other Settings > Scripting Define Symbols.
+
+Note: Currently the package is only available to use for Windows/OSX/Linux standalone builds.
+
 ## Known issues
 
 ### Importing

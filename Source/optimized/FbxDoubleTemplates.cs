@@ -4,7 +4,7 @@
 // Licensed under the ##LICENSENAME##.
 // See LICENSE.md file in the project root for full license information.
 // ***********************************************************************
-
+#if UNITY_EDITOR || FBXSDK_RUNTIME
 namespace Autodesk.Fbx
 {
     /**
@@ -524,3 +524,4 @@ namespace Autodesk.Fbx
         }
     }
 }
+#endif // UNITY_EDITOR || FBXSDK_RUNTIME
