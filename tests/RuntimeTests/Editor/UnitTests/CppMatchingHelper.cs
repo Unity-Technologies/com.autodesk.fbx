@@ -103,25 +103,6 @@ namespace Autodesk.Fbx.UnitTests
             Assert.That(commands_used, Is.EquivalentTo(commands.Keys));
         }
 
-#if ENABLE_COVERAGE_TEST
-        /**
-         * The coverage tester won't track the calls that MatchingTests makes
-         * to the lambda functions. Call this function in your static
-         * constructor to register the calls.
-         *
-         * This is accurate because MatchingTests makes sure that every command
-         * was actually issued.
-         */
-        public static void RegisterLambdaCalls<T>(
-                System.Reflection.MethodInfo caller,
-                Dictionary<string, TestCommand<T>> commands)
-        {
-            foreach(var lambda in commands.Values) {
-                CoverageTester.RegisterReflectionCall(caller, lambda.Method);
-            }
-        }
-#endif
-
         // Parse one line in the file.
         static void ParseLine(string line,
                 out string out_context,

@@ -11,31 +11,6 @@ namespace Autodesk.Fbx.UnitTests
 {
     public class FbxPropertyTest : TestBase<FbxProperty>
     {
-
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public override void TestCoverage() {
-            // Alphabetical list, with FbxProperty at the top.
-            base.TestCoverage();
-            CoverageTester.TestCoverage(typeof(FbxPropertyBool), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyDouble), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyDouble3), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEBlendMode), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEGateFit), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEWrapMode), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEProjectionType), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyMarkerELook), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyNullELook), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyString), this.GetType());
-            CoverageTester.TestCoverage(typeof(FbxPropertyELightType), this.GetType ());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEAreaLightShape), this.GetType ());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEDecayType), this.GetType ());
-            CoverageTester.TestCoverage(typeof(FbxPropertyFloat), this.GetType ());
-            CoverageTester.TestCoverage(typeof(FbxPropertyEInheritType), this.GetType ());
-            CoverageTester.TestCoverage(typeof(FbxPropertyInt), this.GetType ());
-        }
-#endif
-
         [Test]
         public void TestEquality() {
             using(var manager = FbxManager.Create()) {

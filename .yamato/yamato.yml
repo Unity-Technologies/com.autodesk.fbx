@@ -64,6 +64,8 @@ promote_platform:
   type: Unity::VM
   image: package-ci/win10:stable
   flavor: b1.medium
+coverage:
+  minPercent: 94.7
 ---
 
 build_win:
@@ -158,7 +160,13 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
 {% endif %}
   commands:
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
+# Code coverage is only available in Unity 2019.3 and higher
+{% if editor.version == 2018.4 %}
     - upm-ci package test --backend {{ backend.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+{% else %}
+    - upm-ci package test --backend {{ backend.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
+    - python tests/Yamato/check_coverage_percent.py upm-ci~/test-results/ {{ coverage.minPercent }}
+{% endif %}
     - echo "****** PASSED {{ backend.name }} backend *******"
   triggers:
     pull_requests:

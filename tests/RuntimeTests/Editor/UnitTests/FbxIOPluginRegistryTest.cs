@@ -13,14 +13,6 @@ namespace Autodesk.Fbx.UnitTests
 {
     public class FbxIOPluginRegistryTest
     {
-        #if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage ()
-        {
-            CoverageTester.TestCoverage (typeof(FbxIOPluginRegistry), this.GetType ());
-        }
-        #endif
-
         [Test]
         public void TestBasics ()
         {

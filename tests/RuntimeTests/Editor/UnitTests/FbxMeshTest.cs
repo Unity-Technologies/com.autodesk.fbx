@@ -193,20 +193,6 @@ namespace Autodesk.Fbx.UnitTests
     }
 
     public class FbxMeshBadBracketingExceptionTest {
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxMesh.BadBracketingException), this.GetType()); }
-
-        static FbxMeshBadBracketingExceptionTest()
-        {
-            // We don't test Exception.GetObjectData ; we assume that the C#
-            // compiler and runtime can make it work.
-            CoverageTester.RegisterReflectionCall(
-                    typeof(FbxMeshBadBracketingExceptionTest).GetMethod("BasicTests"),
-                    typeof(FbxMesh.BadBracketingException).GetMethod("GetObjectData"));
-        }
-#endif
-
         [Test]
         public void BasicTests()
         {

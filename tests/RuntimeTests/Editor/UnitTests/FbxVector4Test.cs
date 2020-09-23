@@ -12,19 +12,6 @@ namespace Autodesk.Fbx.UnitTests
 {
     public class FbxVector4Test
     {
-#if ENABLE_COVERAGE_TEST
-        static FbxVector4Test()
-        {
-            var lambdaCaller = typeof(FbxVector4Test).GetMethod("MatchingTests");
-            CppMatchingHelper.RegisterLambdaCalls(lambdaCaller, s_commands);
-        }
-
-        [Test]
-        public void TestCoverage() {
-            CoverageTester.TestCoverage(typeof(FbxVector4), this.GetType());
-        }
-#endif
-
         [Test]
         public void TestEquality()
         {

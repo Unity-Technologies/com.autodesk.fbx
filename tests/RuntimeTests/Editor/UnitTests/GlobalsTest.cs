@@ -18,53 +18,6 @@ namespace Autodesk.Fbx.UnitTests
         static ConstructorInfo s_PINVOKEctor;
         static List<MethodInfo> s_UpcastFunctions = new List<MethodInfo>();
 
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() {
-            /* Search the current assembly for unit tests. */
-            var alltypes = GetType().Assembly.GetTypes();
-            var unitTestMethods = new List<MethodBase>();
-            foreach(var t in alltypes) {
-                CoverageTester.CollectTestMethods(t, unitTestMethods);
-            }
-
-            /* Search the assembly that Autodesk.Fbx.Globals is in to find classes in
-             * the FbxSdk namespace to test. */
-            alltypes = typeof(Autodesk.Fbx.Globals).Assembly.GetTypes();
-            var methodsToCover = new List<MethodBase>();
-            foreach(var t in alltypes) {
-                if (t.Namespace != "Autodesk.Fbx") {
-                    continue;
-                }
-
-                /* don't take in delegates; we can't properly track coverage,
-                   so just avoid the false negative */
-                if (t.IsSubclassOf(typeof(System.Delegate))) {
-                    continue;
-                }
-
-                /* take in the PINVOKE class but skip its helper classes */
-                bool skip = false;
-                for(var u = t.DeclaringType ; u != null; u = u.DeclaringType) {
-                    if (u.TypeHandle.Value == s_PINVOKEtype.TypeHandle.Value) {
-                        skip = true;
-                        break;
-                    }
-                }
-                if (skip) { continue; }
-
-                CoverageTester.CollectMethodsToCover(t, methodsToCover);
-            }
-
-            List<MethodBase> hitMethods = new List<MethodBase>();
-            List<MethodBase> missedMethods = new List<MethodBase>();
-            var ok = CoverageTester.TestCoverage(methodsToCover, unitTestMethods, out hitMethods, out missedMethods);
-            NUnit.Framework.Assert.That(
-                    () => ok,
-                    () => CoverageTester.MakeCoverageMessage(hitMethods, missedMethods));
-        }
-#endif
-
         static GlobalsTest()
         {
             /* We test the PINVOKE class by reflection since it's private to
@@ -85,17 +38,6 @@ namespace Autodesk.Fbx.UnitTests
                     s_UpcastFunctions.Add(m);
                 }
             }
-
-#if ENABLE_COVERAGE_TEST
-            var basicTests = typeof(GlobalsTest).GetMethod("BasicTests");
-            if (s_PINVOKEctor != null) {
-                CoverageTester.RegisterReflectionCall(basicTests, s_PINVOKEctor);
-            }
-
-            foreach(var m in s_UpcastFunctions) {
-                CoverageTester.RegisterReflectionCall(basicTests, m);
-            }
-#endif
         }
 
         bool ProgressCallback(float a, string b) { return true; }

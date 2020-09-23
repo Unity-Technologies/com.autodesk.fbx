@@ -12,11 +12,6 @@ namespace Autodesk.Fbx.UnitTests
 {
     public class FbxQuaternionTest
     {
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxQuaternion), this.GetType()); }
-#endif
-
         /// <summary>
         /// Check that two quaternions represent a similar rotation.
         ///

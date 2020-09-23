@@ -13,11 +13,6 @@ namespace Autodesk.Fbx.UnitTests
 {
     public class FbxStatusTest
     {
-        #if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxStatus), this.GetType()); }
-        #endif
-
         [Test]
         public void TestBasics()
         {

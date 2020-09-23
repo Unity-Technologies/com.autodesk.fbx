@@ -35,26 +35,6 @@ namespace Autodesk.Fbx.UnitTests
 
             s_getDirectArray = typeof(T).GetMethod ("GetDirectArray");
             s_getIndexArray = typeof(T).GetMethod ("GetIndexArray");
-
-            #if ENABLE_COVERAGE_TEST
-            // Register the calls we make through reflection.
-
-            // We use reflection in CreateObject(FbxLayerContainer, string)
-            if (s_createFromLayerContainerAndName != null) {
-                var createFromLayerContainerAndName = typeof(FbxLayerElementTestBase<T>).GetMethod("CreateObject", new System.Type[] {typeof(FbxLayerContainer), typeof(string)});
-                CoverageTester.RegisterReflectionCall(createFromLayerContainerAndName, s_createFromLayerContainerAndName);
-            }
-
-            if(s_getDirectArray != null){
-                var getDirectArray = typeof(FbxLayerElementTestBase<T>).GetMethod("GetDirectArray");
-                CoverageTester.RegisterReflectionCall(getDirectArray, s_getDirectArray);
-            }
-
-            if(s_getIndexArray != null){
-                var getIndexArray = typeof(FbxLayerElementTestBase<T>).GetMethod("GetIndexArray");
-                CoverageTester.RegisterReflectionCall(getIndexArray, s_getIndexArray);
-            }
-            #endif
         }
 
         protected FbxManager m_fbxManager;
@@ -68,12 +48,7 @@ namespace Autodesk.Fbx.UnitTests
         public T CreateObject (string name = "") {
             return CreateObject(LayerContainer, name);
         }
-
-        #if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(T), this.GetType()); }
-        #endif
-
+        
         /* Test all the equality functions we can find. */
         [Test]
         public virtual void TestEquality() {

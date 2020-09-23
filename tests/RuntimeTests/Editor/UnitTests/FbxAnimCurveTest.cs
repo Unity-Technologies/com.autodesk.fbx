@@ -207,11 +207,6 @@ namespace Autodesk.Fbx.UnitTests
 
     public class FbxAnimCurveDefTest /* testing a static class, so we can't derive from TestBase */
     {
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public virtual void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxAnimCurveDef), this.GetType()); }
-#endif
-
         [Test]
         public void TestBasics()
         {

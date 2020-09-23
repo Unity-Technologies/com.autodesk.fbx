@@ -48,22 +48,6 @@ namespace Autodesk.Fbx.UnitTests
                 typeof(double)
             });
             s_SetConstrainedObject = typeof(T).GetMethod ("SetConstrainedObject", new System.Type[] { typeof(FbxObject) });
-
-            #if ENABLE_COVERAGE_TEST
-            // Register the calls we make through reflection.
-            if (s_AddConstraintSource != null) {
-                var addConstraintSource = typeof(FbxConstraintDescendantTestBase<T>).GetMethod ("AddConstraintSource");
-                CoverageTester.RegisterReflectionCall (addConstraintSource, s_AddConstraintSource);
-            }
-            if (s_AddConstraintSourceDouble != null) {
-                var addConstraintSourceDouble = typeof(FbxConstraintDescendantTestBase<T>).GetMethod ("AddConstraintSourceDouble");
-                CoverageTester.RegisterReflectionCall (addConstraintSourceDouble, s_AddConstraintSourceDouble);
-            }
-            if (s_SetConstrainedObject != null) {
-                var setConstrainedObject = typeof(FbxConstraintDescendantTestBase<T>).GetMethod ("SetConstrainedObject");
-                CoverageTester.RegisterReflectionCall (setConstrainedObject, s_SetConstrainedObject);
-            }
-            #endif
         }
 
         public void AddConstraintSourceDouble (T instance, FbxObject obj, double weight)

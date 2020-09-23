@@ -11,11 +11,6 @@ namespace Autodesk.Fbx.UnitTests
 {
     public class FbxDataTypeTest
     {
-#if ENABLE_COVERAGE_TEST
-        [Test]
-        public void TestCoverage() { CoverageTester.TestCoverage(typeof(FbxDataType), this.GetType()); }
-#endif
-
         [Test]
         public void TestEquality()
         {
