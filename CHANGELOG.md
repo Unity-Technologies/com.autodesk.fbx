@@ -1,9 +1,17 @@
 # Changes in FBX SDK C# Bindings
 
-## [3.2.0-preview.1] - 2020-09-23
+## [4.0.0-pre.1] - 2020-09-28
+
+NEW FEATURES
+* Binding for FbxMesh::GetPolygonVertexNormal(). Thank you to @julienkay for the addition.
+* Bindings for FbxNurbsCurve. Thank you to @jeanblouin for the addition.
 
 CHANGES
 * Switched to using Unity code coverage to test unit test coverage.
+
+BUGFIXES
+* Make UnityFbxSdkNative dll's Editor only by default. In order to use at runtime, 
+  add the FBXSDK_RUNTIME define to Edit > Project Settings... > Player > Other Settings > Scripting Define Symbols.
 
 ## [3.1.0-preview.2] - 2020-07-21
 
