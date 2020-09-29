@@ -8,10 +8,11 @@ NEW FEATURES
 
 CHANGES
 * Switched to using Unity code coverage to test unit test coverage.
+* Made UnityFbxSdkNative dll and scripts Editor only by default. In order to use at runtime, 
+  add the FBXSDK_RUNTIME define to Edit > Project Settings... > Player > Other Settings > Scripting Define Symbols.
 
 BUGFIXES
-* Make UnityFbxSdkNative dll's Editor only by default. In order to use at runtime, 
-  add the FBXSDK_RUNTIME define to Edit > Project Settings... > Player > Other Settings > Scripting Define Symbols.
+*  UnityFbxSdkNative dll is no longer included in builds, fixing an issue with shipping on the Mac App Store.
 
 ## [3.1.0-preview.2] - 2020-07-21
 
