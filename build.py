@@ -34,6 +34,7 @@ if sys.platform.startswith('win'):
 else:
     # check if we should use cmake or cmake3
     cmake_version = subprocess.check_output(["cmake", "--version"], shell=False)
+    # result will be either "cmake version ...." or "cmake3 version ...."
     if cmake_version.startswith(b'cmake3'):
         # cmake is CMake2 on centos, need to be explicit.
         cmake_exe = 'cmake3'
