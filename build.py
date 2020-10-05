@@ -2,7 +2,6 @@
 import argparse
 import shutil
 import os
-import distro
 import subprocess
 import sys
 
@@ -33,6 +32,7 @@ if sys.platform.startswith('win'):
     shell = True
     cmake_exe = 'cmake.exe'
 else:
+    import distro
     if distro.linux_distribution(full_distribution_name=False)[0].startswith('centos'):
         # cmake is CMake2 on centos, need to be explicit.
         cmake_exe = 'cmake3'
