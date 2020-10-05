@@ -32,8 +32,9 @@ if sys.platform.startswith('win'):
     shell = True
     cmake_exe = 'cmake.exe'
 else:
-    import distro
-    if distro.linux_distribution(full_distribution_name=False)[0].startswith('centos'):
+    # check if we should use cmake or cmake3
+    cmake_version = subprocess.run("cmake --version", capture_output=True, text=True, shell=False, check=True, cwd=builddir)
+    if cmake_version.startswith("cmake3"):
         # cmake is CMake2 on centos, need to be explicit.
         cmake_exe = 'cmake3'
     else:

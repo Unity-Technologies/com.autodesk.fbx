@@ -92,7 +92,6 @@ build_mac:
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list mono || brew install mono
-    - pip install distro
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
   artifacts:
@@ -108,7 +107,6 @@ build_ubuntu:
     flavor: {{ ubuntu_platform.flavor}}
   commands:
     - sudo apt-get install p7zip mono-devel
-    - pip install distro
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-ubuntu
   artifacts:
