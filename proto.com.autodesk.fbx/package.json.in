@@ -9,6 +9,6 @@
         "max"
     ], 
     "name": "com.autodesk.fbx", 
-    "unity": "2018.2", 
+    "unity": "2018.4", 
     "version": "4.0.0-pre.1"
 }
