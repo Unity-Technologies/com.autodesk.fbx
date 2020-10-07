@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [4.0.0-pre.1] - 2020-09-28
+## [4.0.0-pre.1] - 2020-10-07
 
 NEW FEATURES
 * Binding for FbxMesh::GetPolygonVertexNormal(). Thank you to @julienkay for the addition.
