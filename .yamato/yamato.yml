@@ -229,7 +229,6 @@ publish:
       paths:
         - "upm-ci~/packages/**"
   dependencies:
-    - .yamato/yamato.yml#promotion_test
     - .yamato/yamato.yml#pack
 {% for editor in editors %}
 {% for platform in platforms %}
@@ -258,5 +257,6 @@ promote:
       paths:
         - "upm-ci~/packages/**"
   dependencies:
+    - .yamato/yamato.yml#promotion_test
     - .yamato/yamato.yml#pack
     - .yamato/yamato.yml#publish
