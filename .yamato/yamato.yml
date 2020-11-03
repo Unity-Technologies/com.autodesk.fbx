@@ -92,6 +92,7 @@ build_mac:
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list mono || brew install mono
+    - HOMEBREW_NO_INSTALL_CLEANUP=1 brew install httpie@2.2.0_1
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
   artifacts:
