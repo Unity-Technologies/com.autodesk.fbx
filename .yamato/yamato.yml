@@ -28,6 +28,7 @@ editors:
   - version: 2019.4
   - version: 2020.1
 backends:
+  - name: mono
   - name: il2cpp
 mac_platform:
   name: mac
