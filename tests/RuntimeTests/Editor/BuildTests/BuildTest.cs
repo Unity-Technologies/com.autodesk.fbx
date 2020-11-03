@@ -49,10 +49,8 @@ namespace Autodesk.Fbx.BuildTests
         {
             get
             {
-                yield return new TestCaseData(new string[] { k_runningBuildSymbol }, false, false).SetName("FbxSdkNotIncludedAtRuntime").Returns(null);
-                yield return new TestCaseData(new string[] { k_runningBuildSymbol }, false, true).SetName("FbxSdkNotIncludedAtRuntime_IL2CPP").Returns(null);
-                yield return new TestCaseData(new string[] { k_runningBuildSymbol, "FBXSDK_RUNTIME" }, true, false).SetName("FbxSdkIncludedAtRuntime").Returns(null);
-                yield return new TestCaseData(new string[] { k_runningBuildSymbol, "FBXSDK_RUNTIME" }, true, true).SetName("FbxSdkIncludedAtRuntime_IL2CPP").Returns(null);
+                yield return new TestCaseData(new string[] { k_runningBuildSymbol }, false).SetName("FbxSdkNotIncludedAtRuntime").Returns(null);
+                yield return new TestCaseData(new string[] { k_runningBuildSymbol, "FBXSDK_RUNTIME" }, true).SetName("FbxSdkIncludedAtRuntime").Returns(null);
             }
         }
 
@@ -71,9 +69,6 @@ namespace Autodesk.Fbx.BuildTests
             // remove the running build symbol and everything after it
             var result = symbols.Split(new string[] { k_runningBuildSymbol, ";" + k_runningBuildSymbol }, System.StringSplitOptions.None);
             PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, result[0]);
-
-            // set scripting backend back to default (Mono)
-            PlayerSettings.SetScriptingBackend(EditorUserBuildSettings.selectedBuildTargetGroup, ScriptingImplementation.Mono2x);
 
             // delete build folder
             if (Directory.Exists(BuildFolder))
@@ -120,13 +115,8 @@ namespace Autodesk.Fbx.BuildTests
 
         [UnityTest]
         [TestCaseSource("RuntimeFbxSdkTestData")]
-        public IEnumerator TestFbxSdkAtRuntime(string[] defineSymbols, bool dllExists, bool useIL2CPP)
+        public IEnumerator TestFbxSdkAtRuntime(string[] defineSymbols, bool dllExists)
         {
-            if (useIL2CPP)
-            {
-                PlayerSettings.SetScriptingBackend(EditorUserBuildSettings.selectedBuildTargetGroup, ScriptingImplementation.IL2CPP);
-            }
-
             AddDefineSymbols(defineSymbols);
 
             // start and stop playmode to force a domain reload
