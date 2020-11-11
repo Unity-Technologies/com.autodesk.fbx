@@ -75,7 +75,9 @@ NEW FEATURES
 KNOWN ISSUES
 * The FBX SDK C# Bindings package is not supported if you build using the IL2CPP backend.
 
-## [1.3.0f1] - 2018-04-17
+## [1.3.0] - 2018-04-17
+NOTES
+* This is the last Asset Store version. It is also known as 1.3.0f1.
 
 NEW FEATURES
 * Added bindings for FbxAnimCurveFilterUnroll
