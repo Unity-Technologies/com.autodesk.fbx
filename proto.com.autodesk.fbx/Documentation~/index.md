@@ -10,14 +10,14 @@ The Autodesk® FBX® SDK is a C++ software development platform and API toolkit 
 
 The Autodesk® FBX® SDK for Unity package is compatible with the following versions of the Unity Editor:
 
-* 2018.2 and later
+* 2018.4 and later
 
 ## Contents
 
 The Autodesk® FBX® SDK for Unity package contains:
 
 * C# bindings
-* Compiled binaries for MacOS and Windows that include the FBX SDK
+* Compiled binaries for MacOS, Windows, and Ubuntu that include the FBX SDK
 
 ## Installation
 
@@ -40,17 +40,13 @@ In this version, you cannot downcast SDK C# objects, which limits the use of the
 
 While there are guards against some common errors, it is possible to crash Unity by writing C# code that directs the FBX SDK to perform invalid operations. For example, if you have an `FbxProperty` in C# and you delete the `FbxNode` that contains the property, using the `FbxProperty` may produce undefined behavior This may even include crashing the Unity Editor. Make sure to read the editor log if you have unexplained crashes when writing FBX SDK C# code.
 
-### IL2CPP backend
-
-The C# Autodesk® FBX® SDK package is not supported at Runtime if you build using the IL2CPP backend.
-
 ### Linux
 
 Linux support is currently experimental and unsupported.
 
 ## API documentation
 
-There is no API documentation in the preview package. See the <a href="http://help.autodesk.com/cloudhelp/2018/ENU/FBX-Developer-Help/cpp_ref/annotated.html">Autodesk® FBX® SDK API documentation</a>.
+There is no API documentation in the preview package. See the <a href="http://help.autodesk.com/view/FBX/2020/ENU/?guid=FBX_Developer_Help_cpp_ref_annotated_html">Autodesk® FBX® SDK API documentation</a>.
 
 The bindings are in the `Autodesk.Fbx` namespace:
 
