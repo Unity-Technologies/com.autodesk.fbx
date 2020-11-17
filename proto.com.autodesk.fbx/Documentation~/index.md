@@ -46,7 +46,7 @@ Linux support is currently experimental and unsupported.
 
 ## API documentation
 
-There is no API documentation in the preview package. See the <a href="http://help.autodesk.com/view/FBX/2020/ENU/?guid=FBX_Developer_Help_cpp_ref_annotated_html">Autodesk® FBX® SDK API documentation</a>.
+See the <a href="http://help.autodesk.com/view/FBX/2020/ENU/?guid=FBX_Developer_Help_cpp_ref_annotated_html">Autodesk® FBX® SDK API documentation</a>.
 
 The bindings are in the `Autodesk.Fbx` namespace:
 
