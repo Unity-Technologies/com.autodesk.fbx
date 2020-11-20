@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Autodesk.Fbx.BuildTests
 {
-    public class ExportEmptyFbx : MonoBehaviour
+    internal class ExportEmptyFbx : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()

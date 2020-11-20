@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxAnimCurveNodeTest : Base<FbxAnimCurveNode>
+    internal class FbxAnimCurveNodeTest : Base<FbxAnimCurveNode>
     {
 
         [Test]

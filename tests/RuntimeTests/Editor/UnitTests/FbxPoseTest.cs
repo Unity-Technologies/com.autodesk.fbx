@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxPoseTest : Base<FbxPose>
+    internal class FbxPoseTest : Base<FbxPose>
     {
 
         [Test]

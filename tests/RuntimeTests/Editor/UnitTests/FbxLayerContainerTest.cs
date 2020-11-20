@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxLayerContainerBase<T> : FbxNodeAttributeBase<T> where T:FbxLayerContainer
+    internal class FbxLayerContainerBase<T> : FbxNodeAttributeBase<T> where T:FbxLayerContainer
     {
         override public void TestBasics(T layerContainer, FbxNodeAttribute.EType typ)
         {
@@ -31,7 +31,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxLayerContainerTest : FbxLayerContainerBase<FbxLayerContainer>
+    internal class FbxLayerContainerTest : FbxLayerContainerBase<FbxLayerContainer>
     {
         [Test]
         public void TestBasics() {

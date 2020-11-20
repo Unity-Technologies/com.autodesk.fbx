@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class AnimationClipsExportTest : RoundTripTestBase
+    internal class AnimationClipsExportTest : RoundTripTestBase
     {
         protected int m_keyCount = 5;
 

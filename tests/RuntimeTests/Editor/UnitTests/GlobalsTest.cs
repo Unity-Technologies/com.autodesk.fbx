@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class GlobalsTest
+    internal class GlobalsTest
     {
         const string kPINVOKE = "NativeMethods";
         static System.Type s_PINVOKEtype;

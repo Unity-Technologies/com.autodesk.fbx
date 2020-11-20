@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxAnimLayerTest : Base<FbxAnimLayer>
+    internal class FbxAnimLayerTest : Base<FbxAnimLayer>
     {
         [Test]
         public void TestBasics(){

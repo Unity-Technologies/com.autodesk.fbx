@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public abstract class FbxLayerElementArrayTestBase<T> : TestBase<T> where T : Autodesk.Fbx.FbxLayerElementArray
+    internal abstract class FbxLayerElementArrayTestBase<T> : TestBase<T> where T : Autodesk.Fbx.FbxLayerElementArray
     {
         public void TestBasics(T layerElementArray)
         {
@@ -76,7 +76,7 @@ namespace Autodesk.Fbx.UnitTests
         public abstract void TestBasics();
     }
 
-    public abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTestBase<T> where T : Autodesk.Fbx.FbxLayerElementArray {
+    internal abstract class FbxLayerElementArrayTemplateTestBase<T,U> : FbxLayerElementArrayTestBase<T> where T : Autodesk.Fbx.FbxLayerElementArray {
 
         static System.Reflection.MethodInfo s_getAt;
         static System.Reflection.ConstructorInfo s_constructor;
@@ -123,7 +123,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxLayerElementArrayTest : FbxLayerElementArrayTestBase<FbxLayerElementArray> {
+    internal class FbxLayerElementArrayTest : FbxLayerElementArrayTestBase<FbxLayerElementArray> {
         [Test]
         public override void TestBasics()
         {
@@ -131,23 +131,23 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxLayerElementArrayTemplateFbxColorTest : 
+    internal class FbxLayerElementArrayTemplateFbxColorTest : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxColor,FbxColor> {
     }
 
-    public class FbxLayerElementArrayTemplateFbxSurfaceMaterialTest :
+    internal class FbxLayerElementArrayTemplateFbxSurfaceMaterialTest :
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxSurfaceMaterial,FbxSurfaceMaterial> {
     }
 
-    public class FbxLayerElementArrayTemplateFbxVector2Test : 
+    internal class FbxLayerElementArrayTemplateFbxVector2Test : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector2,FbxVector2> {
     }
 
-    public class FbxLayerElementArrayTemplateFbxVector4Test : 
+    internal class FbxLayerElementArrayTemplateFbxVector4Test : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateFbxVector4,FbxVector4> {
     }
 
-    public class FbxLayerElementArrayTemplateIntTest : 
+    internal class FbxLayerElementArrayTemplateIntTest : 
         FbxLayerElementArrayTemplateTestBase<FbxLayerElementArrayTemplateInt,int> {
     }
 }

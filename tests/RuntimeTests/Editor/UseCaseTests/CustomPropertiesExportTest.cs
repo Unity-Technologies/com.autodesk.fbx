@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class CustomPropertiesExportTest : HierarchyExportTest
+    internal class CustomPropertiesExportTest : HierarchyExportTest
     {
         protected string m_customPropName = "customProp";
 

@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxStatusTest
+    internal class FbxStatusTest
     {
         [Test]
         public void TestBasics()

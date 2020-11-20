@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxSkinTest : FbxDeformerTestBase<FbxSkin>
+    internal class FbxSkinTest : FbxDeformerTestBase<FbxSkin>
     {
         [Test]
         public void TestDeformerBasics()

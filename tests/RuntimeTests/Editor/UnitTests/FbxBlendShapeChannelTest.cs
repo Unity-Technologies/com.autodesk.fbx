@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxBlendShapeChannelTest : Base<FbxBlendShapeChannel>
+    internal class FbxBlendShapeChannelTest : Base<FbxBlendShapeChannel>
     {
         [Test]
         public void TestBasics ()

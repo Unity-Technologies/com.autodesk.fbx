@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class VisibilityExportTest : RoundTripTestBase
+    internal class VisibilityExportTest : RoundTripTestBase
     {
         [SetUp]
         public override void Init ()

@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxMarkerTest : FbxNodeAttributeBase<FbxMarker>
+    internal class FbxMarkerTest : FbxNodeAttributeBase<FbxMarker>
     {
         [Test]
         public void TestBasics ()
