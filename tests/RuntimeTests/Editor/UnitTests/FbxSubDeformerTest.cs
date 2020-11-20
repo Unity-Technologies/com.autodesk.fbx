@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxSubDeformerTest : Base<FbxSubDeformer>
+    internal class FbxSubDeformerTest : Base<FbxSubDeformer>
     {
 
     }

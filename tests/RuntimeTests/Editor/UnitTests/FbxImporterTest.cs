@@ -9,7 +9,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxImporterTest : FbxIOBaseTest<FbxImporter>
+    internal class FbxImporterTest : FbxIOBaseTest<FbxImporter>
     {
         [Test]
         public override void TestBasics ()

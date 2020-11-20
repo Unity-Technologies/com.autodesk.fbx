@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Autodesk.Fbx.BuildTests
 {
-    public class BuildTest
+    internal class BuildTest
     {
         private const string k_fbxsdkNativePlugin = "UnityFbxSdkNative";
         private const string k_autodeskFbxDll = "Autodesk.Fbx.dll";

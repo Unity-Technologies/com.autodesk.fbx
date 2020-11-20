@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxBindingTableTest : Base<FbxBindingTable>
+    internal class FbxBindingTableTest : Base<FbxBindingTable>
     {
         [Test]
         public void TestBasics() {

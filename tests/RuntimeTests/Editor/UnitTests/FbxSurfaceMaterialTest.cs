@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxSurfaceMaterialTest : Base<FbxSurfaceMaterial>
+    internal class FbxSurfaceMaterialTest : Base<FbxSurfaceMaterial>
     {
         public static void TestSurface<T>(T material) where T:FbxSurfaceMaterial
         {
@@ -51,7 +51,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxSurfaceLambertTest : Base<FbxSurfaceLambert>
+    internal class FbxSurfaceLambertTest : Base<FbxSurfaceLambert>
     {
         public static void TestLambert<T>(T lambert) where T:FbxSurfaceLambert
         {
@@ -80,7 +80,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxSurfacePhongTest : Base<FbxSurfacePhong>
+    internal class FbxSurfacePhongTest : Base<FbxSurfacePhong>
     {
         [Test]
         public void TestBasics()

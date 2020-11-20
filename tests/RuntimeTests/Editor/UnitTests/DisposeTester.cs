@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public static class DisposeTester
+    internal static class DisposeTester
     {
         /// <summary>
         /// Test that dispose doesn't crash or throw anything.

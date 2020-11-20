@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxSkeletonTest : FbxNodeAttributeBase<FbxSkeleton>
+    internal class FbxSkeletonTest : FbxNodeAttributeBase<FbxSkeleton>
     {
         [Test]
         public void TestBasics ()

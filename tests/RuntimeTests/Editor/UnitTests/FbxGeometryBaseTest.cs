@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxGeometryBaseTestBase<T> : FbxLayerContainerBase<T> where T : FbxGeometryBase
+    internal class FbxGeometryBaseTestBase<T> : FbxLayerContainerBase<T> where T : FbxGeometryBase
     {
         override public void TestBasics(T geometryBase, FbxNodeAttribute.EType typ)
         {
@@ -48,7 +48,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxGeometryBaseTest : FbxGeometryBaseTestBase<FbxGeometryBase> {
+    internal class FbxGeometryBaseTest : FbxGeometryBaseTestBase<FbxGeometryBase> {
         [Test]
         public void TestBasics()
         {
@@ -62,7 +62,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxGeometryTestBase<T> : FbxGeometryBaseTestBase<T> where T : FbxGeometry
+    internal class FbxGeometryTestBase<T> : FbxGeometryBaseTestBase<T> where T : FbxGeometry
     {
         override public void TestBasics(T fbxGeometry, FbxNodeAttribute.EType typ)
         {
@@ -110,7 +110,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxGeometryTest : FbxGeometryTestBase<FbxGeometry>
+    internal class FbxGeometryTest : FbxGeometryTestBase<FbxGeometry>
     {
         [Test]
         public void TestBasics()
@@ -119,7 +119,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxShapeTest : FbxGeometryBaseTestBase<FbxShape>
+    internal class FbxShapeTest : FbxGeometryBaseTestBase<FbxShape>
     {
         [Test]
         public void TestBasics()

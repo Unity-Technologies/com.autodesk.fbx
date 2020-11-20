@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace Autodesk.Fbx.UseCaseTests
 {
 
-    public class EmptyExportTest : RoundTripTestBase
+    internal class EmptyExportTest : RoundTripTestBase
     {
 
         private static Dictionary<string, string> m_dataValues = new Dictionary<string, string> ()

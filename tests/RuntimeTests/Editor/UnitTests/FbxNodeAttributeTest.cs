@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxNodeAttributeBase<T> : Base<T> where T : FbxNodeAttribute
+    internal class FbxNodeAttributeBase<T> : Base<T> where T : FbxNodeAttribute
     {
         virtual public void TestBasics(T attr, FbxNodeAttribute.EType typ)
         {
@@ -29,7 +29,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxNodeAttributeTest : FbxNodeAttributeBase<FbxNodeAttribute>
+    internal class FbxNodeAttributeTest : FbxNodeAttributeBase<FbxNodeAttribute>
     {
         [Test]
         public void TestBasics() {

@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxQuaternionTest
+    internal class FbxQuaternionTest
     {
         /// <summary>
         /// Check that two quaternions represent a similar rotation.

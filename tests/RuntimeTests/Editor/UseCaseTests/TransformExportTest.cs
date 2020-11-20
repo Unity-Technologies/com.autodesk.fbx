@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class TransformExportTest : RoundTripTestBase
+    internal class TransformExportTest : RoundTripTestBase
     {
         [SetUp]
         public override void Init ()

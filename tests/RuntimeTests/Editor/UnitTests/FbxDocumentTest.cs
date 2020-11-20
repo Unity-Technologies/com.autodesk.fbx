@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxDocumentTest : Base<FbxDocument>
+    internal class FbxDocumentTest : Base<FbxDocument>
     {
         private static Dictionary<string, string> m_dataValues = new Dictionary<string, string> ()
         {

@@ -9,7 +9,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxColorTest
+    internal class FbxColorTest
     {
         [Test]
         public void TestEquality()

@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxAnimCurveTest : Base<FbxAnimCurve>
+    internal class FbxAnimCurveTest : Base<FbxAnimCurve>
     {
         Dictionary<FbxManager, FbxScene> m_scenes = new Dictionary<FbxManager, FbxScene>();
 
@@ -205,7 +205,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxAnimCurveDefTest /* testing a static class, so we can't derive from TestBase */
+    internal class FbxAnimCurveDefTest /* testing a static class, so we can't derive from TestBase */
     {
         [Test]
         public void TestBasics()

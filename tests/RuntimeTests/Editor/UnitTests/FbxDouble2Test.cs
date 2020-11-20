@@ -14,7 +14,7 @@ namespace Autodesk.Fbx.UnitTests
     /// If you add tests here, you probably want to add them to the other
     /// FbxDouble* test classes.
     /// </summary>
-    public class FbxDouble2Test
+    internal class FbxDouble2Test
     {
         [Test]
         public void TestEquality()

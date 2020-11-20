@@ -7,7 +7,7 @@
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public static class Invoker
+    internal static class Invoker
     {
         /**
          * Invoke a constructor taking zero arguments.

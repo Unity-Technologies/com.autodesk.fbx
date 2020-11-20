@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxGlobalSettingsTest : Base<FbxGlobalSettings>
+    internal class FbxGlobalSettingsTest : Base<FbxGlobalSettings>
     {
         [Test]
         public void TestBasics()

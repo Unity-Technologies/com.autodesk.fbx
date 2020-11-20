@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class AnimatedConstraintExportTest : AnimationClipsExportTest
+    internal class AnimatedConstraintExportTest : AnimationClipsExportTest
     {
         protected override string[] PropertyNames
         {

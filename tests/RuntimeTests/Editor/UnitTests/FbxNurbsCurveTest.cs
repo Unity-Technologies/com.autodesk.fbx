@@ -2,7 +2,7 @@
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxNurbsCurveTest : FbxGeometryTestBase<FbxNurbsCurve>
+    internal class FbxNurbsCurveTest : FbxGeometryTestBase<FbxNurbsCurve>
     {
         [Test]
         public void TestBasics()

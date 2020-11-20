@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Autodesk.Fbx.PlayModeTests
 {
-    public class FbxExporterTest {
+    internal class FbxExporterTest {
         [Test]
         public void TestWriteEmptyFbxFile() {
             /*

@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxExporterTest : FbxIOBaseTest<FbxExporter>
+    internal class FbxExporterTest : FbxIOBaseTest<FbxExporter>
     {
         FbxExporter m_exporter;
 

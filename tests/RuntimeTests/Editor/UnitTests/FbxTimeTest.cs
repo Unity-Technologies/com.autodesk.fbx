@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxTimeTest : TestBase<FbxTime>
+    internal class FbxTimeTest : TestBase<FbxTime>
     {
         [Test]
         public void TestComparison ()
@@ -122,7 +122,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxTimeSpanTest : TestBase<FbxTimeSpan>
+    internal class FbxTimeSpanTest : TestBase<FbxTimeSpan>
     {
         [Test]
         public void TestBasics ()
