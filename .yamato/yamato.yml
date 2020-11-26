@@ -161,12 +161,12 @@ test_{{ platform.name }}_{{ editor.version }}:
     # There is no IL2CPP on Ubuntu before 2019.3
     - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
 {% elseif editor.version == 2018.4 %}
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+{% else %}
     {% if platform.name == "ubuntu" %}
     # clang required for il2cpp backend
     - sudo apt-get -y install clang
     {% endif %}
-    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx
-{% else %}
     # Code coverage is only available in Unity 2019.3 and higher
     - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
     - python tests/Yamato/check_coverage_percent.py upm-ci~/test-results/ {{ coverage.minPercent }}
