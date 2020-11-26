@@ -50,9 +50,11 @@ namespace Autodesk.Fbx.BuildTests
             get
             {
                 yield return new TestCaseData(new string[] { k_runningBuildSymbol }, false, false).SetName("FbxSdkNotIncludedAtRuntime").Returns(null);
-                yield return new TestCaseData(new string[] { k_runningBuildSymbol }, false, true).SetName("FbxSdkNotIncludedAtRuntime_IL2CPP").Returns(null);
                 yield return new TestCaseData(new string[] { k_runningBuildSymbol, "FBXSDK_RUNTIME" }, true, false).SetName("FbxSdkIncludedAtRuntime").Returns(null);
+                #if !UNITY_EDITOR_LINUX || UNITY_2019_3_OR_NEWER
+                yield return new TestCaseData(new string[] { k_runningBuildSymbol }, false, true).SetName("FbxSdkNotIncludedAtRuntime_IL2CPP").Returns(null);
                 yield return new TestCaseData(new string[] { k_runningBuildSymbol, "FBXSDK_RUNTIME" }, true, true).SetName("FbxSdkIncludedAtRuntime_IL2CPP").Returns(null);
+                #endif // !UNITY_EDITOR_LINUX || UNITY_2019_3_OR_NEWER
             }
         }
 
@@ -156,26 +158,29 @@ namespace Autodesk.Fbx.BuildTests
             }
             Assert.That(buildPluginFullPath, constraint);
 
-            // check the size of Autodesk.Fbx.dll
-            var autodeskDllFullPath = Path.Combine(
-                    string.Format(k_buildPluginPath, buildPathWithoutExt),
-                    k_autodeskDllInstallPath,
-                    k_autodeskFbxDll
-                );
-            Assert.That(autodeskDllFullPath, Does.Exist);
-            var fileInfo = new FileInfo(autodeskDllFullPath);
+            // Autodesk.Fbx.dll will only exist if building with Mono
+            if(!useIL2CPP){
+                // check the size of Autodesk.Fbx.dll
+                var autodeskDllFullPath = Path.Combine(
+                        string.Format(k_buildPluginPath, buildPathWithoutExt),
+                        k_autodeskDllInstallPath,
+                        k_autodeskFbxDll
+                    );
+                Assert.That(autodeskDllFullPath, Does.Exist);
+                var fileInfo = new FileInfo(autodeskDllFullPath);
 
-            // If the FBX SDK is copied over at runtime, the DLL filesize will
-            // be ~350,000. If it isn't copied over it will be ~3500.
-            // Putting the expected size as 10000 to allow for some buffer room.
-            var expectedDllFileSize = 10000;
-            if (dllExists)
-            {
-                Assert.That(fileInfo.Length, Is.GreaterThan(expectedDllFileSize));
-            }
-            else
-            {
-                Assert.That(fileInfo.Length, Is.LessThan(expectedDllFileSize));
+                // If the FBX SDK is copied over at runtime, the DLL filesize will
+                // be ~350,000. If it isn't copied over it will be ~3500.
+                // Putting the expected size as 10000 to allow for some buffer room.
+                var expectedDllFileSize = 10000;
+                if (dllExists)
+                {
+                    Assert.That(fileInfo.Length, Is.GreaterThan(expectedDllFileSize));
+                }
+                else
+                {
+                    Assert.That(fileInfo.Length, Is.LessThan(expectedDllFileSize));
+                }
             }
 
             var buildPath = report.summary.outputPath;

@@ -27,9 +27,6 @@ editors:
   - version: 2018.4
   - version: 2019.4
   - version: 2020.1
-test_platforms:
-  - name: standalone
-  - name: editmode
 mac_platform:
   name: mac
   type: Unity::VM::osx
@@ -109,7 +106,7 @@ build_ubuntu:
     image: {{ ubuntu_platform.image }}
     flavor: {{ ubuntu_platform.flavor}}
   commands:
-    - sudo apt-get install p7zip mono-devel
+    - sudo apt-get install p7zip mono-devel clang
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-ubuntu
   artifacts:
@@ -148,9 +145,8 @@ pack:
 
 {% for editor in editors %}
 {% for platform in platforms %}
-{% for test_platform in test_platforms %}
-test_{{ platform.name }}_{{ editor.version }}_{{ test_platform.name }}:
-  name : Test version {{ editor.version }} on {{ platform.name }} in {{ test_platform.name }}
+test_{{ platform.name }}_{{ editor.version }}:
+  name : Test version {{ editor.version }} on {{ platform.name }}
   agent:
     type: {{ platform.type }}
     image: {{ platform.image }}
@@ -163,15 +159,15 @@ test_{{ platform.name }}_{{ editor.version }}_{{ test_platform.name }}:
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
 {% if editor.version == 2018.4 and platform.name == "ubuntu" %}
     # There is no IL2CPP on Ubuntu before 2019.3
-    - upm-ci package test --backend mono --platform {{ test_platform.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx   
+    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
 {% else if editor.version == 2018.4 %}
-    # Code coverage is only available in Unity 2019.3 and higher
-    - upm-ci package test --backend il2cpp --platform {{ test_platform.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx
 {% else %}
-    - upm-ci package test --backend il2cpp --platform {{ test_platform.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
+    # Code coverage is only available in Unity 2019.3 and higher
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
     - python tests/Yamato/check_coverage_percent.py upm-ci~/test-results/ {{ coverage.minPercent }}
 {% endif %}
-    - echo "****** PASSED {{ test_platform.name }} Tests *******"
+    - echo "****** PASSED *******"
   triggers:
     pull_requests:
       - targets:
@@ -186,7 +182,6 @@ test_{{ platform.name }}_{{ editor.version }}_{{ test_platform.name }}:
         - "upm-ci~/test-results/**/*"
   dependencies:
     - .yamato/yamato.yml#pack
-{% endfor %}
 {% endfor %}
 {% endfor %}
 
@@ -235,9 +230,7 @@ publish:
     - .yamato/yamato.yml#pack
 {% for editor in editors %}
 {% for platform in platforms %}
-{% for test_platform in test_platforms %}
-    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}_{{ test_platform.name }}
-{% endfor %}
+    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}
 {% endfor %}
 {% endfor %}
 
