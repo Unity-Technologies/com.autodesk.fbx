@@ -160,9 +160,10 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% if editor.version == 2018.4 and platform.name == "ubuntu" %}
     # There is no IL2CPP on Ubuntu before 2019.3
     - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
-{% else if editor.version == 2018.4 %}
+{% elseif editor.version == 2018.4 %}
     {% if platform.name == "ubuntu" %}
-    - sudo apt-get install clang-6.0
+    # clang required for il2cpp backend
+    - sudo apt-get -y install clang
     {% endif %}
     - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx
 {% else %}
