@@ -27,8 +27,6 @@ editors:
   - version: 2018.4
   - version: 2019.4
   - version: 2020.1
-backends:
-  - name: il2cpp
 mac_platform:
   name: mac
   type: Unity::VM::osx
@@ -146,12 +144,9 @@ pack:
         - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
-{% for backend in backends %}
 {% for platform in platforms %}
-# There is no IL2CPP on Ubuntu before 2019.3
-{% unless platform.name == "ubuntu" and editor.version == 2018.4 and backend.name == "il2cpp" %}
-test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
-  name : Test version {{ editor.version }} {{ backend.name }} on {{ platform.name }}
+test_{{ platform.name }}_{{ editor.version }}:
+  name : Test version {{ editor.version }} on {{ platform.name }}
   agent:
     type: {{ platform.type }}
     image: {{ platform.image }}
@@ -163,13 +158,18 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
   commands:
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
 # Code coverage is only available in Unity 2019.3 and higher
-{% if editor.version == 2018.4 %}
-    - upm-ci package test --extra-utr-arg="--scripting-backend={{backend.name}}" --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+{% if editor.version == 2018.4 and platform.name == "ubuntu" %}
+    # There is no IL2CPP on Ubuntu before 2019.3
+    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+{% else if editor.version == 2018.4 %}
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+    - upm-ci package test --backend il2cpp --platform standalone --unity-version {{ editor.version }} --package-path com.autodesk.fbx
 {% else %}
-    - upm-ci package test --extra-utr-arg="--scripting-backend={{backend.name}}" --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
+    - upm-ci package test --backend il2cpp --platform standalone --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
     - python tests/Yamato/check_coverage_percent.py upm-ci~/test-results/ {{ coverage.minPercent }}
 {% endif %}
-    - echo "****** PASSED {{ backend.name }} backend *******"
+    - echo "****** PASSED *******"
   triggers:
     pull_requests:
       - targets:
@@ -184,8 +184,6 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
         - "upm-ci~/test-results/**/*"
   dependencies:
     - .yamato/yamato.yml#pack
-{% endunless %}
-{% endfor %}
 {% endfor %}
 {% endfor %}
 
@@ -234,12 +232,7 @@ publish:
     - .yamato/yamato.yml#pack
 {% for editor in editors %}
 {% for platform in platforms %}
-{% for backend in backends %}
-# There is no IL2CPP on Ubuntu before 2019.3
-{% unless platform.name == "ubuntu" and editor.version == 2018.4 and backend.name == "il2cpp" %}
-    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}
-{% endunless %}
-{% endfor %}
+    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}
 {% endfor %}
 {% endfor %}
 
