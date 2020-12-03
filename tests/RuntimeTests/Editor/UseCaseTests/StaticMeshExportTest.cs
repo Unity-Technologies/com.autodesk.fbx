@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class StaticMeshExportTest : RoundTripTestBase
+    internal class StaticMeshExportTest : RoundTripTestBase
     {
         // Define the corners of a cube that spans from
         // -50 to 50 on the x and z axis, and 0 to 100 on the y axis
@@ -116,7 +116,7 @@ namespace Autodesk.Fbx.UseCaseTests
         }
     }
 
-    public class StaticMeshWithNormalsExportTest : StaticMeshExportTest 
+    internal class StaticMeshWithNormalsExportTest : StaticMeshExportTest 
     {
         // Define normal vectors along each axis
         protected FbxVector4 normalXPos = new FbxVector4(1,0,0);
@@ -319,7 +319,7 @@ namespace Autodesk.Fbx.UseCaseTests
 		}
     }
 
-    public class StaticMeshWithMaterialExportTest : StaticMeshExportTest {
+    internal class StaticMeshWithMaterialExportTest : StaticMeshExportTest {
 
         private string m_materialName = "MaterialTest";
 

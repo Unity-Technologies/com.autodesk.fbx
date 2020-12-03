@@ -12,7 +12,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public abstract class RoundTripTestBase
+    internal abstract class RoundTripTestBase
     {
         private string _filePath;
         protected string filePath       { get { return string.IsNullOrEmpty(_filePath) ? "." : _filePath; } set { _filePath = value; } }

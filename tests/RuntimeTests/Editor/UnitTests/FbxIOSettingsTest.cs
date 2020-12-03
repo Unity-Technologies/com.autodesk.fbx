@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 namespace Autodesk.Fbx.UnitTests
 {
 
-    public class FbxIOSettingsTest : Base<FbxIOSettings>
+    internal class FbxIOSettingsTest : Base<FbxIOSettings>
     {
         [Test]
         public void TestFVirtual ()

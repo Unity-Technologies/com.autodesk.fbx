@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxCameraTest : FbxNodeAttributeBase<FbxCamera>
+    internal class FbxCameraTest : FbxNodeAttributeBase<FbxCamera>
     {
         [Test]
         public void TestBasics()

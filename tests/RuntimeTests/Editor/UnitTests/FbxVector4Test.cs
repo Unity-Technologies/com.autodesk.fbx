@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxVector4Test
+    internal class FbxVector4Test
     {
         [Test]
         public void TestEquality()

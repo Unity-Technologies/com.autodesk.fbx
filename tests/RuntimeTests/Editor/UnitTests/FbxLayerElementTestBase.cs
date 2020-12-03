@@ -19,7 +19,7 @@ using Autodesk.Fbx;
  */
 namespace Autodesk.Fbx.UnitTests
 {
-    public abstract class FbxLayerElementTestBase<T> where T: Autodesk.Fbx.FbxLayerElement
+    internal abstract class FbxLayerElementTestBase<T> where T: Autodesk.Fbx.FbxLayerElement
     {
         // Note: Create function is only present in derived classes (those which are actually used).
         //       Included it here so that we can test FbxLayerElement functions, and because they
@@ -157,21 +157,21 @@ namespace Autodesk.Fbx.UnitTests
     /*
      * Tests for the classes derived from the FbxLayerElementTemplate classes.
      */
-    public class FbxLayerElementUVTest : FbxLayerElementTestBase<FbxLayerElementUV>
+    internal class FbxLayerElementUVTest : FbxLayerElementTestBase<FbxLayerElementUV>
     {}
 
-    public class FbxLayerElementVertexColorTest : FbxLayerElementTestBase<FbxLayerElementVertexColor>
+    internal class FbxLayerElementVertexColorTest : FbxLayerElementTestBase<FbxLayerElementVertexColor>
     {}
 
-    public class FbxLayerElementNormalTest : FbxLayerElementTestBase<FbxLayerElementNormal>
+    internal class FbxLayerElementNormalTest : FbxLayerElementTestBase<FbxLayerElementNormal>
     {}
 
-    public class FbxLayerElementBinormalTest : FbxLayerElementTestBase<FbxLayerElementBinormal>
+    internal class FbxLayerElementBinormalTest : FbxLayerElementTestBase<FbxLayerElementBinormal>
     {}
 
-    public class FbxLayerElementTangentTest : FbxLayerElementTestBase<FbxLayerElementTangent>
+    internal class FbxLayerElementTangentTest : FbxLayerElementTestBase<FbxLayerElementTangent>
     {}
 
-    public class FbxLayerElementMaterialTest : FbxLayerElementTestBase<FbxLayerElementMaterial>
+    internal class FbxLayerElementMaterialTest : FbxLayerElementTestBase<FbxLayerElementMaterial>
     {}
 }

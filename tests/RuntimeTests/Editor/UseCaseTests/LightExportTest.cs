@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class LightExportTest : AnimationClipsExportTest
+    internal class LightExportTest : AnimationClipsExportTest
     {
         [SetUp]
         public override void Init ()

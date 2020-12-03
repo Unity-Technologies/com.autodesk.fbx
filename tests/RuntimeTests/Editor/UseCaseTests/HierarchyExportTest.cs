@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class HierarchyExportTest : RoundTripTestBase
+    internal class HierarchyExportTest : RoundTripTestBase
     {
         [SetUp]
         public override void Init ()

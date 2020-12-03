@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxLayerTest : TestBase<FbxLayer>
+    internal class FbxLayerTest : TestBase<FbxLayer>
     {
 
         private FbxMesh m_fbxMesh;

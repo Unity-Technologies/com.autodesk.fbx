@@ -16,7 +16,7 @@ using UnityEditorInternal;
 namespace Autodesk.Fbx.PerformanceTests
 {
     [TestFixture]
-    public class PerformanceTest
+    internal class PerformanceTest
     {
         protected string exeFileName {
             get {

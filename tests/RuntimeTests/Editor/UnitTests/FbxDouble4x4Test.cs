@@ -9,7 +9,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxDouble4x4TestBase<T> : TestBase<T> where T: FbxDouble4x4
+    internal class FbxDouble4x4TestBase<T> : TestBase<T> where T: FbxDouble4x4
     {
         /// <summary>
         /// Test element access and Dispose().
@@ -48,7 +48,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxDouble4x4Test : FbxDouble4x4TestBase<FbxDouble4x4>
+    internal class FbxDouble4x4Test : FbxDouble4x4TestBase<FbxDouble4x4>
     {
         [Test]
         public void TestEquality()

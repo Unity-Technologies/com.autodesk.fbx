@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 namespace Autodesk.Fbx.UnitTests
 {
 
-    public class FbxObjectTest : Base<FbxObject>
+    internal class FbxObjectTest : Base<FbxObject>
     {
         [Test]
         public void TestUTF8()

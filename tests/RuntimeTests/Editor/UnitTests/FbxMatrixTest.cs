@@ -9,7 +9,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxMatrixTest : FbxDouble4x4TestBase<FbxMatrix>
+    internal class FbxMatrixTest : FbxDouble4x4TestBase<FbxMatrix>
     {
 
         public static bool AssertIsIdentity(FbxMatrix mx,

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public abstract class TestBase<T>
+    internal abstract class TestBase<T>
     {
         /*
          * Helper to test a property getter without a compiler warning.

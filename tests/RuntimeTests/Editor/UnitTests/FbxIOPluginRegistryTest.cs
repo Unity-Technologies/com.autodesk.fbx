@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxIOPluginRegistryTest
+    internal class FbxIOPluginRegistryTest
     {
         [Test]
         public void TestBasics ()

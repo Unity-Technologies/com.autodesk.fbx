@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 namespace Autodesk.Fbx.UnitTests
 {
 
-    public class FbxIOBaseTest<T> : Base<T> where T: FbxIOBase
+    internal class FbxIOBaseTest<T> : Base<T> where T: FbxIOBase
     {
         [Test]
         public virtual void TestBasics()
@@ -29,5 +29,5 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxIOBaseTestClass : FbxIOBaseTest<FbxIOBase> { }
+    internal class FbxIOBaseTestClass : FbxIOBaseTest<FbxIOBase> { }
 }

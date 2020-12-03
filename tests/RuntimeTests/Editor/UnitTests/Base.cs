@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public abstract class Base<T> : TestBase<T> where T: Autodesk.Fbx.FbxObject
+    internal abstract class Base<T> : TestBase<T> where T: Autodesk.Fbx.FbxObject
     {
         // T.Create(FbxManager, string)
         static System.Reflection.MethodInfo s_createFromMgrAndName;

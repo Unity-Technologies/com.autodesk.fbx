@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxDeformerTestBase<T> : Base<T> where T : FbxDeformer
+    internal class FbxDeformerTestBase<T> : Base<T> where T : FbxDeformer
     {
         virtual public void TestBasics(T deformer, FbxDeformer.EDeformerType type)
         {
@@ -19,7 +19,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxDeformerTest : FbxDeformerTestBase<FbxDeformer> {
+    internal class FbxDeformerTest : FbxDeformerTestBase<FbxDeformer> {
         [Test]
         public void TestBasics()
         {

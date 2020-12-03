@@ -12,7 +12,7 @@ using UnityEngine.TestTools.Utils;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxMeshTest : FbxGeometryTestBase<FbxMesh>
+    internal class FbxMeshTest : FbxGeometryTestBase<FbxMesh>
     {
         [Test]
         public void TestBasics()
@@ -192,7 +192,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxMeshBadBracketingExceptionTest {
+    internal class FbxMeshBadBracketingExceptionTest {
         [Test]
         public void BasicTests()
         {
