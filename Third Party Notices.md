@@ -5,7 +5,7 @@ Component Name: Autodesk FBX SDK
 License Type: FBX SDK License and Service Agreement  
 Copyright (c) 2020 Autodesk, Inc.  All rights reserved.  
 
-Use of the FBX SDK requires agreeing to and complying with the FBX SDK License and Service Agreement terms accessed at <https://unity3d.com/legal/autodesk-fbx>.
+Use of the FBX SDK requires agreeing to and complying with the FBX SDK License and Service Agreement terms accessed at <https://unity3d.com/legal/autodesk-fbx> and copied below:
 
 **Autodesk**
 
