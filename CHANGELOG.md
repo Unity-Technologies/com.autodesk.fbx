@@ -1,13 +1,14 @@
 # Changes in FBX SDK C# Bindings
 
-## [Unreleased] - 2020-11-16
+## [4.0.0-pre.2] - 2020-12-03
 
 CHANGES
 * Updated documentation.
     * Updated minimum supported Unity version.
     * Removed IL2CPP backend not supported section.
     * Updated link to FBX SDK API documentation.
-* Updated year in license files (Third Party Notices and License.md)
+    * Moved API documentation to Scripting API landing page.
+* Updated year in license files (Third Party Notices and License.md).
 
 ## [4.0.0-pre.1] - 2020-10-07
 
