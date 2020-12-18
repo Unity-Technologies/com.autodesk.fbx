@@ -56,7 +56,7 @@ if (${USE_STEVEDORE} STREQUAL "ON")
 
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         set(fbxsdk_artifact_name fbxsdk-mac-x64)
-        set(fbxsdk_artifact_id 2020.1_b40395c1fffb94f9dedfeb2da755e224918508d7e46796ae489c946ee2e653a1.7z)
+        set(fbxsdk_artifact_id 2020.2_bfa28d76a77eb68eb9254c389b244e2a024037424da655baf1dd3f554b09056e.7z)
 
         set(swig_artifact_name swig-mac-x64)
         set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
