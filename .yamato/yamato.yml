@@ -113,9 +113,7 @@ build_ubuntu:
     - sudo apt-get install p7zip mono-devel
     # Ensure correct version of gcc and g++ used
     # https://stackoverflow.com/questions/17275348/how-to-specify-new-gcc-path-for-cmake
-    - export CC=`which gcc-9`
-    - export CXX=`which g++-9`
-    - python ./build.py --stevedore --verbose --clean --yamato
+    - export CC=`which gcc-9`;export CXX=`which g++-9`;python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-ubuntu
   artifacts:
     build:
