@@ -86,13 +86,12 @@ build_mac:
     type: {{ mac_platform.type }}
     image: {{ mac_platform.image }}
     flavor: {{ mac_platform.flavor}}
-  variables:
-    PIP_INDEX_URL: "https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple"
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
-    # update httpie first, otherwise installing mono tries to update it and fails
-    # as it tries to delete the previous httpie which no longer exists.
-    - HOMEBREW_NO_INSTALL_CLEANUP=1 brew update && brew upgrade httpie
+    # Make sure correct pip index url is set as mono depends on Python 3.9 which also installs pip. 
+    # Setting the PIP_INDEX_URL environment variable does not seem to
+    # be sufficient in this situation as the incorrect URL is used when updating pip.
+    - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list mono || brew install mono
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
