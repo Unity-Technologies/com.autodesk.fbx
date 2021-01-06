@@ -9,6 +9,7 @@ CHANGES
     * Updated link to FBX SDK API documentation.
     * Moved API documentation to Scripting API landing page.
 * Updated year in license files (Third Party Notices and License.md).
+* Upgraded to FBX SDK 2020.2
 
 ## [4.0.0-pre.1] - 2020-10-07
 

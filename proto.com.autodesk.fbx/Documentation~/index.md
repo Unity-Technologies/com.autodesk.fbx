@@ -52,3 +52,7 @@ For example, if you have an `FbxProperty` in C# and you delete the `FbxNode` tha
 #### Linux not supported
 
 Linux support is currently experimental on this package. Unity does not provide support for it.
+
+#### Linux requires gcc 9.3
+
+On Linux, gcc/g++ 9.3 is required to be installed in order to use the package.
