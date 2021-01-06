@@ -109,8 +109,8 @@ build_ubuntu:
   commands:
     # FBX SDK 2020.2 requires gcc 9.3
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-    - sudo apt update
-    - sudo apt -y install gcc-9 g++-9
+    - sudo apt-get update
+    - sudo apt-get -y install gcc-9 g++-9
     - sudo apt-get install p7zip mono-devel
     # Ensure correct version of gcc and g++ used
     # https://stackoverflow.com/questions/17275348/how-to-specify-new-gcc-path-for-cmake
@@ -164,6 +164,12 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endif %}
   commands:
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
+{% if platform.name == "ubuntu" %}
+    # FBX SDK 2020.2 requires gcc 9.3
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+    - sudo apt-get update
+    - sudo apt-get -y install gcc-9 g++-9    
+{% endif %} 
 {% if editor.version == 2018.4 and platform.name == "ubuntu" %}
     # There is no IL2CPP on Ubuntu before 2019.3
     - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
