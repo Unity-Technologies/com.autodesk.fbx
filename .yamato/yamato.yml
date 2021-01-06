@@ -86,6 +86,8 @@ build_mac:
     type: {{ mac_platform.type }}
     image: {{ mac_platform.image }}
     flavor: {{ mac_platform.flavor}}
+  variables:
+    PIP_INDEX_URL: "https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple"
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
     # update httpie first, otherwise installing mono tries to update it and fails
