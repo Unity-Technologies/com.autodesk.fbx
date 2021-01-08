@@ -53,6 +53,6 @@ For example, if you have an `FbxProperty` in C# and you delete the `FbxNode` tha
 
 Linux support is currently experimental on this package. Unity does not provide support for it.
 
-#### Linux requires gcc 9.3
+#### Linux requires libstdc++ 6
 
-On Linux, gcc/g++ 9.3 is required to be installed in order to use the package.
+On Linux, libstdc++ 6 is required to be installed in order to use the package.
