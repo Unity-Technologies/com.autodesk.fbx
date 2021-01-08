@@ -8,7 +8,6 @@ CHANGES
     * Removed IL2CPP backend not supported section.
     * Updated link to FBX SDK API documentation.
     * Moved API documentation to Scripting API landing page.
-* Updated year in license files (Third Party Notices and License.md).
 * Update Third Party Notices.md with new FBX License
 * Upgraded to FBX SDK 2020.2
 
