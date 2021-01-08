@@ -217,7 +217,7 @@ promotion_test:
     UPMCI_PROMOTION: 1
   commands:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
-    - upm-ci package test --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx
+    - upm-ci package test --backend il2cpp --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx
   triggers:
     pull_requests:
       - targets:
