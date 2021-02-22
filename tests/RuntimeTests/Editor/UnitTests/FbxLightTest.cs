@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxLightTest : FbxNodeAttributeBase<FbxLight>
+    internal class FbxLightTest : FbxNodeAttributeBase<FbxLight>
     {
         [Test]
         public void TestBasics()

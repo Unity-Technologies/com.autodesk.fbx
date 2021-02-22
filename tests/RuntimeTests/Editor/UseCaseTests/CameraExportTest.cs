@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class CameraExportTest : AnimationClipsExportTest
+    internal class CameraExportTest : AnimationClipsExportTest
     {
         [SetUp]
         public override void Init ()

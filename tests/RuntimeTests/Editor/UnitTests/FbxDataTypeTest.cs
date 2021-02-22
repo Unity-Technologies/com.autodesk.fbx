@@ -9,7 +9,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxDataTypeTest
+    internal class FbxDataTypeTest
     {
         [Test]
         public void TestEquality()

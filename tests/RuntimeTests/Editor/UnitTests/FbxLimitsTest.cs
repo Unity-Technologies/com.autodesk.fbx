@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxLimitsTest : TestBase<FbxLimits>
+    internal class FbxLimitsTest : TestBase<FbxLimits>
     {
         // There's lots of flags with get/set to test. Do it with lambdas.
         delegate bool GetActive();

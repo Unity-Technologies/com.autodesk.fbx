@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class InstancesExportTest : TransformExportTest
+    internal class InstancesExportTest : TransformExportTest
     {
         protected string m_meshName = "shared mesh";
         protected string m_materialName = "shared material";

@@ -1,5 +1,16 @@
 # Changes in FBX SDK C# Bindings
 
+## [4.0.0-pre.2] - 2021-01-08
+
+CHANGES
+* Updated documentation.
+    * Updated minimum supported Unity version.
+    * Removed IL2CPP backend not supported section.
+    * Updated link to FBX SDK API documentation.
+    * Moved API documentation to Scripting API landing page.
+* Update Third Party Notices.md with new FBX License
+* Upgraded to FBX SDK 2020.2
+
 ## [4.0.0-pre.1] - 2020-10-07
 
 NEW FEATURES
@@ -75,7 +86,9 @@ NEW FEATURES
 KNOWN ISSUES
 * The FBX SDK C# Bindings package is not supported if you build using the IL2CPP backend.
 
-## [1.3.0f1] - 2018-04-17
+## [1.3.0] - 2018-04-17
+NOTES
+* This is the last Asset Store version. It is also known as 1.3.0f1.
 
 NEW FEATURES
 * Added bindings for FbxAnimCurveFilterUnroll

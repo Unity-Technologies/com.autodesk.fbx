@@ -9,7 +9,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public abstract class FbxConstraintTestBase<T> : Base<T> where T : FbxConstraint
+    internal abstract class FbxConstraintTestBase<T> : Base<T> where T : FbxConstraint
     {
         protected virtual FbxConstraint.EType ConstraintType { get { return FbxConstraint.EType.eUnknown; } }
 
@@ -34,7 +34,7 @@ namespace Autodesk.Fbx.UnitTests
     /// <summary>
     /// For testing functions that classes that derive from FbxConstraint share, but are not implemented in FbxConstraint.
     /// </summary>
-    public abstract class FbxConstraintDescendantTestBase<T> : FbxConstraintTestBase<T> where T : FbxConstraint
+    internal abstract class FbxConstraintDescendantTestBase<T> : FbxConstraintTestBase<T> where T : FbxConstraint
     {
         static System.Reflection.MethodInfo s_AddConstraintSource;
         static System.Reflection.MethodInfo s_AddConstraintSourceDouble;
@@ -104,12 +104,12 @@ namespace Autodesk.Fbx.UnitTests
     }
 
 
-    public class FbxConstraintTest : FbxConstraintTestBase<FbxConstraint>
+    internal class FbxConstraintTest : FbxConstraintTestBase<FbxConstraint>
     {
 
     }
 
-    public class FbxConstraintAimTest : FbxConstraintDescendantTestBase<FbxConstraintAim>
+    internal class FbxConstraintAimTest : FbxConstraintDescendantTestBase<FbxConstraintAim>
     {
         protected override FbxConstraint.EType ConstraintType {
             get {
@@ -146,7 +146,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxConstraintParentTest : FbxConstraintDescendantTestBase<FbxConstraintParent>
+    internal class FbxConstraintParentTest : FbxConstraintDescendantTestBase<FbxConstraintParent>
     {
         protected override FbxConstraint.EType ConstraintType {
             get {
@@ -241,7 +241,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxConstraintPositionTest : FbxConstraintDescendantTestBase<FbxConstraintPosition>
+    internal class FbxConstraintPositionTest : FbxConstraintDescendantTestBase<FbxConstraintPosition>
     {
         protected override FbxConstraint.EType ConstraintType {
             get {
@@ -289,7 +289,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxConstraintRotationTest : FbxConstraintDescendantTestBase<FbxConstraintRotation>
+    internal class FbxConstraintRotationTest : FbxConstraintDescendantTestBase<FbxConstraintRotation>
     {
         protected override FbxConstraint.EType ConstraintType {
             get {
@@ -309,7 +309,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxConstraintScaleTest : FbxConstraintDescendantTestBase<FbxConstraintScale>
+    internal class FbxConstraintScaleTest : FbxConstraintDescendantTestBase<FbxConstraintScale>
     {
         protected override FbxConstraint.EType ConstraintType {
             get {

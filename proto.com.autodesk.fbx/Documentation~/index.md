@@ -4,67 +4,55 @@ The C# Autodesk® FBX® SDK package provides access to a subset of the Autodesk�
 
 The Autodesk® FBX® SDK is a C++ software development platform and API toolkit that is free and easy-to-use. It allows application and content vendors to transfer existing content into the FBX format with minimal effort.
 
-> ***Note:*** The C# Autodesk® FBX® SDK exposes only a subset of the full API. That subset enables exporter tools, such as the [FBX Exporter](https://docs.unity3d.com/Packages/com.unity.formats.fbx@latest) package. Using the C# Autodesk® FBX® SDK package for importing is not recommended. See [Known issues](#issues) below for more information.
-
-## Requirements
-
-The Autodesk® FBX® SDK for Unity package is compatible with the following versions of the Unity Editor:
-
-* 2018.2 and later
+> **Note:** The C# Autodesk® FBX® SDK exposes only [a subset of the full API](../api/index.html). That subset enables exporter tools, such as the [FBX Exporter](https://docs.unity3d.com/Packages/com.unity.formats.fbx@latest) package. Unity does not recommend to use the C# Autodesk® FBX® SDK package for FBX importing. See [Known issues and limitations](#known-issues-and-limitations) for more information.
 
 ## Contents
 
 The Autodesk® FBX® SDK for Unity package contains:
 
 * C# bindings
-* Compiled binaries for MacOS and Windows that include the FBX SDK
+* Compiled binaries for MacOS, Windows, and Ubuntu that include the FBX SDK
+
+## Requirements
+
+The Autodesk® FBX® SDK for Unity package is compatible with the following versions of the Unity Editor:
+
+* 2018.4 and later (recommended)
 
 ## Installation
 
-The Autodesk® FBX® SDK is automatically installed as a dependency of the [FBX Exporter](https://docs.unity3d.com/Packages/com.unity.formats.fbx@latest) package. It is not discoverable from the Package Manager UI, but can be installed without installing the FBX Exporter by adding it to your package manifest [Package Manager documentation](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest/index.html#PackManManifestsProject).
+Unity automatically installs the Autodesk® FBX® SDK as a dependency of the [FBX Exporter](https://docs.unity3d.com/Packages/com.unity.formats.fbx@latest) package.
 
-## Including the Package in a Build
+> **Note:** The Package Manager UI does not allow you to discover it, but you can install it without installing the FBX Exporter. In that case, you need to [add it to your package manifest](https://docs.unity3d.com/Packages/com.unity.package-manager-ui@latest).
 
-This package can be used at runtime, however by default it is Editor only and will not be included in a build.
-In order for the package to be included in the build, add the FBXSDK_RUNTIME define to Edit > Project Settings... > Player > Other Settings > Scripting Define Symbols.
+## Including the package in a build
 
-Note: Currently the package is only available to use for Windows/OSX/Linux standalone builds.
+By default, Unity does not include this package in builds, you can only use it in the Editor. However, it is possible to use this package at runtime on some specific platforms.
+> **Note:** You can currently use the package in Windows/OSX/Linux standalone builds only.
 
-## Known issues
+To include the Autodesk® FBX® SDK for Unity package in your build:
+1. In the Unity Editor main menu, select **Edit > Project Settings**.
+2. In **Player** properties, expand the **Other Settings** section.
+3. Under **Configuration**, in the **Scripting Define Symbols** field, add `FBXSDK_RUNTIME`.
 
-### Importing
+## Known issues and limitations
 
-In this version, you cannot downcast SDK C# objects, which limits the use of the bindings for an importer. For example, if the FBX SDK declares in C++ that it will return an `FbxDeformer`, you could safely cast the deformer to a skin deformer on the C++ side if you happen to know it is an `FbxSkinDeformer`. However, on the C# side, this is not permitted.
+#### Limited import capabilities
 
-### Invalid operations
+In this version of the package, you cannot downcast SDK C# objects, which limits the use of the bindings for an importer.
 
-While there are guards against some common errors, it is possible to crash Unity by writing C# code that directs the FBX SDK to perform invalid operations. For example, if you have an `FbxProperty` in C# and you delete the `FbxNode` that contains the property, using the `FbxProperty` may produce undefined behavior This may even include crashing the Unity Editor. Make sure to read the editor log if you have unexplained crashes when writing FBX SDK C# code.
+For example, if the FBX SDK declares in C++ that it returns an `FbxDeformer`, you can safely cast the deformer to a skin deformer on the C++ side if you happen to know it is an `FbxSkinDeformer`. However, on the C# side, this is not permitted.
 
-### IL2CPP backend
+#### Unexpected crashes following invalid operations
 
-The C# Autodesk® FBX® SDK package is not supported at Runtime if you build using the IL2CPP backend.
+While there are guards against some common errors, you might make Unity crash if you write C# code that directs the FBX SDK to perform invalid operations.
 
-### Linux
+For example, if you have an `FbxProperty` in C# and you delete the `FbxNode` that contains the property, the use of `FbxProperty` may produce an undefined behavior. This might even make the Unity Editor crash. Make sure to read the Editor log if you encounter unexpected crashes when you write FBX SDK C# code.
 
-Linux support is currently experimental and unsupported.
+#### Linux not supported
 
-## API documentation
+Linux support is currently experimental on this package. Unity does not provide support for it.
 
-There is no API documentation in the preview package. See the <a href="http://help.autodesk.com/cloudhelp/2018/ENU/FBX-Developer-Help/cpp_ref/annotated.html">Autodesk® FBX® SDK API documentation</a>.
+#### Linux requires libstdc++ 6
 
-The bindings are in the `Autodesk.Fbx` namespace:
-
-```
-using Autodesk.Fbx;
-using UnityEditor;
-using UnityEngine;
-
-public class HelloFbx {
-  [MenuItem("Fbx/Hello")]
-  public static void Hello() {
-    using(var manager = FbxManager.Create()) {
-      Debug.LogFormat("FBX SDK is version {0}", FbxManager.GetVersion());
-    }
-  }
-}
-```
+On Linux, libstdc++ 6 is required to be installed in order to use the package.

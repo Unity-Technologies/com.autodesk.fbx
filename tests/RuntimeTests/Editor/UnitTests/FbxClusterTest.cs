@@ -11,7 +11,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxClusterTest : Base<FbxCluster>
+    internal class FbxClusterTest : Base<FbxCluster>
     {
 
         [Test]

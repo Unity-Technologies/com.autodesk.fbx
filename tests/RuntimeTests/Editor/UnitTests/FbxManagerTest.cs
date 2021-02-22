@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 namespace Autodesk.Fbx.UnitTests
 {
 
-    public class FbxManagerTest
+    internal class FbxManagerTest
     {
 
         FbxManager m_fbxManager;

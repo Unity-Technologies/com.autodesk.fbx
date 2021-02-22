@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UseCaseTests
 {
-    public class SkinnedMeshExportTest : StaticMeshExportTest
+    internal class SkinnedMeshExportTest : StaticMeshExportTest
     {
         [SetUp]
         public override void Init ()

@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Autodesk.Fbx.UnitTests
 {
-	public class FbxAnimCurveFilterUnrollTest : TestBase<FbxAnimCurveFilterUnroll>
+	internal class FbxAnimCurveFilterUnrollTest : TestBase<FbxAnimCurveFilterUnroll>
     {
         public static IEnumerable KeyTimeValues {
             get {

@@ -9,7 +9,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxAMatrixTest : FbxDouble4x4TestBase<FbxAMatrix>
+    internal class FbxAMatrixTest : FbxDouble4x4TestBase<FbxAMatrix>
     {
         [Test]
         public void TestEquality()

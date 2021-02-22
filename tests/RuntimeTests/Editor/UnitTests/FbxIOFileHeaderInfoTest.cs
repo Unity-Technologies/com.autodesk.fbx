@@ -7,7 +7,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxIOFileHeaderInfoTest : TestBase<FbxIOFileHeaderInfo>
+    internal class FbxIOFileHeaderInfoTest : TestBase<FbxIOFileHeaderInfo>
     {
 
         [Test]

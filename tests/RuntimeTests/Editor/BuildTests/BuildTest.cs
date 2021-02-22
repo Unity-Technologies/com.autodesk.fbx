@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Autodesk.Fbx.BuildTests
 {
-    public class BuildTest
+    internal class BuildTest
     {
         private const string k_fbxsdkNativePlugin = "UnityFbxSdkNative";
         private const string k_autodeskFbxDll = "Autodesk.Fbx.dll";
@@ -30,7 +30,8 @@ namespace Autodesk.Fbx.BuildTests
         private const BuildTarget k_buildTarget = BuildTarget.StandaloneLinux64;
         private const string k_autodeskDllInstallPath = "Managed";
 #endif
-        
+        private const BuildTargetGroup k_buildTargetGroup = BuildTargetGroup.Standalone;
+
         private const string k_buildTestScene = "Packages/com.autodesk.fbx/Tests/Runtime/BuildTestsAssets/BuildTestScene.unity";
 
         private const string k_createdFbx = "emptySceneFromRuntimeBuild.fbx";
@@ -49,8 +50,28 @@ namespace Autodesk.Fbx.BuildTests
         {
             get
             {
-                yield return new TestCaseData(new string[] { k_runningBuildSymbol }, false).SetName("FbxSdkNotIncludedAtRuntime").Returns(null);
-                yield return new TestCaseData(new string[] { k_runningBuildSymbol, "FBXSDK_RUNTIME" }, true).SetName("FbxSdkIncludedAtRuntime").Returns(null);
+                yield return new TestCaseData(
+                    new string[] { k_runningBuildSymbol }, 
+                    false,
+                    ScriptingImplementation.Mono2x
+                    ).SetName("FbxSdkNotIncludedAtRuntime_Mono").Returns(null);
+                yield return new TestCaseData(
+                    new string[] { k_runningBuildSymbol, "FBXSDK_RUNTIME" },
+                    true,
+                    ScriptingImplementation.Mono2x
+                    ).SetName("FbxSdkIncludedAtRuntime_Mono").Returns(null);
+#if !UNITY_EDITOR_LINUX || UNITY_2019_3_OR_NEWER
+                yield return new TestCaseData(
+                    new string[] { k_runningBuildSymbol },
+                    false,
+                    ScriptingImplementation.IL2CPP
+                    ).SetName("FbxSdkNotIncludedAtRuntime_IL2CPP").Returns(null);
+                yield return new TestCaseData(
+                    new string[] { k_runningBuildSymbol, "FBXSDK_RUNTIME" },
+                    true,
+                    ScriptingImplementation.IL2CPP
+                    ).SetName("FbxSdkIncludedAtRuntime_IL2CPP").Returns(null);
+#endif // !UNITY_EDITOR_LINUX || UNITY_2019_3_OR_NEWER
             }
         }
 
@@ -65,10 +86,13 @@ namespace Autodesk.Fbx.BuildTests
         public void Term()
         {
             // reset the scripting define symbols
-            var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(k_buildTargetGroup);
             // remove the running build symbol and everything after it
             var result = symbols.Split(new string[] { k_runningBuildSymbol, ";" + k_runningBuildSymbol }, System.StringSplitOptions.None);
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, result[0]);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(k_buildTargetGroup, result[0]);
+
+            // set scripting backend back to default (Mono)
+            PlayerSettings.SetScriptingBackend(k_buildTargetGroup, ScriptingImplementation.Mono2x);
 
             // delete build folder
             if (Directory.Exists(BuildFolder))
@@ -82,7 +106,7 @@ namespace Autodesk.Fbx.BuildTests
             BuildPlayerOptions options = new BuildPlayerOptions();
             options.locationPathName = Path.Combine(BuildFolder, k_buildName);
             options.target = k_buildTarget;
-            options.targetGroup = BuildTargetGroup.Standalone;
+            options.targetGroup = k_buildTargetGroup;
             options.scenes = new string[] { k_buildTestScene };
 
             var report = BuildPipeline.BuildPlayer(options);
@@ -99,7 +123,7 @@ namespace Autodesk.Fbx.BuildTests
                 return;
             }
 
-            var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(k_buildTargetGroup);
             if (!string.IsNullOrEmpty(symbols))
             {
                 symbols += ";";
@@ -110,13 +134,14 @@ namespace Autodesk.Fbx.BuildTests
             {
                 symbols += ";" + toAdd[i];
             }
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, symbols);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(k_buildTargetGroup, symbols);
         }
 
         [UnityTest]
         [TestCaseSource("RuntimeFbxSdkTestData")]
-        public IEnumerator TestFbxSdkAtRuntime(string[] defineSymbols, bool dllExists)
+        public IEnumerator TestFbxSdkAtRuntime(string[] defineSymbols, bool dllExists, ScriptingImplementation scriptingImplementation)
         {
+            PlayerSettings.SetScriptingBackend(k_buildTargetGroup, scriptingImplementation);
             AddDefineSymbols(defineSymbols);
 
             // start and stop playmode to force a domain reload
@@ -146,26 +171,30 @@ namespace Autodesk.Fbx.BuildTests
             }
             Assert.That(buildPluginFullPath, constraint);
 
-            // check the size of Autodesk.Fbx.dll
-            var autodeskDllFullPath = Path.Combine(
-                    string.Format(k_buildPluginPath, buildPathWithoutExt),
-                    k_autodeskDllInstallPath,
-                    k_autodeskFbxDll
-                );
-            Assert.That(autodeskDllFullPath, Does.Exist);
-            var fileInfo = new FileInfo(autodeskDllFullPath);
+            // Autodesk.Fbx.dll will not exist if building with IL2CPP
+            if(scriptingImplementation != ScriptingImplementation.IL2CPP)
+            {
+                // check the size of Autodesk.Fbx.dll
+                var autodeskDllFullPath = Path.Combine(
+                        string.Format(k_buildPluginPath, buildPathWithoutExt),
+                        k_autodeskDllInstallPath,
+                        k_autodeskFbxDll
+                    );
+                Assert.That(autodeskDllFullPath, Does.Exist);
+                var fileInfo = new FileInfo(autodeskDllFullPath);
 
-            // If the FBX SDK is copied over at runtime, the DLL filesize will
-            // be ~350,000. If it isn't copied over it will be ~3500.
-            // Putting the expected size as 10000 to allow for some buffer room.
-            var expectedDllFileSize = 10000;
-            if (dllExists)
-            {
-                Assert.That(fileInfo.Length, Is.GreaterThan(expectedDllFileSize));
-            }
-            else
-            {
-                Assert.That(fileInfo.Length, Is.LessThan(expectedDllFileSize));
+                // If the FBX SDK is copied over at runtime, the DLL filesize will
+                // be ~350,000. If it isn't copied over it will be ~3500.
+                // Putting the expected size as 10000 to allow for some buffer room.
+                var expectedDllFileSize = 10000;
+                if (dllExists)
+                {
+                    Assert.That(fileInfo.Length, Is.GreaterThan(expectedDllFileSize));
+                }
+                else
+                {
+                    Assert.That(fileInfo.Length, Is.LessThan(expectedDllFileSize));
+                }
             }
 
             var buildPath = report.summary.outputPath;

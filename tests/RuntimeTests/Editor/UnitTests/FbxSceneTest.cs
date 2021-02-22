@@ -9,7 +9,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxSceneTest : Base<FbxScene>
+    internal class FbxSceneTest : Base<FbxScene>
     {
         protected override void TestSceneContainer()
         {

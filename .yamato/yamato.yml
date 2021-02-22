@@ -27,9 +27,6 @@ editors:
   - version: 2018.4
   - version: 2019.4
   - version: 2020.1
-backends:
-  - name: mono
-  - name: il2cpp
 mac_platform:
   name: mac
   type: Unity::VM::osx
@@ -91,6 +88,10 @@ build_mac:
     flavor: {{ mac_platform.flavor}}
   commands:
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
+    # Make sure correct pip index url is set as mono depends on Python 3.9 which also installs pip. 
+    # Setting the PIP_INDEX_URL environment variable does not seem to
+    # be sufficient in this situation as the incorrect URL is used when updating pip.
+    - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list mono || brew install mono
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
@@ -106,8 +107,14 @@ build_ubuntu:
     image: {{ ubuntu_platform.image }}
     flavor: {{ ubuntu_platform.flavor}}
   commands:
+    # FBX SDK 2020.2 requires gcc 9.3
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+    - sudo apt-get update
+    - sudo apt-get -y install gcc-9 g++-9
     - sudo apt-get install p7zip mono-devel
-    - python ./build.py --stevedore --verbose --clean --yamato
+    # Ensure correct version of gcc and g++ used
+    # https://stackoverflow.com/questions/17275348/how-to-specify-new-gcc-path-for-cmake
+    - CC=`which gcc-9` CXX=`which g++-9` python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-ubuntu
   artifacts:
     build:
@@ -144,12 +151,9 @@ pack:
         - "com.autodesk.fbx/**"
 
 {% for editor in editors %}
-{% for backend in backends %}
 {% for platform in platforms %}
-# There is no IL2CPP on Ubuntu before 2019.3
-{% unless platform.name == "ubuntu" and editor.version == 2018.4 and backend.name == "il2cpp" %}
-test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
-  name : Test version {{ editor.version }} {{ backend.name }} on {{ platform.name }}
+test_{{ platform.name }}_{{ editor.version }}:
+  name : Test version {{ editor.version }} on {{ platform.name }}
   agent:
     type: {{ platform.type }}
     image: {{ platform.image }}
@@ -160,14 +164,32 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
 {% endif %}
   commands:
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
-# Code coverage is only available in Unity 2019.3 and higher
-{% if editor.version == 2018.4 %}
-    - upm-ci package test --backend {{ backend.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+{% if platform.name == "ubuntu" %}
+    # FBX SDK 2020.2 requires gcc 9.3
+    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+    - sudo apt-get update
+    - sudo apt-get -y install --only-upgrade libstdc++6  
+{% endif %} 
+{% if editor.version == 2018.4 and platform.name == "ubuntu" %}
+    # There is no IL2CPP on Ubuntu before 2019.3
+    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
+{% elseif editor.version == 2018.4 %}
+    # Setting backend to il2cpp to ensure il2cpp is installed.
+    # Note: setting backend to il2cpp will still run the tests with mono by default 
+    #       (would need to add --platform standalone to run playmode tests with il2cpp),
+    #       however this installs il2cpp so that the editor build tests can change the backend as necessary.
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx
 {% else %}
-    - upm-ci package test --backend {{ backend.name }} --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
+    {% if platform.name == "ubuntu" %}
+    # clang required for il2cpp backend
+    - sudo apt-get -y install clang
+    {% endif %}
+    # Code coverage is only available in Unity 2019.3 and higher.
+    # Setting backend to il2cpp to ensure il2cpp is installed and can be used by editor tests (see Note above).
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
     - python tests/Yamato/check_coverage_percent.py upm-ci~/test-results/ {{ coverage.minPercent }}
 {% endif %}
-    - echo "****** PASSED {{ backend.name }} backend *******"
+    - echo "****** PASSED *******"
   triggers:
     pull_requests:
       - targets:
@@ -182,8 +204,6 @@ test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}:
         - "upm-ci~/test-results/**/*"
   dependencies:
     - .yamato/yamato.yml#pack
-{% endunless %}
-{% endfor %}
 {% endfor %}
 {% endfor %}
 
@@ -197,7 +217,7 @@ promotion_test:
     UPMCI_PROMOTION: 1
   commands:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
-    - upm-ci package test --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx
+    - upm-ci package test --backend il2cpp --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx
   triggers:
     pull_requests:
       - targets:
@@ -232,12 +252,7 @@ publish:
     - .yamato/yamato.yml#pack
 {% for editor in editors %}
 {% for platform in platforms %}
-{% for backend in backends %}
-# There is no IL2CPP on Ubuntu before 2019.3
-{% unless platform.name == "ubuntu" and editor.version == 2018.4 and backend.name == "il2cpp" %}
-    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}_{{ backend.name }}
-{% endunless %}
-{% endfor %}
+    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}
 {% endfor %}
 {% endfor %}
 

@@ -10,7 +10,7 @@ using Autodesk.Fbx;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxCollectionTest : Base<FbxCollection>
+    internal class FbxCollectionTest : Base<FbxCollection>
     {
 
         public static void GenericTests<T>(T fbxCollection, FbxManager manager) where T : FbxCollection

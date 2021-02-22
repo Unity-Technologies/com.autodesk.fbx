@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace Autodesk.Fbx.UnitTests
 {
-    public class FbxTextureTest : Base<FbxTexture>
+    internal class FbxTextureTest : Base<FbxTexture>
     {
         public static void CommonTextureTests<T>(T tex) where T : FbxTexture
         {
@@ -98,7 +98,7 @@ namespace Autodesk.Fbx.UnitTests
         }
     }
 
-    public class FbxFileTextureTest : Base<FbxFileTexture>
+    internal class FbxFileTextureTest : Base<FbxFileTexture>
     {
         [Test]
         public void TestBasics() {
