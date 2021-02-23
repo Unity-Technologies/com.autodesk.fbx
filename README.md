@@ -25,22 +25,13 @@ Newer versions of each software likely also work.
 When installing Visual Studio, make sure to install C# sdk, C++ sdk, and Universal Windows App Development Tools (this can be done by doing a custom install or
 relaunching the installer and selecting "Modify").
 
-### OSX or Linux:
+### OSX, Linux, or Windows:
 
-```
+```bash
 # get the source
 git clone https://github.com/Unity-Technologies/com.autodesk.fbx.git
 cd com.autodesk.fbx
-./build.sh
-```
-
-### Windows:
-
-```
-# get the source
-git clone https://github.com/Unity-Technologies/com.autodesk.fbx.git
-cd com.autodesk.fbx
-build.cmd
+python build.py
 ```
 
 ## Overview
