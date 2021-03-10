@@ -1,9 +1,9 @@
 # Changes in FBX SDK C# Bindings
 
-## [4.0.0] - 2021-03-02
+## [4.0.1] - 2021-03-10
 
 CHANGES
-* Update from prerelease to released package (remove "pre" from version).
+* Update from prerelease to released package.
 
 ## [4.0.0-pre.2] - 2021-01-08
 
