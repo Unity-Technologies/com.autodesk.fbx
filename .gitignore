@@ -61,4 +61,5 @@ build/**
 **/.idea/**
 
 .DS_Store
+.history/
 

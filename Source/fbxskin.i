@@ -14,6 +14,7 @@
 %rename("%s") FbxSkin::Create;
 %rename("%s") FbxSkin::AddCluster;
 %rename("%s") FbxSkin::GetCluster(int pIndex) const;
+%rename("%s") FbxSkin::GetClusterCount() const;
 #endif
 
 %include "fbxsdk/scene/geometry/fbxskin.h"
