@@ -282,7 +282,7 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/fbx-bindings-mac-x64" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
+    install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/fbx-bindings-mac-x64/UnityFbxSdkNative.bundle" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
 else()
     install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
 endif()
