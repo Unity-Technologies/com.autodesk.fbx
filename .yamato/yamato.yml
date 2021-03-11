@@ -187,7 +187,10 @@ test_{{ platform.name }}_{{ editor.version }}:
     # Code coverage is only available in Unity 2019.3 and higher.
     # Setting backend to il2cpp to ensure il2cpp is installed and can be used by editor tests (see Note above).
     - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
+{% if platform.name != "ubuntu" %}
+    # Tests are temporarily disabled on linux (FBX-100)
     - python tests/Yamato/check_coverage_percent.py upm-ci~/test-results/ {{ coverage.minPercent }}
+{% endif %}
 {% endif %}
     - echo "****** PASSED *******"
   triggers:
