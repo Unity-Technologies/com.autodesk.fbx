@@ -12,5 +12,12 @@
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxDeformer::EDeformerType;
 %rename("%s") FbxDeformer::GetDeformerType;
+%rename("%s") FbxDeformer::AsSkin;
 
 %include "fbxsdk/scene/geometry/fbxdeformer.h"
+
+%extend FbxDeformer {
+  FbxSkin* AsSkin() {
+    return FbxCast<FbxSkin>($self);
+  }
+}
