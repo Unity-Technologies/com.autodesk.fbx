@@ -172,14 +172,17 @@
 
 %template(Set) FbxProperty::Set<FbxColor>;
 %template(Set) FbxProperty::Set<float>;
+%template(Set) FbxProperty::Set<FbxString>;
 %template(EvaluateValue) FbxProperty::EvaluateValue<float>;
 
 /* Generic properties */
 %template("FbxPropertyBool") FbxPropertyT<FbxBool>;
 %template("FbxPropertyDouble") FbxPropertyT<FbxDouble>;
 %template("FbxPropertyDouble3") FbxPropertyT<FbxDouble3>;
-%template("FbxPropertyString") FbxPropertyT<FbxString>;
 %template("FbxPropertyInt") FbxPropertyT<signed int>;
+
+%csmethodmodifiers FbxPropertyT<FbxString>::Set(const FbxString&) "public new";
+%template("FbxPropertyString") FbxPropertyT<FbxString>;
 
 %csmethodmodifiers FbxPropertyT<float>::Set(const float&) "public new";
 %template("FbxPropertyFloat") FbxPropertyT<float>;
