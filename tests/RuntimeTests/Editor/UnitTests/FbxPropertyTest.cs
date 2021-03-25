@@ -133,6 +133,9 @@ namespace Autodesk.Fbx.UnitTests
             // Test setting the value with color accessor
             property.Set (new FbxColor ());
 
+            // Test setting the value with string accessor
+            property.Set ("MyCustomProperty");
+
             // test GetCurve(). Just make sure it doesn't crash. We can't
             // generically test actually getting curves, because the details
             // (channel names etc) depend on the type of property and its
