@@ -5,6 +5,9 @@
 # See LICENSE.md file in the project root for full license information.
 # ***********************************************************************
 
+# Some parts of this file *must* be above the 'project' line and others *must*
+# be below it. Be careful about moving statements around.
+
 cmake_minimum_required (VERSION 3.08)
 
 # Default is a release build.
@@ -17,13 +20,19 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 
+
+# ***********************************************************************
 project (UnityFbxSdkNative)
+# ***********************************************************************
+
+set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
 
 # We build for c++11
 set(CMAKE_CXX_STANDARD 11)
+
 
 if(MSVC)
 set(PROJECT_COMPILE_FLAGS "/WX")
