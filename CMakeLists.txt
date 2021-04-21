@@ -25,6 +25,8 @@ message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 project (UnityFbxSdkNative)
 # ***********************************************************************
 
+
+# CMake docs say this should be before project but it doesn't actually work that way.
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
