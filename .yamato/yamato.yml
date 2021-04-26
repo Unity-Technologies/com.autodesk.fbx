@@ -86,13 +86,17 @@ build_mac:
     type: {{ mac_platform.type }}
     image: {{ mac_platform.image }}
     flavor: {{ mac_platform.flavor}}
+  variables:
+    HOMEBREW_BOTTLE_DOMAIN : "https://artifactory-slo.bf.unity3d.com/artifactory/public-brew-mirror/bottles"
+    HOMEBREW_NO_INSTALL_CLEANUP: "1"
   commands:
-    - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list p7zip || brew install p7zip
-    # Make sure correct pip index url is set as mono depends on Python 3.9 which also installs pip. 
-    # Setting the PIP_INDEX_URL environment variable does not seem to
-    # be sufficient in this situation as the incorrect URL is used when updating pip.
+    # We need to install p7zip and mono.
+    # Mono needs to install Python 3.9 and pip.
+    # Pip needs to set PIP_INDEX_URL, but brew clears the environment when it
+    # elevates privileges. So we need to set it via pip config.
     - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
-    - HOMEBREW_NO_INSTALL_CLEANUP=1 brew list mono || brew install mono
+    - brew list p7zip || brew install p7zip
+    - brew list mono || brew install mono
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
   artifacts:
