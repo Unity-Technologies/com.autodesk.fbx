@@ -40,7 +40,7 @@ ubuntu_platform:
 win_platform:
   name: win
   type: Unity::VM
-  image: package-ci/win10:stable
+  image: package-ci/win10:v1.15.0-713263
   flavor: b1.medium
 platforms:
   - name: mac
