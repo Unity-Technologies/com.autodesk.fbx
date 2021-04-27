@@ -1,5 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
+## [4.0.1] - 2021-03-10
+
+CHANGES
+* Update from prerelease to released package.
+
 ## [4.0.0-pre.2] - 2021-01-08
 
 CHANGES
@@ -8,8 +13,8 @@ CHANGES
     * Removed IL2CPP backend not supported section.
     * Updated link to FBX SDK API documentation.
     * Moved API documentation to Scripting API landing page.
-* Update Third Party Notices.md with new FBX License
-* Upgraded to FBX SDK 2020.2
+* Update Third Party Notices.md with new FBX License.
+* Upgraded to FBX SDK 2020.2.
 
 ## [4.0.0-pre.1] - 2020-10-07
 
