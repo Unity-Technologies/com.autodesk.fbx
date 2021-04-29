@@ -27,6 +27,8 @@ editors:
   - version: 2018.4
   - version: 2019.4
   - version: 2020.1
+  - version: 2021.1
+  - version: 2021.2
 mac_platform:
   name: mac
   type: Unity::VM::osx
