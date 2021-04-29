@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [4.1.0-pre.1] - 2021-04-27
+## [4.1.0-pre.1] - 2021-04-29
 
 CHANGES
 * Add support for Apple M1.
