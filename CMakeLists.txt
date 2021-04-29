@@ -89,10 +89,6 @@ if (${USE_STEVEDORE} STREQUAL "ON")
 
     stevedore(internal-unpack ${stevedore_repo_name} ${fbxsdk_artifact_name}/${fbxsdk_artifact_id} "${CMAKE_BINARY_DIR}/deps/${fbxsdk_artifact_name}")
     stevedore(internal-unpack ${stevedore_repo_name} ${swig_artifact_name}/${swig_artifact_id} "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}")
-    
-    if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-        stevedore(internal-unpack ${stevedore_repo_name} fbx-bindings-mac-x64/4.0.1_6063f5e419d0e0dd40b23506f24a269043a8fc16a86bcddd158201d121f9e62b.7z "${CMAKE_BINARY_DIR}/deps/fbx-bindings-mac-x64")
-    endif()
 
     file(GLOB_RECURSE SWIG_EXECUTABLE "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/${swig_executable_name}")
     file(GLOB_RECURSE swig_lib "${CMAKE_BINARY_DIR}/deps/${swig_artifact_name}/swig.swg")
@@ -291,11 +287,9 @@ install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFI
 install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    install(DIRECTORY "${CMAKE_BINARY_DIR}/deps/fbx-bindings-mac-x64/UnityFbxSdkNative.bundle" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
-else()
-    install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
-endif()
+install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
+
+
 
 install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
