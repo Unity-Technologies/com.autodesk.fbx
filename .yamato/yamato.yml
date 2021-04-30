@@ -89,7 +89,6 @@ build_mac:
     image: {{ mac_platform.image }}
     flavor: {{ mac_platform.flavor}}
   variables:
-    HOMEBREW_BOTTLE_DOMAIN : "https://artifactory-slo.bf.unity3d.com/artifactory/public-brew-mirror/bottles"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
   commands:
     # We need to install p7zip and mono.
