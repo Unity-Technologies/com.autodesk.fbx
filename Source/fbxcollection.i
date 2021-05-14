@@ -11,7 +11,12 @@
 %rename("%s") FbxCollection::Clear;
 %rename("%s") FbxCollection::AddMember;
 %rename("%s") FbxCollection::GetAnimLayerMember;
+%rename("%s") FbxCollection::FindMemberObject;
+%rename("%s") FbxCollection::GetMemberObject;
 %rename("%s") FbxCollection::GetMemberCount() const;
+
+// %template(FindMemberFbxObject) FbxCollection::FindMember<FbxObject>;
+// %template(FindMemberFbxObject) FbxCollection::GetMember<FbxObject>;
 
 %extend FbxCollection{
     /*
@@ -21,6 +26,15 @@
      */
     FbxAnimLayer* GetAnimLayerMember(int pIndex = 0) const {
         return $self->GetMember<FbxAnimLayer>(pIndex);
+    }
+
+    FbxObject* GetMemberObject(int pIndex = 0) const 
+    {
+        return $self->GetMember<FbxObject>(pIndex);
+    }
+    FbxObject* FindMemberObject(const char* pName) const 
+    {
+        return $self->FindMember<FbxObject>(pName);
     }
 }
 
