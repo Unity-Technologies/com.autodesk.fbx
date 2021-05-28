@@ -129,7 +129,11 @@ if sys.platform.startswith('darwin'):
     if not os.path.exists(builddir_legacy):
         os.mkdir(builddir_legacy)
     
-    config_args[4] = '-DCMAKE_INSTALL_PREFIX={}'.format(os.path.join(builddir_legacy, 'install'))
+    install_prefix = '-DCMAKE_INSTALL_PREFIX={}'.format(os.path.join(builddir_legacy, 'install'))
+    
+    # use all the same config args except the install prefix
+    config_args = [a for a in config_args if not a.startswith("-DCMAKE_INSTALL_PREFIX")] 
+    config_args.append(install_prefix)
     config_args.append('-DLEGACY_MAC=ON')
     retcode = subprocess.check_call(config_args, stderr=subprocess.STDOUT, shell=shell, cwd=builddir_legacy)
 
@@ -142,15 +146,16 @@ if sys.platform.startswith('darwin'):
 
     # combine the arm build and the legacy build with lipo
     bundle_path = "install/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle/Contents/MacOS/UnityFbxSdkNative"
+    bundle_name = "UnityFbxSdkNative"
     arm_bundle = os.path.join(builddir, bundle_path)
     legacy_bundle = os.path.join(builddir_legacy, bundle_path)
-    lipo_call = ["lipo", "-create", "-output", "UnityFbxSdkNative", arm_bundle, legacy_bundle]
+    lipo_call = ["lipo", "-create", "-output", bundle_name, arm_bundle, legacy_bundle]
     retcode = subprocess.check_call(lipo_call, stderr=subprocess.STDOUT, shell=shell, cwd=curdir, env=env)
     if retcode != 0:
         sys.exit(retcode)
     
     # replace the arm bundle with the universal binary
-    src = os.path.join(curdir, "UnityFbxSdkNative")
+    src = os.path.join(curdir, bundle_name)
     dst = arm_bundle
     shutil.copyfile(src, dst)
 
