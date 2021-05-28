@@ -113,4 +113,45 @@ if args.use_stevedore and not sys.platform.startswith('win'):
 print(build_args)
 retcode = subprocess.check_call(build_args, stderr=subprocess.STDOUT, shell=shell, cwd=builddir, env=env)
 
+if retcode != 0:
+    sys.exit(retcode)
+
+if sys.platform.startswith('darwin'):
+    # On Mac build two binaries (one that works on arm and one x86_64 that works on 10.13+).
+    # The arm binary is already built, here we build the second one and combine the two with lipo
+    
+    # use a different build directory
+    builddir_legacy = os.path.join(curdir, 'build_legacy_mac')
+    
+    if args.clean_build and os.path.exists(builddir_legacy):
+        shutil.rmtree(builddir_legacy)
+
+    if not os.path.exists(builddir_legacy):
+        os.mkdir(builddir_legacy)
+    
+    config_args[4] = '-DCMAKE_INSTALL_PREFIX={}'.format(os.path.join(builddir_legacy, 'install'))
+    config_args.append('-DLEGACY_MAC=ON')
+    retcode = subprocess.check_call(config_args, stderr=subprocess.STDOUT, shell=shell, cwd=builddir_legacy)
+
+    if retcode != 0:
+        sys.exit(retcode)
+
+    retcode = subprocess.check_call(build_args, stderr=subprocess.STDOUT, shell=shell, cwd=builddir_legacy, env=env)
+    if retcode != 0:
+        sys.exit(retcode)
+
+    # combine the arm build and the legacy build with lipo
+    bundle_path = "install/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle/Contents/MacOS/UnityFbxSdkNative"
+    arm_bundle = os.path.join(builddir, bundle_path)
+    legacy_bundle = os.path.join(builddir_legacy, bundle_path)
+    lipo_call = ["lipo", "-create", "-output", "UnityFbxSdkNative", arm_bundle, legacy_bundle]
+    retcode = subprocess.check_call(lipo_call, stderr=subprocess.STDOUT, shell=shell, cwd=curdir, env=env)
+    if retcode != 0:
+        sys.exit(retcode)
+    
+    # replace the arm bundle with the universal binary
+    src = os.path.join(curdir, "UnityFbxSdkNative")
+    dst = arm_bundle
+    shutil.copyfile(src, dst)
+
 sys.exit(retcode)

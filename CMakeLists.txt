@@ -25,9 +25,16 @@ message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 project (UnityFbxSdkNative)
 # ***********************************************************************
 
+if (NOT LEGACY_MAC)
+    set(LEGACY_MAC "OFF")
+endif()
 
 # CMake docs say this should be before project but it doesn't actually work that way.
-set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+if (${LEGACY_MAC} STREQUAL "OFF")
+set(CMAKE_OSX_ARCHITECTURES "arm64")
+else()
+set(CMAKE_OSX_ARCHITECTURES "x86_64")
+endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/deps")
@@ -56,7 +63,7 @@ endif()
 # don't generate stubs for inherited virtuals e.g. GetSelected
 SET(CMAKE_SWIG_FLAGS -fvirtual)
 
-option(USE_STEVEDORE "Use stevedore to get dependencies (useful on contiuous integration platforms, default off)" OFF)
+option(USE_STEVEDORE "Use stevedore to get dependencies (useful on continuous integration platforms, default off)" OFF)
 
 if (${USE_STEVEDORE} STREQUAL "ON")
     include(cmake/Stevedore.cmake)
@@ -66,7 +73,11 @@ if (${USE_STEVEDORE} STREQUAL "ON")
 
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         set(fbxsdk_artifact_name fbxsdk-mac-x64)
-        set(fbxsdk_artifact_id 2020.2.1_b255f8750fb93d642e5fcb808c38ced04152ff2c978d5edd92eb91416717b367.7z)
+        if (${LEGACY_MAC} STREQUAL "OFF")
+            set(fbxsdk_artifact_id 2020.2_bfa28d76a77eb68eb9254c389b244e2a024037424da655baf1dd3f554b09056e.7z)
+        else()
+            set(fbxsdk_artifact_id 2020.2.1_b255f8750fb93d642e5fcb808c38ced04152ff2c978d5edd92eb91416717b367.7z)
+        endif()
 
         set(swig_artifact_name swig-mac-x64)
         set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
@@ -282,22 +293,24 @@ if (${YAMATO} STREQUAL "OFF")
         ###########################################################################
 endif()
 
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
-install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
-install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
+if (${LEGACY_MAC} STREQUAL "OFF")
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
+    install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
+    install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
+endif()
 
 install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
 
+if (${LEGACY_MAC} STREQUAL "OFF")
+    install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+    install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+    install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 
+    # Copy the test-run framework
 
-install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
-install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
-install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
-
-# Copy the test-run framework
-
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
-install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
-install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
+    install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
+    install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
+    install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
+    install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
+endif()
