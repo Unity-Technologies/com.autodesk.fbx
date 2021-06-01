@@ -42,6 +42,7 @@ config_args = [
     '-DCMAKE_SOURCE_DIR={}'.format(curdir),
     '-DCMAKE_BUILD_TYPE={}'.format(args.build_type), 
     '-DCMAKE_INSTALL_PREFIX={}'.format(os.path.join(builddir, 'install')),
+    '-DCMAKE_OSX_ARCHITECTURES=arm64',
     ]
 
 # Where to find swig if not standard install
@@ -132,9 +133,9 @@ if sys.platform.startswith('darwin'):
     install_prefix = '-DCMAKE_INSTALL_PREFIX={}'.format(os.path.join(builddir_legacy, 'install'))
     
     # use all the same config args except the install prefix
-    config_args = [a for a in config_args if not a.startswith("-DCMAKE_INSTALL_PREFIX")] 
+    config_args = [a for a in config_args if not (a.startswith("-DCMAKE_INSTALL_PREFIX") or a.startswith("-DCMAKE_OSX_ARCHITECTURES"))] 
     config_args.append(install_prefix)
-    config_args.append('-DLEGACY_MAC=ON')
+    config_args.append('-DCMAKE_OSX_ARCHITECTURES=x86_64')
     retcode = subprocess.check_call(config_args, stderr=subprocess.STDOUT, shell=shell, cwd=builddir_legacy)
 
     if retcode != 0:

@@ -25,15 +25,13 @@ message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
 project (UnityFbxSdkNative)
 # ***********************************************************************
 
-if (NOT LEGACY_MAC)
-    set(LEGACY_MAC "OFF")
+if (NOT CMAKE_OSX_ARCHITECTURES)
+    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 endif()
 
 # CMake docs say this should be before project but it doesn't actually work that way.
-if (${LEGACY_MAC} STREQUAL "OFF")
-set(CMAKE_OSX_ARCHITECTURES "arm64")
-else()
-set(CMAKE_OSX_ARCHITECTURES "x86_64")
+if (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64")
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -73,10 +71,10 @@ if (${USE_STEVEDORE} STREQUAL "ON")
 
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         set(fbxsdk_artifact_name fbxsdk-mac-x64)
-        if (${LEGACY_MAC} STREQUAL "OFF")
-            set(fbxsdk_artifact_id 2020.2_bfa28d76a77eb68eb9254c389b244e2a024037424da655baf1dd3f554b09056e.7z)
-        else()
+        if (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64")
             set(fbxsdk_artifact_id 2020.2.1_b255f8750fb93d642e5fcb808c38ced04152ff2c978d5edd92eb91416717b367.7z)
+        else()
+            set(fbxsdk_artifact_id 2020.2_bfa28d76a77eb68eb9254c389b244e2a024037424da655baf1dd3f554b09056e.7z)
         endif()
 
         set(swig_artifact_name swig-mac-x64)
@@ -293,7 +291,7 @@ if (${YAMATO} STREQUAL "OFF")
         ###########################################################################
 endif()
 
-if (${LEGACY_MAC} STREQUAL "OFF")
+if (NOT (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64"))
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
     install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
@@ -302,7 +300,7 @@ endif()
 
 install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
 
-if (${LEGACY_MAC} STREQUAL "OFF")
+if (NOT (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64"))
     install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
     install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
     install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
