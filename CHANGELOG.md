@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [4.1.0-pre.2] - 2021-06-28
+## [4.1.0-pre.3] - 2021-06-28
 
 CHANGES
 * Universal Mac binary supporting Apple M1 and OSX 10.13+.
