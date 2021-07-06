@@ -10,7 +10,7 @@
     ],
     "name": "com.autodesk.fbx",
     "unity": "2018.4",
-    "version": "4.1.0-pre.3",
+    "version": "4.1.0",
     "author": {
         "name": "Unity"
     }
