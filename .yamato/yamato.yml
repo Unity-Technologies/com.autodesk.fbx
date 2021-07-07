@@ -26,7 +26,9 @@
 editors:
   - version: 2018.4
   - version: 2019.4
-  - version: 2020.1
+  - version: 2020.3
+  - version: 2021.1
+  - version: 2021.2
 mac_platform:
   name: mac
   type: Unity::VM::osx
@@ -40,7 +42,7 @@ ubuntu_platform:
 win_platform:
   name: win
   type: Unity::VM
-  image: package-ci/win10:stable
+  image: package-ci/win10:v1.15.0
   flavor: b1.medium
 platforms:
   - name: mac
@@ -53,13 +55,13 @@ platforms:
     flavor: b1.medium
   - name: win
     type: Unity::VM
-    image: package-ci/win10:stable
+    image: package-ci/win10:v1.15.0
     flavor: b1.medium
 promote_platform:
   version: 2019.4
   name: win
   type: Unity::VM
-  image: package-ci/win10:stable
+  image: package-ci/win10:v1.15.0
   flavor: b1.medium
 coverage:
   minPercent: 94.7
@@ -87,7 +89,6 @@ build_mac:
     image: {{ mac_platform.image }}
     flavor: {{ mac_platform.flavor}}
   variables:
-    HOMEBREW_BOTTLE_DOMAIN : "https://artifactory-slo.bf.unity3d.com/artifactory/public-brew-mirror/bottles"
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
   commands:
     # We need to install p7zip and mono.
@@ -243,9 +244,9 @@ promotion_test:
 publish:
   name: Publish to Internal Registry
   agent:
-    type: Unity::VM
-    image: package-ci/win10:stable
-    flavor: b1.medium
+    type: {{ win_platform.type }}
+    image: {{ win_platform.image }}
+    flavor: {{ win_platform.flavor}}
   commands:
     - dir /A 
     - dir /A com.autodesk.fbx
@@ -266,8 +267,8 @@ publish:
 promote:
   name: Promote to Production
   agent:
-    type: Unity::VM
-    image: package-ci/win10:stable
+    type: {{ win_platform.type }}
+    image: {{ win_platform.image }}
     flavor: b1.small
   variables:
     UPMCI_PROMOTION: 1
