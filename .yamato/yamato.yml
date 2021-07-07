@@ -42,7 +42,7 @@ ubuntu_platform:
 win_platform:
   name: win
   type: Unity::VM
-  image: package-ci/win10:stable
+  image: package-ci/win10:v1.15.0
   flavor: b1.medium
 platforms:
   - name: mac
@@ -55,13 +55,13 @@ platforms:
     flavor: b1.medium
   - name: win
     type: Unity::VM
-    image: package-ci/win10:stable
+    image: package-ci/win10:v1.15.0
     flavor: b1.medium
 promote_platform:
   version: 2019.4
   name: win
   type: Unity::VM
-  image: package-ci/win10:stable
+  image: package-ci/win10:v1.15.0
   flavor: b1.medium
 coverage:
   minPercent: 94.7
@@ -244,9 +244,9 @@ promotion_test:
 publish:
   name: Publish to Internal Registry
   agent:
-    type: Unity::VM
-    image: package-ci/win10:stable
-    flavor: b1.medium
+    type: {{ win_platform.type }}
+    image: {{ win_platform.image }}
+    flavor: {{ win_platform.flavor}}
   commands:
     - dir /A 
     - dir /A com.autodesk.fbx
@@ -267,8 +267,8 @@ publish:
 promote:
   name: Promote to Production
   agent:
-    type: Unity::VM
-    image: package-ci/win10:stable
+    type: {{ win_platform.type }}
+    image: {{ win_platform.image }}
     flavor: b1.small
   variables:
     UPMCI_PROMOTION: 1
