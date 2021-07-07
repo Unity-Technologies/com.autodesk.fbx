@@ -267,8 +267,8 @@ publish:
 promote:
   name: Promote to Production
   agent:
-    type: Unity::VM
-    image: package-ci/win10:v1.15.0
+    type: {{ win_platform.type }}
+    image: {{ win_platform.image }}
     flavor: b1.small
   variables:
     UPMCI_PROMOTION: 1
