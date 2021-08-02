@@ -21,7 +21,11 @@
   }
 %} }
 
+%rename("%s") FbxAnimCurveBase::KeyClear;
+%rename("%s") FbxAnimCurveBase::KeySet;
+%rename("%s") FbxAnimCurveBase::KeyRemove;
 %rename("%s") FbxAnimCurveBase::KeyGetTime;
+%rename("%s") FbxAnimCurveBase::KeySetTime;
 %rename("%s") FbxAnimCurveBase::KeyGetCount;
 
 %include "fbxsdk/scene/animation/fbxanimcurvebase.h"

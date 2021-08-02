@@ -14,7 +14,11 @@
 %rename("%s") FbxGeometryBase::GetControlPointsCount;
 %rename("%s") FbxGeometryBase::GetControlPointAt;
 %rename("%s") FbxGeometryBase::CreateElementNormal;
+%rename("%s") FbxGeometryBase::CreateElementBinormal;
 %rename("%s") FbxGeometryBase::CreateElementTangent;
+%rename("%s") FbxGeometryBase::CreateElementMaterial;
+%rename("%s") FbxGeometryBase::CreateElementVertexColor;
+%rename("%s") FbxGeometryBase::CreateElementUV;
 
 #endif
 
