@@ -65,29 +65,21 @@
         float pVelocity0=FbxAnimCurveDef::sDEFAULT_VELOCITY,
         float pVelocity1=FbxAnimCurveDef::sDEFAULT_VELOCITY 
     );
-%rename("%s") FbxAnimCurve::KeyGet;
 %rename("%s") FbxAnimCurve::KeySetValue;
 %rename("%s") FbxAnimCurve::KeyIncValue;
 %rename("%s") FbxAnimCurve::KeyMultValue;
-%rename("%s") FbxAnimCurve::KeyMultTangent;
 %rename("%s") FbxAnimCurve::KeyGetValue;
 %rename("%s") FbxAnimCurve::KeySetInterpolation;
 %rename("%s") FbxAnimCurve::KeyGetInterpolation;
-%rename("%s") FbxAnimCurve::KeySetTime;
-%rename("%s") FbxAnimCurve::KeyGetTime;
 %rename("%s") FbxAnimCurve::KeySetBreak;
 %rename("%s") FbxAnimCurve::KeyGetBreak;
 
 %rename("%s") FbxAnimCurve::KeyGetLeftDerivative;
 %rename("%s") FbxAnimCurve::KeySetLeftDerivative;
 %rename("%s") FbxAnimCurve::KeyGetLeftAuto;
-%rename("%s") FbxAnimCurve::KeyGetLeftDerivativeInfo;
-%rename("%s") FbxAnimCurve::KeySetLeftDerivativeInfo;
 %rename("%s") FbxAnimCurve::KeyGetRightDerivative;
 %rename("%s") FbxAnimCurve::KeySetRightDerivative;
 %rename("%s") FbxAnimCurve::KeyGetRightAuto;
-%rename("%s") FbxAnimCurve::KeyGetRightDerivativeInfo;
-%rename("%s") FbxAnimCurve::KeySetRightDerivativeInfo;
 %rename("%s") FbxAnimCurve::KeyIsLeftTangentWeighted;
 %rename("%s") FbxAnimCurve::KeyIsRightTangentWeighted;
 %rename("%s") FbxAnimCurve::KeyGetLeftTangentWeight;

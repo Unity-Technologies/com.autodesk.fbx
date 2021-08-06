@@ -57,6 +57,18 @@ namespace Autodesk.Fbx.UnitTests
             }
         }
 
+        public static bool AssertSimilar(double expected, double actual,
+                double tolerance = 1e-10, bool nothrow = false)
+        {
+            if (System.Math.Abs(expected - actual) >= tolerance) {
+                if (!nothrow) {
+                    Assert.AreEqual(expected, actual);
+                }
+                return false;
+            }
+
+            return true;
+        }
 
         [Test]
         public void TestBasics ()
@@ -102,6 +114,44 @@ namespace Autodesk.Fbx.UnitTests
 
                 // add key for below testing
                 index = curve.KeyAdd (keyTime);
+
+                // test KeySetValue, KeyIncValue, KeyMultValue
+                curve.KeySetValue (index, 1);
+                Assert.AreEqual (1, curve.KeyGetValue (index));
+                curve.KeyIncValue (index, 1);
+                AssertSimilar (2, curve.KeyGetValue (index));
+                curve.KeyMultValue (index, 2);
+                AssertSimilar (4, curve.KeyGetValue (index));
+
+                // test KeySetInterpolation, KeyGetInterpolation
+                curve.KeySetInterpolation (index, FbxAnimCurveDef.EInterpolationType.eInterpolationConstant);
+                Assert.AreEqual (FbxAnimCurveDef.EInterpolationType.eInterpolationConstant, curve.KeyGetInterpolation (index));
+                curve.KeySetInterpolation (index, FbxAnimCurveDef.EInterpolationType.eInterpolationLinear);
+                Assert.AreEqual (FbxAnimCurveDef.EInterpolationType.eInterpolationLinear, curve.KeyGetInterpolation (index));
+                curve.KeySetInterpolation (index, FbxAnimCurveDef.EInterpolationType.eInterpolationCubic);
+                Assert.AreEqual (FbxAnimCurveDef.EInterpolationType.eInterpolationCubic, curve.KeyGetInterpolation (index));
+
+                // test KeySetBreak, KeyGetBreak
+                curve.KeySetBreak (index, false);
+                Assert.AreEqual (false, curve.KeyGetBreak (index));
+                curve.KeySetBreak (index, true);
+                Assert.AreEqual (true, curve.KeyGetBreak (index));
+
+                // make sure none of the variations crash
+                curve.KeySetLeftDerivative (index, 1);
+                curve.KeyGetLeftDerivative (index);
+                curve.KeySetRightDerivative (index, 1);
+                curve.KeyGetRightDerivative (index);
+                curve.KeyGetLeftAuto (index);
+                curve.KeyGetRightAuto (index);
+                curve.KeySetLeftTangentWeight (index, 1);
+                curve.KeyGetLeftTangentVelocity (index);
+                curve.KeySetRightTangentWeight (index, 1);
+                curve.KeyGetRightTangentVelocity (index);
+                curve.KeyIsLeftTangentWeighted (index);
+                curve.KeyIsRightTangentWeighted (index);
+                curve.KeyGetLeftTangentVelocity (index);
+                curve.KeyGetRightTangentVelocity (index);
 
                 // test don't crash
                 FbxAnimCurveKey key = curve.KeyGet(index);
