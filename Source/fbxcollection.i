@@ -14,7 +14,6 @@
 %rename("%s") FbxCollection::GetMember;
 %rename("%s") FbxCollection::IsMember;
 %rename("%s") FbxCollection::GetAnimLayerMember;
-%rename("%s") FbxCollection::SetSelectedAll;
 %rename("%s") FbxCollection::GetMemberCount() const;
 
 %extend FbxCollection{
