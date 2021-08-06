@@ -83,7 +83,26 @@ namespace Autodesk.Fbx.UnitTests
                 Assert.AreEqual (5, curve.KeyGetValue (index));
                 Assert.AreEqual (keyTime, curve.KeyGetTime (index));
                 Assert.AreEqual (1, curve.KeyGetCount ());
-                
+
+                // test KeyRemove
+                curve.KeyRemove (curve.KeyAdd (FbxTime.FromSecondDouble (4)));
+                Assert.AreEqual (1, curve.KeyGetCount ());
+                int startIndex = curve.KeyAdd (FbxTime.FromSecondDouble (4));
+                int endIndex = curve.KeyAdd (FbxTime.FromSecondDouble (5));
+                curve.KeyRemove (startIndex, endIndex);
+                Assert.AreEqual (1, curve.KeyGetCount ());
+
+                // test KeySetTime
+                curve.KeySetTime (index, FbxTime.FromSecondDouble (4));
+                Assert.AreEqual (FbxTime.FromSecondDouble(4), curve.KeyGetTime (index));
+
+				// test KeyClear
+                curve.KeyClear ();
+                Assert.AreEqual (0, curve.KeyGetCount ());
+
+                // add key for below testing
+                index = curve.KeyAdd (keyTime);
+
                 // test don't crash
                 FbxAnimCurveKey key = curve.KeyGet(index);
                 Assert.That(key, Is.Not.Null);

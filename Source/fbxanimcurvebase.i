@@ -22,7 +22,6 @@
 %} }
 
 %rename("%s") FbxAnimCurveBase::KeyClear;
-%rename("%s") FbxAnimCurveBase::KeySet;
 %rename("%s") FbxAnimCurveBase::KeyRemove;
 %rename("%s") FbxAnimCurveBase::KeyGetTime;
 %rename("%s") FbxAnimCurveBase::KeySetTime;
