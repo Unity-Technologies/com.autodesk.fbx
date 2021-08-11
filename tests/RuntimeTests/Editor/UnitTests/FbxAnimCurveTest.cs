@@ -57,19 +57,6 @@ namespace Autodesk.Fbx.UnitTests
             }
         }
 
-        public static bool AssertSimilar(double expected, double actual,
-                double tolerance = 1e-10, bool nothrow = false)
-        {
-            if (System.Math.Abs(expected - actual) >= tolerance) {
-                if (!nothrow) {
-                    Assert.AreEqual(expected, actual);
-                }
-                return false;
-            }
-
-            return true;
-        }
-
         [Test]
         public void TestBasics ()
         {
@@ -108,7 +95,7 @@ namespace Autodesk.Fbx.UnitTests
                 curve.KeySetTime (index, FbxTime.FromSecondDouble (4));
                 Assert.AreEqual (FbxTime.FromSecondDouble(4), curve.KeyGetTime (index));
 
-				// test KeyClear
+                // test KeyClear
                 curve.KeyClear ();
                 Assert.AreEqual (0, curve.KeyGetCount ());
 
@@ -119,9 +106,9 @@ namespace Autodesk.Fbx.UnitTests
                 curve.KeySetValue (index, 1);
                 Assert.AreEqual (1, curve.KeyGetValue (index));
                 curve.KeyIncValue (index, 1);
-                AssertSimilar (2, curve.KeyGetValue (index));
+                Assert.AreEqual (2, curve.KeyGetValue (index), 1e-10);
                 curve.KeyMultValue (index, 2);
-                AssertSimilar (4, curve.KeyGetValue (index));
+                Assert.AreEqual (4, curve.KeyGetValue (index), 1e-10);
 
                 // test KeySetInterpolation, KeyGetInterpolation
                 curve.KeySetInterpolation (index, FbxAnimCurveDef.EInterpolationType.eInterpolationConstant);
