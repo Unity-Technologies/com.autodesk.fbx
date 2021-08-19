@@ -26,6 +26,7 @@
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxAnimCurve::KeyModifyBegin;
 %rename("%s") FbxAnimCurve::KeyModifyEnd;
+%rename("%s") FbxAnimCurve::KeyClear;
 %rename("%s") FbxAnimCurve::KeyGetCount;
 
 %rename("%s") FbxAnimCurve::KeySetTangentMode;
@@ -64,7 +65,29 @@
         float pVelocity0=FbxAnimCurveDef::sDEFAULT_VELOCITY,
         float pVelocity1=FbxAnimCurveDef::sDEFAULT_VELOCITY 
     );
+%rename("%s") FbxAnimCurve::KeySetValue;
+%rename("%s") FbxAnimCurve::KeyIncValue;
+%rename("%s") FbxAnimCurve::KeyMultValue;
 %rename("%s") FbxAnimCurve::KeyGetValue;
+%rename("%s") FbxAnimCurve::KeySetInterpolation;
+%rename("%s") FbxAnimCurve::KeyGetInterpolation;
+%rename("%s") FbxAnimCurve::KeySetBreak;
+%rename("%s") FbxAnimCurve::KeyGetBreak;
+
+%rename("%s") FbxAnimCurve::KeyGetLeftDerivative;
+%rename("%s") FbxAnimCurve::KeySetLeftDerivative;
+%rename("%s") FbxAnimCurve::KeyGetLeftAuto;
+%rename("%s") FbxAnimCurve::KeyGetRightDerivative;
+%rename("%s") FbxAnimCurve::KeySetRightDerivative;
+%rename("%s") FbxAnimCurve::KeyGetRightAuto;
+%rename("%s") FbxAnimCurve::KeyIsLeftTangentWeighted;
+%rename("%s") FbxAnimCurve::KeyIsRightTangentWeighted;
+%rename("%s") FbxAnimCurve::KeyGetLeftTangentWeight;
+%rename("%s") FbxAnimCurve::KeyGetRightTangentWeight;
+%rename("%s") FbxAnimCurve::KeySetLeftTangentWeight;
+%rename("%s") FbxAnimCurve::KeySetRightTangentWeight;
+%rename("%s") FbxAnimCurve::KeyGetLeftTangentVelocity;
+%rename("%s") FbxAnimCurve::KeyGetRightTangentVelocity;
 
 // Unignore FbxAnimCurveDef. It's a static class.
 %rename("%s", %$isclass) FbxAnimCurveDef;

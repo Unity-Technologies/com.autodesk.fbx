@@ -10,6 +10,9 @@
 
 %rename("%s") FbxCollection::Clear;
 %rename("%s") FbxCollection::AddMember;
+%rename("%s") FbxCollection::RemoveMember;
+%rename("%s") FbxCollection::GetMember;
+%rename("%s") FbxCollection::IsMember;
 %rename("%s") FbxCollection::GetAnimLayerMember;
 %rename("%s") FbxCollection::GetMemberCount() const;
 

@@ -45,6 +45,18 @@ namespace Autodesk.Fbx.UnitTests
 
             var elementTangent = geometryBase.CreateElementTangent ();
             Assert.IsInstanceOf<FbxLayerElementTangent> (elementTangent);
+
+            var elementBinormal = geometryBase.CreateElementBinormal ();
+            Assert.IsInstanceOf<FbxLayerElementBinormal> (elementBinormal);
+
+            var elementMaterial = geometryBase.CreateElementMaterial ();
+            Assert.IsInstanceOf<FbxLayerElementMaterial> (elementMaterial);
+
+            var elementVertexColor = geometryBase.CreateElementVertexColor ();
+            Assert.IsInstanceOf<FbxLayerElementVertexColor> (elementVertexColor);
+
+            var elementUV = geometryBase.CreateElementUV ("UV", FbxLayerElement.EType.eTextureDiffuse);
+            Assert.IsInstanceOf<FbxLayerElementUV> (elementUV);
         }
     }
 
