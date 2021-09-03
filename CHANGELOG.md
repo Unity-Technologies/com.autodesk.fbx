@@ -1,5 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
+## [4.1.1] - 2021-09-03
+
+NEW FEATURES
+* Additional bindings for FbxAnimCurve, FbxAnimCurveBase, FbxCollection, and FbxGeometryBase. Thank you to @utjkaz for the addition.
+
 ## [4.1.0] - 2021-07-06
 
 CHANGES
