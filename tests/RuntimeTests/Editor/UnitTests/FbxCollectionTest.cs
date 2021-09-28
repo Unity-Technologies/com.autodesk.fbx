@@ -33,6 +33,7 @@ namespace Autodesk.Fbx.UnitTests
             fbxCollection.AddMember (obj2);
             Assert.AreEqual (true, fbxCollection.IsMember (obj2));
             Assert.AreEqual (obj2, fbxCollection.GetMember (initialMemberCount));
+            Assert.That(fbxCollection.GetMember(), Is.Not.Null);
             fbxCollection.RemoveMember (obj2);
             Assert.AreEqual (false, fbxCollection.IsMember (obj2));
             Assert.AreEqual (initialMemberCount, fbxCollection.GetMemberCount());
