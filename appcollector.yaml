@@ -4,9 +4,9 @@ language: C#
 development_stage: Production
 findings_access:
 - markv@unity3d.com
-- benoit.hudson@unity3d.com
+- marief@unity3d.com
 organization: 5d8b8596cadf01000a30db1f
-poc: benoit.hudson@unity3d.com
+poc: marief@unity3d.com
 slack_channel: devs-fbx-exporter
 description: This package provides Unity C# bindings to the Autodesk\u00ae FBX\u00ae SDK.
 risk_assessment:
