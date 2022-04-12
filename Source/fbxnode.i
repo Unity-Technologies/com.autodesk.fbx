@@ -43,6 +43,7 @@
 %rename("%s") FbxNode::AddMaterial;
 %rename("%s") FbxNode::GetMaterial;
 %rename("%s") FbxNode::GetMaterialIndex;
+%rename("%s") FbxNode::GetMaterialCount;
 
 /* Visibility */
 %rename("%s") FbxNode::SetVisibility;

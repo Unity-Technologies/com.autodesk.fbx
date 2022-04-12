@@ -19,6 +19,10 @@
 %rename("%s") FbxScene::GetPose;
 %rename("%s") FbxScene::SetCurrentAnimationStack;
 %rename("%s") FbxScene::GetCurrentAnimationStack;
+%rename("%s") FbxScene::GetMaterialCount;
+// TODO: expose GetMaterial(char* pName). If exposed as is, if you pass it a null it will crash the application.
+// Note: can't use %null_arg_check(char* pName) as this will affect all the Create() functions as well.
+%rename("%s") FbxScene::GetMaterial(int pIndex);
 #endif
 
 %include "fbxsdk/scene/fbxscene.h"
