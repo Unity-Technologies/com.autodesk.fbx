@@ -71,7 +71,7 @@ promote_platform:
   image: package-ci/win10:v1.15.0
   flavor: b1.medium
 coverage:
-  minPercent: 94.7
+  minPercent: 94.6
 ---
 
 build_win:
