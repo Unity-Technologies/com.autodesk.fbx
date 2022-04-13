@@ -53,6 +53,7 @@ for inname in sys.argv[2:]:
              \1',
              line
         )
+        line = re.sub('FBX_DEPRECATED', '', line)
         
         # remember to write it out!
         fileout.write(line)

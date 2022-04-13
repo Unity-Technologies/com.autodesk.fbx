@@ -84,4 +84,4 @@
   %}
 }
 
-%include "fbxsdk/core/fbxobject.h"
+%include "UnityFbxSdkNative-fixed-headers/fbxobject.h"
