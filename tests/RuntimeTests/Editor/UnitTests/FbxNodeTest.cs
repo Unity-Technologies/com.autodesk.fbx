@@ -118,6 +118,12 @@ namespace Autodesk.Fbx.UnitTests
             //       (as they both us pName as a param)
             //Assert.That(() => { fooNode.GetMaterialIndex (null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
 
+            // test material count
+            Assert.That(fooNode.GetMaterialCount(), Is.EqualTo(1));
+            var mat2 = FbxSurfaceMaterial.Create(Manager, "mat2");
+            Assert.AreEqual(1, fooNode.AddMaterial(mat2));
+            Assert.That(fooNode.GetMaterialCount(), Is.EqualTo(2));
+
             // Test whether it's a skeleton, camera, etc. It isn't.
             Assert.IsNull(fooNode.GetCamera());
             Assert.IsNull(fooNode.GetGeometry());

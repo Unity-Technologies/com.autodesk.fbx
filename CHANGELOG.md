@@ -2,8 +2,8 @@
 
 ## [4.2.0-pre.1] - 2022-04-20
 
-CHANGES
-* expose GetMaterial
+NEW FEATURES
+* Added bindings for FbxScene::GetMaterialCount, FbxScene::GetMaterial, FbxNode::GetMaterialCount.
 
 ## [4.1.1] - 2021-09-03
 
