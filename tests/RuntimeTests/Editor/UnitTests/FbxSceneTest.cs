@@ -95,5 +95,31 @@ namespace Autodesk.Fbx.UnitTests
                 Assert.That (() => { newScene.SetCurrentAnimationStack(animStack); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
             }
         }
+
+        [Test]
+        public void TestMaterialInfo()
+        {
+            using (FbxScene newScene = FbxScene.Create(Manager, ""))
+            {
+                var rootNode = FbxNode.Create(newScene, "root");
+
+                // Test GetMaterialCount
+                Assert.That(newScene.GetMaterialCount(), Is.EqualTo(0));
+
+                var mat = FbxSurfaceMaterial.Create(Manager, "mat");
+                Assert.AreEqual(0, rootNode.AddMaterial(mat));
+
+                Assert.That(newScene.GetMaterialCount(), Is.EqualTo(1));
+
+                // Test GetMaterial
+                Assert.That(newScene.GetMaterial(0), Is.EqualTo(mat));
+                Assert.That(newScene.GetMaterial("mat"), Is.EqualTo(mat));
+
+                // test invalid values
+                newScene.GetMaterial(int.MinValue);
+                newScene.GetMaterial(int.MaxValue);
+                Assert.That(() => { newScene.GetMaterial(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
+            }
+        }
     }
 }
