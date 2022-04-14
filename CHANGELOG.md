@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [Unreleased] - 2022-04-13
+## [4.2.0-pre.1] - 2022-04-20
 
 NEW FEATURES
 * Added bindings for FbxScene::GetMaterialCount, FbxScene::GetMaterial, FbxNode::GetMaterialCount.
