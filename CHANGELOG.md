@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [4.2.0-pre.1] - 2022-04-12
+## [Unreleased] - 2022-04-14
 
 CHANGES
 * Upgraded to FBX SDK 2020.3.1.
