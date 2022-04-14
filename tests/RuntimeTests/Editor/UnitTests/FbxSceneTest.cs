@@ -113,10 +113,12 @@ namespace Autodesk.Fbx.UnitTests
 
                 // Test GetMaterial
                 Assert.That(newScene.GetMaterial(0), Is.EqualTo(mat));
+                Assert.That(newScene.GetMaterial("mat"), Is.EqualTo(mat));
 
                 // test invalid values
                 newScene.GetMaterial(int.MinValue);
                 newScene.GetMaterial(int.MaxValue);
+                Assert.That(() => { newScene.GetMaterial(null); }, Throws.Exception.TypeOf<System.ArgumentNullException>());
             }
         }
     }

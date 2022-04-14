@@ -20,9 +20,18 @@
 %rename("%s") FbxScene::SetCurrentAnimationStack;
 %rename("%s") FbxScene::GetCurrentAnimationStack;
 %rename("%s") FbxScene::GetMaterialCount;
-// TODO: expose GetMaterial(char* pName). If exposed as is, if you pass it a null it will crash the application.
-// Note: can't use %null_arg_check(char* pName) as this will affect all the Create() functions as well.
 %rename("%s") FbxScene::GetMaterial(int pIndex);
+%rename("GetMaterial") FbxScene::GetMaterialByNameChecked;
+%extend FbxScene {
+    FbxSurfaceMaterial* GetMaterialByNameChecked(char* pName){
+        if(!pName){
+            SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "pName is null", "pName");
+            return nullptr;
+        }
+        
+        return $self->GetMaterial(pName);
+    }
+}
 #endif
 
 %include "fbxsdk/scene/fbxscene.h"
