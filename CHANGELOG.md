@@ -3,7 +3,7 @@
 ## [Unreleased] - 2022-04-13
 
 NEW FEATURES
-* Added bindings for FbxScene::GetMaterialCount, FbxScene::GetMaterial(int pIndex), FbxNode::GetMaterialCount.
+* Added bindings for FbxScene::GetMaterialCount, FbxScene::GetMaterial, FbxNode::GetMaterialCount.
 
 ## [4.1.1] - 2021-09-03
 
