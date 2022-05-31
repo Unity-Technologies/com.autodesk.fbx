@@ -72,9 +72,9 @@ if (${USE_STEVEDORE} STREQUAL "ON")
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         set(fbxsdk_artifact_name fbxsdk-mac-x64)
         if (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64")
-            set(fbxsdk_artifact_id 2020.2.1_b255f8750fb93d642e5fcb808c38ced04152ff2c978d5edd92eb91416717b367.7z)
+            set(fbxsdk_artifact_id 2020.3.1_15d756bcbc18823a9d06688b21aba756f652b97b44f2904ec529dbeb19c7c5a3.7z)
         else()
-            set(fbxsdk_artifact_id 2020.2_bfa28d76a77eb68eb9254c389b244e2a024037424da655baf1dd3f554b09056e.7z)
+            set(fbxsdk_artifact_id 2020.3.1-arm64_bb2cd272a48457a1d30554ed291f787fc55abcdcd361a2ac34d870865e85cfd1.7z)
         endif()
 
         set(swig_artifact_name swig-mac-x64)
@@ -82,14 +82,14 @@ if (${USE_STEVEDORE} STREQUAL "ON")
         set(swig_executable_name swig)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         set(fbxsdk_artifact_name fbxsdk-win-x64)
-        set(fbxsdk_artifact_id 2020.2_63f59fe9bbdbaadd9dc8ed03be87bc102fbb1604ee798abf190954f3124c8859.7z)
+        set(fbxsdk_artifact_id 2020.3.1_ee10c87c88dafd14b517664e0488c97a1dd7a2d2875c3c1db91671bd6ff91d68.7z)
 
         set(swig_artifact_name swig-win-x64)
         set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
         set(swig_executable_name swig.exe)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         set(fbxsdk_artifact_name fbxsdk-linux-x64)
-        set(fbxsdk_artifact_id 2020.2_d1094eaf7b70549ec8ed5eec542e88a790b92110dd91c0317ba95c25771daeb5.7z)
+        set(fbxsdk_artifact_id 2020.3.1_8370a3768d141a730d633f107db6cfd7c372d5866170de39d95ab9cdbc5e2d7a.7z)
 
         set(swig_artifact_name swig-linux-x64)
         set(swig_artifact_id 3.0.12_f3f14d565afd0ec44d3d77298f708f41bd12ef1fa209a1535226cf3e30a5f15b.7z)
@@ -161,6 +161,7 @@ swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxproperty
 swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/math/fbxmatrix.h")
 swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/math/fbxaffinematrix.h")
 swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/scene/geometry/fbxlayer.h")
+swig_fix_header(UnityFbxSdkNative "${FBXSDK_INCLUDE_DIR}/fbxsdk/core/fbxobject.h")
 
 # Find the constants for FbxDataType.
 fbxsharp_discover_immutables(OUTPUT ${CMAKE_BINARY_DIR}/fbxdatatypeconstants.i

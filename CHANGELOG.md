@@ -5,6 +5,9 @@
 NEW FEATURES
 * Added bindings for FbxScene::GetMaterialCount, FbxScene::GetMaterial, FbxNode::GetMaterialCount.
 
+CHANGES
+* Upgraded to FBX SDK 2020.3.1.
+
 ## [4.1.1] - 2021-09-03
 
 NEW FEATURES
