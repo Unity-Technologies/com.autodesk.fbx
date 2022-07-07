@@ -1,5 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
+## [5.0.0-pre.1] - 2022-07-07
+
+CHANGES
+* re-enable Linux tests.
+
 ## [4.2.0-pre.1] - 2022-04-20
 
 NEW FEATURES
