@@ -40,7 +40,7 @@ ubuntu_platform:
   flavor: b1.medium
 win_platform:
   name: win
-  type: Unity::VM::GPU
+  type: Unity::VM
   image: package-ci/win10:latest
   flavor: b1.medium
 platforms:
@@ -67,7 +67,7 @@ promote_platform:
   version: 2019.4
   name: win
   type: Unity::VM
-  image: package-ci/win10:stable
+  image: package-ci/win10:v1.15.0
   flavor: b1.medium
 coverage:
   minPercent: 94.4
