@@ -64,8 +64,8 @@ if args.use_ninja:
     config_args.append('Ninja')
 else:
     if sys.platform.startswith('win'):
-        config_args.append('Visual Studio 15 2017 Win64')
-        #config_args.append('-Ax64')
+        config_args.append('Visual Studio 16 2019')
+        config_args.append('-Ax64')
     else:
         config_args.append('Unix Makefiles')
 
