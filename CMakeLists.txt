@@ -82,7 +82,7 @@ if (${USE_STEVEDORE} STREQUAL "ON")
         set(swig_executable_name swig)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         set(fbxsdk_artifact_name fbxsdk-win-x64)
-        set(fbxsdk_artifact_id 2020.3.1_ee10c87c88dafd14b517664e0488c97a1dd7a2d2875c3c1db91671bd6ff91d68.7z)
+        set(fbxsdk_artifact_id 2020.3.1-VS2019_44917dfdc02838677078272af416eea0f95c3bb56ca87f27ada0afcc653b83f8.7z)
 
         set(swig_artifact_name swig-win-x64)
         set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)

@@ -28,7 +28,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   list(APPEND CMAKE_SWIG_FLAGS "-D_MSC_VER")
 
   set(_fbxsdk_root_path "C:/Program Files/Autodesk/FBX/FBX SDK")
-  list(APPEND _fbxsdk_lib_paths "lib/vs2015/x64/release")
+  list(APPEND _fbxsdk_lib_paths "lib/vs2019/x64/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__linux__")
