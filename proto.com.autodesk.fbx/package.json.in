@@ -9,7 +9,7 @@
         "max"
     ],
     "name": "com.autodesk.fbx",
-    "unity": "2018.4",
+    "unity": "2020.3",
     "version": "4.2.0-pre.1",
     "author": {
         "name": "Unity"
