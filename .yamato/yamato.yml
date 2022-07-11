@@ -28,7 +28,6 @@ editors:
   - version: 2021.3
   - version: 2022.1
   - version: 2022.2
-  - version: trunk
 mac_platform:
   name: mac
   type: Unity::VM::osx
