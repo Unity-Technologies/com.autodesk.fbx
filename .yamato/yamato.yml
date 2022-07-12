@@ -24,10 +24,9 @@
 # change one, change both! (Hopefully yamato handles this soon)
 #
 editors:
-  - version: 2018.4
-  - version: 2019.4
   - version: 2020.3
   - version: 2021.3
+  - version: 2022.2
 mac_platform:
   name: mac
   type: Unity::VM::osx
@@ -58,13 +57,13 @@ platforms:
     flavor: b1.medium
 
 publish_platform:
-  version: 2019.4
+  version: 2020.3
   name: win
   type: Unity::VM
   image: package-ci/win10:stable
   flavor: b1.medium
 promote_platform:
-  version: 2019.4
+  version: 2020.3
   name: win
   type: Unity::VM
   image: package-ci/win10:stable

@@ -17,7 +17,7 @@ The Autodesk® FBX® SDK for Unity package contains:
 
 The Autodesk® FBX® SDK for Unity package is compatible with the following versions of the Unity Editor:
 
-* 2018.4 and later (recommended)
+* 2020.3 and later
 
 ## Installation
 
