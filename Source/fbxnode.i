@@ -70,6 +70,12 @@
 %rename("%s") FbxNode::SetScalingOffset;
 %rename("%s") FbxNode::GetScalingPivot;
 %rename("%s") FbxNode::SetScalingPivot;
+%rename("%s") FbxNode::GetGeometricTranslation;
+%rename("%s") FbxNode::SetGeometricTranslation;
+%rename("%s") FbxNode::GetGeometricRotation;
+%rename("%s") FbxNode::SetGeometricRotation;
+%rename("%s") FbxNode::GetGeometricScaling;
+%rename("%s") FbxNode::SetGeometricScaling;
 
 // Limits (returns by ref; there's no corresponding set)
 // Note: swig doesn't see these functions, so we need to redefine them.

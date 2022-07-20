@@ -244,6 +244,33 @@ namespace Autodesk.Fbx.UnitTests
         }
 
         [Test]
+        public void TestSetGeometricTransform()
+        {
+            using(FbxNode node = CreateObject("root"))
+            {
+                FbxVector4 t1 = new FbxVector4(1, 2, 3);
+                FbxVector4 t2 = new FbxVector4(4, 5, 6);
+                node.SetGeometricTranslation(FbxNode.EPivotSet.eDestinationPivot, t1);
+                node.SetGeometricTranslation(FbxNode.EPivotSet.eSourcePivot, t2);
+
+                Assert.That(node.GetGeometricTranslation(FbxNode.EPivotSet.eDestinationPivot), Is.EqualTo(t1));
+                Assert.That(node.GetGeometricTranslation(FbxNode.EPivotSet.eSourcePivot), Is.EqualTo(t2));
+
+                node.SetGeometricRotation(FbxNode.EPivotSet.eDestinationPivot, t1);
+                node.SetGeometricRotation(FbxNode.EPivotSet.eSourcePivot, t2);
+
+                Assert.That(node.GetGeometricRotation(FbxNode.EPivotSet.eDestinationPivot), Is.EqualTo(t1));
+                Assert.That(node.GetGeometricRotation(FbxNode.EPivotSet.eSourcePivot), Is.EqualTo(t2));
+
+                node.SetGeometricScaling(FbxNode.EPivotSet.eDestinationPivot, t1);
+                node.SetGeometricScaling(FbxNode.EPivotSet.eSourcePivot, t2);
+
+                Assert.That(node.GetGeometricScaling(FbxNode.EPivotSet.eDestinationPivot), Is.EqualTo(t1));
+                Assert.That(node.GetGeometricScaling(FbxNode.EPivotSet.eSourcePivot), Is.EqualTo(t2));
+            }
+        }
+
+        [Test]
         public void TestSetRotationScalePivotOffset(){
             using (FbxNode node = CreateObject ("root")) {
                 FbxVector4 rot = new FbxVector4 (1, 2, 3);
