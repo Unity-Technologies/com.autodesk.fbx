@@ -35,7 +35,7 @@ mac_platform:
 ubuntu_platform:
   name: ubuntu
   type: Unity::VM
-  image: package-ci/ubuntu:prev-stable
+  image: package-ci/ubuntu:stable
   flavor: b1.medium
 win_platform:
   name: win
@@ -49,7 +49,7 @@ platforms:
     flavor: m1.mac
   - name: ubuntu
     type: Unity::VM
-    image: package-ci/ubuntu:prev-stable
+    image: package-ci/ubuntu:stable
     flavor: b1.medium
   - name: win
     type: Unity::VM
