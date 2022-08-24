@@ -1,5 +1,5 @@
 {
-    "name": "FbxUseCaseTests",
+    "name": "Autodesk.Fbx.LinuxTest",
     "references": [
         "Autodesk.Fbx"
     ],
@@ -10,9 +10,7 @@
         "TestAssemblies"
     ],
     "defineConstraints": [
-        "!UNITY_EDITOR_LINUX"
+        "UNITY_EDITOR_LINUX"
     ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
     "allowUnsafeCode": false
 }

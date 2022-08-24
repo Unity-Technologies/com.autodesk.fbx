@@ -1,5 +1,5 @@
 {
-    "name": "FbxBuildTestAssets",
+    "name": "Autodesk.Fbx.BuildTestAssets",
     "references": [
         "Autodesk.Fbx",
         "UnityEngine.TestRunner",
