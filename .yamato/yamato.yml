@@ -35,7 +35,7 @@ mac_platform:
 ubuntu_platform:
   name: ubuntu
   type: Unity::VM
-  image: package-ci/ubuntu:stable
+  image: package-ci/ubuntu:prev-stable
   flavor: b1.medium
 win_platform:
   name: win
