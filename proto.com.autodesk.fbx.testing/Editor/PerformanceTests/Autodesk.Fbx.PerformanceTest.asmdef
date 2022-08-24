@@ -1,5 +1,5 @@
 {
-    "name": "PerformanceTests",
+    "name": "Autodesk.Fbx.PerformanceTests",
     "references": [
         "Autodesk.Fbx"
     ],
