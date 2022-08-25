@@ -1,5 +1,5 @@
 {
-    "name": "PerformanceTests",
+    "name": "Autodesk.Fbx.LinuxTest",
     "references": [
         "Autodesk.Fbx"
     ],
@@ -9,7 +9,8 @@
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
+    "defineConstraints": [
+        "UNITY_EDITOR_LINUX"
+    ],
     "allowUnsafeCode": false
 }
