@@ -1,16 +1,16 @@
 {
-    "name": "FbxLinuxTest",
+    "name": "Autodesk.Fbx.PlayModeTests",
     "references": [
         "Autodesk.Fbx"
-    ],
-    "includePlatforms": [
-        "Editor"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
     ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
     "defineConstraints": [
-        "UNITY_EDITOR_LINUX"
+        "!FBX_RUNNING_BUILD_TEST",
+        "!UNITY_EDITOR_LINUX"
     ],
     "allowUnsafeCode": false
 }

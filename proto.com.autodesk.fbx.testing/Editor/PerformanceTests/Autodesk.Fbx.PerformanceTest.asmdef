@@ -1,5 +1,5 @@
 {
-    "name": "FbxUseCaseTests",
+    "name": "Autodesk.Fbx.PerformanceTests",
     "references": [
         "Autodesk.Fbx"
     ],
@@ -8,9 +8,6 @@
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
-    ],
-    "defineConstraints": [
-        "!UNITY_EDITOR_LINUX"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
