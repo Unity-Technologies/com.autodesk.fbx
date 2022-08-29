@@ -1,8 +1,18 @@
 # Changes in FBX SDK C# Bindings
 
-## [5.0.0-pre.1] - 2022-07-07
+## [5.0.0-pre.1] - 2022-08-24
 
-No changes.
+NEW FEATURES
+* Expose functions to get/set geometric transforms.
+
+CHANGES
+* Increase minimum supported Unity version to 2020.3.
+* Update FBX SDK to 2020.3.1.
+* Update FBX SDK Windows binaries to use VS2019.
+
+BUGFIXES
+* Fix IOException when overwriting an existing build. Thank you to @julienkay for the contribution.
+* Changes names of test assemblies to reduce the risk of assembly name conflict in projects.
 
 ## [4.2.0] - 2022-07-08
 
