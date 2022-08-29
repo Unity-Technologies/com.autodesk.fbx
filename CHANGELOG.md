@@ -4,6 +4,10 @@
 
 No changes.
 
+## [4.2.0] - 2022-07-08
+
+Released, no changes from release candidate 4.2.0-pre.1.
+
 ## [4.2.0-pre.1] - 2022-04-20
 
 NEW FEATURES
