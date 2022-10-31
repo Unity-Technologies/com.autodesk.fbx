@@ -79,6 +79,8 @@ namespace Autodesk.Fbx.UnitTests
                 TestGetter (fbxCamera.GateFit);
                 TestGetter (fbxCamera.FilmOffsetX);
                 TestGetter (fbxCamera.FilmOffsetY);
+                TestGetter (fbxCamera.FocusDistance);
+                TestGetter (fbxCamera.UseDepthOfField);
             }
         }
     }
