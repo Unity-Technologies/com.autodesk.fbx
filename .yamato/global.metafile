@@ -6,19 +6,19 @@ editors:
 mac_platform: &mac
   name: mac
   type: Unity::VM::osx
-  image: package-ci/macos-12:v4
+  image: package-ci/mac:stable
   flavor: m1.mac
 
 ubuntu_platform: &ubuntu
   name: ubuntu
   type: Unity::VM
-  image: package-ci/ubuntu-18.04:v4
+  image: package-ci/ubuntu:stable
   flavor: b1.medium
 
 win_platform:
   name: win
-  type: Unity::VM::GPU
-  image: package-ci/win10:latest
+  type: Unity::VM
+  image: package-ci/win10:stable
   flavor: b1.medium
 
 platforms:
