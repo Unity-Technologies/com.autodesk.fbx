@@ -1,0 +1,33 @@
+{% metadata_file .yamato/global.metafile %}
+---
+
+# Before uploading fbxsdk to Stevedore, make sure
+# 1) fbxsdk_version is set correctly
+# 2) Under Repo root in your branch, there is a folder structure as below
+#
+#     fbxsdk_to_upload (folder)
+#       fbxsdk-win-x64.7z 
+#       fbxsdk-linux-x64.7z
+#       fbxsdk-mac-x64.7z
+#       arm64 (folder) 
+#         fbxsdk-mac-x64.7z 
+#
+# Note: On Mac, there are two kinds of lib, x64 and arm64. Put the arm64 one in a subfolder arm64, but with the same name.
+upload_fbxsdk_to_stevedore:
+  name: Upload FBXSDK to Stevedore-testing
+  agent:
+    type: {{ ubuntu_platform.type }}
+    image: {{ ubuntu_platform.image }}
+    flavor: {{ ubuntu_platform.flavor}}
+  commands:
+    - curl -sSo StevedoreUpload $STEVEDORE_UPLOAD_TOOL_LINUX_X64_URL
+    - chmod +x StevedoreUpload
+    - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }} fbxsdk_to_upload/fbxsdk-win-x64.7z
+    - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }} fbxsdk_to_upload/fbxsdk-linux-x64.7z
+    - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }} fbxsdk_to_upload/fbxsdk-mac-x64.7z
+    # Upload arm64 Mac lib, using "-arm64" as the version surfix.
+    - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }}-arm64 fbxsdk_to_upload/arm64/fbxsdk-mac-x64.7z
+  artifacts:
+    artifacts_to_upload:
+      paths:
+        - "fbxsdk/**/*"
