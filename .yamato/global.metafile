@@ -3,13 +3,13 @@ editors:
   - version: 2021.3
   - version: 2022.2
 
-mac_platform: &mac
+mac_platform:
   name: mac
   type: Unity::VM::osx
   image: package-ci/mac:stable
   flavor: m1.mac
 
-ubuntu_platform: &ubuntu
+ubuntu_platform:
   name: ubuntu
   type: Unity::VM
   image: package-ci/ubuntu:prev-stable
@@ -17,13 +17,19 @@ ubuntu_platform: &ubuntu
 
 win_platform:
   name: win
-  type: Unity::VM
-  image: package-ci/win10:stable
+  type: Unity::VM::GPU
+  image: package-ci/win10:latest
   flavor: b1.medium
 
 platforms:
-  - *mac
-  - *ubuntu
+  - name: mac
+    type: Unity::VM::osx
+    image: package-ci/mac:stable
+    flavor: m1.mac
+  - name: ubuntu
+    type: Unity::VM
+    image: package-ci/ubuntu:stable
+    flavor: b1.medium
   - name: win
     type: Unity::VM
     image: package-ci/win10:v1.15.0

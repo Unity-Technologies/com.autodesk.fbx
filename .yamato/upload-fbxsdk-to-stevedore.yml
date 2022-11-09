@@ -14,7 +14,7 @@
 #
 # Note: On Mac, there are two kinds of lib, x64 and arm64. Put the arm64 one in a subfolder arm64, but with the same name.
 upload_fbxsdk_to_stevedore:
-  name: Upload FBXSDK to Stevedore-testing
+  name: Upload FBXSDK {{ fbxsdk_version }} to Stevedore testing repository
   agent:
     type: {{ ubuntu_platform.type }}
     image: {{ ubuntu_platform.image }}
