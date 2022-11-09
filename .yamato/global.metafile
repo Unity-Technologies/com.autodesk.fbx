@@ -11,7 +11,7 @@ mac_platform:
 
 ubuntu_platform:
   name: ubuntu
-  type: Unity::VM
+  type: Unity::VM::GPU
   image: package-ci/ubuntu:prev-stable
   flavor: b1.medium
 
