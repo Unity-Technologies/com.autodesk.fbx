@@ -23,7 +23,7 @@ upload_fbxsdk_to_stevedore:
     - curl -sSo StevedoreUpload $STEVEDORE_UPLOAD_TOOL_LINUX_X64_URL
     - chmod +x StevedoreUpload
     - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }}-VS2019 fbxsdk_to_upload/fbxsdk-win-x64.7z
-    # - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }} fbxsdk_to_upload/fbxsdk-linux-x64.7z
+    - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }} fbxsdk_to_upload/fbxsdk-linux-x64.7z
     - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }} fbxsdk_to_upload/fbxsdk-mac-x64.7z
     # Upload arm64 Mac lib, using "-arm64" as the version surfix.
     - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }}-arm64 fbxsdk_to_upload/arm64/fbxsdk-mac-x64.7z
