@@ -74,7 +74,7 @@ if (${USE_STEVEDORE} STREQUAL "ON")
         if (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64")
             set(fbxsdk_artifact_id 2020.3.2_e64b3e38b4acfe27d1d8947133acc14d4632ab318b83d91529ff008254d7b99a.7z)
         else()
-            set(fbxsdk_artifact_id 2020.3.2-arm64_2ddba804eb08129d59eafab1f50efa5d92f291e7ca8aeb0e5aec53e86d475108.7z)
+            set(fbxsdk_artifact_id 2020.3.2-arm64_ba9a3ecf23aacd13733d07dae21967731c5227e97cd83f5c3e9a77d7863a8c43.7z)
         endif()
 
         set(swig_artifact_name swig-mac-x64)
