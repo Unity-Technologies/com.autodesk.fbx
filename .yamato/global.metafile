@@ -18,7 +18,7 @@ ubuntu_platform:
 win_platform:
   name: win
   type: Unity::VM::GPU
-  image: package-ci/win10:latest
+  image: package-ci/win10:v4
   flavor: b1.medium
 
 platforms:
