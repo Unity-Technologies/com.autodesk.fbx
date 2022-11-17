@@ -61,13 +61,13 @@ config_args.append('-DYAMATO' + ('=ON' if args.yamato_build else '=OFF'))
 # Generator selection
 config_args.append('-G')
 if args.use_ninja:
-    generator = 'Ninja'
+    config_args.append('Ninja')
 else:
     if sys.platform.startswith('win'):
-        generator = 'Visual Studio 15 2017 Win64'
+        config_args.append('Visual Studio 16 2019')
+        config_args.append('-Ax64')
     else:
-        generator = 'Unix Makefiles'
-config_args.append(generator)   
+        config_args.append('Unix Makefiles')
 
 # Remove this if you're a build system dev
 config_args.append('-Wno-dev')

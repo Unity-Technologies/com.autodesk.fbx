@@ -23,54 +23,7 @@
 # and they repeat, because variable definitions can't use variables. If you
 # change one, change both! (Hopefully yamato handles this soon)
 #
-editors:
-  - version: 2018.4
-  - version: 2019.4
-  - version: 2020.3
-  - version: 2021.3
-mac_platform:
-  name: mac
-  type: Unity::VM::osx
-  image: package-ci/mac:stable
-  flavor: m1.mac
-ubuntu_platform:
-  name: ubuntu
-  type: Unity::VM
-  image: package-ci/ubuntu:prev-stable
-  flavor: b1.medium
-win_platform:
-  name: win
-  type: Unity::VM
-  image: package-ci/win10:v1.15.0
-  flavor: b1.medium
-platforms:
-  - name: mac
-    type: Unity::VM::osx
-    image: package-ci/mac:stable
-    flavor: m1.mac
-  - name: ubuntu
-    type: Unity::VM
-    image: package-ci/ubuntu:prev-stable
-    flavor: b1.medium
-  - name: win
-    type: Unity::VM
-    image: package-ci/win10:v1.15.0
-    flavor: b1.medium
-
-publish_platform:
-  version: 2019.4
-  name: win
-  type: Unity::VM
-  image: package-ci/win10:stable
-  flavor: b1.medium
-promote_platform:
-  version: 2019.4
-  name: win
-  type: Unity::VM
-  image: package-ci/win10:v1.15.0
-  flavor: b1.medium
-coverage:
-  minPercent: 94.6
+{% metadata_file .yamato/global.metafile %}
 ---
 
 build_win:
@@ -204,11 +157,6 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endif %}
 {% endif %}
     - echo "****** PASSED *******"
-  triggers:
-    pull_requests:
-      - targets:
-          only:
-            - "/.*/"
   artifacts:
     packages:
       paths:
@@ -218,6 +166,20 @@ test_{{ platform.name }}_{{ editor.version }}:
         - "upm-ci~/test-results/**/*"
   dependencies:
     - .yamato/yamato.yml#pack
+{% endfor %}
+{% endfor %}
+
+# PR trigger
+test_trigger_pr:
+  name: Pull Request Tests Trigger
+  triggers:
+    cancel_old_ci: true
+    expression: pull_request.(source match ".*" AND NOT draft)
+  dependencies:
+    - .yamato/yamato.yml#pack
+{% for editor in editors %}
+{% for platform in platforms %}
+    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}
 {% endfor %}
 {% endfor %}
 
@@ -266,11 +228,7 @@ publish:
         - "upm-ci~/packages/**"
   dependencies:
     - .yamato/yamato.yml#pack
-{% for editor in editors %}
-{% for platform in platforms %}
-    - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}
-{% endfor %}
-{% endfor %}
+    - .yamato/yamato.yml#test_trigger_pr
 
 promote:
   name: Promote to Production
