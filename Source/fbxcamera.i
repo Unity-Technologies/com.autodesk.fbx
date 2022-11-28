@@ -40,6 +40,8 @@
 %fbximmutable(FbxCamera::GateFit);
 %fbximmutable(FbxCamera::FilmOffsetX);
 %fbximmutable(FbxCamera::FilmOffsetY);
+%fbximmutable(FbxCamera::FocusDistance);
+%fbximmutable(FbxCamera::UseDepthOfField);
 
 %include "fbxsdk/scene/geometry/fbxcamera.h"
 
