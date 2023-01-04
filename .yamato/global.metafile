@@ -8,13 +8,13 @@ editors:
 mac_platform: &mac
   name: mac
   type: Unity::VM::osx
-  image: package-ci/mac:stable
+  image: package-ci/mac-12:v4
   flavor: m1.mac
 
 ubuntu_platform: &ubuntu
   name: ubuntu
   type: Unity::VM
-  image: package-ci/ubuntu:prev-stable
+  image: package-ci/ubuntu-18.04:v4
   flavor: b1.medium
 
 win_platform: &win
@@ -32,7 +32,7 @@ promote_platform:
   version: 2020.3
   name: win
   type: Unity::VM
-  image: package-ci/win10:stable
+  image: package-ci/win10:v4
   flavor: b1.medium
 
 coverage:
