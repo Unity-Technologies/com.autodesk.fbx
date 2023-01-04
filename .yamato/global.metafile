@@ -32,7 +32,10 @@ platforms:
     type: Unity::VM
     image: package-ci/ubuntu-18.04:v4
     flavor: b1.medium
-  - *win
+  - name: win
+    type: Unity::VM
+    image: package-ci/win10:v4
+    flavor: b1.medium
 
 promote_platform:
   version: 2020.3
