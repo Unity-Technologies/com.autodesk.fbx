@@ -24,10 +24,13 @@ win_platform: &win
   flavor: b1.medium
 
 platforms:
-  - *mac
+  - name: mac
+    type: Unity::VM::osx
+    image: package-ci/macos-12:v4
+    flavor: m1.mac
   - name: ubuntu
     type: Unity::VM
-    image: package-ci/ubuntu:stable
+    image: package-ci/ubuntu-18.04:v4
     flavor: b1.medium
   - *win
 
