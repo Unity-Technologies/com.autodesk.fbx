@@ -14,28 +14,31 @@ mac_platform: &mac
 ubuntu_platform: &ubuntu
   name: ubuntu
   type: Unity::VM
-  image: package-ci/ubuntu:stable
+  image: package-ci/ubuntu:prev-stable
   flavor: b1.medium
 
-win_platform:
+win_platform: &win
   name: win
   type: Unity::VM::GPU
   image: package-ci/win10:v4
   flavor: b1.medium
 
 platforms:
-  - *mac
-  - *ubuntu
-  - name: win
+  - name: mac
+    type: Unity::VM::osx
+    image: package-ci/macos-12:v4
+    flavor: m1.mac
+  - name: ubuntu
     type: Unity::VM
-    image: package-ci/win10:v1.15.0
+    image: package-ci/ubuntu-18.04:v4
     flavor: b1.medium
+  - *win
 
 promote_platform:
   version: 2020.3
   name: win
   type: Unity::VM
-  image: package-ci/win10:stable
+  image: package-ci/win10:v4
   flavor: b1.medium
 
 coverage:
