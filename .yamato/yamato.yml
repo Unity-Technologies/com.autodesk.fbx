@@ -76,7 +76,6 @@ build_ubuntu:
     - sudo apt-get update
     - sudo apt-get -y install gcc-9 g++-9
     - sudo apt-get install p7zip mono-devel
-    - sudo apt-get install libxml2-dev
     # Ensure correct version of gcc and g++ used
     # https://stackoverflow.com/questions/17275348/how-to-specify-new-gcc-path-for-cmake
     - CC=`which gcc-9` CXX=`which g++-9` python ./build.py --stevedore --verbose --clean --yamato
