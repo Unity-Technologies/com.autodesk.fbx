@@ -212,7 +212,7 @@ promotion_test:
 publish:
   name: Publish to Internal Registry
   agent:
-    type: {{ win_platform.type }}
+    type: Unity::VM
     image: {{ win_platform.image }}
     flavor: {{ win_platform.flavor}}
   commands:
@@ -228,12 +228,31 @@ publish:
     - .yamato/yamato.yml#pack
     - .yamato/yamato.yml#test_trigger_pr
 
+publish_dry_run:
+  name: Publish to Internal Registry (Dry Run)
+  agent:
+    type: Unity::VM
+    image: {{ win_platform.image }}
+    flavor: {{ win_platform.flavor}}
+  commands:
+    - dir /A
+    - dir /A com.autodesk.fbx
+    - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
+    - upm-ci package publish --package-path com.autodesk.fbx --dry-run
+  artifacts:
+    packages:
+      paths:
+        - "upm-ci~/packages/**"
+  dependencies:
+    - .yamato/yamato.yml#pack
+    - .yamato/yamato.yml#test_trigger_pr
+
 promote:
   name: Promote to Production
   agent:
-    type: {{ win_platform.type }}
-    image: {{ win_platform.image }}
-    flavor: b1.small
+    type: {{ promote_platform.type }}
+    image: {{ promote_platform.image }}
+    flavor: {{ promote_platform.flavor}}
   variables:
     UPMCI_PROMOTION: 1
   commands:
