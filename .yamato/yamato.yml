@@ -183,6 +183,17 @@ test_trigger_pr:
 {% endfor %}
 {% endfor %}
 
+# Weekly trigger
+weekly_trigger:
+  name: Weekly trigger
+  triggers:
+    recurring:
+      - branch: release/4.1
+        frequency: weekly
+        rerun: always
+  dependencies:
+    - .yamato/yamato.yml#test_trigger_pr
+
 promotion_test:
   name : Promotion Test with {{ promote_platform.version }} on {{ promote_platform.name }}
   agent:
