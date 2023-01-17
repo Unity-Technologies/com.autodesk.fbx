@@ -56,6 +56,7 @@ build_mac:
     # elevates privileges. So we need to set it via pip config.
     - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - brew list p7zip || brew install p7zip
+    - export MONO_GAC_PREFIX="$(brew --prefix)"
     - brew list mono || brew install mono
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
