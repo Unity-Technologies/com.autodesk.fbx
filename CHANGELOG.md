@@ -1,5 +1,13 @@
 # Changes in FBX SDK C# Bindings
 
+## [Unreleased]
+
+NEW FEATURES
+* Expose FbxCamera focus distance and use depth of field properties.
+
+CHANGES
+* Update FBX SDK to 2020.3.2.
+
 ## [5.0.0-pre.1] - 2022-08-24
 
 NEW FEATURES
