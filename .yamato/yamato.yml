@@ -29,7 +29,7 @@
 build_win:
   name: Build on win
   agent:
-    type: {{ win_platform.type }}
+    type: Unity::VM::GPU
     image: {{ win_platform.image }}
     flavor: {{ win_platform.flavor}}
   commands:
@@ -56,7 +56,7 @@ build_mac:
     # elevates privileges. So we need to set it via pip config.
     - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - brew list p7zip || brew install p7zip
-    - brew list mono || brew install mono
+    - cmake --version || brew install cmake
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
   artifacts:
@@ -74,6 +74,8 @@ build_ubuntu:
     # FBX SDK 2020.2 requires gcc 9.3
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update
+    - sudo apt-get -y install cmake
+    - sudo apt-get -y install libxml2-dev
     - sudo apt-get -y install gcc-9 g++-9
     - sudo apt-get install p7zip mono-devel
     # Ensure correct version of gcc and g++ used
@@ -224,9 +226,9 @@ promotion_test:
 publish:
   name: Publish to Internal Registry
   agent:
-    type: {{ publish_platform.type }}
-    image: {{ publish_platform.image }}
-    flavor: {{ publish_platform.flavor}}
+    type: {{ win_platform.type }}
+    image: {{ win_platform.image }}
+    flavor: {{ win_platform.flavor }}
   variables:
     UPMCI_ENABLE_PACKAGE_SIGNING: 1
   commands:
@@ -242,12 +244,33 @@ publish:
     - .yamato/yamato.yml#pack
     - .yamato/yamato.yml#test_trigger_pr
 
-promote:
-  name: Promote to Production
+publish_dry_run:
+  name: Publish to Internal Registry (Dry Run)
   agent:
     type: {{ win_platform.type }}
     image: {{ win_platform.image }}
-    flavor: b1.small
+    flavor: {{ win_platform.flavor }}
+  variables:
+    UPMCI_ENABLE_PACKAGE_SIGNING: 1
+  commands:
+    - dir /A 
+    - dir /A com.autodesk.fbx
+    - npm install upm-ci-utils@latest -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
+    - upm-ci package publish --package-path com.autodesk.fbx --dry-run
+  artifacts:
+    packages:
+      paths:
+        - "upm-ci~/packages/**"
+  dependencies:
+    - .yamato/yamato.yml#pack
+    - .yamato/yamato.yml#test_trigger_pr
+
+promote:
+  name: Promote to Production
+  agent:
+    type: {{ promote_platform.type }}
+    image: {{ promote_platform.image }}
+    flavor: {{ promote_platform.flavor }}
   variables:
     UPMCI_PROMOTION: 1
   commands:
