@@ -29,7 +29,7 @@
 build_win:
   name: Build on win
   agent:
-    type: {{ win_platform.type }}
+    type: Unity::VM::GPU
     image: {{ win_platform.image }}
     flavor: {{ win_platform.flavor}}
   commands:
@@ -56,7 +56,7 @@ build_mac:
     # elevates privileges. So we need to set it via pip config.
     - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     - brew list p7zip || brew install p7zip
-    - brew list mono || brew install mono
+    - cmake --version || brew install cmake
     - python ./build.py --stevedore --verbose --clean --yamato
     - mv build build-mac
   artifacts:
@@ -74,6 +74,8 @@ build_ubuntu:
     # FBX SDK 2020.2 requires gcc 9.3
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update
+    - sudo apt-get -y install cmake
+    - sudo apt-get -y install libxml2-dev
     - sudo apt-get -y install gcc-9 g++-9
     - sudo apt-get install p7zip mono-devel
     # Ensure correct version of gcc and g++ used
@@ -223,7 +225,7 @@ promotion_test:
 publish:
   name: Publish to Internal Registry
   agent:
-    type: Unity::VM
+    type: {{ win_platform.type }}
     image: {{ win_platform.image }}
     flavor: {{ win_platform.flavor}}
   variables:
@@ -244,7 +246,7 @@ publish:
 publish_dry_run:
   name: Publish to Internal Registry (Dry Run)
   agent:
-    type: Unity::VM
+    type: {{ win_platform.type }}
     image: {{ win_platform.image }}
     flavor: {{ win_platform.flavor}}
   commands:
