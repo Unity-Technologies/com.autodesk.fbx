@@ -29,7 +29,7 @@
 build_win:
   name: Build on win
   agent:
-    type: Unity::VM::GPU
+    type: {{ win_platform.type }}
     image: {{ win_platform.image }}
     flavor: {{ win_platform.flavor}}
   commands:
