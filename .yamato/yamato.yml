@@ -48,6 +48,7 @@ build_mac:
   variables:
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
   commands:
+    - chmod +x ./build_mac.sh
     - ./build_mac.sh
   artifacts:
     build:
@@ -61,6 +62,7 @@ build_ubuntu:
     image: {{ ubuntu_platform.image }}
     flavor: {{ ubuntu_platform.flavor}}
   commands:
+    - chmod +x ./build_linux.sh
     - ./build_linux.sh
   artifacts:
     build:
