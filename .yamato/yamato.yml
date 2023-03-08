@@ -48,15 +48,7 @@ build_mac:
   variables:
     HOMEBREW_NO_INSTALL_CLEANUP: "1"
   commands:
-    # We need to install p7zip and mono.
-    # Mono needs to install Python 3.9 and pip.
-    # Pip needs to set PIP_INDEX_URL, but brew clears the environment when it
-    # elevates privileges. So we need to set it via pip config.
-    - pip config set global.index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
-    - brew list p7zip || brew install p7zip
-    - cmake --version || brew install cmake
-    - python ./build.py --stevedore --verbose --clean --yamato
-    - mv build build-mac
+    - ./build_mac.sh
   artifacts:
     build:
       paths:
@@ -69,17 +61,7 @@ build_ubuntu:
     image: {{ ubuntu_platform.image }}
     flavor: {{ ubuntu_platform.flavor}}
   commands:
-    # FBX SDK 2020.2 requires gcc 9.3
-    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-    - sudo apt-get update
-    - sudo apt-get -y install cmake
-    - sudo apt-get -y install libxml2-dev
-    - sudo apt-get -y install gcc-9 g++-9
-    - sudo apt-get install p7zip mono-devel
-    # Ensure correct version of gcc and g++ used
-    # https://stackoverflow.com/questions/17275348/how-to-specify-new-gcc-path-for-cmake
-    - CC=`which gcc-9` CXX=`which g++-9` python ./build.py --stevedore --verbose --clean --yamato
-    - mv build build-ubuntu
+    - ./build_linux.sh
   artifacts:
     build:
       paths:
