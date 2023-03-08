@@ -33,9 +33,7 @@ build_win:
     image: {{ win_platform.image }}
     flavor: {{ win_platform.flavor}}
   commands:
-    - choco -v -y install 7zip
-    - python build.py --stevedore --verbose --clean --yamato
-    - ren build build-win
+    - build_win.cmd
   artifacts:
     build:
       paths:
