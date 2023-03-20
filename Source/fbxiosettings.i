@@ -8,6 +8,7 @@
 // Unignore class
 %rename("%s", %$isclass) FbxIOSettings;
 %rename("%s") FbxIOSettings::SetBoolProp;
+%rename("%s") FbxIOSettings::SetIntProp;
 
 // make sure SetBoolProp() doesn't crash if we pass it a null string
 // Note: Have to add pValue too even though we don't need it so this doesn't
