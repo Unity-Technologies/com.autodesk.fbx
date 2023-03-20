@@ -21,6 +21,8 @@
 %rename("%s") FbxScene::GetCurrentAnimationStack;
 %rename("%s") FbxScene::GetMaterialCount;
 %rename("%s") FbxScene::GetMaterial(int pIndex);
+%rename("%s") FbxScene::GetGeometryCount;
+%rename("%s") FbxScene::GetGeometry(int pIndex);
 %rename("GetMaterial") FbxScene::GetMaterialByNameChecked;
 %extend FbxScene {
     FbxSurfaceMaterial* GetMaterialByNameChecked(char* pName){
