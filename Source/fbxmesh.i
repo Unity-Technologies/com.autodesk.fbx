@@ -14,6 +14,7 @@
 %rename("%s") FbxMesh::GetPolygonCount;
 %rename("%s") FbxMesh::GetPolygonSize;
 %rename("%s") FbxMesh::GetPolygonVertexCount;
+%rename("%s") FbxMesh::GetPolygonVertices;
 
 %apply FbxVector4& OUTPUT { FbxVector4& pNormal };
 %rename("%s") FbxMesh::GetPolygonVertexNormal(int pPolyIndex, int pVertexIndex, FbxVector4& pNormal) const;

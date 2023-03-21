@@ -11,6 +11,20 @@
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxGeometryBase::InitControlPoints;
+%typemap(imtype) int* "System.IntPtr"
+%typemap(cstype) int* "System.IntPtr"
+%typemap(out)    int* %{ $result = $1; %}
+%typemap(csout, excode=SWIGEXCODE)  int* { 
+      System.IntPtr cPtr = $imcall;$excode
+      return cPtr;
+  }
+  %typemap(csvarout, excode=SWIGEXCODE2) int* %{ 
+    get {
+        System.IntPtr cPtr = $imcall;$excode 
+        return cPtr; 
+    } 
+  %}
+%rename("%s") FbxGeometryBase::GetControlPoints;
 %rename("%s") FbxGeometryBase::GetControlPointsCount;
 %rename("%s") FbxGeometryBase::GetControlPointAt;
 %rename("%s") FbxGeometryBase::CreateElementNormal;
