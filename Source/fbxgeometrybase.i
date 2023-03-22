@@ -21,6 +21,9 @@
 %rename("%s") FbxGeometryBase::CreateElementVertexColor;
 %rename("%s") FbxGeometryBase::CreateElementUV;
 
+%rename("%s") FbxGeometryBase::GetElementNormal();
+%rename("%s") FbxGeometryBase::GetElementTangent();
+%rename("%s") FbxGeometryBase::GetElementUV();
 #endif
 
 /* Prevent a crash when setting a negative index. */
