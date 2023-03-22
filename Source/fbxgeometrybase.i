@@ -11,6 +11,7 @@
 // As the ignore everything will include the constructor, destructor, methods etc
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxGeometryBase::InitControlPoints;
+%rename("%s") FbxGeometryBase::GetControlPoints;
 %rename("%s") FbxGeometryBase::GetControlPointsCount;
 %rename("%s") FbxGeometryBase::GetControlPointAt;
 %rename("%s") FbxGeometryBase::CreateElementNormal;
@@ -20,6 +21,9 @@
 %rename("%s") FbxGeometryBase::CreateElementVertexColor;
 %rename("%s") FbxGeometryBase::CreateElementUV;
 
+%rename("%s") FbxGeometryBase::GetElementNormal();
+%rename("%s") FbxGeometryBase::GetElementTangent();
+%rename("%s") FbxGeometryBase::GetElementUV();
 #endif
 
 /* Prevent a crash when setting a negative index. */

@@ -17,6 +17,63 @@
 /* TODO: just remove this; we aren't testing whether it works without. */
 #define IGNORE_ALL_INCLUDE_SOME
 
+%typemap(imtype) void* "System.IntPtr"
+%typemap(cstype) void* "System.IntPtr"
+%typemap(out)    void* %{ $result = $1; %}
+%typemap(csout, excode=SWIGEXCODE)  void* { 
+      System.IntPtr cPtr = $imcall;$excode
+      return cPtr;
+  }
+  %typemap(csvarout, excode=SWIGEXCODE2) void* %{ 
+    get {
+        System.IntPtr cPtr = $imcall;$excode 
+        return cPtr; 
+    } 
+  %}
+%typemap(imtype) void** "System.IntPtr"
+%typemap(cstype) void** "System.IntPtr"
+%typemap(in)     void** %{ $1 = &$input; %}
+%typemap(out)    void** %{ $result = $1; %}
+%typemap(csin) void** %{$csinput%}
+%typemap(csout)  void** { return $imcall; }
+%typemap(csout, excode=SWIGEXCODE)  void** { 
+      System.IntPtr cPtr = $imcall;$excode
+      return cPtr;
+  }
+  %typemap(csvarout, excode=SWIGEXCODE2) void** %{ 
+    get {
+        System.IntPtr cPtr = $imcall;$excode 
+        return cPtr; 
+    } 
+  %}
+%typemap(imtype) FbxVector4* "System.IntPtr"
+%typemap(cstype) FbxVector4* "System.IntPtr"
+%typemap(out)    FbxVector4* %{ $result = $1; %}
+%typemap(csout, excode=SWIGEXCODE)  FbxVector4* { 
+      System.IntPtr cPtr = $imcall;$excode
+      return cPtr;
+  }
+  %typemap(csvarout, excode=SWIGEXCODE2) FbxVector4* %{ 
+    get {
+        System.IntPtr cPtr = $imcall;$excode 
+        return cPtr; 
+    } 
+  %}
+%typemap(imtype) int* "System.IntPtr"
+%typemap(cstype) int* "System.IntPtr"
+%typemap(out)    int* %{ $result = $1; %}
+%typemap(csout, excode=SWIGEXCODE)  int* { 
+      System.IntPtr cPtr = $imcall;$excode
+      return cPtr;
+  }
+  %typemap(csvarout, excode=SWIGEXCODE2) int* %{ 
+    get {
+        System.IntPtr cPtr = $imcall;$excode 
+        return cPtr; 
+    } 
+  %}
+
+
 /* helpers for defining equality correctly */
 %include "equality.i"
 
