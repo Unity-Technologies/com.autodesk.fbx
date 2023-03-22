@@ -105,7 +105,7 @@
 %ignore FbxLayerElementArray::ClearStatus;
 %ignore FbxLayerElementArray::GetStatus;
 %ignore FbxLayerElementArray::IsWriteLocked;
-%ignore FbxLayerElementArray::GetReadLockCount;
+//%ignore FbxLayerElementArray::GetReadLockCount;
 %ignore FbxLayerElementArray::IsInUse;
 %ignore FbxLayerElementArray::ReadLock;
 %ignore FbxLayerElementArray::ReadUnlock;
