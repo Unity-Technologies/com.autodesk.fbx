@@ -88,6 +88,12 @@
   FbxLimits& GetRotationLimits() { return self->GetRotationLimits(); }
   FbxLimits& GetScalingLimits() { return self->GetScalingLimits(); }
 }
+
+// Pivot Management
+%rename("%s") FbxNode::ResetPivotSet;
+%rename("%s") FbxNode::ConvertPivotAnimationRecursive;
+%rename("%s") FbxNode::ResetPivotSetAndConvertAnimation;
+
 #endif
 
 /* The properties need to be marked immutable. */

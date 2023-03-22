@@ -79,8 +79,12 @@
   %csmethodmodifiers GetHashCode "public override";
   int GetHashCode() { return GetHashCode(*$self, 16); }
 }
+%rename("%s") FbxAMatrix::SetROnly;
 
+// Hack to get FbxAMatrix::SetROnly
+#undef DOXYGEN_SHOULD_SKIP_THIS
 %include "UnityFbxSdkNative-fixed-headers/fbxaffinematrix.h"
+#define DOXYGEN_SHOULD_SKIP_THIS
 
 /******************************
  * End of file. Turn reveal back off.
