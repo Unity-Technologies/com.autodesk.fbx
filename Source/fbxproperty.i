@@ -141,6 +141,13 @@
 %rename("%s") FbxProperty::GetInt;
 %rename("%s") FbxProperty::GetFbxColor;
 
+/***************************************************************************
+ * Animation Curve Management.
+ ***************************************************************************/
+%rename("%s") FbxProperty::IsAnimated;
+%rename("%s") FbxProperty::GetAnimationEvaluator;
+%rename("%s") FbxProperty::EvaluateValueDouble3; 
+
 %extend FbxProperty {
     float GetFloat () const { return $self->Get<float>(); }
     FbxBool GetBool () const { return $self->Get<FbxBool>(); }
@@ -149,11 +156,15 @@
     FbxString GetString () const { return $self->Get<FbxString>(); }
     FbxColor GetFbxColor () const { return $self->Get<FbxColor>(); }
     int GetInt() const { return $self->Get<int>(); }
+    
+    FbxDouble3 EvaluateValueDouble3(const FbxTime &pTime, bool pForceEval = false)
+    {
+        return $self->EvaluateValue<FbxDouble3>(pTime, pForceEval);
+    }
 }
 
 %rename("%s") FbxPropertyT::Get;
 %rename("%s") FbxPropertyT::Set;
-%rename("%s") FbxPropertyT::EvaluateValue;
 
 /***************************************************************************
  * There's no assignment operator for FbxProperty and FbxPropertyT.

@@ -329,6 +329,7 @@
 %include "fbxskin.i"
 %include "fbxskeleton.i"
 %include "fbxiopluginregistry.i"
+%include "fbxanimevaluator.i"
 %include "fbxanimlayer.i"
 %include "fbxanimstack.i"
 %include "fbxanimcurvebase.i"
