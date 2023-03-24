@@ -87,4 +87,14 @@
   
 }
 
+// Animation
+%rename("%s") FbxObject::GetSrcObjectCountAnimLayer; 
+
 %include "fbxsdk/core/fbxobject.h"
+
+%extend FbxObject {
+    int GetSrcObjectCountAnimLayer()
+    {
+        return $self->GetSrcObjectCount<FbxAnimLayer>();
+    }
+}

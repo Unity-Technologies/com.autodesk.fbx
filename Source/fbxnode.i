@@ -94,6 +94,9 @@
 %rename("%s") FbxNode::ConvertPivotAnimationRecursive;
 %rename("%s") FbxNode::ResetPivotSetAndConvertAnimation;
 
+// Animation
+%rename("%s") FbxNode::GetAnimationInterval;
+
 #endif
 
 /* The properties need to be marked immutable. */

@@ -47,6 +47,11 @@
 %rename("%s") FbxAnimCurveKey::SetBreak;
 %rename("%s") FbxAnimCurveKey::GetBreak;
 
+%rename("%s") FbxAnimCurveKey::GetTime;
+%rename("%s") FbxAnimCurveKey::GetInterpolation;
+
+
+
 %rename("%s") FbxAnimCurve::KeyGet;
 
 %apply int* INOUT {int* pLast};
@@ -73,6 +78,8 @@
 %rename("%s") FbxAnimCurve::KeyGetInterpolation;
 %rename("%s") FbxAnimCurve::KeySetBreak;
 %rename("%s") FbxAnimCurve::KeyGetBreak;
+
+%rename("%s") FbxAnimCurve::GetTimeIntervalPureVirtual;
 
 %rename("%s") FbxAnimCurve::KeyGetLeftDerivative;
 %rename("%s") FbxAnimCurve::KeySetLeftDerivative;
@@ -105,3 +112,10 @@
 %fbximmutable(FbxAnimCurveDef::sMAX_WEIGHT);
 
 %include "fbxsdk/scene/animation/fbxanimcurve.h"
+
+%extend FbxAnimCurve{
+    bool GetTimeIntervalPureVirtual(FbxTimeSpan &pTimeInterval) const
+    {
+        return $self->GetTimeInterval(pTimeInterval);
+    } 
+}
