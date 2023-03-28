@@ -11,4 +11,4 @@
 // in the class, these have to be explicitly unignored too:
 %rename("%s") FbxAnimEvaluator::ValidateTime;
 
-%include "fbxsdk/scene/animation/FbxAnimEvaluator.h"
+%include "fbxsdk/scene/animation/fbxanimevaluator.h"
