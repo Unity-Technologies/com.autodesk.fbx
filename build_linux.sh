@@ -5,6 +5,7 @@ set -e
 
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
 sudo apt-get update
+sudo apt-get -y install zlib1g-dev
 sudo apt-get -y install cmake
 sudo apt-get -y install libxml2-dev
 sudo apt-get -y install gcc-9 g++-9
