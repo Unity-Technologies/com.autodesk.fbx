@@ -8,7 +8,8 @@ editors:
 mac_platform: &mac
   name: mac
   type: Unity::VM::osx
-  image: package-ci/macos-12:v4
+  # Pin Mac image to v4.19.0 because of https://jira.unity3d.com/browse/FBX-479
+  image: package-ci/macos-12:v4.19.0
   flavor: m1.mac
 
 ubuntu_platform: &ubuntu
