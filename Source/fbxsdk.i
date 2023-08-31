@@ -250,6 +250,7 @@
 %include "fbxgeometrybase.i"
 %include "fbxgeometry.i"
 %include "fbxmesh.i"
+%include "fbxline.i"
 %include "fbxnurbscurve.i"
 %include "fbxglobalsettings.i"
 %include "fbximplementation.i"
