@@ -12,9 +12,6 @@
     "precompiledReferences": [
         "nunit.framework.dll"
     ],
-    "defineConstraints": [
-        "!UNITY_EDITOR_LINUX"
-    ],
     "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],

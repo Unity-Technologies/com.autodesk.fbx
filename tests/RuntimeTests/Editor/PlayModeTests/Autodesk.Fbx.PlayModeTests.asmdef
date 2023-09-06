@@ -9,8 +9,7 @@
     "includePlatforms": [],
     "excludePlatforms": [],
     "defineConstraints": [
-        "!FBX_RUNNING_BUILD_TEST",
-        "!UNITY_EDITOR_LINUX"
+        "!FBX_RUNNING_BUILD_TEST"
     ],
     "allowUnsafeCode": false
 }
