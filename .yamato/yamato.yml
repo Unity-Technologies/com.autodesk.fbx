@@ -185,11 +185,6 @@ promotion_test:
   commands:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package test --backend il2cpp --unity-version {{ promote_platform.version }} --package-path com.autodesk.fbx
-  triggers:
-    pull_requests:
-      - targets:
-          only:
-            - "master"
   artifacts:
     logs:
       paths:
