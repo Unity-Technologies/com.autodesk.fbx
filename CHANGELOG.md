@@ -1,5 +1,9 @@
 # Changes in FBX SDK C# Bindings
 
+## [5.1.0] - 2023-09-08
+
+* Updated package version number for release.
+
 ## [5.1.0-pre.1] - 2023-05-02
 
 NEW FEATURES
