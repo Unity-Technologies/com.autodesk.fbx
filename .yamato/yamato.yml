@@ -103,7 +103,7 @@ test_{{ platform.name }}_{{ editor.version }}:
   agent:
     type: {{ platform.type }}
 {% if platform.model %}
-    model: platform.model
+    model: {{ platform.model }}
 {% endif %}
     image: {{ platform.image }}
     flavor: {{ platform.flavor}}
