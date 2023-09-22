@@ -16,7 +16,7 @@ mac_arm64_platform: &mac_arm64
   name: mac_arm64
   type: Unity::VM::osx
   model: M1
-  image: slough-ops/macos-13-arm64-base:latest
+  image: package-ci/macos-13-arm64:v4
   flavor: m1.mac
 
 ubuntu_platform: &ubuntu
