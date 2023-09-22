@@ -12,6 +12,13 @@ mac_platform: &mac
   image: package-ci/macos-12:v4.19.0
   flavor: m1.mac
 
+mac_arm64_platform: &mac_arm64
+  name: mac_arm64
+  type: Unity::VM::osx
+  model: M1
+  image: slough-ops/macos-13-arm64-base
+  flavor: m1.mac
+
 ubuntu_platform: &ubuntu
   name: ubuntu
   type: Unity::VM
@@ -26,6 +33,7 @@ win_platform: &win
 
 platforms:
   - *mac
+  - *mac_arm64
   - *ubuntu
   - *win
 

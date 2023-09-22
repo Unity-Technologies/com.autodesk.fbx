@@ -102,6 +102,9 @@ test_{{ platform.name }}_{{ editor.version }}:
   name : Test version {{ editor.version }} on {{ platform.name }}
   agent:
     type: {{ platform.type }}
+{% if platform.model %}
+    model: platform.model
+{% endif %}
     image: {{ platform.image }}
     flavor: {{ platform.flavor}}
 {% if platform.name == "ubuntu" %}
@@ -115,26 +118,13 @@ test_{{ platform.name }}_{{ editor.version }}:
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get update
     - sudo apt-get -y install --only-upgrade libstdc++6  
-{% endif %} 
-{% if editor.version == 2018.4 and platform.name == "ubuntu" %}
-    # There is no IL2CPP on Ubuntu before 2019.3
-    - upm-ci package test --backend mono --unity-version {{ editor.version }} --package-path com.autodesk.fbx
-{% elseif editor.version == 2018.4 %}
-    # Setting backend to il2cpp to ensure il2cpp is installed.
-    # Note: setting backend to il2cpp will still run the tests with mono by default 
-    #       (would need to add --platform standalone to run playmode tests with il2cpp),
-    #       however this installs il2cpp so that the editor build tests can change the backend as necessary.
-    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx
-{% else %}
-    {% if platform.name == "ubuntu" %}
     # clang required for il2cpp backend
     - sudo apt-get -y install clang
-    {% endif %}
+{% endif %}
     # Code coverage is only available in Unity 2019.3 and higher.
     # Setting backend to il2cpp to ensure il2cpp is installed and can be used by editor tests (see Note above).
     - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --extra-utr-arg=--coverage-pkg-version=1.2.2 --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
     - python tests/Yamato/check_coverage_percent.py upm-ci~/test-results/ {{ coverage.minPercent }}
-{% endif %}
     - echo "****** PASSED *******"
   artifacts:
     packages:
