@@ -137,6 +137,8 @@ generate_documentation:
         PACKAGE_PATH: com.autodesk.fbx
         #Treat doc build warnings as errors
         WARNINGS_AS_ERRORS: false
+  dependencies:
+    - .yamato/yamato.yml#pack
 
 {% for editor in editors %}
 {% for platform in platforms %}
