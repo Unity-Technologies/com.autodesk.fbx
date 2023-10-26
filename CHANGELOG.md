@@ -167,3 +167,4 @@ NEW FEATURES
 FIXES
 * Fix Universal Windows Platform build error caused by UnityFbxSdk.dll being set as compatible with any platform instead of editor only.
 * Enforced FbxSdk DLL only works with Unity 2017.1+
+
