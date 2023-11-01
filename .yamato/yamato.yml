@@ -161,7 +161,7 @@ test_trigger_pr_documentation:
   name: Pull Request Tests Trigger for documentation changes
   triggers:
     cancel_old_ci: true
-    expression: pull_request.(source match ".*" AND push.changes.all match "**/*.md" AND NOT draft)
+    expression: pull_request.(source match ".*" AND push.changes.any match "com.autodesk.fbx/Documentation~/**" AND NOT draft)
   dependencies:
     - .yamato/yamato.yml#generate_documentation
 
@@ -170,7 +170,7 @@ test_trigger_pr:
   name: Pull Request Tests Trigger
   triggers:
     cancel_old_ci: true
-    expression: pull_request.(source match ".*" AND NOT push.changes.all match "**/*.md" AND NOT draft)
+    expression: pull_request.(source match ".*" AND NOT push.changes.all match ["com.autodesk.fbx/Documentation~/**", "**/*.md"] AND NOT draft)
   dependencies:
     - .yamato/yamato.yml#pack
 {% for editor in editors %}
