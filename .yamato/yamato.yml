@@ -96,6 +96,24 @@ pack:
       paths:
         - "com.autodesk.fbx/**"
 
+# Job to generate documentation for the package
+generate_documentation:
+  name : Generate documentation
+  agent:
+    type: {{ mac_platform.type }}
+    image: {{ mac_platform.image }}
+    flavor: {{ mac_platform.flavor }}
+  commands:
+    - brick_source: git@github.cds.internal.unity3d.com:wind-xu/virtual_production_doc_generation.git@v0.3.0
+      variables:
+        EDITOR_VERSION: {{ editors.last.version }}
+        PACKAGE_NAME: com.autodesk.fbx
+        PACKAGE_PATH: com.autodesk.fbx
+        #Set to false because some file links such as api/index.html don't exist in local Documentation folder and will cause warnings. They only exist in generated documentation.
+        WARNINGS_AS_ERRORS: false
+  dependencies:
+    - .yamato/yamato.yml#pack
+
 {% for editor in editors %}
 {% for platform in platforms %}
 test_{{ platform.name }}_{{ editor.version }}:
@@ -138,12 +156,21 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endfor %}
 {% endfor %}
 
+# PR trigger for doc only changes, it will run generate_documentation job.
+test_trigger_pr_documentation:
+  name: Pull Request Tests Trigger for documentation changes
+  triggers:
+    cancel_old_ci: true
+    expression: pull_request.(source match ".*" AND push.changes.any match "com.autodesk.fbx/Documentation~/**" AND NOT draft)
+  dependencies:
+    - .yamato/yamato.yml#generate_documentation
+
 # PR trigger
 test_trigger_pr:
   name: Pull Request Tests Trigger
   triggers:
     cancel_old_ci: true
-    expression: pull_request.(source match ".*" AND NOT draft)
+    expression: pull_request.(source match ".*" AND NOT push.changes.all match ["com.autodesk.fbx/Documentation~/**", "**/*.md"] AND NOT draft)
   dependencies:
     - .yamato/yamato.yml#pack
 {% for editor in editors %}
