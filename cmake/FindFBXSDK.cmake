@@ -23,12 +23,14 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   SET(CMAKE_FIND_LIBRARY_PREFIXES "lib")
 
+  # Depends on WIN_ARCHITECTURE and WIN_ARCHITECTURE_UPPER set in CMakeLists.txt
+  # As of this writing they must be either x64 or arm64.
   list(APPEND CMAKE_SWIG_FLAGS "-D_WIN64")
-  list(APPEND CMAKE_SWIG_FLAGS "-D_M_X64")
+  list(APPEND CMAKE_SWIG_FLAGS "-D_M_${WIN_ARCHITECTURE_UPPER}")
   list(APPEND CMAKE_SWIG_FLAGS "-D_MSC_VER")
 
   set(_fbxsdk_root_path "C:/Program Files/Autodesk/FBX/FBX SDK")
-  list(APPEND _fbxsdk_lib_paths "lib/vs2019/x64/release")
+  list(APPEND _fbxsdk_lib_paths "lib/vs2022/${WIN_ARCHITECTURE}/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__linux__")

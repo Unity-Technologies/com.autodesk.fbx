@@ -19,19 +19,41 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
 endif()
 message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
+if (WIN32)
+	message(STATUS "Building on ${CMAKE_GENERATOR_INSTANCE} for platform ${CMAKE_GENERATOR_PLATFORM}")
+endif()
 
 
 # ***********************************************************************
 project (UnityFbxSdkNative)
 # ***********************************************************************
 
+
+# On mac, build a universal binary by default.
+# Set on all platforms for simplicity; it just isn't used on others.
+# If we build an intel-only build, make it compatible with 10.13 to match Unity 2018.
+# CMake docs say this should be before project but it doesn't actually work that way.
 if (NOT CMAKE_OSX_ARCHITECTURES)
     set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 endif()
 
-# CMake docs say this should be before project but it doesn't actually work that way.
 if (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64")
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
+endif()
+
+# On windows, build a native binary by default.
+# The -A argument to cmake can override this. Values are x64 or arm64.
+# Store WIN_ARCHITECTURE_UPPER in uppercase and WIN_ARCHITECTURE in lowercase.
+if (WIN32)
+    if (CMAKE_GENERATOR_PLATFORM)
+        string(TOUPPER "${CMAKE_GENERATOR_PLATFORM}" WIN_ARCHITECTURE_UPPER)
+    elseif("$ENV{PROCESSOR_ARCHITECTURE}" STREQUAL "AMD64")
+        set(WIN_ARCHITECTURE_UPPER "X64")
+    else()
+        set(WIN_ARCHITECTURE_UPPER "$ENV{PROCESSOR_ARCHITECTURE}")
+    endif()
+    string(TOLOWER "${WIN_ARCHITECTURE_UPPER}" WIN_ARCHITECTURE)
+    message(STATUS "Target platform is ${WIN_ARCHITECTURE}")
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -81,10 +103,10 @@ if (${USE_STEVEDORE} STREQUAL "ON")
         set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
         set(swig_executable_name swig)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-        set(fbxsdk_artifact_name fbxsdk-win-x64)
+        set(fbxsdk_artifact_name fbxsdk-win-${WIN_ARCHITECTURE})
         set(fbxsdk_artifact_id 2020.3.2-VS2019_ea0c2e7f0288cbd7e0e86f42f011e735c0f8d93b989ef02b8ad8c49c249cc8a5.7z)
 
-        set(swig_artifact_name swig-win-x64)
+        set(swig_artifact_name swig-win-${WIN_ARCHITECTURE})
         set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
         set(swig_executable_name swig.exe)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -277,7 +299,7 @@ if (${YAMATO} STREQUAL "OFF")
         if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         set_target_properties(unity_tests PROPERTIES SUFFIX "-mac-x64")
         elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-        set_target_properties(unity_tests PROPERTIES SUFFIX "-win-x64.exe")
+		set_target_properties(unity_tests PROPERTIES SUFFIX "-win-${WIN_ARCHITECTURE}.exe")
         elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         find_package(Threads)
         set_target_properties(unity_tests PROPERTIES SUFFIX "-linux-x64")
@@ -292,16 +314,29 @@ if (${YAMATO} STREQUAL "OFF")
         ###########################################################################
 endif()
 
+# The target is named the same on all platforms. To distinguish it we use either the extension or the directory.
+# macos is a .bundle which may be x64, arm64, or universal.
+# Linux is a .so and which is x64.
+# Windows is a .dll ; since universal isn't supported we put it in a directory based on architecture.
+# The Unity .meta files tell Unity which platforms each file supports.
+# Out of the box, the .bundle.meta claims to be universal.
+if (WIN32)
+    install(TARGETS UnityFbxSdkNative DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins/Win${WIN_ARCHITECTURE_UPPER}")
+else()
+    install(TARGETS UnityFbxSdkNative DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins")
+endif()
+
+# Why check for the platform? A hack: when we build for the Unity release we
+# build x86_64 and arm64 separately and combine them. The reason is that FBX
+# SDK's universal build requires 10.15 on intel, but Unity 2018 and even some
+# later versions promised to be compatible with 10.13. Solution: build twice,
+# install the text files only once.
 if (NOT (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64"))
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
     install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
     install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
     install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
-endif()
 
-install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
-
-if (NOT (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64"))
     install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
     install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
     install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
