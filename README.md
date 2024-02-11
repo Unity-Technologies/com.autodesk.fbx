@@ -52,7 +52,9 @@ sdkManager.Destroy();
 
 ### Running Tests
 
-Open TestProjects/FBXSdk in Unity and run using the TestRunner.
+1. Create a new 3d project in Unity.
+2. Copy the `build/install/com.autodesk.fbx` folder into the `Packages` folder of the new project.
+3. Use Window > General > Test Runner to run tests
 
 ### API Documentation
 
