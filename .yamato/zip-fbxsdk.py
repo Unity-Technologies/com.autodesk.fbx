@@ -30,9 +30,12 @@ def find_files():
     for root, dirs, files in os.walk(fbxsdk_root + "/lib"):
         relative_root = root[len(fbxsdk_root)+1:]
         # Don't upload debug versions.
+        # Don't upload the legacy-clang version.
         # Removing them from the list prevents walk from searching them.
         if 'debug' in dirs:
             dirs.remove('debug')
+        if 'legacy_clang' in dirs:
+            dirs.remove('legacy_clang')
 
         # On windows, don't upload /MT versions, we only use /MD
         # On other platforms, there's no -mt.lib files so this just wastes a couple ms.
