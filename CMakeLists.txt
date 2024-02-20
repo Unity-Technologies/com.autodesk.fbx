@@ -65,8 +65,8 @@ set(CMAKE_CXX_STANDARD 11)
 if(MSVC)
 set(PROJECT_COMPILE_FLAGS "/WX")
 elseif(CMAKE_HOST_APPLE)
-# requires gcc 6 or higher
-set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference")
+# Be as strict as possible, but FBX SDK hits a couple of warnings.
+set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference -Wno-error=deprecated-declarations")
 else()
 # No Werror because there's invalid use of incomplete type FbxAnimEvaluator in fbxproperty.h
 set(PROJECT_COMPILE_FLAGS "-Wall -Wno-format -Wno-strict-aliasing")
