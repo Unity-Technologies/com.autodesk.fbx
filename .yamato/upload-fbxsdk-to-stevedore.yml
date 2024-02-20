@@ -1,18 +1,33 @@
 {% metadata_file .yamato/global.metafile %}
 ---
 
-# Before uploading fbxsdk to Stevedore, make sure
-# 1) fbxsdk_version is set correctly
-# 2) Under Repo root in your branch, there is a folder structure as below
+# This file is only used within Unity to deploy to the package manager.
 #
+# When Autodesk releases a new version of FBX SDK, to update the pacakge to it:
+# 1) Create a branch of the repo like "update-to-2020-3-4"
+# 2) Create the folder fbxsdk_to_upload at the root of the repo.
+# 3) Push the branch.
+# 4) On each platform:
+#    a) install FBX SDK using the installer
+#    b) pull the branch
+#    c) windows:
+#         7z a fbxsdk-win-x64 "/c/Program Files/Autodesk/FBX/FBX SDK/2020.3.4"
+#    d) mac:
+#         7z a fbxsdk-mac-x64 "/Applications/Autodesk/FBX\ SDK/2020.3.4"
+#    e) linux: ... similar
+# 5) Under Repo root in your branch, commit a folder structure as below:
 #     fbxsdk_to_upload (folder)
-#       fbxsdk-win-x64.7z 
+#       fbxsdk-win-x64.7z    -- install VS2019; this supports both x64+arm64
 #       fbxsdk-linux-x64.7z
-#       fbxsdk-mac-x64.7z
-#       arm64 (folder) 
-#         fbxsdk-mac-x64.7z 
+#       fbxsdk-mac-x64.7z    -- install the universal binary here
+# 6) manually run the yamato job on this branch, and set fbxsdk_version correctly
+#     e.g. 2020.3.4
+# 7) check the logs to find the upload name including GUID & update the
+#    CMakeLists.txt stevedore jobs accordingly
 #
-# Note: On Mac, there are two kinds of lib, x64 and arm64. Put the arm64 one in a subfolder arm64, but with the same name.
+# Revert to 22a593b45e074c1bc9e7095e958ae4a5d7376a5a to get the legacy
+# behaviour used before FBX SDK 2020.3.4 (you would lose win/arm64 and gain mac/intel/10.13)
+#
 upload_fbxsdk_to_stevedore:
   name: Upload FBXSDK {{ fbxsdk_version }} to Stevedore testing repository
   agent:
@@ -25,8 +40,6 @@ upload_fbxsdk_to_stevedore:
     - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }}-VS2019 fbxsdk_to_upload/fbxsdk-win-x64.7z
     - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }} fbxsdk_to_upload/fbxsdk-linux-x64.7z
     - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }} fbxsdk_to_upload/fbxsdk-mac-x64.7z
-    # Upload arm64 Mac lib, using "-arm64" as the version surfix.
-    - ./StevedoreUpload --repo=testing --version={{ fbxsdk_version }}-arm64 fbxsdk_to_upload/arm64/fbxsdk-mac-x64.7z
   artifacts:
     artifacts_to_upload:
       paths:
