@@ -75,7 +75,7 @@ if args.use_ninja:
     config_args.append('Ninja')
 else:
     if sys.platform.startswith('win'):
-        config_args.append(vs_long_version_name)
+        config_args.append(vs_generator_name)
     else:
         config_args.append('Unix Makefiles')
 
