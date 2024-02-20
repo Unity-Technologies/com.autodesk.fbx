@@ -11,18 +11,15 @@
 #    a) install FBX SDK using the installer
 #    b) pull the branch
 #    c) windows:
-#         7z a fbxsdk-win-x64 "/c/Program Files/Autodesk/FBX/FBX SDK/2020.3.4"
+#         py -3 .yamato/zip-fbxsdk.py "/c/Program Files/Autodesk/FBX/FBX SDK/2020.3.4"
+#         git commit fbxsdk_to_upload/fbxsdk-win-x64.7z
 #    d) mac:
-#         7z a fbxsdk-mac-x64 "/Applications/Autodesk/FBX\ SDK/2020.3.4"
-#    e) linux: ... similar
-# 5) Under Repo root in your branch, commit a folder structure as below:
-#     fbxsdk_to_upload (folder)
-#       fbxsdk-win-x64.7z    -- install VS2019; this supports both x64+arm64
-#       fbxsdk-linux-x64.7z
-#       fbxsdk-mac-x64.7z    -- install the universal binary here
-# 6) manually run the yamato job on this branch, and set fbxsdk_version correctly
+#         python .yamato/zip-fbxsdk.py "/Applications/Autodesk/FBX\ SDK/2020.3.4"
+#         git commit fbxsdk-mac-x64.7z
+#    e) linux: ... similar, just figure out where FBX SDK ends up.
+# 5) manually run the yamato job on this branch, and set fbxsdk_version correctly
 #     e.g. 2020.3.4
-# 7) check the logs to find the upload name including GUID & update the
+# 6) check the logs to find the upload name including GUID & update the
 #    CMakeLists.txt stevedore jobs accordingly
 #
 # Revert to 22a593b45e074c1bc9e7095e958ae4a5d7376a5a to get the legacy
