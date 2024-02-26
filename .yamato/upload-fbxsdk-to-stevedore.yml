@@ -16,7 +16,9 @@
 #    d) mac:
 #         python .yamato/zip-fbxsdk.py "/Applications/Autodesk/FBX SDK/2020.3.4"
 #         git commit fbxsdk-mac-x64.7z
-#    e) linux: ... similar, just figure out where FBX SDK ends up.
+#    e) linux: On linux, user needs to speficy where to install FBX SDK, for example install at /usr/FBX202034_FBXFILESDK_LINUX
+#         python .yamato/zip-fbxsdk.py "/usr/FBX202034_FBXFILESDK_LINUX"
+#         git commit fbxsdk-linux-x64.7z
 # 5) manually run the yamato job on this branch, and set fbxsdk_version correctly
 #     e.g. 2020.3.4
 # 6) check the logs to find the upload name including GUID & update the
