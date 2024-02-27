@@ -52,8 +52,25 @@ config_args = [
 if args.swig_location is not None:
     config_args.append('-DSWIG_EXECUTABLE={}'.format(args.swig_location))
     # config_args.append(args.swig_location)
+# Where to find fbxsdk if not standard install
 if args.fbxsdk_location is not None:
     config_args.append('-DFBXSDK_ROOT_PATH={}'.format(args.fbxsdk_location))
+    # If using fbxsdk in folder "fbxsdk_to_upload", unzip them first.
+    if args.fbxsdk_location == "fbxsdk_to_upload":
+        if sys.platform.startswith('linux'):
+            extract_dir = os.path.join('.', 'fbxsdk_to_upload', 'fbxsdk-linux-x64')
+            zip_file = os.path.join('.', 'fbxsdk_to_upload', 'fbxsdk-linux-x64.7z')
+        elif sys.platform.startswith('darwin'):
+            extract_dir = os.path.join('.', 'fbxsdk_to_upload', 'fbxsdk-mac-x64')
+            zip_file = os.path.join('.', 'fbxsdk_to_upload', 'fbxsdk-mac-x64.7z')
+        else:
+            extract_dir = os.path.join('.', 'fbxsdk_to_upload', 'fbxsdk-win-x64')
+            zip_file = os.path.join('.', 'fbxsdk_to_upload', 'fbxsdk-win-x64.7z')
+
+        retcode = subprocess.check_call(['7z', 'x', zip_file, '-o{}'.format(extract_dir), '-aoa'], stderr=subprocess.STDOUT)
+        if retcode != 0:
+            print('Error: Fail to extract {}'.format(zip_file))
+            sys.exit(retcode)
 
 # Use Stevedore?
 config_args.append('-DUSE_STEVEDORE' + ('=ON' if args.use_stevedore else '=OFF'))
