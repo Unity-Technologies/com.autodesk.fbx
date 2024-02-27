@@ -41,15 +41,14 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release" "lib/gcc/x64/release")
 endif()
 
+# If FBXSDK_ROOT_PATH is set explicitly, use it.
 if(NOT ${FBXSDK_ROOT_PATH} STREQUAL "" )
   set(_fbxsdk_root_path ${FBXSDK_ROOT_PATH})
+# If FBXSDK_ROOT_PATH is not set and using Stevedore, use FBX SDK which is installed in the source tree.
+elseif (${USE_STEVEDORE} STREQUAL "ON")
+  set(_fbxsdk_root_path "${CMAKE_PREFIX_PATH}") 
 endif()
-
-# When using Stevedore, FBX SDK gets installed in the source tree, and we
-# don't want to use the system-installed version.
-if (${USE_STEVEDORE} STREQUAL "ON")
-  set(_fbxsdk_root_path "${CMAKE_PREFIX_PATH}")
-endif()
+# If FBXSDK_ROOT_PATH is not set and Stevedore is not used, FBX SDK istalled on the system will be used.
 
 # Iterate over the versions. Pick the first one (reverse-alphabetically)
 file(GLOB _fbxsdk_VERSIONS LIST_DIRECTORIES true "${_fbxsdk_root_path}/*")

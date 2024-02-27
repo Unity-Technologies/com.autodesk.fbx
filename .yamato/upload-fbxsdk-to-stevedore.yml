@@ -19,10 +19,15 @@
 #    e) linux: On linux, user needs to speficy where to install FBX SDK, for example install at /usr/FBX202034_FBXFILESDK_LINUX
 #         python .yamato/zip-fbxsdk.py "/usr/FBX202034_FBXFILESDK_LINUX"
 #         git commit fbxsdk-linux-x64.7z
-# 5) manually run the yamato job on this branch, and set fbxsdk_version correctly
+# 5) Before uploading fbxsdk zip files which reside in "fbxsdk_to_upload" folder to Stevedore, we need to test them first.
+#    This can be done by using "--fbxsdk" flag to point to the unzipped fbxsdk when running build.py, then CI will run using the local fbxsdk.
+# 6) If CI passes using local fbxsdk, set fbxsdk_version correctly in global.metafile and manually run the yamato upload job "upload_fbxsdk_to_stevedore" on this branch
 #     e.g. 2020.3.4
-# 6) check the logs to find the upload name including GUID & update the
-#    CMakeLists.txt stevedore jobs accordingly
+# 7) Check the logs to find the upload name including GUID and update fbxsdk_artifact_id in the
+#    CMakeLists.txt accordingly.
+#
+# Notes: fbxsdk_to_upload folder together with all contents in it shouldn't be merged into master branch.
+#        Only the fbxsdk_version update in global.metafile and fbxsdk_artifact_id change in CMakeLists.txt need to be merged into master branch.
 #
 # Revert to 22a593b45e074c1bc9e7095e958ae4a5d7376a5a to get the legacy
 # behaviour used before FBX SDK 2020.3.4 (you would lose win/arm64 and gain mac/intel/10.13)

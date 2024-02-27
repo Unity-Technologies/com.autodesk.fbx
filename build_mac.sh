@@ -5,5 +5,5 @@ set -e
 
 brew list p7zip || brew install p7zip
 cmake --version || brew install cmake
-python ./build.py --stevedore --verbose --clean --yamato
+python ./build.py --stevedore --verbose --clean --yamato --fbxsdk "fbxsdk_to_upload"
 mv build build-mac
