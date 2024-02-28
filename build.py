@@ -83,8 +83,8 @@ if sys.platform.startswith('darwin'):
     config_args.append(f"-DCMAKE_OSX_DEPLOYMENT_TARGET={osx_deployment_target}")
 elif sys.platform.startswith('win'):
     import platform
-    arch = platform.machine().lower()
-    config_args.append('-A' + arch)
+    arch = 'x64' if platform.machine() in ['x86_64', 'AMD64'] else 'ARM64'
+    config_args.append('-A ' + arch)
 
 # Generator selection
 config_args.append('-G')
