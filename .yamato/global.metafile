@@ -47,4 +47,4 @@ promote_platform:
 coverage:
   minPercent: 94.4
 
-fbxsdk_version: 2020.3.2
+fbxsdk_version: 2020.3.4
