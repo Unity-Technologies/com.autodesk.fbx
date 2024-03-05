@@ -52,7 +52,8 @@ config_args = [
 if args.swig_location is not None:
     config_args.append('-DSWIG_EXECUTABLE={}'.format(args.swig_location))
     # config_args.append(args.swig_location)
-# Where to find fbxsdk if not standard install
+# Where to find fbxsdk if not standard install. This is mostly used to test fbxsdk before uploading to Stevedore.
+# fbxsdk zip files are put in 'fbxsdk_to_upload' folder for uploading, so set '--fbxsdk=fbxsdk_to_upload' to do the testing.
 if args.fbxsdk_location is not None:
     config_args.append('-DFBXSDK_ROOT_PATH={}'.format(args.fbxsdk_location))
     # If using fbxsdk in folder "fbxsdk_to_upload", unzip them first.
