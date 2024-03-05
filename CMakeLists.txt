@@ -91,7 +91,7 @@ if (${USE_STEVEDORE} STREQUAL "ON")
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         # the artifact is named x64 but it's actually universal
         set(fbxsdk_artifact_name fbxsdk-mac-x64)
-        set(fbxsdk_artifact_id 2020.3.2-arm64_ba9a3ecf23aacd13733d07dae21967731c5227e97cd83f5c3e9a77d7863a8c43.7z)
+        set(fbxsdk_artifact_id 2020.3.4_f4efeddec28f0b3510b95445abbea79d3346896501ec49a1efd89d89ca0ea624.7z)
 
         set(swig_artifact_name swig-mac-x64)
         set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
@@ -99,14 +99,14 @@ if (${USE_STEVEDORE} STREQUAL "ON")
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         # the artifact is named x64 but it's actually universal
         set(fbxsdk_artifact_name fbxsdk-win-x64)
-        set(fbxsdk_artifact_id 2020.3.2-VS2019_ea0c2e7f0288cbd7e0e86f42f011e735c0f8d93b989ef02b8ad8c49c249cc8a5.7z)
+        set(fbxsdk_artifact_id 2020.3.4-VS2019_fe9152b548177ed45b439ea59b29bf520bcaa416889c5ba4b5552c6f4a59cabd.7z)
 
         set(swig_artifact_name swig-win-x64)
         set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
         set(swig_executable_name swig.exe)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         set(fbxsdk_artifact_name fbxsdk-linux-x64)
-        set(fbxsdk_artifact_id 2020.3.2_f2aa57e70c8210f876a09f7084b04040922c133f38f81e99376eececd66f67b2.7z)
+        set(fbxsdk_artifact_id 2020.3.4_e2b2ef2738cfaacc7912941f5d80d6f64d3b77c93b63f5e50f09351f5a81889c.7z)
 
         set(swig_artifact_name swig-linux-x64)
         set(swig_artifact_id 3.0.12_f3f14d565afd0ec44d3d77298f708f41bd12ef1fa209a1535226cf3e30a5f15b.7z)
