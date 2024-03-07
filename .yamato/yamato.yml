@@ -70,9 +70,9 @@ build_ubuntu:
 pack:
   name: Pack
   agent:
-    type: Unity::VM
-    image: package-ci/ubuntu:stable
-    flavor: b1.small
+    type: {{ ubuntu_platform.type }}
+    image: {{ ubuntu_platform.image }}
+    flavor: {{ ubuntu_platform.flavor }}
   commands:
     - mv -v build-ubuntu/install/* .
     - cp -vrfp build-mac/install/* .
