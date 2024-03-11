@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Autodesk.Fbx
 {
@@ -52,7 +53,9 @@ namespace Autodesk.Fbx
 
             if (!string.IsNullOrEmpty(sourcePathExt))
             {
-                sourcePath = Path.Combine(fbxsdkNativePluginPath, fbxsdkNativePlugin + sourcePathExt);
+                string platformFolder = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ?
+                    (RuntimeInformation.OSArchitecture == Architecture.Arm64 ? "WinARM64" : "WinX64") : "";
+                sourcePath = Path.Combine(fbxsdkNativePluginPath, platformFolder, fbxsdkNativePlugin + sourcePathExt);
             }
 
             if (string.IsNullOrEmpty(destPath) || string.IsNullOrEmpty(sourcePath))
