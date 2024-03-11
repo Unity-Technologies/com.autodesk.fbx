@@ -4,10 +4,12 @@ import shutil
 import os
 import subprocess
 import sys
+import platform
 
 # Defaults
-osx_deployment_target="10.15"
-vs_generator_name="Visual Studio 16 2019"
+osx_deployment_target = "10.15"
+# To build for arm64, Visual Studio 2022 is needed.
+vs_generator_name = "Visual Studio 16 2019" if platform.machine() in ['x86_64', 'AMD64'] else "Visual Studio 17 2022"
 
 parser = argparse.ArgumentParser(description='Parse the options')
 parser.add_argument('--swig', type=str, dest='swig_location', help='Root location of the swig executable')
@@ -83,7 +85,6 @@ config_args.append('-DYAMATO' + ('=ON' if args.yamato_build else '=OFF'))
 if sys.platform.startswith('darwin'):
     config_args.append(f"-DCMAKE_OSX_DEPLOYMENT_TARGET={osx_deployment_target}")
 elif sys.platform.startswith('win'):
-    import platform
     arch = 'x64' if platform.machine() in ['x86_64', 'AMD64'] else 'ARM64'
     config_args.append('-A ' + arch)
 
