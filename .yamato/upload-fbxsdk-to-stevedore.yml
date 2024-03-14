@@ -3,7 +3,7 @@
 
 # This file is only used within Unity to deploy to the package manager.
 #
-# When Autodesk releases a new version of FBX SDK, to update the pacakge to it:
+# When Autodesk releases a new version of FBX SDK, to update the package to it:
 # 1) Create a branch of the repo like "update-to-2020-3-4"
 # 2) Create the folder fbxsdk_to_upload at the root of the repo.
 # 3) Push the branch.
