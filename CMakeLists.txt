@@ -19,19 +19,38 @@ elseif (CMAKE_BUILD_TYPE STREQUAL "Debug")
   list(APPEND CMAKE_CXX_FLAGS "-DMEMORY_DEBUG")
 endif()
 message(STATUS "Building for ${CMAKE_BUILD_TYPE}")
+if (WIN32)
+	message(STATUS "Building on ${CMAKE_GENERATOR_INSTANCE} for platform ${CMAKE_GENERATOR_PLATFORM}")
+endif()
 
 
 # ***********************************************************************
 project (UnityFbxSdkNative)
 # ***********************************************************************
 
-if (NOT CMAKE_OSX_ARCHITECTURES)
+
+# On mac, build a universal binary by default.
+# CMake docs say this should be before project but it doesn't actually work that way.
+if (APPLE)
+  if (NOT CMAKE_OSX_ARCHITECTURES)
     set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+  endif()
+  message("Building on macos ${CMAKE_OSX_DEPLOYMENT_TARGET} for arch ${CMAKE_OSX_ARCHITECTURES}")
 endif()
 
-# CMake docs say this should be before project but it doesn't actually work that way.
-if (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64")
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13")
+# On windows, build a native binary by default.
+# The -A argument to cmake can override this. Values are x64 or arm64.
+# Store WIN_ARCHITECTURE_UPPER in uppercase and WIN_ARCHITECTURE in lowercase.
+if (WIN32)
+    if (CMAKE_GENERATOR_PLATFORM)
+        string(TOUPPER "${CMAKE_GENERATOR_PLATFORM}" WIN_ARCHITECTURE_UPPER)
+    elseif("$ENV{PROCESSOR_ARCHITECTURE}" STREQUAL "AMD64")
+        set(WIN_ARCHITECTURE_UPPER "X64")
+    else()
+        set(WIN_ARCHITECTURE_UPPER "$ENV{PROCESSOR_ARCHITECTURE}")
+    endif()
+    string(TOLOWER "${WIN_ARCHITECTURE_UPPER}" WIN_ARCHITECTURE)
+    message(STATUS "Target platform is ${WIN_ARCHITECTURE}")
 endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -43,8 +62,8 @@ set(CMAKE_CXX_STANDARD 11)
 if(MSVC)
 set(PROJECT_COMPILE_FLAGS "/WX")
 elseif(CMAKE_HOST_APPLE)
-# requires gcc 6 or higher
-set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference")
+# Be as strict as possible, but FBX SDK hits a couple of warnings.
+set(PROJECT_COMPILE_FLAGS "-Werror -Wno-error=null-dereference -Wno-error=deprecated-declarations")
 else()
 # No Werror because there's invalid use of incomplete type FbxAnimEvaluator in fbxproperty.h
 set(PROJECT_COMPILE_FLAGS "-Wall -Wno-format -Wno-strict-aliasing")
@@ -70,26 +89,24 @@ if (${USE_STEVEDORE} STREQUAL "ON")
     set(stevedore_repo_name testing)
 
     if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+        # the artifact is named x64 but it's actually universal
         set(fbxsdk_artifact_name fbxsdk-mac-x64)
-        if (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64")
-            set(fbxsdk_artifact_id 2020.3.2_e64b3e38b4acfe27d1d8947133acc14d4632ab318b83d91529ff008254d7b99a.7z)
-        else()
-            set(fbxsdk_artifact_id 2020.3.2-arm64_ba9a3ecf23aacd13733d07dae21967731c5227e97cd83f5c3e9a77d7863a8c43.7z)
-        endif()
+        set(fbxsdk_artifact_id 2020.3.4_f4efeddec28f0b3510b95445abbea79d3346896501ec49a1efd89d89ca0ea624.7z)
 
         set(swig_artifact_name swig-mac-x64)
         set(swig_artifact_id 3.0.12_814b172e58d71a5f5a35d3e4a1bd07a16d50ac223249d561719a9e71409115e3.7z)
         set(swig_executable_name swig)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        # the artifact is named x64 but it's actually universal
         set(fbxsdk_artifact_name fbxsdk-win-x64)
-        set(fbxsdk_artifact_id 2020.3.2-VS2019_ea0c2e7f0288cbd7e0e86f42f011e735c0f8d93b989ef02b8ad8c49c249cc8a5.7z)
+        set(fbxsdk_artifact_id 2020.3.4-VS2019_fe9152b548177ed45b439ea59b29bf520bcaa416889c5ba4b5552c6f4a59cabd.7z)
 
         set(swig_artifact_name swig-win-x64)
         set(swig_artifact_id 3.0.12_2e184e8ce59cca5da026ac275ef53aff60e8b60ec5edb576efced3f7168f82d8.7z)
         set(swig_executable_name swig.exe)
     elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         set(fbxsdk_artifact_name fbxsdk-linux-x64)
-        set(fbxsdk_artifact_id 2020.3.2_f2aa57e70c8210f876a09f7084b04040922c133f38f81e99376eececd66f67b2.7z)
+        set(fbxsdk_artifact_id 2020.3.4_e2b2ef2738cfaacc7912941f5d80d6f64d3b77c93b63f5e50f09351f5a81889c.7z)
 
         set(swig_artifact_name swig-linux-x64)
         set(swig_artifact_id 3.0.12_f3f14d565afd0ec44d3d77298f708f41bd12ef1fa209a1535226cf3e30a5f15b.7z)
@@ -277,7 +294,7 @@ if (${YAMATO} STREQUAL "OFF")
         if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
         set_target_properties(unity_tests PROPERTIES SUFFIX "-mac-x64")
         elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
-        set_target_properties(unity_tests PROPERTIES SUFFIX "-win-x64.exe")
+		set_target_properties(unity_tests PROPERTIES SUFFIX "-win-${WIN_ARCHITECTURE}.exe")
         elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         find_package(Threads)
         set_target_properties(unity_tests PROPERTIES SUFFIX "-linux-x64")
@@ -292,24 +309,30 @@ if (${YAMATO} STREQUAL "OFF")
         ###########################################################################
 endif()
 
-if (NOT (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64"))
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
-    install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
+# The target is named the same on all platforms. To distinguish it we use either the extension or the directory.
+# macos is a .bundle which may be x64, arm64, or universal.
+# Linux is a .so and which is x64.
+# Windows is a .dll ; since universal isn't supported we put it in a directory based on architecture.
+# The Unity .meta files tell Unity which platforms each file supports.
+# Out of the box, the .bundle.meta claims to be universal.
+if (WIN32)
+    install(TARGETS UnityFbxSdkNative DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins/Win${WIN_ARCHITECTURE_UPPER}")
+else()
+    install(TARGETS UnityFbxSdkNative DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins")
 endif()
 
-install(TARGETS UnityFbxSdkNative DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Editor/Plugins)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/proto.com.autodesk.fbx/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx PATTERN "*.in" EXCLUDE)
+install(FILES ${CMAKE_BINARY_DIR}/package.json DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/swig/generated/csharp/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/Source/optimized/ DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Runtime/Scripts FILES_MATCHING PATTERN "*.cs")
 
-if (NOT (${CMAKE_OSX_ARCHITECTURES} STREQUAL "x86_64"))
-    install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
-    install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
-    install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(FILES ${CMAKE_SOURCE_DIR}/CHANGELOG.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.md DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
+install(FILES "${CMAKE_SOURCE_DIR}/Third Party Notices.md" DESTINATION ${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx)
 
-    # Copy the test-run framework
+# Copy the test-run framework
 
-    install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
-    install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
-    install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
-    install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
-endif()
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
+install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Editor.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime" DESTINATION  "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests/")
+install(FILES "${CMAKE_SOURCE_DIR}/tests/RuntimeTests/Runtime.meta" DESTINATION "${CMAKE_INSTALL_PREFIX}/com.autodesk.fbx/Tests")

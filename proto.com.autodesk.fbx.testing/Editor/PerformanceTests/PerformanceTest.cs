@@ -7,6 +7,7 @@
 using NUnit.Framework;
 using Autodesk.Fbx;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.IO;
 using System.Collections.Generic;
@@ -21,7 +22,15 @@ namespace Autodesk.Fbx.PerformanceTests
         protected string exeFileName {
             get {
 #if UNITY_EDITOR_WIN
-                return Path.GetFullPath("Packages/com.autodesk.fbx/Tests/PerformanceBenchmarks-win-x64.exe");
+                switch (RuntimeInformation.ProcessArchitecture)
+                {
+                    case Architecture.X64:
+                        return Path.GetFullPath("Packages/com.autodesk.fbx/Tests/PerformanceBenchmarks-win-x64.exe");
+                    case Architecture.Arm64:
+                        return Path.GetFullPath("Packages/com.autodesk.fbx/Tests/PerformanceBenchmarks-win-arm64.exe");
+                    default:
+                        throw new NotImplementedException($"unhandled architecture {RuntimeInformation.ProcessArchitecture}");
+                }
 #elif UNITY_EDITOR_OSX
                 return Path.GetFullPath("Packages/com.autodesk.fbx/Tests/PerformanceBenchmarks-mac-x64");
 #elif UNITY_EDITOR_LINUX
