@@ -1,5 +1,10 @@
 # Changes in FBX SDK C# Bindings
 
+## [5.1.1] - 2024-03-18
+
+* Update FBX SDK to 2020.3.4.
+* Add support for Windows ARM64.
+
 ## [5.1.0] - 2023-09-08
 
 * Updated package version number for release.

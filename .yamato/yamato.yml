@@ -132,10 +132,6 @@ test_{{ platform.name }}_{{ editor.version }}:
   commands:
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
 {% if platform.name == "ubuntu" %}
-    # FBX SDK 2020.2 requires gcc 9.3
-    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-    - sudo apt-get update
-    - sudo apt-get -y install --only-upgrade libstdc++6  
     # clang required for il2cpp backend
     - sudo apt-get -y install clang
 {% endif %}
