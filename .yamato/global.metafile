@@ -2,7 +2,6 @@ editors:
   - version: 2020.3
   - version: 2021.3
   - version: 2022.3
-  - version: 2023.1
   - version: 2023.2
   - version: trunk
 
@@ -23,19 +22,26 @@ ubuntu_platform: &ubuntu
   name: ubuntu
   type: Unity::VM
   image: package-ci/ubuntu-20.04:v4
-  flavor: b1.medium
+  flavor: b1.large
 
 win_platform: &win
   name: win
   type: Unity::VM
   image: package-ci/win10:v4
-  flavor: b1.medium
+  flavor: b1.large
+
+win_arm64_platform: &win_arm64
+  name: win_arm64
+  type: Unity::VM::Azure
+  image: package-ci/win11-arm64:v4
+  flavor: b1.large
 
 platforms:
   - *mac
   - *mac_arm64
   - *ubuntu
   - *win
+  - *win_arm64
 
 promote_platform:
   version: 2020.3
