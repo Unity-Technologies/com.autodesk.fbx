@@ -33,6 +33,7 @@ win_platform: &win
 win_arm64_platform: &win_arm64
   name: win_arm64
   type: Unity::VM::Azure
+  model: arm
   image: package-ci/win11-arm64:v4
   flavor: b1.large
 
