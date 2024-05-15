@@ -12,7 +12,7 @@ osx_deployment_target = "10.15"
 parser = argparse.ArgumentParser(description='Parse the options')
 parser.add_argument('--swig', type=str, dest='swig_location', help='Root location of the swig executable')
 parser.add_argument('--fbxsdk', type=str, dest='fbxsdk_location', help='location of the FBX SDK')
-parser.add_argument('--architecture', type=str, default='x64', dest='target_architecture', help='Target architecture of the build')
+parser.add_argument('--target', type=str, default='amd64', dest='target_architecture', help='Target architecture of the build')
 parser.add_argument('-s', '--stevedore', action='store_true', dest='use_stevedore', help='Use stevedore (used for internal builds)')
 parser.add_argument('-n', '--ninja', action='store_true', dest='use_ninja', help='Generate Ninja build files')
 parser.add_argument('-t', '--build_type', default='Release', dest='build_type', help='Build type to do (Release, Debug, ...)')
