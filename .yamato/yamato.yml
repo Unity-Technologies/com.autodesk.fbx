@@ -99,11 +99,6 @@ pack:
     - .yamato/yamato.yml#build_mac
     - .yamato/yamato.yml#build_ubuntu
   artifacts:
-    build:
-      paths:
-        - "build-ubuntu/install/**"
-        - "build-mac/install/**"
-        - "build-win/install/**"
     packages:
       paths:
         - "upm-ci~/packages/**"
