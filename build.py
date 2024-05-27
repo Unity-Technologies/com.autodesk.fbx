@@ -8,12 +8,11 @@ import platform
 
 # Defaults
 osx_deployment_target = "10.15"
-# To build for arm64, Visual Studio 2022 is needed.
-vs_generator_name = "Visual Studio 16 2019" if platform.machine() in ['x86_64', 'AMD64'] else "Visual Studio 17 2022"
 
 parser = argparse.ArgumentParser(description='Parse the options')
 parser.add_argument('--swig', type=str, dest='swig_location', help='Root location of the swig executable')
 parser.add_argument('--fbxsdk', type=str, dest='fbxsdk_location', help='location of the FBX SDK')
+parser.add_argument('--target', type=str, default='amd64', dest='target_architecture', help='Target architecture of the build')
 parser.add_argument('-s', '--stevedore', action='store_true', dest='use_stevedore', help='Use stevedore (used for internal builds)')
 parser.add_argument('-n', '--ninja', action='store_true', dest='use_ninja', help='Generate Ninja build files')
 parser.add_argument('-t', '--build_type', default='Release', dest='build_type', help='Build type to do (Release, Debug, ...)')
@@ -21,6 +20,9 @@ parser.add_argument('-z', '--zap', '-c', '--clean', action='store_true', dest='c
 parser.add_argument('-v', '--verbose', action='store_true', dest='verbose_build', help='Make CMake verbose')
 parser.add_argument('--yamato', action='store_true', dest='yamato_build', help='Used internally for CI')
 args = parser.parse_args()
+
+# To build for arm64, Visual Studio 2022 is needed.
+vs_generator_name = "Visual Studio 16 2019" if args.target_architecture.lower() in ['x64', 'amd64'] else "Visual Studio 17 2022"
 
 curdir = os.path.dirname(os.path.abspath(__file__))
 builddir = os.path.join(curdir, 'build')
@@ -85,7 +87,7 @@ config_args.append('-DYAMATO' + ('=ON' if args.yamato_build else '=OFF'))
 if sys.platform.startswith('darwin'):
     config_args.append(f"-DCMAKE_OSX_DEPLOYMENT_TARGET={osx_deployment_target}")
 elif sys.platform.startswith('win'):
-    arch = 'x64' if platform.machine() in ['x86_64', 'AMD64'] else 'ARM64'
+    arch = 'x64' if args.target_architecture.lower() in ['x64', 'amd64'] else 'ARM64'
     config_args.append('-A ' + arch)
 
 # Generator selection

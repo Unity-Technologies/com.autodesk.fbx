@@ -39,6 +39,20 @@ build_win:
       paths:
         - "build-win/install/**"
 
+build_win_arm64:
+  name: Build on win arm64
+  agent:
+    type: {{ win_arm64_platform.type }}
+    model: {{ win_arm64_platform.model }}
+    image: {{ win_arm64_platform.image }}
+    flavor: {{ win_arm64_platform.flavor}}
+  commands:
+    - build_win.cmd
+  artifacts:
+    build:
+      paths:
+        - "build-win/install/**"
+
 build_mac:
   name: Build on mac
   agent:
@@ -81,14 +95,10 @@ pack:
     - upm-ci package pack --package-path com.autodesk.fbx
   dependencies:
     - .yamato/yamato.yml#build_win
+    - .yamato/yamato.yml#build_win_arm64
     - .yamato/yamato.yml#build_mac
     - .yamato/yamato.yml#build_ubuntu
   artifacts:
-    build:
-      paths:
-        - "build-ubuntu/install/**"
-        - "build-mac/install/**"
-        - "build-win/install/**"
     packages:
       paths:
         - "upm-ci~/packages/**"
