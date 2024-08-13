@@ -198,7 +198,7 @@ weekly_trigger:
   name: Weekly trigger
   triggers:
     recurring:
-      - branch: master
+      - branch: main
         frequency: weekly
         rerun: always
   dependencies:
