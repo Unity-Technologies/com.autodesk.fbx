@@ -1,5 +1,8 @@
 # Changes in FBX SDK C# Bindings
 
+## [5.2.0] - 2024-08-19
+* Upgrading version to prevent a package validation error
+
 ## [5.1.1] - 2024-03-18
 
 * Update FBX SDK to 2020.3.4.
