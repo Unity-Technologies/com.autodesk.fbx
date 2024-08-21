@@ -93,6 +93,14 @@ pack:
     - cp -vrfp build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package pack --package-path com.autodesk.fbx
+    - upm-pvp xray --packages "upm-ci~/packages/*.tgz" --results upm-ci~/xray
+  # Require once without exemptions (and without Yamato reporting) to generate a new exemption file "new_exemptions.json"
+  # "new_exemptions.json" always contains all errors at the moment if there is any.
+    - upm-pvp require "supported rme" --allow-missing --no-report --results upm-ci~/xray --exemptions "upm-ci~/xray/new_exemptions.json"
+  # Require once to determine job status and report errors
+  # If the job fails because of errors which are expected, save the "new_exemptions.json" as "pvp_xray_exemptions.json"
+  # and run the command with exemptions, such as: upm-pvp require "supported rme ./pvp_xray_exemptions.json"
+  #  - upm-pvp require "supported rme" --allow-missing --results "upm-ci~/xray"
   dependencies:
     - .yamato/yamato.yml#build_win
     - .yamato/yamato.yml#build_win_arm64
@@ -105,6 +113,9 @@ pack:
     build_output:
       paths:
         - "com.autodesk.fbx/**"
+    xray_results:
+      paths:
+        - "upm-ci~/xray/**/*"
 
 # Job to generate documentation for the package
 generate_documentation:
