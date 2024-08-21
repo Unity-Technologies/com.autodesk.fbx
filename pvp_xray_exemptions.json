@@ -1,0 +1,14 @@
+{
+  "per_package": {
+    "com.autodesk.fbx@5": {
+      "exempts": {
+        "PVP-25-1": {
+          "errors": [
+            "Editor/Plugins/WinARM64/UnityFbxSdkNative.dll",
+            "Editor/Plugins/WinX64/UnityFbxSdkNative.dll"
+          ]
+        }
+      }
+    }
+  }
+}
