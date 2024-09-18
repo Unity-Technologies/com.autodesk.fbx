@@ -17,6 +17,8 @@
 %rename("%s") FbxDocumentInfo::mKeywords;
 %rename("%s") FbxDocumentInfo::mRevision;
 %rename("%s") FbxDocumentInfo::mComment;
+%rename("%s") FbxDocumentInfo::mDocumentUrl;
+%rename("%s") FbxDocumentInfo::mSrcDocumentUrl;
 
 %include "fbxdocumentinfoimmutables.i"
 
