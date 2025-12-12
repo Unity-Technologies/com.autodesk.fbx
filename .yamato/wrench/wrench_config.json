@@ -1,0 +1,13 @@
+{
+  "schema_version": 0.7,
+  "packages": {},
+  "releasing_packages": [
+    "com.autodesk.fbx"
+  ],
+  "jobs_to_monitor": {},
+  "publishing_job": "",
+  "branch_pattern": "ReleaseSlash",
+  "wrench_version": "1.4.3.0",
+  "pvp_exemption_path": ".yamato/wrench/pvp-exemptions.json",
+  "cs_project_path": "Tools/CI/FbxSdk.Cookbook.csproj"
+}
