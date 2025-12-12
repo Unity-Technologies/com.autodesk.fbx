@@ -88,7 +88,7 @@ pack:
     image: {{ ubuntu_platform.image }}
     flavor: {{ ubuntu_platform.flavor }}
   commands:
-    - mv -v build-ubuntu/install/* .
+    - cp -vrfp build-ubuntu/install/* .
     - cp -vrfp build-mac/install/* .
     - cp -vrfp build-win/install/* .
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
