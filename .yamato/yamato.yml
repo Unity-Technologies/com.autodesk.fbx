@@ -91,7 +91,7 @@ pack:
     - cp -vrfp build-ubuntu/install/* .
     - cp -vrfp build-mac/install/* .
     - cp -vrfp build-win/install/* .
-    - dos2unix com.autodesk.fbx/Runtime/Scripts/*.cs
+    - sudo apt update && sudo apt install dos2unix && dos2unix com.autodesk.fbx/Runtime/Scripts/*.cs
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package pack --package-path com.autodesk.fbx
     - upm-pvp xray --packages "upm-ci~/packages/*.tgz" --results upm-ci~/xray
