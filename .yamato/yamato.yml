@@ -89,8 +89,8 @@ pack:
     flavor: {{ ubuntu_platform.flavor }}
   commands:
     - cp -vrfp build-ubuntu/install/* .
-    - cp -vrfp build-mac/install/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle/* ./com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle
-    - cp -vrfp build-win/install/com.autodesk.fbx/Editor/Plugins/Win*/* ./com.autodesk.fbx/Editor/Plugins
+    - cp -vrfp build-win/install/* .
+    - cp -vrfp build-mac/install/* .
     - npm install -g upm-ci-utils@stable --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     - upm-ci package pack --package-path com.autodesk.fbx
     - upm-pvp xray --packages "upm-ci~/packages/*.tgz" --results upm-ci~/xray
