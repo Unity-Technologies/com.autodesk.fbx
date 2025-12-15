@@ -12,6 +12,9 @@ package_pack_-_com_autodesk_fbx:
   - command: npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
     timeout: 20
     retries: 10
+  - command: cp -vrfp build-ubuntu/install/* .
+  - command: cp -vrfp build-mac/install/* .
+  - command: cp -vrfp build-win/install/* .
   - command: upm-ci package pack --package-path com.autodesk.fbx
   - command: cp upm-ci~/packages/packages.json upm-ci~/packages/com.autodesk.fbx_packages.json
   after:
@@ -20,6 +23,10 @@ package_pack_-_com_autodesk_fbx:
     packages:
       paths:
       - upm-ci~/packages/**/*
+  dependencies:
+  - path: .yamato/build-fbx-sdk-bindings.yml#build_plugins_-_ubuntu-22_04
+  - path: .yamato/code-signing.yml#sign_binaries_for_fbx_on_macos
+  - path: .yamato/code-signing.yml#sign_binaries_for_fbx_on_windows
   variables:
     UPMCI_ACK_LARGE_PACKAGE: 1
   metadata:

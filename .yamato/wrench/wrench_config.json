@@ -3,7 +3,11 @@
   "packages": {
     "com.autodesk.fbx": {
       "directory": "com.autodesk.fbx/",
-      "prePackCommands": [],
+      "prePackCommands": [
+        "cp -vrfp build-ubuntu/install/* .",
+        "cp -vrfp build-mac/install/* .",
+        "cp -vrfp build-win/install/* ."
+      ],
       "preTestCommands": {
         "MacOS": [],
         "Ubuntu": [],

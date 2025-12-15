@@ -1,0 +1,2 @@
+build-win/install/com.autodesk.fbx/Editor/Plugins/WinX64/UnityFbxSdkNative.dll
+build-win/install/com.autodesk.fbx/Editor/Plugins/WinARM64/UnityFbxSdkNative.dll

@@ -26,7 +26,9 @@ validate_-_com_autodesk_fbx_-_2020_3_-_macos:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -94,7 +96,9 @@ validate_-_com_autodesk_fbx_-_2020_3_-_ubuntu:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -162,7 +166,9 @@ validate_-_com_autodesk_fbx_-_2020_3_-_windows:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -230,7 +236,9 @@ validate_-_com_autodesk_fbx_-_2022_3_-_macos:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -298,7 +306,9 @@ validate_-_com_autodesk_fbx_-_2022_3_-_ubuntu:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -366,7 +376,9 @@ validate_-_com_autodesk_fbx_-_2022_3_-_windows:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -434,7 +446,9 @@ validate_-_com_autodesk_fbx_-_6000_0_-_macos:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -502,7 +516,9 @@ validate_-_com_autodesk_fbx_-_6000_0_-_ubuntu:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -570,7 +586,9 @@ validate_-_com_autodesk_fbx_-_6000_0_-_windows:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -638,7 +656,9 @@ validate_-_com_autodesk_fbx_-_6000_3_-_macos:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -706,7 +726,9 @@ validate_-_com_autodesk_fbx_-_6000_3_-_ubuntu:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -774,7 +796,9 @@ validate_-_com_autodesk_fbx_-_6000_3_-_windows:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -842,7 +866,9 @@ validate_-_com_autodesk_fbx_-_6000_4_-_macos:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -910,7 +936,9 @@ validate_-_com_autodesk_fbx_-_6000_4_-_ubuntu:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -978,7 +1006,9 @@ validate_-_com_autodesk_fbx_-_6000_4_-_windows:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -1046,7 +1076,9 @@ validate_-_com_autodesk_fbx_-_6000_5_-_macos:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -1114,7 +1146,9 @@ validate_-_com_autodesk_fbx_-_6000_5_-_ubuntu:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
@@ -1182,7 +1216,9 @@ validate_-_com_autodesk_fbx_-_6000_5_-_windows:
   - command: upm-pvp require "pkgprom-promote -PVP-29-2 rme" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
     timeout: 5
     retries: 0
-  - command: echo No additional PVP profiles to declared to check.
+  - command: upm-pvp require "rme PVP-160-1 supported -PVP-41-1 .yamato/wrench/pvp-exemptions.json" --results upm-ci~/pvp --exemptions upm-ci~/pvp/failures.json
+    timeout: 10
+    retries: 0
   - command: 'UnifiedTestRunner.exe --testproject=test-com.autodesk.fbx --editor-location=.Editor --clean-library --reruncount=1 --clean-library-on-rerun --artifacts-path=artifacts --suite=Editor --suite=Playmode "--ff={ops.upmpvpevidence.enable=true}" '
     timeout: 20
     retries: 1
