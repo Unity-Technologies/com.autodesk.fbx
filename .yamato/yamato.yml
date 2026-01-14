@@ -177,15 +177,6 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% endfor %}
 {% endfor %}
 
-# PR trigger for doc only changes, it will run generate_documentation job.
-test_trigger_pr_documentation:
-  name: Pull Request Tests Trigger for documentation changes
-  triggers:
-    cancel_old_ci: true
-    expression: pull_request.(source match ".*" AND push.changes.any match "com.autodesk.fbx/Documentation~/**" AND NOT draft)
-  dependencies:
-    - .yamato/yamato.yml#generate_documentation
-
 # PR trigger
 test_trigger_pr:
   name: Pull Request Tests Trigger
