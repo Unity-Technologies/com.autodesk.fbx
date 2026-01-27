@@ -1,7 +1,7 @@
 {
     "name": "com.autodesk.fbx",
     "displayName": "Autodesk FBX SDK for Unity",
-    "version": "5.1.1",
+    "version": "5.1.2",
     "unity": "2020.3",
     "description": "This package provides Unity C# bindings to the Autodesk\u00ae FBX\u00ae SDK.",
     "keywords": [
