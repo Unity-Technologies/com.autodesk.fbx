@@ -1,0 +1,42 @@
+{
+  "schema_version": 0.7,
+  "packages": {
+    "com.autodesk.fbx": {
+      "directory": "com.autodesk.fbx/",
+      "prePackCommands": [
+        "cp -vrfp build-ubuntu/install/* .",
+        "cp -vrfp build-mac/install/* .",
+        "cp -vrfp build-win/install/* ."
+      ],
+      "preTestCommands": {
+        "MacOS": [],
+        "Ubuntu": [],
+        "Windows": []
+      },
+      "InternalOnly": false,
+      "NeverPublish": false,
+      "MaxEditorVersion": "",
+      "coverageEnabled": false,
+      "coverageCommands": [
+        "generateAdditionalMetrics;generateHtmlReport;assemblyFilters:ASSEMBLY_NAME;pathReplacePatterns:@*,,**/PackageCache/,;sourcePaths:YAMATO_SOURCE_DIR/Packages;"
+      ],
+      "dependantsToIgnoreInPreviewApv": {},
+      "postPackCommands": []
+    }
+  },
+  "releasing_packages": [
+    "com.autodesk.fbx"
+  ],
+  "jobs_to_monitor": {
+    "com.autodesk.fbx": [
+      ".yamato/wrench/api-validation-jobs.yml#api_validation_-_com_autodesk_fbx_-_2020_3_-_windows",
+      ".yamato/wrench/preview-a-p-v.yml#all_preview_apv_jobs",
+      ".yamato/wrench/promotion-jobs.yml#publish_dry_run_com_autodesk_fbx"
+    ]
+  },
+  "publishing_job": ".yamato/wrench/promotion-jobs.yml#publish_com_autodesk_fbx",
+  "branch_pattern": "ReleaseSlash",
+  "wrench_version": "1.4.4.0",
+  "pvp_exemption_path": ".yamato/wrench/pvp-exemptions.json",
+  "cs_project_path": "Tools/CI/FbxSdk.Cookbook.csproj"
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FbxSdk": {
+      "commandName": "Project",
+      "workingDirectory": "$(SolutionDir)/../../"
+    }
+  }
+}

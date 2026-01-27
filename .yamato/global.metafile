@@ -1,8 +1,10 @@
 editors:
   - version: 2020.3
-  - version: 2021.3
   - version: 2022.3
   - version: 6000.0
+  - version: 6000.2
+  - version: 6000.3
+  - version: 6000.4
   - version: trunk
 
 mac_platform: &mac
@@ -21,7 +23,7 @@ mac_arm64_platform: &mac_arm64
 ubuntu_platform: &ubuntu
   name: ubuntu
   type: Unity::VM
-  image: package-ci/ubuntu-20.04:v4
+  image: package-ci/ubuntu-22.04:v4
   flavor: b1.large
 
 win_platform: &win
