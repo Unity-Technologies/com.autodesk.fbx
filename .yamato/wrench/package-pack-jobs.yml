@@ -5,7 +5,7 @@
 package_pack_-_com_autodesk_fbx:
   name: Package Pack - com.autodesk.fbx
   agent:
-    image: package-ci/ubuntu-20.04:default
+    image: package-ci/ubuntu-22.04:default
     type: Unity::VM
     flavor: b1.large
   commands:
