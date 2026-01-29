@@ -1,6 +1,6 @@
 # Changes in FBX SDK C# Bindings
 
-## [5.1.2] - 2026-01-28
+## [5.1.3] - 2026-01-28
 
 * Signed binaries on Windows and Mac
 
