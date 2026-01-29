@@ -75,7 +75,7 @@ validate_-_com_autodesk_fbx_-_2020_3_-_macos:
 validate_-_com_autodesk_fbx_-_2020_3_-_ubuntu:
   name: Validate - com.autodesk.fbx - 2020.3 - ubuntu
   agent:
-    image: package-ci/ubuntu-20.04:default
+    image: package-ci/ubuntu-22.04:default
     type: Unity::VM
     flavor: b1.large
   commands:
@@ -285,7 +285,7 @@ validate_-_com_autodesk_fbx_-_2022_3_-_macos:
 validate_-_com_autodesk_fbx_-_2022_3_-_ubuntu:
   name: Validate - com.autodesk.fbx - 2022.3 - ubuntu
   agent:
-    image: package-ci/ubuntu-20.04:default
+    image: package-ci/ubuntu-22.04:default
     type: Unity::VM
     flavor: b1.large
   commands:
