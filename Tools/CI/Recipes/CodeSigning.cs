@@ -16,10 +16,8 @@ public class CodeSigning: RecipeBase
 {
     string fbxSdkCodeSignListFileWindows = "windows_codesign_list.txt";
 
-    string[] fbxSdkBinariesToSignOnMac =
-    [
-        "build-mac/install/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle"
-    ];
+    private string fbxSdkBinariesToSignOnMac = "build-mac/install/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle";
+
     string[] fbxSdkBinariesToSignOnWin =
     [
         "build-win/install/com.autodesk.fbx/Editor/Plugins/WinX64/UnityFbxSdkNative.dll",
@@ -79,11 +77,11 @@ public class CodeSigning: RecipeBase
         switch (platform.System)
         {
             case SystemType.MacOS:
-                job.WithCodeSigningCommands(platform, string.Join(" ", fbxSdkBinariesToSignOnMac))
+                job.WithCodeSigningCommands(platform, fbxSdkBinariesToSignOnMac)
                     .WithDependencies(
                         new Dependency("BuildFbxSdkBindings", "build_plugins_-_macos-12")
                         )
-                    .WithArtifact(new Artifact($"{packageName}_SignedBinariesOnMac", fbxSdkBinariesToSignOnMac));
+                    .WithArtifact(new Artifact($"{packageName}_SignedBinariesOnMac", $"{fbxSdkBinariesToSignOnMac}/**"));
                 break;
             case SystemType.Windows:
                 job.WithCodeSigningCommands(platform, fbxSdkCodeSignListFileWindows)
