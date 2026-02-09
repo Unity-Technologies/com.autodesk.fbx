@@ -21,7 +21,7 @@ sign_binaries_for_fbx_on_macos:
   artifacts:
     Fbx_SignedBinariesOnMac:
       paths:
-      - build-mac/install/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle
+      - build-mac/install/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle/**
   dependencies:
   - path: .yamato/build-fbx-sdk-bindings.yml#build_plugins_-_macos-12
 

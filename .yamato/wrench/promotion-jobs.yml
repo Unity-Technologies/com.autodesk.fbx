@@ -5,7 +5,7 @@
 publish_com_autodesk_fbx:
   name: Publish com.autodesk.fbx
   agent:
-    image: package-ci/ubuntu-20.04:default
+    image: package-ci/ubuntu-22.04:default
     type: Unity::VM
     flavor: b1.large
   commands:
@@ -217,7 +217,7 @@ publish_com_autodesk_fbx:
 publish_dry_run_com_autodesk_fbx:
   name: Publish Dry Run com.autodesk.fbx
   agent:
-    image: package-ci/ubuntu-20.04:default
+    image: package-ci/ubuntu-22.04:default
     type: Unity::VM
     flavor: b1.large
   commands:

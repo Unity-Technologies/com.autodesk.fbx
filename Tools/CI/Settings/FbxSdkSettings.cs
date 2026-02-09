@@ -1,8 +1,10 @@
 ﻿using RecipeEngine.Api.Commands;
 using RecipeEngine.Api.Dependencies;
+using RecipeEngine.Api.Platforms;
 using RecipeEngine.Api.Settings;
 using RecipeEngine.Modules.Wrench.Models;
 using RecipeEngine.Modules.Wrench.Settings;
+using RecipeEngine.Platforms;
 
 namespace FbxSdk.Cookbook.Settings;
 
@@ -53,6 +55,11 @@ public class FbxSdkSettings : AnnotatedSettingsBase
             wrenchCsProjectPath: "Tools/CI/FbxSdk.Cookbook.csproj"
         );
         
+        var defaultUbuntuAgent = WrenchPackage.DefaultEditorPlatforms[SystemType.Ubuntu].Agent;
+        // Use Ubuntu image package-ci/ubuntu-22.04 for Linux platform
+        Wrench.Packages[FbxSdkPackageName].EditorPlatforms[SystemType.Ubuntu] = new Platform(new Agent("package-ci/ubuntu-22.04:default",
+            defaultUbuntuAgent.Flavor, defaultUbuntuAgent.Resource), SystemType.Ubuntu);
+
         Wrench.BranchNamingPattern = BranchPatterns.ReleaseSlash;
         // Add "rme", "supported" to upm-pvp check profiles together with an exemption file
         // PVP-41-1 check is skipped because of "Unreleased" entry in CHANGELOG.md
