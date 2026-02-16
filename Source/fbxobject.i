@@ -29,6 +29,8 @@
 %rename("%s") FbxObject::GetFbxManager;
 %rename("%s") FbxObject::GetScene;
 
+%rename("%s") FbxObject::GetRuntimeClassId;
+
 /* Properties */
 %rename("%s") FbxObject::GetFirstProperty() const;
 %rename("%s") FbxObject::GetNextProperty(const FbxProperty& pProperty) const;
@@ -82,6 +84,7 @@
     return string.Format("{0}({1})", name, GetType().Name);
   }
   %}
+  
 }
 
 %include "UnityFbxSdkNative-fixed-headers/fbxobject.h"
