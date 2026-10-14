@@ -30,7 +30,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   list(APPEND CMAKE_SWIG_FLAGS "-D_MSC_VER")
 
   set(_fbxsdk_root_path "C:/Program Files/Autodesk/FBX/FBX SDK")
-  list(APPEND _fbxsdk_lib_paths "lib/vs2019/${WIN_ARCHITECTURE}/release")
+  list(APPEND _fbxsdk_lib_paths "lib/${WIN_ARCHITECTURE}/release" "lib/vs2019/${WIN_ARCHITECTURE}/release")
 
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__linux__")
@@ -38,7 +38,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
   list(APPEND CMAKE_SWIG_FLAGS "-D__GNUC__")
 
   # where is fbxsdk installed by default on linux?
-  list(APPEND _fbxsdk_lib_paths "lib/gcc4/x64/release" "lib/gcc/x64/release")
+  list(APPEND _fbxsdk_lib_paths "lib/release" "lib/gcc4/x64/release" "lib/gcc/x64/release")
 endif()
 
 # If FBXSDK_ROOT_PATH is set explicitly, use it.
@@ -94,7 +94,8 @@ endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   find_library(LIBXML2_LIBRARY libxml2-md.lib PATHS ${FBXSDK_LIB_PATHS})
   find_library(ZLIB_LIBRARY zlib-md.lib PATHS ${FBXSDK_LIB_PATHS})
-  list(APPEND FBXSDK_LIBRARY "${ZLIB_LIBRARY}" "${LIBXML2_LIBRARY}")
+  # libxml2 in FBX SDK 2020.3.11 needs BCryptGenRandom.
+  list(APPEND FBXSDK_LIBRARY "${ZLIB_LIBRARY}" "${LIBXML2_LIBRARY}" bcrypt)
 else()
   # on UNIXes, they're system libraries
   list(APPEND FBXSDK_LIBRARY "-lxml2" "-lz")
