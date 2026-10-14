@@ -139,6 +139,8 @@
 %ignore FBXSDK_REF_MAX;
 %ignore FBXSDK_ATOMIC_MIN;
 %ignore FBXSDK_ATOMIC_MAX;
+%ignore FBXSDK_SSIZE_T_MAX;
+%ignore downcast_to_int;
 
 // Fix so on Windows FbxLongLong doesn't get typedef'd
 // to signed __int64 instead of signed long long.
