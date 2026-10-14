@@ -36,6 +36,8 @@ def find_files():
             dirs.remove('debug')
         if 'legacy_clang' in dirs:
             dirs.remove('legacy_clang')
+        if 'legacy' in dirs:
+            dirs.remove('legacy')
 
         # On windows, don't upload /MT versions, we only use /MD
         # On other platforms, there's no -mt.lib files so this just wastes a couple ms.
@@ -56,5 +58,7 @@ outfile = curdir + "/" + find_archive_name()
 with open("file-list.txt", "w") as f:
     for name in find_files():
         print(name, file=f)
-retcode = subprocess.check_call(["7z", "a", "-spf", "-bb", outfile, f"@{curdir}/file-list.txt"], stderr=subprocess.STDOUT, cwd=fbxsdk_root)
+# -mf=off: 7-Zip 23+ applies an ARM64 filter to arm64 binaries, which older 7z versions (like the one on
+# the Windows build agents) can't extract ("Unsupported Method").
+retcode = subprocess.check_call(["7z", "a", "-spf", "-bb", "-mf=off", outfile, f"@{curdir}/file-list.txt"], stderr=subprocess.STDOUT, cwd=fbxsdk_root)
 sys.exit(retcode)
