@@ -154,7 +154,7 @@
  * In C# a byte is an 8-bit unsigned int.
  */
 %typemap(imtype,
-         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.U8)]")
+         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.U1)]")
          char "byte";
 %typemap(csout, excode=SWIGEXCODE) char {
     byte ret = $imcall;$excode

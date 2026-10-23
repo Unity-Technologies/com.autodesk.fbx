@@ -3,6 +3,7 @@
 ## [5.1.4] - 2026-10-13
 
 * Update FBX SDK to 2020.3.11, which fixes the security vulnerabilities CVE-2026-10709 and CVE-2026-10710 (Autodesk advisory ADSK-SA-2026-0010).
+* Fix `char` return values being marshalled as 8-byte integers, which caused a MarshalDirectiveException in newer Unity versions.
 
 ## [5.1.3] - 2026-01-28
 
