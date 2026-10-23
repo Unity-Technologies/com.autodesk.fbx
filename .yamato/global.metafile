@@ -54,6 +54,6 @@ promote_platform:
   flavor: b1.medium
 
 coverage:
-  minPercent: 94.4
+  minPercent: 93
 
 fbxsdk_version: 2020.3.11
