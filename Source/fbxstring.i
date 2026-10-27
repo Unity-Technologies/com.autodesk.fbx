@@ -10,14 +10,61 @@
 /*
  * When we get the char* in C# we marshal it with this code.
  * FBX uses UTF-8, both for FbxString and for char* strings.
- * TODO: use the .net 4.5 UnmanagedType.LPUTF8Str
- * For compatibility with .net 2.0 we use LPStr (which is ANSI) which might
- * lead to undefined behaviour with chinese, japanese, etc.
+ * LPStr is ANSI on CoreCLR for Windows, so we always use LPUTF8Str.
  */
 %typemap(imtype,
-         inattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPStr)]",
-         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPStr)]")
+         inattributes="[global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]",
+         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]")
         const FbxString&, FbxString "string"
+
+%typemap(imtype,
+         inattributes="[global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]",
+         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]",
+         directorinattributes="[global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]",
+         directoroutattributes="[return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]")
+        char *, char *&, char[ANY], char[] "string"
+
+/*
+ * Replaces SWIG's string helper (disabled with SWIG_CSHARP_NO_STRING_HELPER),
+ * whose callback would otherwise marshal returned strings as LPStr.
+ */
+%insert(runtime) %{
+typedef char * (SWIGSTDCALL* SWIG_CSharpStringHelperCallback)(const char *);
+static SWIG_CSharpStringHelperCallback SWIG_csharp_string_callback = NULL;
+
+#ifdef __cplusplus
+extern "C"
+#endif
+SWIGEXPORT void SWIGSTDCALL SWIGRegisterStringCallback_$module(SWIG_CSharpStringHelperCallback callback) {
+  SWIG_csharp_string_callback = callback;
+}
+%}
+
+%pragma(csharp) imclasscode=%{
+  // UnmanagedType.LPUTF8Str, which Unity 2020.3's .NET Standard 2.0 profile does not define.
+  internal const global::System.Runtime.InteropServices.UnmanagedType LPUTF8Str = (global::System.Runtime.InteropServices.UnmanagedType)48;
+
+  protected class SWIGStringHelper {
+
+    [return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]
+    public delegate string SWIGStringDelegate([global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)] string message);
+    static SWIGStringDelegate stringDelegate = new SWIGStringDelegate(CreateString);
+
+    [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="SWIGRegisterStringCallback_$module")]
+    public static extern void SWIGRegisterStringCallback_$module(SWIGStringDelegate stringDelegate);
+
+    [return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]
+    static string CreateString([global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)] string cString) {
+      return cString;
+    }
+
+    static SWIGStringHelper() {
+      SWIGRegisterStringCallback_$module(stringDelegate);
+    }
+  }
+
+  static protected SWIGStringHelper swigStringHelper = new SWIGStringHelper();
+%}
 
 /* When we use FbxString in C# we use string instead. */
 %typemap(cstype) FbxString, const FbxString& "string"
