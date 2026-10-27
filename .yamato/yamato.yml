@@ -159,9 +159,9 @@ test_{{ platform.name }}_{{ editor.version }}:
 {% if platform.model == "M1" or platform.model == "arm" %}
     - unity-downloader-cli -u {{ editor.version }} -a arm64 -c Editor --wait --published-only
     # Setting backend to il2cpp to ensure il2cpp is installed and can be used by editor tests (see Note above).
-    - upm-ci package test --backend il2cpp --unity-version .Editor --package-path com.autodesk.fbx --enable-code-coverage --extra-utr-arg=--coverage-pkg-version=1.2.2 --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
+    - upm-ci package test --backend il2cpp --unity-version .Editor --package-path com.autodesk.fbx --enable-code-coverage --extra-utr-arg=--coverage-pkg-version={% if editor.version == "2020.3" %}1.2.2{% else %}1.3.0{% endif %} --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
 {% else %}
-    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --extra-utr-arg=--coverage-pkg-version=1.2.2 --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
+    - upm-ci package test --backend il2cpp --unity-version {{ editor.version }} --package-path com.autodesk.fbx --enable-code-coverage --extra-utr-arg=--coverage-pkg-version={% if editor.version == "2020.3" %}1.2.2{% else %}1.3.0{% endif %} --code-coverage-options 'generateHtmlReport;assemblyFilters:+Autodesk.Fbx'
 {% endif %}
     - python tests/Yamato/check_coverage_percent.py upm-ci~/test-results/ {{ coverage.minPercent }}
     - echo "****** PASSED *******"
