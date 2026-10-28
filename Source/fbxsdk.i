@@ -106,6 +106,8 @@
 %include "FbxSharpObjectLifetime.i"
 #ifndef SWIG_GENERATING_TYPEDEFS
   %include "weakpointerhandles.i"
+  /*Downcast table information is generated at the same time as the weakpointer*/
+  %include "downcast_table.i" 
 #endif
 
 /*
@@ -219,6 +221,12 @@
  ***************************************************************************/
 %reveal_all_end;
 
+%typemap(csout, excode=SWIGEXCODE) FbxDeformer*, FbxSkin*, FbxObject* {
+  System.IntPtr cPtr = $imcall;
+  $csclassname ret = ($csclassname) NativeMethods.Realtype(cPtr, $owner);$excode;
+  return ret;
+}
+
 /* Core classes */
 %include "fbxmath.i"
 %include "fbxmanager.i"
@@ -231,6 +239,7 @@
 %include "fbxquaternion.i"
 %include "fbxprogress.i"
 %include "fbxtransforms.i"
+%include "fbxclassid.i"
 
 /* The emitter hierarchy. Must be in partial order (base class before derived class). */
 %include "fbxemitter.i"
