@@ -8,6 +8,11 @@ using System.IO;
 namespace Autodesk.Fbx.PlayModeTests
 {
     internal class FbxExporterTest {
+        [System.Runtime.InteropServices.DllImport("/usr/lib/libSystem.dylib")]
+        static extern System.IntPtr dlopen(string path, int mode);
+        [System.Runtime.InteropServices.DllImport("/usr/lib/libSystem.dylib")]
+        static extern System.IntPtr dlerror();
+
         [Test, Order(0)]
         public void Diag() {
 #if UNITY_EDITOR
@@ -18,8 +23,8 @@ namespace Autodesk.Fbx.PlayModeTests
             foreach (var d in System.IO.Directory.GetDirectories(System.IO.Path.GetFullPath("Packages/com.autodesk.fbx/Editor/Plugins"))) Debug.Log("DIAG dir " + d);
             var exe = System.IO.Path.GetFullPath("Packages/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle/Contents/MacOS/UnityFbxSdkNative");
             Debug.Log("DIAG exe exists=" + System.IO.File.Exists(exe) + " " + exe);
-            try { var h = System.Runtime.InteropServices.NativeLibrary.Load(exe); Debug.Log("DIAG load ok " + h); }
-            catch (System.Exception e) { Debug.Log("DIAG load failed " + e); }
+            var h = dlopen(exe, 2);
+            Debug.Log("DIAG dlopen=" + h + " err=" + (h == System.IntPtr.Zero ? System.Runtime.InteropServices.Marshal.PtrToStringAnsi(dlerror()) : ""));
             Debug.Log("DIAG playing=" + Application.isPlaying + " domainReload=" + UnityEditor.EditorSettings.enterPlayModeOptionsEnabled);
 #endif
         }
