@@ -8,7 +8,23 @@ using System.IO;
 namespace Autodesk.Fbx.PlayModeTests
 {
     internal class FbxExporterTest {
-        [Test]
+        [Test, Order(0)]
+        public void Diag() {
+#if UNITY_EDITOR
+            foreach (var imp in UnityEditor.PluginImporter.GetAllImporters()) {
+                if (imp.assetPath.Contains("UnityFbxSdkNative"))
+                    Debug.Log("DIAG importer " + imp.assetPath + " native=" + imp.isNativePlugin + " editor=" + imp.GetCompatibleWithEditor() + " os=" + imp.GetEditorData("OS") + " cpu=" + imp.GetEditorData("CPU"));
+            }
+            foreach (var d in System.IO.Directory.GetDirectories(System.IO.Path.GetFullPath("Packages/com.autodesk.fbx/Editor/Plugins"))) Debug.Log("DIAG dir " + d);
+            var exe = System.IO.Path.GetFullPath("Packages/com.autodesk.fbx/Editor/Plugins/UnityFbxSdkNative.bundle/Contents/MacOS/UnityFbxSdkNative");
+            Debug.Log("DIAG exe exists=" + System.IO.File.Exists(exe) + " " + exe);
+            try { var h = System.Runtime.InteropServices.NativeLibrary.Load(exe); Debug.Log("DIAG load ok " + h); }
+            catch (System.Exception e) { Debug.Log("DIAG load failed " + e); }
+            Debug.Log("DIAG playing=" + Application.isPlaying + " domainReload=" + UnityEditor.EditorSettings.enterPlayModeOptionsEnabled);
+#endif
+        }
+
+        [Test, Order(1)]
         public void TestWriteEmptyFbxFile() {
             /*
             Runtime test that writes an fbx scene file in the directory where the 
