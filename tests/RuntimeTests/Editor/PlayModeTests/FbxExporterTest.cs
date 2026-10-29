@@ -36,6 +36,34 @@ namespace Autodesk.Fbx.PlayModeTests
                 Debug.Log("DIAG early hooked alc=" + alc);
             }
             catch (System.Exception e) { Debug.Log("DIAG early hook failed " + e); }
+            try {
+                var profilePath = System.IO.Path.GetFullPath("Library/Scripting/StartupJitProfile.json");
+                if (!System.IO.File.Exists(profilePath)) { Debug.Log("DIAG profile missing " + profilePath); return; }
+                var text = System.IO.File.ReadAllText(profilePath);
+                Debug.Log("DIAG profile bytes=" + text.Length + " head=" + text.Substring(0, System.Math.Min(400, text.Length)));
+                var module = typeof(FbxManager).Assembly.ManifestModule;
+                var mvid = module.ModuleVersionId.ToString();
+                var at = text.IndexOf(mvid, System.StringComparison.OrdinalIgnoreCase);
+                Debug.Log("DIAG profile fbx mvid=" + mvid + " found=" + (at >= 0));
+                if (at < 0) return;
+                var end = text.IndexOf("\"Mvid\"", at + mvid.Length, System.StringComparison.OrdinalIgnoreCase);
+                var block = text.Substring(at, (end < 0 ? text.Length : end) - at);
+                int total = 0, pinvoke = 0;
+                foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(block, "\"Token\"\\s*:\\s*(\\d+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase)) {
+                    total++;
+                    var token = int.Parse(m.Groups[1].Value);
+                    try {
+                        var method = module.ResolveMethod(token);
+                        var isPinvoke = (method.Attributes & System.Reflection.MethodAttributes.PinvokeImpl) != 0;
+                        if (isPinvoke) pinvoke++;
+                        if (isPinvoke || method.DeclaringType.FullName.Contains("SWIG") || method.IsConstructor)
+                            Debug.Log("DIAG profile entry 0x" + token.ToString("x8") + " " + method.DeclaringType.FullName + "." + method.Name + " pinvoke=" + isPinvoke);
+                    }
+                    catch (System.Exception e) { Debug.Log("DIAG profile entry 0x" + token.ToString("x8") + " unresolved " + e.GetType().Name); }
+                }
+                Debug.Log("DIAG profile fbx entries=" + total + " pinvoke=" + pinvoke);
+            }
+            catch (System.Exception e) { Debug.Log("DIAG profile read failed " + e); }
         }
 #endif
 
