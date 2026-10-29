@@ -15,6 +15,8 @@ namespace Autodesk.Fbx.PlayModeTests
 
         [Test, Order(0)]
         public void Diag() {
+            try { FbxManager.Create().Destroy(); Debug.Log("DIAG first call ok"); }
+            catch (System.Exception e) { Debug.Log("DIAG first call failed " + e.GetBaseException().Message); }
 #if UNITY_EDITOR
             foreach (var imp in UnityEditor.PluginImporter.GetAllImporters()) {
                 if (imp.assetPath.Contains("UnityFbxSdkNative"))
