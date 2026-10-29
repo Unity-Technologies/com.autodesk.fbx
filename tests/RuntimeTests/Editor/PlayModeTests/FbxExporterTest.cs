@@ -15,6 +15,17 @@ namespace Autodesk.Fbx.PlayModeTests
 
         [Test, Order(0)]
         public void Diag() {
+            try {
+                const System.Reflection.BindingFlags all0 = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+                var asm0 = typeof(FbxManager).Assembly;
+                var alc0 = typeof(object).Assembly.GetType("System.Runtime.Loader.AssemblyLoadContext").GetMethod("GetLoadContext").Invoke(null, new object[] { asm0 });
+                var wrapper0 = alc0.GetType().GetProperty("UnityAssemblyLoadContextWrapper", all0).GetValue(alc0);
+                var resolver0 = wrapper0.GetType().GetProperty("NativeLibraryResolver", all0).GetValue(wrapper0);
+                var resolve0 = resolver0.GetType().GetMethod("Resolve", all0);
+                for (int i = 0; i < 3; i++)
+                    Debug.Log("DIAG pre-resolve " + i + " t=" + System.DateTime.Now.ToString("HH:mm:ss.fff") + " thread=" + System.Threading.Thread.CurrentThread.ManagedThreadId + " -> " + (resolve0.Invoke(resolver0, new object[] { asm0, "UnityFbxSdkNative" }) ?? "<null>"));
+            }
+            catch (System.Exception e) { Debug.Log("DIAG pre-resolve failed " + e); }
             try { FbxManager.Create().Destroy(); Debug.Log("DIAG first call ok"); }
             catch (System.Exception e) { Debug.Log("DIAG first call failed " + e.GetBaseException().Message); }
             try {
