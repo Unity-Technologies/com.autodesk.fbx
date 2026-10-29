@@ -13,6 +13,11 @@ namespace Autodesk.Fbx.PlayModeTests
         [System.Runtime.InteropServices.DllImport("/usr/lib/libSystem.dylib")]
         static extern System.IntPtr dlerror();
 
+        static System.IntPtr DiagDllImportResolver(string name, System.Reflection.Assembly assembly, System.Runtime.InteropServices.DllImportSearchPath? searchPath) {
+            Debug.Log("DIAG dllimport resolver " + name);
+            return System.IntPtr.Zero;
+        }
+
         [Test, Order(0)]
         public void Diag() {
             try {
@@ -32,13 +37,12 @@ namespace Autodesk.Fbx.PlayModeTests
                 var alc1 = alcT.GetMethod("GetLoadContext").Invoke(null, new object[] { asm1 });
                 var fld = alcT.GetField("_resolvingUnmanagedDll", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 var del = fld?.GetValue(alc1) as System.Delegate;
-                Debug.Log("DIAG event field=" + (fld != null) + " handlers=" + (del == null ? "0" : string.Join(",", System.Array.ConvertAll(del.GetInvocationList(), d => d.Method.DeclaringType + "." + d.Method.Name + " target=" + d.Target))));
-                System.Func<System.Reflection.Assembly, string, System.IntPtr> h = (a, n) => { Debug.Log("DIAG event raised " + n + " for " + a.GetName().Name); return System.IntPtr.Zero; };
-                alcT.GetEvent("ResolvingUnmanagedDll").AddEventHandler(alc1, h);
+                Debug.Log("DIAG event field=" + (fld != null) + " handlers=" + (del == null ? "0" : string.Join(",", System.Array.ConvertAll(del.GetInvocationList(), x => x.Method.DeclaringType + "." + x.Method.Name + " target=" + x.Target))));
+                System.Func<System.Reflection.Assembly, string, System.IntPtr> hookEvent = (a, n) => { Debug.Log("DIAG event raised " + n + " for " + a.GetName().Name); return System.IntPtr.Zero; };
+                alcT.GetEvent("ResolvingUnmanagedDll").AddEventHandler(alc1, hookEvent);
                 var nl = typeof(object).Assembly.GetType("System.Runtime.InteropServices.NativeLibrary");
                 var drT = typeof(object).Assembly.GetType("System.Runtime.InteropServices.DllImportResolver");
-                System.Func<string, System.Reflection.Assembly, object, System.IntPtr> r = (n, a, sp) => { Debug.Log("DIAG dllimport resolver " + n); return System.IntPtr.Zero; };
-                var rd = System.Delegate.CreateDelegate(drT, r.Target, r.Method);
+                var rd = System.Delegate.CreateDelegate(drT, typeof(FbxExporterTest).GetMethod("DiagDllImportResolver", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static));
                 try { nl.GetMethod("SetDllImportResolver").Invoke(null, new object[] { asm1, rd }); Debug.Log("DIAG SetDllImportResolver ok"); }
                 catch (System.Reflection.TargetInvocationException e) { Debug.Log("DIAG SetDllImportResolver threw " + e.InnerException.Message); }
             }
