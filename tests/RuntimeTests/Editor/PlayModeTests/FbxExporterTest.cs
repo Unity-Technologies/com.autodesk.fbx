@@ -26,6 +26,23 @@ namespace Autodesk.Fbx.PlayModeTests
                     Debug.Log("DIAG pre-resolve " + i + " t=" + System.DateTime.Now.ToString("HH:mm:ss.fff") + " thread=" + System.Threading.Thread.CurrentThread.ManagedThreadId + " -> " + (resolve0.Invoke(resolver0, new object[] { asm0, "UnityFbxSdkNative" }) ?? "<null>"));
             }
             catch (System.Exception e) { Debug.Log("DIAG pre-resolve failed " + e); }
+            try {
+                var asm1 = typeof(FbxManager).Assembly;
+                var alcT = typeof(object).Assembly.GetType("System.Runtime.Loader.AssemblyLoadContext");
+                var alc1 = alcT.GetMethod("GetLoadContext").Invoke(null, new object[] { asm1 });
+                var fld = alcT.GetField("_resolvingUnmanagedDll", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var del = fld?.GetValue(alc1) as System.Delegate;
+                Debug.Log("DIAG event field=" + (fld != null) + " handlers=" + (del == null ? "0" : string.Join(",", System.Array.ConvertAll(del.GetInvocationList(), d => d.Method.DeclaringType + "." + d.Method.Name + " target=" + d.Target))));
+                System.Func<System.Reflection.Assembly, string, System.IntPtr> h = (a, n) => { Debug.Log("DIAG event raised " + n + " for " + a.GetName().Name); return System.IntPtr.Zero; };
+                alcT.GetEvent("ResolvingUnmanagedDll").AddEventHandler(alc1, h);
+                var nl = typeof(object).Assembly.GetType("System.Runtime.InteropServices.NativeLibrary");
+                var drT = typeof(object).Assembly.GetType("System.Runtime.InteropServices.DllImportResolver");
+                System.Func<string, System.Reflection.Assembly, object, System.IntPtr> r = (n, a, sp) => { Debug.Log("DIAG dllimport resolver " + n); return System.IntPtr.Zero; };
+                var rd = System.Delegate.CreateDelegate(drT, r.Target, r.Method);
+                try { nl.GetMethod("SetDllImportResolver").Invoke(null, new object[] { asm1, rd }); Debug.Log("DIAG SetDllImportResolver ok"); }
+                catch (System.Reflection.TargetInvocationException e) { Debug.Log("DIAG SetDllImportResolver threw " + e.InnerException.Message); }
+            }
+            catch (System.Exception e) { Debug.Log("DIAG hooks failed " + e); }
             try { FbxManager.Create().Destroy(); Debug.Log("DIAG first call ok"); }
             catch (System.Exception e) { Debug.Log("DIAG first call failed " + e.GetBaseException().Message); }
             try {
