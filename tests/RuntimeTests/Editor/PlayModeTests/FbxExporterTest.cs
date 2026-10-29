@@ -18,6 +18,27 @@ namespace Autodesk.Fbx.PlayModeTests
             return System.IntPtr.Zero;
         }
 
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        static void DiagEarly() {
+            Debug.Log("DIAG early init t=" + System.DateTime.Now.ToString("HH:mm:ss.fff"));
+            System.AppDomain.CurrentDomain.FirstChanceException += (sender, args) => {
+                var ex = args.Exception;
+                if (ex is System.DllNotFoundException || (ex is System.TypeInitializationException && ex.Message.Contains("Autodesk")))
+                    Debug.Log("DIAG firstchance t=" + System.DateTime.Now.ToString("HH:mm:ss.fff") + " thread=" + System.Threading.Thread.CurrentThread.ManagedThreadId + " " + ex.GetType().Name + ": " + ex.Message.Split('\n')[0] + "\n" + System.Environment.StackTrace);
+            };
+            try {
+                var asm = typeof(FbxManager).Assembly;
+                var alcT = typeof(object).Assembly.GetType("System.Runtime.Loader.AssemblyLoadContext");
+                var alc = alcT.GetMethod("GetLoadContext").Invoke(null, new object[] { asm });
+                System.Func<System.Reflection.Assembly, string, System.IntPtr> hookEvent = (a, n) => { Debug.Log("DIAG early event raised " + n + "\n" + System.Environment.StackTrace); return System.IntPtr.Zero; };
+                alcT.GetEvent("ResolvingUnmanagedDll").AddEventHandler(alc, hookEvent);
+                Debug.Log("DIAG early hooked alc=" + alc);
+            }
+            catch (System.Exception e) { Debug.Log("DIAG early hook failed " + e); }
+        }
+#endif
+
         [Test, Order(0)]
         public void Diag() {
             try {
@@ -48,7 +69,7 @@ namespace Autodesk.Fbx.PlayModeTests
             }
             catch (System.Exception e) { Debug.Log("DIAG hooks failed " + e); }
             try { FbxManager.Create().Destroy(); Debug.Log("DIAG first call ok"); }
-            catch (System.Exception e) { Debug.Log("DIAG first call failed " + e.GetBaseException().Message); }
+            catch (System.Exception e) { Debug.Log("DIAG first call failed " + e.GetType().Name + " / " + e.GetBaseException().Message.Split('\n')[0]); }
             try {
                 const System.Reflection.BindingFlags all = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
                 var asm = typeof(FbxManager).Assembly;
