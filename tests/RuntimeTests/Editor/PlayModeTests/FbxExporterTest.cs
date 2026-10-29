@@ -24,7 +24,7 @@ namespace Autodesk.Fbx.PlayModeTests
             Debug.Log("DIAG early init t=" + System.DateTime.Now.ToString("HH:mm:ss.fff"));
             System.AppDomain.CurrentDomain.FirstChanceException += (sender, args) => {
                 var ex = args.Exception;
-                if (ex is System.DllNotFoundException || (ex is System.TypeInitializationException && ex.Message.Contains("Autodesk")))
+                if (ex is System.DllNotFoundException || ex is System.TypeInitializationException)
                     Debug.Log("DIAG firstchance t=" + System.DateTime.Now.ToString("HH:mm:ss.fff") + " thread=" + System.Threading.Thread.CurrentThread.ManagedThreadId + " " + ex.GetType().Name + ": " + ex.Message.Split('\n')[0] + "\n" + System.Environment.StackTrace);
             };
             try {
@@ -68,6 +68,13 @@ namespace Autodesk.Fbx.PlayModeTests
                 catch (System.Reflection.TargetInvocationException e) { Debug.Log("DIAG SetDllImportResolver threw " + e.InnerException.Message); }
             }
             catch (System.Exception e) { Debug.Log("DIAG hooks failed " + e); }
+            try {
+                var nlT = typeof(object).Assembly.GetType("System.Runtime.InteropServices.NativeLibrary");
+                var load = nlT.GetMethod("Load", new[] { typeof(string), typeof(System.Reflection.Assembly), typeof(System.Runtime.InteropServices.DllImportSearchPath?) });
+                Debug.Log("DIAG NativeLibrary.Load -> " + load.Invoke(null, new object[] { "UnityFbxSdkNative", typeof(FbxManager).Assembly, null }));
+            }
+            catch (System.Reflection.TargetInvocationException e) { Debug.Log("DIAG NativeLibrary.Load threw " + e.InnerException.GetType().Name + ": " + e.InnerException.Message.Split('\n')[0]); }
+            catch (System.Exception e) { Debug.Log("DIAG NativeLibrary.Load reflection failed " + e); }
             try { FbxManager.Create().Destroy(); Debug.Log("DIAG first call ok"); }
             catch (System.Exception e) { Debug.Log("DIAG first call failed " + e.GetType().Name + " / " + e.GetBaseException().Message.Split('\n')[0]); }
             try {
