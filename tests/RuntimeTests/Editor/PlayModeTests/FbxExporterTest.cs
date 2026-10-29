@@ -17,6 +17,22 @@ namespace Autodesk.Fbx.PlayModeTests
         public void Diag() {
             try { FbxManager.Create().Destroy(); Debug.Log("DIAG first call ok"); }
             catch (System.Exception e) { Debug.Log("DIAG first call failed " + e.GetBaseException().Message); }
+            try {
+                const System.Reflection.BindingFlags all = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+                var asm = typeof(FbxManager).Assembly;
+                var alcType = typeof(object).Assembly.GetType("System.Runtime.Loader.AssemblyLoadContext");
+                var alc = alcType.GetMethod("GetLoadContext").Invoke(null, new object[] { asm });
+                Debug.Log("DIAG alc=" + alc.GetType().FullName + " " + alc);
+                var wrapper = alc.GetType().GetProperty("UnityAssemblyLoadContextWrapper", all)?.GetValue(alc);
+                if (wrapper != null) {
+                    foreach (var prop in wrapper.GetType().GetProperties(all))
+                        if (prop.GetIndexParameters().Length == 0) { try { Debug.Log("DIAG wrapper." + prop.Name + "=" + prop.GetValue(wrapper)); } catch (System.Exception) {} }
+                    var resolver = wrapper.GetType().GetProperty("NativeLibraryResolver", all).GetValue(wrapper);
+                    var resolved = resolver.GetType().GetMethod("Resolve", all).Invoke(resolver, new object[] { asm, "UnityFbxSdkNative" });
+                    Debug.Log("DIAG resolver=" + resolver.GetType().FullName + " resolved=" + (resolved ?? "<null>"));
+                }
+            }
+            catch (System.Exception e) { Debug.Log("DIAG reflection failed " + e); }
 #if UNITY_EDITOR
             foreach (var imp in UnityEditor.PluginImporter.GetAllImporters()) {
                 if (imp.assetPath.Contains("UnityFbxSdkNative"))
