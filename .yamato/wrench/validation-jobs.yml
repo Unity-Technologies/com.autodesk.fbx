@@ -83,11 +83,11 @@ validate_-_com_autodesk_fbx_-_2020_3_-_macos13:
   labels:
   - Packages:com.autodesk.fbx
 
-# PVP Editor and Playmode tests for Validate - com.autodesk.fbx - 2020.3 - ubuntu1804 (2020.3 - Ubuntu).
-validate_-_com_autodesk_fbx_-_2020_3_-_ubuntu1804:
-  name: Validate - com.autodesk.fbx - 2020.3 - ubuntu1804
+# PVP Editor and Playmode tests for Validate - com.autodesk.fbx - 2020.3 - ubuntu2204 (2020.3 - Ubuntu).
+validate_-_com_autodesk_fbx_-_2020_3_-_ubuntu2204:
+  name: Validate - com.autodesk.fbx - 2020.3 - ubuntu2204
   agent:
-    image: package-ci/ubuntu-18.04:v4
+    image: package-ci/ubuntu-22.04:v4
     type: Unity::VM
     flavor: b1.large
   commands:

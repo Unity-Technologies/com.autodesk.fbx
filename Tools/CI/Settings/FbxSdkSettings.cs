@@ -3,6 +3,7 @@ using RecipeEngine.Api.Dependencies;
 using RecipeEngine.Api.Platforms;
 using RecipeEngine.Api.Settings;
 using RecipeEngine.Modules.Wrench.Models;
+using RecipeEngine.Modules.Wrench.Platforms;
 using RecipeEngine.Modules.Wrench.Settings;
 using RecipeEngine.Platforms;
 
@@ -54,7 +55,20 @@ public class FbxSdkSettings : AnnotatedSettingsBase
             PackageOptions,
             wrenchCsProjectPath: "Tools/CI/FbxSdk.Cookbook.csproj"
         );
-        
+
+        // The native plugin is built on Ubuntu 22.04 and does not load on older Ubuntu images
+        foreach (var editor in Wrench.Packages[FbxSdkPackageName].UnityEditors)
+        {
+            var platforms = editor.EditorPlatforms.Items
+                .Where(p => p.Key != EditorPlatformType.Ubuntu1804 && p.Key != EditorPlatformType.Ubuntu2004)
+                .ToDictionary(p => p.Key, p => p.Value);
+            if (platforms.Count != editor.EditorPlatforms.Items.Count)
+            {
+                platforms[EditorPlatformType.Ubuntu2204] = new EditorPlatform(EditorPlatformType.Ubuntu2204);
+                editor.EditorPlatforms = new EditorPlatformSet(platforms);
+            }
+        }
+
         Wrench.BranchNamingPattern = BranchPatterns.ReleaseSlash;
         // Add "rme", "supported" to upm-pvp check profiles together with an exemption file
         // PVP-41-1 check is skipped because of "Unreleased" entry in CHANGELOG.md
