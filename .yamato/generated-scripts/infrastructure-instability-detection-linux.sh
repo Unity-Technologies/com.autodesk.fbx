@@ -3,6 +3,7 @@
 set -x
 
 set -e
+if [ "$YAMATO_COMMAND_BLOCK_SUCCESS" != "1" ]; then
 if [ -f "infrastructure_instability_detection_standalone.zip" ]; then
   echo "removed existing archive infrastructure_instability_detection_standalone.zip"
   rm "infrastructure_instability_detection_standalone.zip" || true
@@ -13,8 +14,8 @@ if [ -d "infrastructure_instability_detection_standalone" ]; then
   rm -rf "infrastructure_instability_detection_standalone" || true
 fi
 
-echo "downloading and extracting infrastructure_instability_detection_standalone@1.0.0"
-curl -fs "https://artifactory-slo.bf.unity3d.com/artifactory/automation-and-tooling/infrastructure-instability-detection/standalone/1.0.0/ubuntu.zip" --output "infrastructure_instability_detection_standalone.zip" --retry 5 || true
+echo "downloading and extracting infrastructure_instability_detection_standalone@1.2.2"
+curl -fs "https://artifactory-slo.bf.unity3d.com/artifactory/automation-and-tooling/infrastructure-instability-detection/standalone/1.2.2/ubuntu.zip" --output "infrastructure_instability_detection_standalone.zip" --retry 5 || true
 
 if [ -d "infrastructure_instability_detection" ]; then
   echo "removing infrastructure_instability_detection folder to avoid name clash"
@@ -35,3 +36,4 @@ unzip -q patterns.zip && rm patterns.zip || true
 
 echo "running '$(pwd)/infrastructure_instability_detection'"
 ./infrastructure_instability_detection || true
+fi
