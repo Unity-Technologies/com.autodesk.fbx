@@ -78,7 +78,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
 endif()
 
 # don't generate stubs for inherited virtuals e.g. GetSelected
-SET(CMAKE_SWIG_FLAGS -fvirtual)
+SET(CMAKE_SWIG_FLAGS -fvirtual -DSWIG_CSHARP_NO_STRING_HELPER)
 
 option(USE_STEVEDORE "Use stevedore to get dependencies (useful on continuous integration platforms, default off)" OFF)
 

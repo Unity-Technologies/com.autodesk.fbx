@@ -188,8 +188,11 @@ test_trigger_pr:
 {% for editor in editors %}
 {% for platform in platforms %}
 # Only run tests in 6000.0 and trunk if on Silicon Mac or ARM64 Windows. On other platforms, run tests in all Editor versions.
+# Trunk has no Intel Mac editor, so it is only tested on Silicon Mac.
+{% if editor.version != "trunk" or platform.name != "mac" %}
 {% if editor.version == "6000.0" or editor.version == "trunk" or platform.model != "M1" and platform.model != "arm" %}
     - .yamato/yamato.yml#test_{{ platform.name }}_{{ editor.version }}
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endfor %}
