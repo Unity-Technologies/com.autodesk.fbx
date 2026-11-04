@@ -13,15 +13,15 @@
  * LPStr is ANSI on CoreCLR for Windows, so we always use LPUTF8Str.
  */
 %typemap(imtype,
-         inattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)]",
-         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)]")
+         inattributes="[global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]",
+         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]")
         const FbxString&, FbxString "string"
 
 %typemap(imtype,
-         inattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)]",
-         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)]",
-         directorinattributes="[global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)]",
-         directoroutattributes="[return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)]")
+         inattributes="[global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]",
+         outattributes="[return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]",
+         directorinattributes="[global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]",
+         directoroutattributes="[return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]")
         char *, char *&, char[ANY], char[] "string"
 
 /*
@@ -41,17 +41,20 @@ SWIGEXPORT void SWIGSTDCALL SWIGRegisterStringCallback_$module(SWIG_CSharpString
 %}
 
 %pragma(csharp) imclasscode=%{
+  // UnmanagedType.LPUTF8Str, which Unity 2020.3's .NET Standard 2.0 profile does not define.
+  internal const global::System.Runtime.InteropServices.UnmanagedType LPUTF8Str = (global::System.Runtime.InteropServices.UnmanagedType)48;
+
   protected class SWIGStringHelper {
 
-    [return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)]
-    public delegate string SWIGStringDelegate([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)] string message);
+    [return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]
+    public delegate string SWIGStringDelegate([global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)] string message);
     static SWIGStringDelegate stringDelegate = new SWIGStringDelegate(CreateString);
 
     [global::System.Runtime.InteropServices.DllImport("$dllimport", EntryPoint="SWIGRegisterStringCallback_$module")]
     public static extern void SWIGRegisterStringCallback_$module(SWIGStringDelegate stringDelegate);
 
-    [return: global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)]
-    static string CreateString([global::System.Runtime.InteropServices.MarshalAs(global::System.Runtime.InteropServices.UnmanagedType.LPUTF8Str)] string cString) {
+    [return: global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)]
+    static string CreateString([global::System.Runtime.InteropServices.MarshalAs(NativeMethods.LPUTF8Str)] string cString) {
       return cString;
     }
 
