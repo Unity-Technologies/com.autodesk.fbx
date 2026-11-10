@@ -11,7 +11,7 @@ The Autodesk® FBX® SDK is a C++ software development platform and API toolkit 
 The Autodesk® FBX® SDK for Unity package contains:
 
 * C# bindings
-* Compiled binaries for MacOS, Windows, and Ubuntu that include the FBX SDK
+* Compiled binaries for MacOS, Windows (x64 and ARM64), and Ubuntu that include the FBX SDK
 
 ## Requirements
 
@@ -53,6 +53,6 @@ For example, if you have an `FbxProperty` in C# and you delete the `FbxNode` tha
 
 Linux support is currently experimental on this package. Unity does not provide support for it.
 
-#### Linux requires libstdc++ 6.0.28+
+#### Linux requires libstdc++ 6.0.30+ and glibc 2.34+
 
-On Linux, libstdc++ 6.0.28 is required to be installed in order to use the package.
+On Linux, the package requires libstdc++ 6.0.30 or later and glibc 2.34 or later, such as on Ubuntu 22.04 or later.
