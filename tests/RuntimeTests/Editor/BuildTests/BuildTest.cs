@@ -137,7 +137,6 @@ namespace Autodesk.Fbx.BuildTests
             PlayerSettings.SetScriptingDefineSymbolsForGroup(k_buildTargetGroup, symbols);
         }
 
-        [Ignore("Ignoring in CI because we don't control which backends are installed")]
         [UnityTest]
         [TestCaseSource("RuntimeFbxSdkTestData")]
         public IEnumerator TestFbxSdkAtRuntime(string[] defineSymbols, bool dllExists, ScriptingImplementation scriptingImplementation)

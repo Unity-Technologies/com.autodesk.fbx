@@ -1,0 +1,18 @@
+{% metadata_file .yamato/global.metafile %}
+---
+
+verify_signed_package:
+  name: Verify the binaries in the signed package are signed
+  agent:
+    type: {{ win_platform.type }}
+    image: {{ win_platform.image }}
+    flavor: {{ win_platform.flavor }}
+  commands:
+    - |
+      powershell -NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference = 'Stop'; $tgz = Get-ChildItem -Recurse -Path 'upm-ci~/packages' -Filter 'com.autodesk.fbx-*.tgz' | Select-Object -First 1; Write-Host \"Package: $($tgz.FullName)\"; New-Item -ItemType Directory -Force -Path extracted | Out-Null; tar -xzf $tgz.FullName -C extracted; $failed = $false; foreach ($dll in @('extracted/package/Editor/Plugins/WinX64/UnityFbxSdkNative.dll', 'extracted/package/Editor/Plugins/WinARM64/UnityFbxSdkNative.dll')) { $sig = Get-AuthenticodeSignature -FilePath $dll; Write-Host \"$dll : $($sig.Status) : $($sig.SignerCertificate.Subject)\"; if ($sig.Status -ne 'Valid') { $failed = $true } }; if ($failed) { exit 1 }"
+  artifacts:
+    signed_package:
+      paths:
+        - "upm-ci~/packages/**/*.tgz"
+  dependencies:
+    - .yamato/wrench/package-pack-jobs.yml#package_pack_-_com_autodesk_fbx
