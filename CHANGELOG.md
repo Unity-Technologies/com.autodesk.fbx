@@ -1,10 +1,11 @@
 # Changes in FBX SDK C# Bindings
 
-## [5.1.4] - 2026-10-13
+## [5.1.5] - 2026-11-10
 
 * Update FBX SDK to 2020.3.11, which fixes the security vulnerabilities CVE-2026-10709 and CVE-2026-10710 (Autodesk advisory ADSK-SA-2026-0010).
 * Fix `char` return values being marshalled as 8-byte integers, which caused a MarshalDirectiveException in newer Unity versions.
 * Fix non-ASCII strings being corrupted on Windows in newer Unity versions, by marshalling all strings as UTF-8.
+* Correct the namespace, the Linux requirements and the supported platforms in the package documentation.
 
 ## [5.1.3] - 2026-01-28
 
