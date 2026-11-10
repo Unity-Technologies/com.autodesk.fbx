@@ -1,4 +1,4 @@
-using FbxSdk.Cookbook.Settings;
+﻿using FbxSdk.Cookbook.Settings;
 using RecipeEngine.Api.Dependencies;
 using RecipeEngine.Api.Extensions;
 using RecipeEngine.Api.Jobs;
@@ -40,7 +40,7 @@ public class BuildFbxSdkBindings: RecipeBase
         foreach (var agent in buildAgents)
         {
             var builder = JobBuilder.Create(GetJobName(agent))
-                .WithPlatform(new Platform(agent, SystemType.Unknown))
+                .WithPlatform(new Platform(agent, agent.Image.Contains("win") ? SystemType.Windows : agent.Image.Contains("mac") ? SystemType.MacOS : SystemType.Ubuntu))
                 .WithDescription(GetJobName(agent));
 
             if (agent.Image.Contains("win"))

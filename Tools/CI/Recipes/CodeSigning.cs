@@ -1,4 +1,4 @@
-using FbxSdk.Cookbook.Recipes.Extensions;
+﻿using FbxSdk.Cookbook.Recipes.Extensions;
 using FbxSdk.Cookbook.Settings;
 using CaseExtensions;
 using RecipeEngine.Api;
@@ -8,6 +8,7 @@ using RecipeEngine.Api.Extensions;
 using RecipeEngine.Api.Jobs;
 using RecipeEngine.Api.Platforms;
 using RecipeEngine.Api.Recipes;
+using RecipeEngine.Modules.Wrench.Platforms;
 using RecipeEngine.Platforms;
 
 namespace FbxSdk.Cookbook.Recipes;
@@ -39,19 +40,15 @@ public class CodeSigning: RecipeBase
     {
         var settings = FbxSdkSettings.Instance;
         var jobBuilders = new List<IJobBuilder>();
-        var platforms = settings.Wrench.Packages[FbxSdkSettings.FbxSdkPackageName].EditorPlatforms;
+        var platforms = new[] { EditorPlatformType.MacOs13, EditorPlatformType.Win10 }
+            .Select(type => new EditorPlatform(type));
         var packages = settings.Wrench.Packages.Where(p => p.Value.ReleaseOptions.IsReleasing);
         foreach (var package in packages)
         {
             var packageName = package.Value.ShortName;
             foreach (var platform in platforms)
             {
-                if(platform.Key != SystemType.MacOS && platform.Key != SystemType.Windows)
-                {
-                    continue;
-                }
-
-                var signJob = CreateCodeSigningJob(platform.Value, packageName);
+                var signJob = CreateCodeSigningJob(platform, packageName);
                 if (signJob != null)
                 {
                     jobBuilders.Add(signJob);
